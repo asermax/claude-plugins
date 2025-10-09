@@ -1,0 +1,8 @@
+{
+  "name": "aur",
+  "version": "1.0.0",
+  "description": "AUR package management commands for building and maintaining Arch User Repository packages",
+  "author": {
+    "name": "Agustin Carrasco"
+  }
+}

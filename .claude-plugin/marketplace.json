@@ -1,0 +1,18 @@
+{
+  "name": "asermax-plugins",
+  "owner": {
+    "name": "Agustin Carrasco"
+  },
+  "plugins": [
+    {
+      "name": "aur",
+      "source": "./aur",
+      "description": "AUR package management commands for building and maintaining Arch User Repository packages"
+    },
+    {
+      "name": "chores",
+      "source": "./chores",
+      "description": "Repository maintenance commands for releases and pull requests using GitHub"
+    }
+  ]
+}

@@ -24,6 +24,7 @@ The plugin includes the following skills:
 
 ### Documentation and Research
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
+- **skill-creator**: Create skills with bundled resources (scripts, references, assets) using initialization templates and packaging workflows
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
 - **writing-skills**: Apply TDD to process documentation by testing with subagents
 

@@ -31,20 +31,13 @@ Transform rough ideas into fully-formed designs through structured questioning a
 - Cover: Architecture, components, data flow, error handling, testing
 - Ask after each section: "Does this look right so far?"
 
-### Phase 4: Worktree Setup (for implementation)
-When design is approved and implementation will follow:
-- Announce: "I'm using the Using Git Worktrees skill to set up an isolated workspace."
-- Switch to skills/collaboration/using-git-worktrees
-- Follow that skill's process for directory selection, safety verification, and setup
-- Return here when worktree ready
-
-### Phase 5: Planning Handoff
+### Phase 4: Planning Handoff
 Ask: "Ready to create the implementation plan?"
 
 When your human partner confirms (any affirmative response):
 - Announce: "I'm using the Writing Plans skill to create the implementation plan."
-- Switch to skills/collaboration/writing-plans skill
-- Create beads issues in the worktree with dependencies
+- Switch to superpowers:writing-plans
+- Create beads issues with dependencies
 
 ## When to Revisit Earlier Phases
 
@@ -58,11 +51,8 @@ When your human partner confirms (any affirmative response):
 
 ## Related Skills
 
-**During exploration:**
-- When approaches have genuine trade-offs: skills/architecture/preserving-productive-tensions
-
-**Before proposing changes to existing code:**
-- Understand why it exists: skills/research/tracing-knowledge-lineages
+**After design is complete:**
+- superpowers:writing-plans - Create implementation plan with beads issues
 
 ## Remember
 - One question per message during Phase 1

@@ -15,7 +15,7 @@ You write test cases (pressure scenarios with subagents), watch them fail (basel
 
 **Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
 
-See skills/testing/test-driven-development for the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
+See superpowers:test-driven-development for the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
 
 ## What is a Skill?
 
@@ -208,7 +208,7 @@ When searching, dispatch subagent with template...
 [20 lines of repeated instructions]
 
 # ✅ GOOD: Reference other skill
-Always use subagents (50-100x context savings). See skills/using-skills for workflow.
+Always use subagents (50-100x context savings). See another skill's workflow.
 ```
 
 **Compress examples:**
@@ -250,10 +250,10 @@ wc -w skills/path/SKILL.md
 
 **When writing documentation that references other skills:**
 
-Use path format without `@` prefix or `/SKILL.md` suffix:
-- ✅ Good: `test-driven-development`
-- ✅ Good: `systematic-debugging`
-- ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
+Use skill reference format:
+- ✅ Good: `superpowers:test-driven-development`
+- ✅ Good: `superpowers:systematic-debugging`
+- ❌ Bad: path references like `skills/testing/test-driven-development`
 
 **Why no @ links:** `@` syntax force-loads files immediately, consuming 200k+ context before you need them.
 
@@ -283,7 +283,7 @@ digraph when_flowchart {
 - Linear instructions → Numbered lists
 - Labels without semantic meaning (step1, helper2)
 
-See @graphviz-conventions.dot for graphviz style rules.
+See ./graphviz-conventions.dot for graphviz style rules.
 
 ## Code Examples
 

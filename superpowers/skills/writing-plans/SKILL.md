@@ -13,7 +13,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the Writing Plans skill to create the implementation plan."
 
-**Context:** This should be run in a dedicated worktree (created by brainstorming skill).
+**Context:** This is typically run after design is complete (from superpowers:brainstorming).
 
 ## Bite-Sized Task Granularity
 
@@ -28,14 +28,14 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 Track your implementation plan as beads issues with dependencies:
 
-1. **Verify local database:** Check for `.beads/*.db` in the worktree (see skills/project-management/using-beads workflow 0)
+1. **Verify local database:** Check for `.beads/*.db` in the directory (see superpowers:using-beads workflow 0)
 
 2. **Create issues for each task:** For every bite-sized step group, create a beads issue with full context
    ```bash
    bd create "Task N: Component Name - [full description with files and steps]"
    ```
 
-3. **Model dependencies:** Link tasks in order (see skills/project-management/using-beads workflow 4)
+3. **Model dependencies:** Link tasks in order (see superpowers:using-beads workflow 4)
    ```bash
    bd dep add task-2 task-1 --type blocks
    ```
@@ -51,27 +51,24 @@ Document in each issue:
 ## Remember
 - Tasks are discoverable by `bd ready` for execution
 - Dependencies show what blocks what
-- Reference relevant skills with path format: `skills/category/skill-name`
 - Each issue is one atomic unit of work
 
 ## Execution Handoff
 
-After issues are created and dependencies modeled, offer execution choice:
+After issues are created and dependencies modeled:
 
-**"Issues created and tracked in beads. Two execution options:**
+**"Issues created and tracked in beads. You can:**
 
-**1. Subagent-Driven (this session)** - I dispatch fresh subagent per task, review between tasks, fast iteration
+**1. Execute with superpowers:executing-plans** - Batch execution with review checkpoints
 
-**2. Parallel Session (separate)** - Open new session with executing-plans, batch execution with checkpoints
+**2. Use `bd ready`** - Find next unblocked task and implement
 
 **Which approach?"**
 
-**If Subagent-Driven chosen:**
-- Use skills/collaboration/subagent-driven-development
-- Stay in this session
-- Fresh subagent per task + code review
+**If executing-plans chosen:**
+- Switch to superpowers:executing-plans
+- Execute in controlled batches
 
-**If Parallel Session chosen:**
-- Guide them to open new session in worktree
-- New session uses skills/collaboration/executing-plans
+**If manual execution:**
 - Use `bd ready` to find unblocked work
+- Implement tasks one at a time

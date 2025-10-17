@@ -20,6 +20,7 @@ The plugin includes the following skills:
 ### Debugging and Testing
 - **root-cause-tracing**: Trace bugs backward through call stack to identify source of issues
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions
+- **test-driven-development**: Write test first, watch it fail, write minimal code to pass
 
 ### Documentation and Research
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state

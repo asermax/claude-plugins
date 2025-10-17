@@ -45,9 +45,8 @@ Based on feedback:
 ### Step 5: Complete Development
 
 After all tasks complete and verified:
-- Announce: "I'm using the Finishing a Development Branch skill to complete this work."
-- Switch to skills/collaboration/finishing-a-development-branch
-- Follow that skill to verify tests, present options, execute choice
+- Confirm all tests pass
+- Ask user if they want to commit changes or create a PR
 
 ## When to Stop and Ask for Help
 

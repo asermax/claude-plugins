@@ -13,6 +13,11 @@
       "name": "chores",
       "source": "./chores",
       "description": "Repository maintenance commands for releases and pull requests using GitHub"
+    },
+    {
+      "name": "superpowers",
+      "source": "./superpowers",
+      "description": "Development workflow skills for systematic debugging, code review, planning, and more"
     }
   ]
 }

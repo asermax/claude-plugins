@@ -1,5 +1,5 @@
 ---
-name: Writing-Plans
+name: writing-plans
 description: Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans with exact file paths, complete code examples, and verification steps assuming engineer has minimal domain knowledge
 ---
 
@@ -11,9 +11,9 @@ Write comprehensive implementation plans assuming the engineer has zero context 
 
 Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
 
-**Announce at start:** "I'm using the Writing Plans skill to create the implementation plan."
+**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** This is typically run after design is complete (from superpowers:brainstorming).
+**Context:** This should be run after design is complete (from brainstorming skill).
 
 ## Bite-Sized Task Granularity
 

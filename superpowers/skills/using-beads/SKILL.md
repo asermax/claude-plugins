@@ -1,5 +1,5 @@
 ---
-name: Using-Beads
+name: using-beads
 description: Use when starting work in a new codebase, discovering work during implementation, receiving feedback, or working in codebases using bd - dependency-aware task management with bd for tracking all work and modeling dependencies
 ---
 

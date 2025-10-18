@@ -1,5 +1,5 @@
 ---
-name: Self-Maintaining-CLAUDE-md
+name: self-maintaining-claude-md
 description: Use when starting any task in a project - keeps CLAUDE.md instruction file current with high-level project state, prompts for init if missing, adds reflection todo before work to ensure documentation stays updated
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements - dispatches code-reviewer subagent to review implementation against plan or requirements before proceeding
+description: Use when completing ANY task that modifies code (bug fixes, features, refactors - all sizes) or before merging to verify work meets requirements - dispatches code-reviewer subagent to review implementation against plan or requirements before proceeding
 ---
 
 # Requesting Code Review
@@ -12,8 +12,8 @@ Dispatch code-reviewer subagent to catch issues before they cascade.
 ## When to Request Review
 
 **Mandatory:**
+- After completing ANY task that modifies code (all sizes: bug fixes, features, refactors)
 - After each task in subagent-driven development
-- After completing major feature
 - Before merge to main
 
 **Optional but valuable:**
@@ -92,7 +92,9 @@ You: [Fix progress indicators]
 ## Red Flags
 
 **Never:**
-- Skip review because "it's simple"
+- Skip review because "it's simple" or "just a bug fix"
+- Skip review because "the change is only 10 lines"
+- Skip review because "time pressure"
 - Ignore Critical issues
 - Proceed with unfixed Important issues
 - Argue with valid technical feedback

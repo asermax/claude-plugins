@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: Use when completing ANY task that modifies code (bug fixes, features, refactors - all sizes) or before merging to verify work meets requirements - dispatches code-reviewer subagent to review implementation against plan or requirements before proceeding
+description: Use when starting ANY task that modifies code (bug fixes, features, refactors - all sizes) or before merging to verify work meets requirements - dispatches code-reviewer subagent to review implementation against plan or requirements before proceeding
 ---
 
 # Requesting Code Review

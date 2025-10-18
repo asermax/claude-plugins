@@ -57,6 +57,10 @@ bd create "Your first issue"
 # Create issue immediately
 bd create "Fix inconsistent error handling in auth module"
 
+# Set priority if not default (0-4, where 0=highest, 2=default)
+bd create "Critical security vulnerability in auth" -p 0
+bd create "Nice-to-have UI polish" -p 4
+
 # If it blocks other work or is blocked by something
 bd create "Add tests for auth error paths" -d "Missing test coverage found during payment-1"
 bd dep add payment-1 auth-tests-1 --type discovered-from
@@ -78,6 +82,27 @@ bd list  # Wrong - shows all issues, not just ready ones
 ```
 
 **`bd ready` shows issues with `status='open'` AND no blocking dependencies.**
+
+**When to use priority:**
+
+Priority is optional. Use it when you need to distinguish urgency within ready work:
+
+**Priority levels (0-4, where 0=highest, 2=default):**
+- `0` = Highest priority (critical bugs, security issues, production blockers)
+- `1` = High priority (important features, significant bugs)
+- `2` = Medium priority (default - most work lives here)
+- `3` = Low priority (nice-to-have improvements)
+- `4` = Lowest priority (future ideas, polish)
+
+```bash
+# Set priority when creating critical issues
+bd create "Security vulnerability in auth" -p 0
+
+# Or update priority later when urgency changes
+bd update issue-1 -p 0
+```
+
+**Key principle:** Dependencies model "what must happen first" (technical ordering). Priority models "what should happen first given equal readiness" (value/urgency ordering). Both matter, but dependencies are mandatory while priority is for tie-breaking.
 
 ### 3. Receiving Feedback → Create Issues, Don't Fix Immediately
 
@@ -144,10 +169,12 @@ bd dep add tests-1 api-endpoint-1 --type related      # tests related but can be
 | Task | Command | When |
 |------|---------|------|
 | **Create issue** | `bd create "description"` | Immediately when discovering work |
+| **Create with priority** | `bd create "description" -p 0` | For critical/urgent issues |
 | **Find next work** | `bd ready` | When choosing what to work on |
 | **Add dependency** | `bd dep add issue-1 issue-2 --type blocks` | When creating issues with dependencies |
 | **Check dependencies** | `bd dep tree issue-1` | Before starting work on issue |
 | **Update status** | `bd update issue-1 --status in_progress` | When starting work |
+| **Update priority** | `bd update issue-1 -p 0` | When urgency changes |
 | **Close issue** | `bd close issue-1` | When work is complete |
 
 ## Common Mistakes

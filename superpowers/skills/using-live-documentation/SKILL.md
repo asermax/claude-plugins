@@ -52,19 +52,17 @@ You MUST use documentation search when you encounter ANY of these:
 
 **How to dispatch:**
 
-1. Use Context7 MCP tools to search for library documentation
-2. Provide clear search parameters:
-   - `libraryName`: Package/library name (e.g., "react-query", "fastapi")
-   - `topic`: Specific concept (e.g., "optimistic updates", "path parameters")
+Dispatch the documentation-searcher agent with the following information:
 
-3. Dispatch using Task tool with general-purpose agent:
-   ```
-   Use: Task
-   Parameters:
-     - subagent_type: general-purpose
-     - description: "Search [library] docs for [topic]"
-     - prompt: Search Context7 documentation for [library] focusing on [topic]. Extract: [what you need]. Provide synthesis with API signatures and recommended patterns.
-   ```
+- **Library name**: Exact package/library name (e.g., "react-query", "fastapi", "pydantic")
+- **Topic**: Specific concept or feature (e.g., "optimistic updates", "path parameters", "field validators")
+- **What you need**: Specific APIs, patterns, or examples you're looking for
+
+The agent will search Context7 documentation and provide a focused synthesis with:
+- Exact API signatures
+- Recommended patterns and best practices
+- Code examples
+- Version-specific guidance
 
 ### Step 3: Implement Using Verified Patterns
 
@@ -81,7 +79,7 @@ You MUST use documentation search when you encounter ANY of these:
 - Assume API names/signatures
 - Skip documentation check "to save time"
 - Implement first, verify later
-- Load raw Context7 docs yourself (defeats the purpose of subagent)
+- Use Context7 MCP tools directly (always dispatch documentation-searcher agent)
 
 ## Red Flags - STOP
 
@@ -153,22 +151,22 @@ If you're thinking ANY of these, you're about to violate the skill:
 
 Before claiming you've implemented something correctly, verify:
 
-- [ ] Dispatched subagent to fetch current documentation
-- [ ] Provided clear search topic in dispatch
+- [ ] Dispatched documentation-searcher agent to fetch current documentation
+- [ ] Provided clear library name, topic, and what you need
 - [ ] Received synthesis with API signatures
 - [ ] API signatures match documentation exactly
 - [ ] Patterns follow current best practices from synthesis
 - [ ] No uncertainties remain about correct approach
 - [ ] Can cite documentation source for key decisions
-- [ ] Did NOT load raw Context7 docs yourself
+- [ ] Did NOT use Context7 MCP tools directly
 
 **If you have ANY uncertainty after receiving synthesis:**
-- Dispatch another subagent with refined topic
+- Dispatch another documentation-searcher agent with refined topic
 - Use WebSearch for supplementary info
 - Ask human for clarification
 
 **Never:**
-- Load Context7 docs directly in main agent
+- Use Context7 MCP tools directly
 - Ship uncertain implementation
 - Skip documentation search to "save time"
 
@@ -178,7 +176,7 @@ Before claiming you've implemented something correctly, verify:
 
 ```
 ❌ "I know react-query uses useQuery, let me write this..."
-✅ "Let me dispatch a subagent to verify the current useQuery API..."
+✅ "Let me dispatch documentation-searcher agent to verify the current useQuery API..."
 ```
 
 **Why it fails:** APIs change. Your memory is from training cutoff.
@@ -186,8 +184,8 @@ Before claiming you've implemented something correctly, verify:
 ### Mistake 2: "Subagent overhead isn't worth it"
 
 ```
-❌ "This is just one search, I'll load Context7 directly..."
-✅ "Even one search saves 15,000 tokens. Always dispatch subagent."
+❌ "This is just one search, I'll use Context7 directly..."
+✅ "Even one search saves 15,000 tokens. Always dispatch documentation-searcher agent."
 ```
 
 **Why it fails:** "Just one" becomes "just one more" throughout the session. Context compounds.
@@ -196,7 +194,7 @@ Before claiming you've implemented something correctly, verify:
 
 ```
 ❌ [Writes full implementation] "Let me check if this is right..."
-✅ [Dispatches subagent first] "Now I'll implement using verified patterns..."
+✅ [Dispatches documentation-searcher agent first] "Now I'll implement using verified patterns..."
 ```
 
 **Why it fails:** Fixing wrong code takes longer than writing correct code once.
@@ -204,19 +202,19 @@ Before claiming you've implemented something correctly, verify:
 ## Integration with Other Workflows
 
 **With Test-Driven Development:**
-1. Dispatch subagent for docs BEFORE writing test
+1. Dispatch documentation-searcher agent BEFORE writing test
 2. Receive synthesis with API signatures
 3. Write test using documented patterns
 4. Implement using same synthesis
 
 **With Brainstorming:**
-1. During design discussion, dispatch subagent for relevant docs
+1. During design discussion, dispatch documentation-searcher agent for relevant docs
 2. Base design on current capabilities from synthesis
 3. Don't propose deprecated patterns
 4. Verify feasibility with current API
 
 **With Debugging:**
-1. Dispatch subagent when error involves library
+1. Dispatch documentation-searcher agent when error involves library
 2. Check if API usage matches synthesis patterns
 3. Verify you're using correct version's API
 4. Look for migration guides if version changed
@@ -226,18 +224,18 @@ Before claiming you've implemented something correctly, verify:
 **Before implementing ANYTHING involving a library/framework:**
 
 1. Recognize trigger (library name → stop)
-2. Dispatch subagent with Context7 documentation search
-3. Provide clear library name and topic
-4. Receive synthesis (~400 words + API signatures)
+2. Dispatch documentation-searcher agent
+3. Provide clear library name, topic, and what you need
+4. Receive synthesis with API signatures and patterns
 5. Implement using verified patterns from synthesis
 6. Cite documentation source
 
 **Critical rules:**
-- **NEVER load raw Context7 docs in main agent**
-- **ALWAYS dispatch subagent for documentation**
+- **NEVER use Context7 MCP tools directly**
+- **ALWAYS dispatch documentation-searcher agent for documentation**
 - **Context savings: 10,000-20,000 tokens per search**
 - **Your training data is always outdated**
 - **Current documentation is always more accurate**
-- **Dispatch subagent first, write code second**
+- **Dispatch agent first, write code second**
 
 **This is not optional. This is mandatory.**

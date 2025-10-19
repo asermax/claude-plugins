@@ -215,9 +215,14 @@ The plugin provides a collection of proven workflow skills organized by category
 
 **Agents:**
 - `agents/code-reviewer.md`: Internal agent used by the requesting-code-review skill
-- Agent definition includes frontmatter with name, description, tools, and model
-- The code-reviewer agent prompt should be synced from the upstream requesting-code-review skill's code-reviewer.md template during updates
-- Agent is invoked via the Task tool with subagent_type: code-reviewer
+  - Analyzes git diffs and provides comprehensive code reviews
+  - Agent prompt should be synced from upstream requesting-code-review skill's code-reviewer.md template during updates
+  - Invoked via Task tool with subagent_type: superpowers:code-reviewer
+- `agents/documentation-searcher.md`: Internal agent used by the using-live-documentation skill
+  - Searches Context7 for library documentation and provides focused synthesis
+  - Uses Context7 MCP tools (resolve-library-id, get-library-docs)
+  - Invoked via Task tool with subagent_type: superpowers:documentation-searcher
+- Agent definitions include frontmatter with name, description, tools, and model
 
 **Beads integration:**
 - Epic-task hierarchy pattern: epic beads contain design documentation, child task beads contain implementation steps

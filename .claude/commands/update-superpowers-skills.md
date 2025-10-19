@@ -59,24 +59,24 @@ If either git pull fails, inform the user about the error and ask them to resolv
 
 ### Step 3: Compare Each Skill
 
-For each skill, compare the files between the upstream source and the plugin destination.
+For each skill, compare the plugin version against the upstream source to identify what's new upstream.
 
 **For superpowers skills:**
-- **Source**: `~/workspace/random/superpowers/skills/<skill-name>/`
-- **Destination**: `~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name>/`
+- **Plugin version** (our modified): `~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name>/`
+- **Upstream version** (original): `~/workspace/random/superpowers/skills/<skill-name>/`
 
 ```bash
-diff -r ~/workspace/random/superpowers/skills/<skill-name> \
-       ~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name>
+diff -r ~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name> \
+       ~/workspace/random/superpowers/skills/<skill-name>
 ```
 
 **For anthropic_skills skills:**
-- **Source**: `~/workspace/random/anthropic_skills/<skill-name>/`
-- **Destination**: `~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name>/`
+- **Plugin version** (our modified): `~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name>/`
+- **Upstream version** (original): `~/workspace/random/anthropic_skills/<skill-name>/`
 
 ```bash
-diff -r ~/workspace/random/anthropic_skills/<skill-name> \
-       ~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name>
+diff -r ~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name> \
+       ~/workspace/random/anthropic_skills/<skill-name>
 ```
 
 ### Step 4: Present Differences to User
@@ -93,9 +93,12 @@ For each skill with differences, show:
 
 This plugin maintains customized versions of certain base skills to integrate with the beads task management system and remove dependencies on skills not included in the plugin:
 
-- **brainstorming** and **writing-plans**: Modified to use beads issues for task tracking instead of markdown documents and git worktrees
-- **executing-plans**: Simplified completion workflow (removed finishing-a-development-branch skill dependency)
+- **All skills**: Use `superpowers:` namespace prefix for all skill references
+- **brainstorming**: Merges design and implementation into single "plan implementation" phase that creates epic beads with design docs and child task beads; removed git worktree dependencies
+- **writing-plans**: Uses epic-task hierarchy (parent-child beads) to document design in epic beads and implementation in task beads
+- **executing-plans**: Simplified completion workflow (removed finishing-a-development-branch skill dependency); aware of epic-task hierarchy
 - **systematic-debugging**: Removed references to skills not included in plugin (defense-in-depth, condition-based-waiting, verification-before-completion)
+- **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"
 
 Format the output clearly:
 
@@ -154,19 +157,22 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 
 **Update procedure by skill type:**
 
-**Type 1: Skills with beads integration (brainstorming, writing-plans)**
+**Type 1: Skills with beads integration (brainstorming, writing-plans, executing-plans)**
 - Read both upstream and plugin versions
 - Identify conceptual improvements in upstream (better explanations, workflow enhancements, etc.)
-- Manually adapt those improvements to preserve beads integration
-- Example: If upstream adds better guidance about design validation, add that guidance but keep the beads issue creation approach
+- Manually adapt those improvements to preserve beads integration and epic-task hierarchy pattern
+- Remove all git worktree references and workflows
+- Apply `superpowers:` namespace prefix to all skill references
+- Example: If upstream adds better guidance about design validation, add that guidance but keep the beads epic-task structure
 
-**Type 2: Skills with simplified workflows (executing-plans, systematic-debugging)**
+**Type 2: Skills with simplified workflows (systematic-debugging)**
 - Read both upstream and plugin versions
 - Identify conceptual improvements in upstream
 - Manually adapt improvements while maintaining simplified workflow (without removed skill references)
+- Apply `superpowers:` namespace prefix to all skill references (except removed ones)
 - Example: If upstream improves debugging guidance, incorporate that while keeping removed skill references out
 
-**Type 3: Unmodified skills (receiving-code-review, requesting-code-review, root-cause-tracing, test-driven-development, testing-skills-with-subagents, writing-skills)**
+**Type 3: Unmodified skills (receiving-code-review, root-cause-tracing, test-driven-development, testing-skills-with-subagents, writing-skills)**
 - Copy directly from upstream:
   ```bash
   cp -r ~/workspace/random/superpowers/skills/<skill-name> \
@@ -200,10 +206,12 @@ Confirm successful update:
 - skill-creator (copied directly from anthropic_skills)
 
 ⚠️ Plugin customizations preserved:
-- brainstorming: beads integration maintained
-- writing-plans: beads workflow maintained
-- executing-plans: simplified completion workflow maintained
-- systematic-debugging: skill references removed
+- All skills: superpowers: namespace prefix applied to skill references
+- brainstorming: merged design and planning into epic-task bead structure, worktree dependencies removed
+- writing-plans: epic-task hierarchy pattern for design documentation
+- executing-plans: simplified completion workflow, epic-task hierarchy awareness
+- systematic-debugging: complementary skill references removed
+- requesting-code-review: kept plugin version with broadened scope
 ```
 
 ## Error Handling
@@ -213,31 +221,6 @@ Confirm successful update:
 - **Permission issues**: Check file permissions and suggest fixes
 - **No differences found**: Inform user that all skills are up to date
 - **Manual merge conflicts**: If adaptation is unclear, ask user for guidance
-
-## Examples
-
-When no differences are found:
-
-```
-User: /update-superpowers-skills
-Claude: Checking for updates...
-        All skills are up to date with upstream repositories.
-```
-
-When differences are found:
-
-```
-User: /update-superpowers-skills
-Claude: Found updates in 3 skills:
-        - brainstorming (requires manual merge for beads integration)
-        - systematic-debugging (requires manual merge for simplified workflow)
-        - receiving-code-review (can auto-update)
-
-        Would you like me to proceed? (yes/no)
-User: yes
-Claude: [Reads upstream changes, adapts to plugin, updates files]
-        ✅ All skills updated successfully with customizations preserved.
-```
 
 ## Important Notes
 

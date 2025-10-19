@@ -13,13 +13,25 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
+## Working with Epic Structure
+
+**When plan has epic beads (parent-child hierarchy):**
+
+- **Epic beads are NOT executable** - they contain design documentation only
+- **Only task beads are executable** - use `bd ready` to find unblocked tasks
+- **Reference parent epic** when implementing tasks to understand design context
+- Task descriptions contain implementation steps; epic contains the "why" and design decisions
+- Dependencies may span across epics (task in Epic B blocks task in Epic A)
+- **Close epic beads** when all child tasks are completed using `bd close <epic-id>`
+
 ## The Process
 
 ### Step 1: Load and Review Plan
-1. Read plan file
-2. Review critically - identify any questions or concerns about the plan
-3. If concerns: Raise them with your human partner before starting
-4. If no concerns: Create TodoWrite and proceed
+1. Use `bd ready` to discover available tasks
+2. Review task descriptions and any parent epic context
+3. Review critically - identify any questions or concerns about the plan
+4. If concerns: Raise them with your human partner before starting
+5. If no concerns: Create TodoWrite and proceed
 
 ### Step 2: Execute Batch
 **Default: First 3 tasks**
@@ -45,6 +57,7 @@ Based on feedback:
 ### Step 5: Complete Development
 
 After all tasks complete and verified:
+- Close any remaining epic beads with `bd close <epic-id>`
 - Confirm all tests pass
 - Ask user if they want to commit changes or create a PR
 

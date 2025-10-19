@@ -75,7 +75,7 @@ Repository maintenance automation for GitHub workflows, primarily targeting the 
 Development workflow skills for systematic debugging, code review, planning, and more.
 
 **Commands:**
-- `/superpowers:update-skills`: Pull latest changes from upstream superpowers repository, compare differences, and update skills
+- `/update-superpowers-skills`: Sync skills from two upstream repositories (superpowers and anthropic_skills), compare differences, and intelligently merge updates while preserving plugin customizations
 
 **Skills:**
 The plugin provides a collection of proven workflow skills organized by category:
@@ -91,21 +91,24 @@ The plugin provides a collection of proven workflow skills organized by category
 - **root-cause-tracing**: Trace bugs backward through call stack to identify source of issues
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions
 - **test-driven-development**: Write test first, watch it fail, write minimal code to pass
+- **testing-skills-with-subagents**: Apply TDD to process documentation by testing with subagents before deployment
 
 *Documentation and Research:*
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
+- **skill-creator**: Guide for creating effective skills with specialized knowledge and workflows
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
-- **writing-skills**: Apply TDD to process documentation by testing with subagents
+- **writing-skills**: Create and refine process documentation skills using TDD methodology
 
 *Project Management:*
 - **using-beads**: Dependency-aware task management with bd - track all work, model dependencies, use bd ready for next tasks
 
 **Key workflows:**
-- Skills directory contains full skill definitions from upstream repository
-- Update command syncs with `~/workspace/random/superpowers` repository
-- Shows detailed diffs before updating skills
+- Skills directory contains full skill definitions from two upstream repositories
+- Update command syncs with `~/workspace/random/superpowers` and `~/workspace/random/anthropic_skills`
+- Shows high-level summary of changes before updating
+- Intelligently merges updates while preserving plugin-specific customizations
 - Skills are automatically available via Claude Code's skill system
-- Brainstorming and writing-plans skills integrate with beads for issue-based task tracking
+- All skills use `superpowers:` namespace prefix for skill references
 
 ## Development Patterns
 
@@ -185,18 +188,23 @@ The plugin provides a collection of proven workflow skills organized by category
 ### Superpowers Plugin Specifics
 
 **Custom modifications:**
-- Brainstorming and writing-plans skills modified to use beads for issue tracking
-- Three additional skills added: using-beads, using-live-documentation, self-maintaining-claude-md
+- **All skills**: Use `superpowers:` namespace prefix for all skill references
+- **brainstorming**: Merges design and planning phases into epic-task bead structure; removed git worktree dependencies
+- **writing-plans**: Uses epic-task hierarchy with parent-child beads for design documentation
+- **executing-plans**: Simplified completion workflow; aware of epic-task hierarchy pattern
+- **systematic-debugging**: Removed references to skills not included in plugin (defense-in-depth, condition-based-waiting, verification-before-completion)
+- **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"
+- Three plugin-specific skills added: using-beads, using-live-documentation, self-maintaining-claude-md
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
-- Upstream repository: `~/workspace/random/superpowers`
-- Pull latest changes from `main` branch
-- Compare 8 core skills (brainstorming, executing-plans, receiving-code-review, requesting-code-review, root-cause-tracing, systematic-debugging, writing-plans, writing-skills)
-- Show detailed diffs with `diff -r` for each skill directory
-- When updating, preserve custom modifications (beads integration in brainstorming and writing-plans)
-- Additional skills (using-beads, using-live-documentation, self-maintaining-claude-md) are not tracked in upstream
-- Confirm before copying updated skills to plugin
+- Two upstream repositories: `~/workspace/random/superpowers` and `~/workspace/random/anthropic_skills`
+- Pull latest changes from both repositories' `main` branch
+- Compare 10 superpowers skills and 1 anthropic_skills skill
+- Show high-level summary of changes (not detailed line-by-line diffs)
+- Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
+- Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md) are never modified
+- Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
 
 **Skills structure:**
@@ -206,9 +214,10 @@ The plugin provides a collection of proven workflow skills organized by category
 - No manual activation required - skills are always available
 
 **Beads integration:**
-- writing-plans creates beads issues instead of markdown plan documents
-- brainstorming references beads in planning handoff
-- using-beads skill provides full bd workflow documentation
+- Epic-task hierarchy pattern: epic beads contain design documentation, child task beads contain implementation steps
+- brainstorming merges design and planning into single phase that creates epic and task beads
+- writing-plans, executing-plans, and using-beads skills all support epic-task hierarchy
+- using-beads skill provides full bd workflow documentation including parent-child relationships
 
 ## Repository Conventions
 

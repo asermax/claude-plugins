@@ -20,7 +20,7 @@ Transform rough ideas into fully-formed designs through structured questioning a
 | **1. Understanding** | Ask questions (one at a time) | AskUserQuestion for choices | Purpose, constraints, criteria |
 | **2. Exploration** | Propose 2-3 approaches | AskUserQuestion for approach selection | Architecture options with trade-offs |
 | **3. Design Presentation** | Present in 200-300 word sections | Open-ended questions | Complete design with validation |
-| **4. Planning Handoff** | Create implementation plan | writing-plans skill | Beads issues with dependencies |
+| **4. Plan Implementation** | Create beads plan with design | superpowers:writing-plans skill | Epic beads with design docs, child task beads |
 
 ## The Process
 
@@ -31,7 +31,7 @@ Brainstorming Progress:
 - [ ] Phase 1: Understanding (purpose, constraints, criteria gathered)
 - [ ] Phase 2: Exploration (2-3 approaches proposed and evaluated)
 - [ ] Phase 3: Design Presentation (design validated in sections)
-- [ ] Phase 4: Planning Handoff (if implementing)
+- [ ] Phase 4: Plan Implementation (epic and task beads created with design)
 ```
 
 ### Phase 1: Understanding
@@ -70,13 +70,16 @@ Options:
 - Ask after each section: "Does this look right so far?" (open-ended)
 - Use open-ended questions here to allow freeform feedback
 
-### Phase 4: Planning Handoff
+### Phase 4: Plan Implementation
 Ask: "Ready to create the implementation plan?"
 
 When your human partner confirms (any affirmative response):
 - Announce: "I'm using the writing-plans skill to create the implementation plan."
-- **REQUIRED SUB-SKILL:** Use writing-plans
-- Create beads issues with dependencies
+- **REQUIRED SUB-SKILL:** Use superpowers:writing-plans
+- The writing-plans skill will create:
+  - Epic beads containing comprehensive design decisions and architecture documentation
+  - Child task beads with implementation details and dependencies
+  - This approach keeps design and implementation plan unified in the beads system
 
 ## Question Patterns
 

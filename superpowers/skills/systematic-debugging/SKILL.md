@@ -111,7 +111,7 @@ You MUST complete each phase before proceeding to the next.
 
    **WHEN error is deep in call stack:**
 
-   **REQUIRED SUB-SKILL:** Use root-cause-tracing for backward tracing technique
+   **REQUIRED SUB-SKILL:** Use superpowers:root-cause-tracing for backward tracing technique
 
    **Quick version:**
    - Where does bad value originate?
@@ -176,7 +176,7 @@ You MUST complete each phase before proceeding to the next.
    - Automated test if possible
    - One-off test script if no framework
    - MUST have before fixing
-   - **REQUIRED SUB-SKILL:** Use test-driven-development for writing proper failing tests
+   - **REQUIRED SUB-SKILL:** Use superpowers:test-driven-development for writing proper failing tests
 
 2. **Implement Single Fix**
    - Address the root cause identified
@@ -278,8 +278,8 @@ If systematic investigation reveals issue is truly environmental, timing-depende
 ## Integration with Other Skills
 
 **This skill requires using:**
-- **root-cause-tracing** - REQUIRED when error is deep in call stack (see Phase 1, Step 5)
-- **test-driven-development** - REQUIRED for creating failing test case (see Phase 4, Step 1)
+- **superpowers:root-cause-tracing** - REQUIRED when error is deep in call stack (see Phase 1, Step 5)
+- **superpowers:test-driven-development** - REQUIRED for creating failing test case (see Phase 4, Step 1)
 
 ## Real-World Impact
 

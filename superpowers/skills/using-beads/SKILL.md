@@ -61,9 +61,22 @@ bd create "Fix inconsistent error handling in auth module"
 bd create "Critical security vulnerability in auth" -p 0
 bd create "Nice-to-have UI polish" -p 4
 
-# If it blocks other work or is blocked by something
-bd create "Add tests for auth error paths" -d "Missing test coverage found during payment-1"
-bd dep add payment-1 auth-tests-1 --type discovered-from
+# Set issue type (bug, feature, task, epic, chore)
+bd create "Fix auth bug" -t bug -p 1
+bd create "Add dark mode" -t feature -p 2
+bd create "Epic: User Management" -t epic
+
+# Add labels for categorization
+bd create "Fix login timeout" -l "backend,urgent"
+
+# Add description
+bd create "Fix bug" -d "Detailed description of the issue"
+
+# Create with dependencies in one command
+bd create "Fix edge case bug" -t bug -p 1 --deps discovered-from:bd-20
+
+# Get JSON output for programmatic use
+bd create "Fix bug" --json
 ```
 
 **Rule:** ALL discovered work gets tracked. No exceptions.
@@ -76,12 +89,22 @@ bd dep add payment-1 auth-tests-1 --type discovered-from
 # Find unblocked work ready to claim
 bd ready
 
+# Get JSON output for programmatic use
+bd ready --json
+
+# Find blocked work to understand blockers
+bd blocked
+
+# Get statistics about the tracker
+bd stats
+
 # NOT this:
 bd list  # Wrong - shows all issues, not just ready ones
 # NOT this either: just start coding without checking
 ```
 
 **`bd ready` shows issues with `status='open'` AND no blocking dependencies.**
+**`bd blocked` shows issues that have open blockers.**
 
 **When to use priority:**
 
@@ -155,6 +178,76 @@ bd dep add tests-1 api-endpoint-1 --type related      # tests related but can be
 
 **Dependencies are mandatory, not optional metadata.**
 
+### 5. Using Epic-Task Hierarchy → Parent-Child Relationships
+
+**For complex features with multiple components, use epic beads as design documentation:**
+
+```bash
+# Create epic bead for the component (not executable)
+bd create "Epic: User Profile Management - Design and architecture for profile editing feature"
+
+# Create task beads for implementation (executable)
+bd create "Update profile data model with new fields"
+bd create "Create PUT /users/:id endpoint"
+bd create "Add validation middleware"
+
+# Link tasks to epic using parent-child relationship (task → epic)
+bd dep add profile-model-1 profile-epic-1 --type parent-child
+bd dep add profile-endpoint-1 profile-epic-1 --type parent-child
+bd dep add profile-validation-1 profile-epic-1 --type parent-child
+
+# Also model execution dependencies between tasks
+bd dep add profile-endpoint-1 profile-model-1 --type blocks
+bd dep add profile-validation-1 profile-endpoint-1 --type blocks
+```
+
+**Epic bead structure:**
+- Contains comprehensive design decisions and architecture rationale
+- Documents trade-offs, patterns, and component-level principles
+- NOT executable - use `bd ready` finds only task beads
+- Close epic when all child tasks are completed
+
+**Task bead structure:**
+- Contains bite-sized implementation steps
+- Links to parent epic for design context
+- Executable - appears in `bd ready` when unblocked
+- May have dependencies on other tasks (even from different epics)
+
+**When to use epic structure:**
+- Feature spans multiple components or phases
+- Design decisions need documentation at component level
+- Multiple related tasks share design context
+
+**When to use flat structure (no epics):**
+- Simple, single-component changes
+- Quick bug fixes
+- Tasks naturally share the same context
+
+**Hierarchical blocking:**
+
+When a parent (epic) is blocked, all of its children are automatically blocked, even if they have no direct blockers. This ensures subtasks don't show up as ready work when their parent epic is blocked:
+
+```bash
+# Create an epic and a child task
+bd create "Epic: User Authentication" -t epic -p 1
+bd create "Task: Add login form" -t task -p 1
+bd dep add bd-2 bd-1 --type parent-child  # bd-2 is child of bd-1
+
+# Block the epic
+bd create "Design authentication system" -t task -p 0
+bd dep add bd-1 bd-3 --type blocks  # bd-1 blocked by bd-3
+
+# Now both bd-1 (epic) AND bd-2 (child task) are blocked
+bd ready  # Neither will show up
+bd blocked  # Shows both bd-1 and bd-2 as blocked
+```
+
+**Blocking propagation rules:**
+- `blocks` + `parent-child` together create transitive blocking (up to 50 levels deep)
+- Children of blocked parents are automatically blocked
+- Grandchildren, great-grandchildren, etc. are also blocked recursively
+- `related` and `discovered-from` do NOT propagate blocking
+
 ## Dependency Types
 
 | Type | When to Use | Example |
@@ -164,15 +257,42 @@ bd dep add tests-1 api-endpoint-1 --type related      # tests related but can be
 | `parent-child` | Epic/subtask hierarchy | Feature epic with implementation subtasks |
 | `discovered-from` | Found during other work | Bug found while implementing feature |
 
+## Dependency Cycle Prevention
+
+Beads maintains a DAG (directed acyclic graph) and prevents cycles across all dependency types:
+
+```bash
+# Detect cycles in your dependency graph
+bd dep cycles
+
+# Example cycle that would be prevented:
+bd dep add bd-1 bd-2 --type blocks  # OK
+bd dep add bd-2 bd-3 --type blocks  # OK
+bd dep add bd-3 bd-1 --type blocks  # ERROR: Would create cycle
+```
+
+**Why cycles break things:**
+- Ready work detection becomes impossible (circular dependencies)
+- Tree traversals enter infinite loops
+- No clear execution order
+
+Attempting to add a cycle-creating dependency returns an error immediately.
+
 ## Quick Reference
 
 | Task | Command | When |
 |------|---------|------|
+| **Check for database** | `ls .beads/*.db 2>/dev/null \|\| bd init` | First command in new codebase |
 | **Create issue** | `bd create "description"` | Immediately when discovering work |
-| **Create with priority** | `bd create "description" -p 0` | For critical/urgent issues |
-| **Find next work** | `bd ready` | When choosing what to work on |
+| **Create with details** | `bd create "description" -t bug -p 0 -l "urgent"` | With type, priority, labels |
+| **Create with deps** | `bd create "Fix bug" --deps discovered-from:bd-20` | Create and link in one command |
+| **Get JSON output** | `bd create "Fix bug" --json` | For programmatic use |
+| **Find next work** | `bd ready` or `bd ready --json` | When choosing what to work on |
+| **Find blocked work** | `bd blocked` | Understand what's blocked |
+| **Get statistics** | `bd stats` | Overview of tracker state |
 | **Add dependency** | `bd dep add issue-1 issue-2 --type blocks` | When creating issues with dependencies |
 | **Check dependencies** | `bd dep tree issue-1` | Before starting work on issue |
+| **Detect cycles** | `bd dep cycles` | Verify dependency graph health |
 | **Update status** | `bd update issue-1 --status in_progress` | When starting work |
 | **Update priority** | `bd update issue-1 -p 0` | When urgency changes |
 | **Close issue** | `bd close issue-1` | When work is complete |

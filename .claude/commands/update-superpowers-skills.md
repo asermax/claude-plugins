@@ -41,7 +41,7 @@ If either git pull fails, inform the user about the error and ask them to resolv
 - brainstorming
 - executing-plans
 - receiving-code-review
-- requesting-code-review
+- requesting-code-review (SKILL.md only - agent is maintained separately)
 - root-cause-tracing
 - systematic-debugging
 - test-driven-development
@@ -57,7 +57,10 @@ If either git pull fails, inform the user about the error and ask them to resolv
 - using-live-documentation
 - self-maintaining-claude-md
 
-### Step 3: Compare Each Skill
+**Agents (separate from skills):**
+- code-reviewer: Synced from `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
+
+### Step 3: Compare Each Skill and Agent
 
 For each skill, compare the plugin version against the upstream source to identify what's new upstream.
 
@@ -78,6 +81,17 @@ diff -r ~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name> \
 diff -r ~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name> \
        ~/workspace/random/anthropic_skills/<skill-name>
 ```
+
+**For the code-reviewer agent:**
+- **Plugin version**: `~/workspace/asermax/claude-plugins/superpowers/agents/code-reviewer.md`
+- **Upstream version**: `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
+
+```bash
+diff ~/workspace/asermax/claude-plugins/superpowers/agents/code-reviewer.md \
+     ~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md
+```
+
+**Note**: The code-reviewer agent has custom frontmatter (name, description, tools, model) that must be preserved when syncing the agent prompt body from upstream.
 
 ### Step 4: Present Differences to User
 
@@ -188,6 +202,17 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 
 **Type 5: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md)**
 - Never modify (no upstream source)
+
+**Type 6: Code-reviewer agent**
+- Read the upstream template from `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
+- Preserve the agent frontmatter (name, description, tools, model) from the plugin version
+- Update only the agent prompt body (everything after the frontmatter) from upstream
+- Process:
+  1. Read upstream code-reviewer.md template
+  2. Extract the template body (skip any frontmatter if present)
+  3. Preserve the plugin agent's frontmatter
+  4. Replace the agent body with the upstream template body
+  5. Verify the merged version has correct frontmatter and updated prompt
 
 **Process for manual merge:**
 1. Read the upstream version completely

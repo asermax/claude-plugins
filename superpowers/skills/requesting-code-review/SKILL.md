@@ -29,16 +29,17 @@ BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch code-reviewer subagent:**
+**2. Dispatch code-reviewer agent:**
 
-Use Task tool with code-reviewer type, fill template at `code-reviewer.md`
+Dispatch the code-reviewer agent with the following information:
 
-**Placeholders:**
-- `{WHAT_WAS_IMPLEMENTED}` - What you just built
-- `{PLAN_OR_REQUIREMENTS}` - What it should do
-- `{BASE_SHA}` - Starting commit
-- `{HEAD_SHA}` - Ending commit
-- `{DESCRIPTION}` - Brief summary
+- **What was implemented**: Brief description of what you just built
+- **Requirements/Plan**: What it should do (reference file path or describe the requirements)
+- **Git range to review**:
+  - Base SHA: [BASE_SHA]
+  - Head SHA: [HEAD_SHA]
+
+The agent will analyze the git diff and provide a comprehensive code review.
 
 **3. Act on feedback:**
 - Fix Critical issues immediately
@@ -56,14 +57,13 @@ You: Let me request code review before proceeding.
 BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
 HEAD_SHA=$(git rev-parse HEAD)
 
-[Dispatch code-reviewer subagent]
-  WHAT_WAS_IMPLEMENTED: Verification and repair functions for conversation index
-  PLAN_OR_REQUIREMENTS: Task 2 from docs/plans/deployment-plan.md
-  BASE_SHA: a7981ec
-  HEAD_SHA: 3df7661
-  DESCRIPTION: Added verifyIndex() and repairIndex() with 4 issue types
+[Dispatch code-reviewer agent]
+  What was implemented: Verification and repair functions for conversation index
+  Requirements/Plan: Task bead #42 "add-verification-functions"
+  Base SHA: a7981ec
+  Head SHA: 3df7661
 
-[Subagent returns]:
+[Agent returns]:
   Strengths: Clean architecture, real tests
   Issues:
     Important: Missing progress indicators
@@ -103,5 +103,3 @@ You: [Fix progress indicators]
 - Push back with technical reasoning
 - Show code/tests that prove it works
 - Request clarification
-
-See template at: requesting-code-review/code-reviewer.md

@@ -213,6 +213,12 @@ The plugin provides a collection of proven workflow skills organized by category
 - Skills are loaded automatically by Claude Code from the `skills/` directory
 - No manual activation required - skills are always available
 
+**Agents:**
+- `agents/code-reviewer.md`: Internal agent used by the requesting-code-review skill
+- Agent definition includes frontmatter with name, description, tools, and model
+- The code-reviewer agent prompt should be synced from the upstream requesting-code-review skill's code-reviewer.md template during updates
+- Agent is invoked via the Task tool with subagent_type: code-reviewer
+
 **Beads integration:**
 - Epic-task hierarchy pattern: epic beads contain design documentation, child task beads contain implementation steps
 - brainstorming merges design and planning into single phase that creates epic and task beads

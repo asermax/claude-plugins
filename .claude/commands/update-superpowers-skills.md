@@ -12,8 +12,8 @@ This command synchronizes the skills in the superpowers plugin with two upstream
 
 1. **Pull Latest Changes**: Update both upstream repositories
 2. **Compare Skills**: Check differences between upstream and plugin skills
-3. **Show Differences**: Display file-by-file comparison for each repository
-4. **Update Skills**: Copy updated skills to plugin (with user confirmation)
+3. **Show Differences**: Display general comparison summary
+4. **Update Skills**: Intelligently merge updates while preserving plugin customizations
 
 ## Implementation Steps
 
@@ -81,35 +81,51 @@ diff -r ~/workspace/random/anthropic_skills/<skill-name> \
 
 ### Step 4: Present Differences to User
 
+**IMPORTANT**: Do NOT show detailed line-by-line diffs. Instead, provide a high-level summary.
+
 For each skill with differences, show:
 - Skill name
 - Source repository (superpowers or anthropic_skills)
-- Which files changed (added, modified, removed)
-- Detailed diff output for each changed file
+- General nature of changes (e.g., "content updates", "new test cases added", "workflow improvements")
+- Whether the skill has plugin customizations that need special handling
+
+**General explanation of plugin modifications:**
+
+This plugin maintains customized versions of certain base skills to integrate with the beads task management system and remove dependencies on skills not included in the plugin:
+
+- **brainstorming** and **writing-plans**: Modified to use beads issues for task tracking instead of markdown documents and git worktrees
+- **executing-plans**: Simplified completion workflow (removed finishing-a-development-branch skill dependency)
+- **systematic-debugging**: Removed references to skills not included in plugin (defense-in-depth, condition-based-waiting, verification-before-completion)
 
 Format the output clearly:
 
 ```
-=== Skill: systematic-debugging (from superpowers) ===
+=== Skills with Updates ===
 
-Modified files:
-- SKILL.md
+brainstorming (from superpowers)
+  Status: Has plugin customizations (beads integration)
+  Changes: Content updates in upstream version
+  Action: Manual merge required to preserve beads workflow
 
-New files:
-- test-pressure-4.md
+writing-plans (from superpowers)
+  Status: Has plugin customizations (beads integration)
+  Changes: Content updates in upstream version
+  Action: Manual merge required to preserve beads workflow
 
-Detailed diff for SKILL.md:
-[show diff output]
+systematic-debugging (from superpowers)
+  Status: Has plugin customizations (removed skill references)
+  Changes: Content updates in upstream version
+  Action: Manual merge required to preserve simplified workflow
 
----
+executing-plans (from superpowers)
+  Status: Has plugin customizations (simplified completion)
+  Changes: Content updates in upstream version
+  Action: Manual merge required to preserve simplified workflow
 
-=== Skill: skill-creator (from anthropic_skills) ===
-
-Modified files:
-- SKILL.md
-
-Detailed diff for SKILL.md:
-[show diff output]
+receiving-code-review (from superpowers)
+  Status: No customizations
+  Changes: Minor content updates
+  Action: Direct copy from upstream
 
 ---
 ```
@@ -120,70 +136,74 @@ After showing all differences, ask the user:
 
 ```
 Found differences in N skills:
-- skill-1
-- skill-2
+- skill-1 (requires manual merge)
+- skill-2 (can auto-update)
 - ...
 
-Would you like to update these skills in the plugin? (yes/no)
+Would you like me to proceed with updating these skills? (yes/no)
 ```
 
-### Step 6: Copy Updated Skills with Custom Modifications Preserved
+### Step 6: Update Skills with Intelligent Merging
 
-**IMPORTANT:** This plugin has custom modifications that must be preserved:
+**Plugin Customization Strategy:**
 
-1. **Brainstorming skill**: Line 47 references "Create beads issues in the worktree with dependencies"
-2. **Writing-plans skill**: Entire content uses beads issues instead of markdown plan documents
-3. **Additional skills** (not in upstream): using-beads, using-live-documentation, self-maintaining-claude-md
+The plugin maintains conceptual modifications to certain skills. When updating these skills, you must:
+1. **Understand the base changes**: Read the upstream updates to understand what improved
+2. **Preserve plugin concepts**: Maintain the plugin's approach (e.g., beads vs markdown, simplified workflows)
+3. **Adapt, don't copy**: Bring improvements from upstream while keeping plugin-specific logic
 
-**Update procedure:**
+**Update procedure by skill type:**
 
-If user confirms, for each changed skill:
+**Type 1: Skills with beads integration (brainstorming, writing-plans)**
+- Read both upstream and plugin versions
+- Identify conceptual improvements in upstream (better explanations, workflow enhancements, etc.)
+- Manually adapt those improvements to preserve beads integration
+- Example: If upstream adds better guidance about design validation, add that guidance but keep the beads issue creation approach
 
-1. **For brainstorming** (from superpowers):
-   - Copy updated content from upstream
-   - Re-apply the beads modification to line 47:
-     ```
-     - Create beads issues in the worktree with dependencies
-     ```
+**Type 2: Skills with simplified workflows (executing-plans, systematic-debugging)**
+- Read both upstream and plugin versions
+- Identify conceptual improvements in upstream
+- Manually adapt improvements while maintaining simplified workflow (without removed skill references)
+- Example: If upstream improves debugging guidance, incorporate that while keeping removed skill references out
 
-2. **For writing-plans** (from superpowers):
-   - **DO NOT** copy from upstream (custom beads integration)
-   - Show differences to user
-   - Ask if they want to manually merge changes
-   - Warn that copying would lose beads integration
+**Type 3: Unmodified skills (receiving-code-review, requesting-code-review, root-cause-tracing, test-driven-development, testing-skills-with-subagents, writing-skills)**
+- Copy directly from upstream:
+  ```bash
+  cp -r ~/workspace/random/superpowers/skills/<skill-name> \
+        ~/workspace/asermax/claude-plugins/superpowers/skills/
+  ```
 
-3. **For other superpowers skills** (executing-plans, receiving-code-review, requesting-code-review, root-cause-tracing, systematic-debugging, test-driven-development, testing-skills-with-subagents, writing-skills):
-   - Copy directly from upstream:
-     ```bash
-     cp -r ~/workspace/random/superpowers/skills/<skill-name> \
-           ~/workspace/asermax/claude-plugins/superpowers/skills/
-     ```
+**Type 4: Anthropic skills (skill-creator)**
+- Copy directly from upstream:
+  ```bash
+  cp -r ~/workspace/random/anthropic_skills/<skill-name> \
+        ~/workspace/asermax/claude-plugins/superpowers/skills/
+  ```
 
-4. **For anthropic_skills skills** (skill-creator):
-   - Copy directly from upstream:
-     ```bash
-     cp -r ~/workspace/random/anthropic_skills/<skill-name> \
-           ~/workspace/asermax/claude-plugins/superpowers/skills/
-     ```
+**Type 5: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md)**
+- Never modify (no upstream source)
 
-5. **Additional skills** (using-beads, using-live-documentation, self-maintaining-claude-md):
-   - Never copy from upstream (they don't exist there)
-   - These are plugin-specific additions
+**Process for manual merge:**
+1. Read the upstream version completely
+2. Read the plugin version completely
+3. Identify what changed conceptually in upstream
+4. Edit the plugin version to incorporate those concepts while preserving plugin-specific approaches
+5. Verify the merged version maintains both upstream improvements and plugin customizations
 
 Confirm successful update:
 
 ```
 ✅ Skills updated successfully:
-- skill-1 (from superpowers)
-- skill-2 (from superpowers)
-- skill-creator (from anthropic_skills)
-- brainstorming (from superpowers, with beads modification preserved)
-- writing-plans (skipped - custom beads integration preserved)
+- skill-1 (adapted from superpowers, beads integration preserved)
+- skill-2 (adapted from superpowers, simplified workflow preserved)
+- skill-3 (copied directly from superpowers)
+- skill-creator (copied directly from anthropic_skills)
 
-⚠️ Custom modifications preserved:
+⚠️ Plugin customizations preserved:
 - brainstorming: beads integration maintained
-- writing-plans: custom beads workflow maintained
-- Additional skills (using-beads, using-live-documentation, self-maintaining-claude-md) unchanged
+- writing-plans: beads workflow maintained
+- executing-plans: simplified completion workflow maintained
+- systematic-debugging: skill references removed
 ```
 
 ## Error Handling
@@ -192,10 +212,37 @@ Confirm successful update:
 - **Git pull fails**: Show error message and suggest manual resolution
 - **Permission issues**: Check file permissions and suggest fixes
 - **No differences found**: Inform user that all skills are up to date
+- **Manual merge conflicts**: If adaptation is unclear, ask user for guidance
 
 ## Examples
 
 When no differences are found:
 
 ```
-User: /superpowers:update-skills
+User: /update-superpowers-skills
+Claude: Checking for updates...
+        All skills are up to date with upstream repositories.
+```
+
+When differences are found:
+
+```
+User: /update-superpowers-skills
+Claude: Found updates in 3 skills:
+        - brainstorming (requires manual merge for beads integration)
+        - systematic-debugging (requires manual merge for simplified workflow)
+        - receiving-code-review (can auto-update)
+
+        Would you like me to proceed? (yes/no)
+User: yes
+Claude: [Reads upstream changes, adapts to plugin, updates files]
+        ✅ All skills updated successfully with customizations preserved.
+```
+
+## Important Notes
+
+- **Never lose plugin customizations**: The beads integration and simplified workflows are critical features
+- **Conceptual merging**: Focus on understanding what improved upstream, then apply those improvements to the plugin's approach
+- **Manual review**: For modified skills, always read both versions completely before merging
+- **Test after update**: Verify updated skills work correctly by checking their SKILL.md files for correctness
+- **Preserve formatting**: Maintain consistent markdown formatting and style in updated skills

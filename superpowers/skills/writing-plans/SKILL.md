@@ -24,6 +24,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
   - Include architecture rationale, trade-offs considered
   - Document component-level patterns and principles
   - No implementation steps (those go in child tasks)
+  - **Can have dependencies** to indicate when blocked by prerequisite work
 
 - **Task beads (children)**: Represent atomic units of work
   - Contain bite-sized implementation steps (2-5 minutes each)
@@ -40,6 +41,11 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 - Simple, single-component changes
 - Quick bug fixes or minor enhancements
 - All tasks share the same design context
+
+**Epic dependencies:**
+- Epics can be blocked by other epics or tasks to show prerequisite work
+- When an epic is blocked, all its child tasks are automatically blocked
+- Use this to prevent premature work on features that depend on others
 
 ## Bite-Sized Task Granularity
 
@@ -84,6 +90,10 @@ Track your implementation plan as beads issues with dependencies:
    ```bash
    # Link child task to parent epic (task → epic)
    bd dep add task-id epic-id --type parent-child
+
+   # Block epics by prerequisite work (epics or tasks)
+   bd dep add dependent-epic-id blocking-epic-id --type blocks
+   bd dep add epic-id blocking-task-id --type blocks
 
    # Link tasks in execution order
    bd dep add task-2 task-1 --type blocks

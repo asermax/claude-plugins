@@ -205,6 +205,7 @@ bd dep add profile-validation-1 profile-endpoint-1 --type blocks
 - Contains comprehensive design decisions and architecture rationale
 - Documents trade-offs, patterns, and component-level principles
 - NOT executable - use `bd ready` finds only task beads
+- **Can have dependencies** to indicate when blocked by prerequisite work
 - Close epic when all child tasks are completed
 
 **Task bead structure:**
@@ -222,6 +223,38 @@ bd dep add profile-validation-1 profile-endpoint-1 --type blocks
 - Simple, single-component changes
 - Quick bug fixes
 - Tasks naturally share the same context
+
+**Epic dependencies - indicating when epics are blocked:**
+
+Epics can have dependencies just like tasks. Epics can be blocked by other epics or by tasks. Use this to indicate when an entire feature is blocked by prerequisite work:
+
+```bash
+# Create epic for user profile feature
+bd create "Epic: User Profile Management" -t epic
+
+# Create epic for authentication system (prerequisite)
+bd create "Epic: User Authentication System" -t epic
+
+# Profile management can't start until auth system exists
+bd dep add profile-epic-1 auth-epic-1 --type blocks
+
+# Or block an epic by a specific task
+bd create "Design user data model" -t task
+bd dep add profile-epic-1 data-model-task-1 --type blocks
+
+# Create child tasks for auth epic
+bd create "Task: Implement JWT tokens" -t task
+bd dep add auth-task-1 auth-epic-1 --type parent-child
+
+# Now auth-task-1 is ready, but ALL profile tasks are blocked
+# even if you haven't created them yet, because their parent is blocked
+```
+
+**Why model epic dependencies:**
+- **Communicates prerequisite work:** Shows when entire components depend on other epics or tasks
+- **Prevents premature work:** Child tasks won't appear in `bd ready` until epic is unblocked
+- **Documents architecture order:** Makes feature sequencing explicit
+- **Enables better planning:** See what must happen before a feature can start
 
 **Hierarchical blocking:**
 

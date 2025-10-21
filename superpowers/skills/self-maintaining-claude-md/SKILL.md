@@ -47,7 +47,13 @@ Before ANY task, check if CLAUDE.md exists in the project root.
 
 ### 3. Process Reflection Todo
 
-When processing the reflection todo, update CLAUDE.md with:
+When processing the reflection todo, **maintaining CLAUDE.md means ADD, UPDATE, or REMOVE content** as needed.
+
+**Three types of maintenance:**
+
+1. **ADD** - New high-level information that didn't exist before
+2. **UPDATE** - Modify existing content that has changed
+3. **REMOVE** - Delete content that is no longer relevant or accurate
 
 **✅ DO include:**
 - High-level architectural decisions (GraphQL vs REST, Redux vs Context)
@@ -64,12 +70,10 @@ When processing the reflection todo, update CLAUDE.md with:
 
 **Why:** CLAUDE.md guides HOW to build, not WHAT was built. Implementation details belong in README, not instructions.
 
-### 4. Remove Legacy Information
+**Important:** CLAUDE.md shows ONLY current state.
 
-CLAUDE.md shows ONLY current state.
-
-**When updating:**
-- DELETE all outdated information completely
+**When maintaining:**
+- **DELETE** all outdated information completely
 - NO "Migration:" sections
 - NO commented-out old patterns
 - NO "Previously we used..." references

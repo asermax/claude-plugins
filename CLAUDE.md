@@ -193,7 +193,7 @@ The plugin provides a collection of proven workflow skills organized by category
 - **writing-plans**: Uses epic-task hierarchy with parent-child beads for design documentation
 - **executing-plans**: Simplified completion workflow; aware of epic-task hierarchy pattern
 - **systematic-debugging**: Removed references to skills not included in plugin (defense-in-depth, condition-based-waiting, verification-before-completion)
-- **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"
+- **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"; simplified SHA commands to run directly without variable assignment
 - Three plugin-specific skills added: using-beads, using-live-documentation, self-maintaining-claude-md
 - All skills use simplified plugin metadata format (name + description only)
 
@@ -215,13 +215,17 @@ The plugin provides a collection of proven workflow skills organized by category
 
 **Agents:**
 - `agents/code-reviewer.md`: Internal agent used by the requesting-code-review skill
-  - Analyzes git diffs and provides comprehensive code reviews
-  - Agent prompt should be synced from upstream requesting-code-review skill's code-reviewer.md template during updates
+  - Copied directly from upstream `~/workspace/random/superpowers/agents/code-reviewer.md`
+  - NOT customized - we use upstream version as-is
   - Invoked via Task tool with subagent_type: superpowers:code-reviewer
 - `agents/documentation-searcher.md`: Internal agent used by the using-live-documentation skill
+  - Plugin-specific agent (no upstream source)
   - Searches Context7 for library documentation and provides focused synthesis
   - Uses Context7 MCP tools (resolve-library-id, get-library-docs)
   - Invoked via Task tool with subagent_type: superpowers:documentation-searcher
+- `skills/requesting-code-review/code-reviewer.md`: Agent template
+  - Copied directly from upstream `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
+  - NOT customized - we use upstream version as-is
 - Agent definitions include frontmatter with name, description, tools, and model
 
 **Beads integration:**

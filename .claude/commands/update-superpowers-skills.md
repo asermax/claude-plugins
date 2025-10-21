@@ -58,40 +58,70 @@ If either git pull fails, inform the user about the error and ask them to resolv
 - self-maintaining-claude-md
 
 **Agents (separate from skills):**
-- code-reviewer: Synced from `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
+- code-reviewer agent: Synced from `~/workspace/random/superpowers/agents/code-reviewer.md`
+- code-reviewer template: Synced from `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
 
-### Step 3: Compare Each Skill and Agent
+### Step 3: Identify What Changed in Upstream Repositories
 
-For each skill, compare the plugin version against the upstream source to identify what's new upstream.
+**Process for each upstream repository:**
 
-**For superpowers skills:**
-- **Plugin version** (our modified): `~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name>/`
-- **Upstream version** (original): `~/workspace/random/superpowers/skills/<skill-name>/`
+1. **Capture the current commit** before pulling (this was already done in Step 1, the output shows the old and new commits)
+2. **Analyze the git pull output** to identify which files changed
+3. **Filter for files we track** in our plugin
+4. **Show the actual upstream changes** using git diff
+5. **Analyze how these changes affect our customized skills**
 
-```bash
-diff -r ~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name> \
-       ~/workspace/random/superpowers/skills/<skill-name>
+**For superpowers repository:**
+
+The git pull output from Step 1 shows:
+- Old commit: First part of "Updating XXX..YYY"
+- New commit: Second part of "Updating XXX..YYY"
+- Changed files: Listed in the output
+
+Example pull output:
+```
+Updating 7fc125e..e3d881b
+Fast-forward
+ agents/code-reviewer.md                     | 47 +++++++++++++++++++++++++++++
+ skills/requesting-code-review/SKILL.md      |  8 ++---
 ```
 
-**For anthropic_skills skills:**
-- **Plugin version** (our modified): `~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name>/`
-- **Upstream version** (original): `~/workspace/random/anthropic_skills/<skill-name>/`
+From this we can see:
+- Old commit: `7fc125e`
+- New commit: `e3d881b`
+- Changed files: `agents/code-reviewer.md` (new), `skills/requesting-code-review/SKILL.md` (modified)
 
+To see what actually changed in upstream:
 ```bash
-diff -r ~/workspace/asermax/claude-plugins/superpowers/skills/<skill-name> \
-       ~/workspace/random/anthropic_skills/<skill-name>
+cd ~/workspace/random/superpowers
+git diff 7fc125e..e3d881b -- skills/requesting-code-review/SKILL.md
+git show e3d881b:agents/code-reviewer.md  # For new files
 ```
 
-**For the code-reviewer agent:**
-- **Plugin version**: `~/workspace/asermax/claude-plugins/superpowers/agents/code-reviewer.md`
-- **Upstream version**: `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
+**For anthropic_skills repository:**
 
-```bash
-diff ~/workspace/asermax/claude-plugins/superpowers/agents/code-reviewer.md \
-     ~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md
-```
+Same process - analyze the git pull output, then use git diff to see the actual changes.
 
-**Note**: The code-reviewer agent has custom frontmatter (name, description, tools, model) that must be preserved when syncing the agent prompt body from upstream.
+**Files we track from superpowers:**
+- `skills/brainstorming/SKILL.md`
+- `skills/executing-plans/SKILL.md`
+- `skills/receiving-code-review/SKILL.md`
+- `skills/requesting-code-review/SKILL.md`
+- `skills/root-cause-tracing/SKILL.md`
+- `skills/systematic-debugging/SKILL.md`
+- `skills/test-driven-development/SKILL.md`
+- `skills/testing-skills-with-subagents/SKILL.md`
+- `skills/writing-plans/SKILL.md`
+- `skills/writing-skills/SKILL.md`
+- `agents/code-reviewer.md` (synced to our `agents/code-reviewer.md`)
+- `skills/requesting-code-review/code-reviewer.md` (synced to our `skills/requesting-code-review/code-reviewer.md`)
+
+**Files we track from anthropic_skills:**
+- `skill-creator/SKILL.md`
+
+**Important**: Only analyze files that:
+1. Are in the changed files list from git pull output
+2. Are files we actually track in our plugin
 
 ### Step 4: Present Differences to User
 
@@ -112,7 +142,7 @@ This plugin maintains customized versions of certain base skills to integrate wi
 - **writing-plans**: Uses epic-task hierarchy (parent-child beads) to document design in epic beads and implementation in task beads
 - **executing-plans**: Simplified completion workflow (removed finishing-a-development-branch skill dependency); aware of epic-task hierarchy
 - **systematic-debugging**: Removed references to skills not included in plugin (defense-in-depth, condition-based-waiting, verification-before-completion)
-- **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"
+- **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"; simplified SHA commands to run directly without variable assignment (use `git rev-parse HEAD~1` and `git rev-parse HEAD` directly instead of assigning to variables)
 
 Format the output clearly:
 
@@ -203,16 +233,14 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 **Type 5: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md)**
 - Never modify (no upstream source)
 
-**Type 6: Code-reviewer agent**
-- Read the upstream template from `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
-- Preserve the agent frontmatter (name, description, tools, model) from the plugin version
-- Update only the agent prompt body (everything after the frontmatter) from upstream
-- Process:
-  1. Read upstream code-reviewer.md template
-  2. Extract the template body (skip any frontmatter if present)
-  3. Preserve the plugin agent's frontmatter
-  4. Replace the agent body with the upstream template body
-  5. Verify the merged version has correct frontmatter and updated prompt
+**Type 6: Code-reviewer agent and template**
+- Copy directly from upstream (no customizations):
+  ```bash
+  cp ~/workspace/random/superpowers/agents/code-reviewer.md \
+     ~/workspace/asermax/claude-plugins/superpowers/agents/code-reviewer.md
+  cp ~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md \
+     ~/workspace/asermax/claude-plugins/superpowers/skills/requesting-code-review/code-reviewer.md
+  ```
 
 **Process for manual merge:**
 1. Read the upstream version completely

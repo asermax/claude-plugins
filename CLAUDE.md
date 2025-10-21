@@ -91,6 +91,7 @@ The plugin provides a collection of proven workflow skills organized by category
 - **root-cause-tracing**: Trace bugs backward through call stack to identify source of issues
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions
 - **test-driven-development**: Write test first, watch it fail, write minimal code to pass
+- **testing-skills-activation**: Systematically test and iterate on skill descriptions to ensure correct activation patterns (15-25 test cases, 90%+ accuracy target)
 - **testing-skills-with-subagents**: Apply TDD to process documentation by testing with subagents before deployment
 
 *Documentation and Research:*
@@ -194,7 +195,7 @@ The plugin provides a collection of proven workflow skills organized by category
 - **executing-plans**: Simplified completion workflow; aware of epic-task hierarchy pattern
 - **systematic-debugging**: Removed references to skills not included in plugin (defense-in-depth, condition-based-waiting, verification-before-completion)
 - **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"; simplified SHA commands to run directly without variable assignment
-- Three plugin-specific skills added: using-beads, using-live-documentation, self-maintaining-claude-md
+- Four plugin-specific skills added: using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
@@ -203,9 +204,10 @@ The plugin provides a collection of proven workflow skills organized by category
 - Compare 10 superpowers skills and 1 anthropic_skills skill
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
-- Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md) are never modified
+- Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation) are never modified
 - Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
+
 
 **Skills structure:**
 - Each skill directory contains SKILL.md and optional test cases

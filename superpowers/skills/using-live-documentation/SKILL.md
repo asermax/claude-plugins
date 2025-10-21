@@ -1,6 +1,6 @@
 ---
 name: using-live-documentation
-description: Use when implementing features, debugging, or answering questions about code, specially if it involves libraries/frameworks - dispatches subagents to fetch current documentation with massive context savings (10,000-20,000 tokens per search), ensuring accurate implementation instead of relying on outdated training data
+description: Use when working with third-party libraries or frameworks (react-query, FastAPI, pydantic, Django, Express, pandas, Next.js, NestJS, Celery, pytest, Pinia, etc.) for implementing features, debugging library-specific behavior, or answering API questions - fetches current documentation ensuring accurate implementation. Do NOT use for language built-ins (Python dict/list, JavaScript Array), standard library (fs, json, os.path), or pure algorithms.
 ---
 
 # Using Live Documentation

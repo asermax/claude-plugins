@@ -5,27 +5,39 @@
 #
 # Usage: Run from the skill directory being tested
 #   cd /path/to/skill-being-tested
-#   /path/to/testing-skills-activation/run-tests.sh
+#   /path/to/testing-skills-activation/run-tests.sh [--auto]
+#
+# Options:
+#   --auto    Auto-accept all detections (non-interactive mode)
 #
 # Expects: test-cases.json in current directory
 # Outputs: Results and report to /tmp/claude/
 
+# Parse arguments
+AUTO_MODE=false
+if [ "$1" = "--auto" ]; then
+    AUTO_MODE=true
+fi
+
 # Get the skill directory being tested (current directory)
 SKILL_DIR="$(pwd)"
+SKILL_NAME=$(basename "$SKILL_DIR")
 TEST_CASES_FILE="$SKILL_DIR/test-cases.json"
 
 # Output to /tmp/claude
 OUTPUT_DIR="/tmp/claude"
 mkdir -p "$OUTPUT_DIR"
 
-RESULTS_FILE="$OUTPUT_DIR/test-results-$(date +%Y%m%d-%H%M%S).json"
-REPORT_FILE="$OUTPUT_DIR/test-report-$(date +%Y%m%d-%H%M%S).md"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+RESULTS_FILE="$OUTPUT_DIR/test-results-$TIMESTAMP.json"
+REPORT_FILE="$OUTPUT_DIR/test-report-$TIMESTAMP.md"
 
 echo "========================================"
 echo "Skill Activation Testing"
 echo "========================================"
 echo ""
 echo "Skill directory: $SKILL_DIR"
+echo "Skill name: $SKILL_NAME"
 echo "Test cases: $TEST_CASES_FILE"
 echo "Results: $RESULTS_FILE"
 echo "Report: $REPORT_FILE"
@@ -36,18 +48,7 @@ if [ ! -f "$TEST_CASES_FILE" ]; then
     echo "Error: test-cases.json not found in current directory"
     echo "Please create test-cases.json in the skill directory being tested"
     echo ""
-    echo "Example:"
-    echo 'cat > test-cases.json << '\''EOF'\''
-    echo '['
-    echo '  {'
-    echo '    "id": 1,'
-    echo '    "user_message": "your test message",'
-    echo '    "project_context": "project context",'
-    echo '    "expected_activation": true,'
-    echo '    "rationale": "why this should activate"'
-    echo '  }'
-    echo ']'
-    echo 'EOF'
+    echo "See SKILL.md for test case format"
     exit 1
 fi
 
@@ -107,9 +108,17 @@ Project: $PROJECT_CONTEXT
 The user has sent you this message:
 \"$USER_MESSAGE\"
 
-IMPORTANT: This is a hypothetical scenario. Assume you have full context of the codebase - any references the user makes (like 'this array', 'the list', 'the user model', etc.) are already visible in your context window. You don't need to ask for clarification about what they're referring to.
+IMPORTANT RULES:
+1. This is a hypothetical scenario. Assume you have full context of the codebase.
+2. DO NOT actually invoke any skills or tools. DO NOT do any work.
+3. DO NOT provide solutions, code, or answers to the user's question.
+4. ONLY state what your very first action would be.
 
-What would be your immediate next step to address this request? Please answer ONLY with what your next action would be (which tool you'd use, which skill you'd invoke, etc.). Do not start working on the task or provide a solution - just state your very next step."
+If you would invoke a skill, say: 'I would invoke the [skill-name] skill'
+If you would use a tool, say: 'I would use the [tool-name] tool'
+If you would run a command, say: 'I would run [command]'
+
+Your response should be ONE sentence describing your intended first action, nothing more."
 
         # Run claude with the prompt
         RESPONSE=$(echo "$PROMPT" | claude -p 2>&1)
@@ -134,34 +143,60 @@ What would be your immediate next step to address this request? Please answer ON
         echo "Response: ${RESPONSE:0:300}..."
         echo ""
 
-        # Auto-detect skill invocation intention
+        # Use Claude to evaluate whether the response indicates skill invocation
+        # This is more accurate than grep patterns
+        EVAL_PROMPT="You are evaluating whether a Claude response explicitly mentions invoking a specific skill.
+
+Skill being tested: $SKILL_NAME
+
+Claude's response to evaluate:
+\"$RESPONSE\"
+
+Does this response explicitly mention invoking or using the '$SKILL_NAME' skill? Look for phrases like:
+- 'invoke the $SKILL_NAME skill'
+- 'use the $SKILL_NAME skill'
+- 'I would use $SKILL_NAME'
+- 'the $SKILL_NAME skill'
+
+IMPORTANT: Only answer YES if the response explicitly mentions the skill BY NAME. Using related tools or commands (like 'bd' commands) does NOT count - we only care about explicit skill invocation.
+
+Answer with ONLY 'YES' or 'NO' - nothing else."
+
+        EVAL_RESULT=$(echo "$EVAL_PROMPT" | claude -p --model haiku 2>&1)
+
         ACTUAL_ACTIVATION="false"
-        if echo "$RESPONSE" | grep -i -q "using-live-documentation\|invoke.*live.*documentation\|use.*live.*documentation\|mcp__context7"; then
+        if echo "$EVAL_RESULT" | grep -i -q "^YES"; then
             ACTUAL_ACTIVATION="true"
-            echo "✓ Detected skill invocation intention"
+            echo "✓ Claude evaluation: skill would be invoked"
         else
-            echo "✗ No skill invocation detected"
+            echo "✗ Claude evaluation: skill would NOT be invoked"
         fi
 
         echo ""
-        echo "Correct? (y/n/override): "
-        read -r VALIDATION_INPUT
 
-        # Allow manual override
-        if [ "$VALIDATION_INPUT" = "override" ]; then
-            echo "Manual override - Did the skill activate? (y/n): "
-            read -r OVERRIDE_INPUT
-            if [ "$OVERRIDE_INPUT" = "y" ]; then
-                ACTUAL_ACTIVATION="true"
-            else
-                ACTUAL_ACTIVATION="false"
-            fi
-        elif [ "$VALIDATION_INPUT" = "n" ]; then
-            # Flip the detection
-            if [ "$ACTUAL_ACTIVATION" = "true" ]; then
-                ACTUAL_ACTIVATION="false"
-            else
-                ACTUAL_ACTIVATION="true"
+        if [ "$AUTO_MODE" = "true" ]; then
+            # Auto-accept detection in non-interactive mode
+            echo "(Auto mode - accepting detection)"
+        else
+            echo "Correct? (y/n/override): "
+            read -r VALIDATION_INPUT
+
+            # Allow manual override
+            if [ "$VALIDATION_INPUT" = "override" ]; then
+                echo "Manual override - Did the skill activate? (y/n): "
+                read -r OVERRIDE_INPUT
+                if [ "$OVERRIDE_INPUT" = "y" ]; then
+                    ACTUAL_ACTIVATION="true"
+                else
+                    ACTUAL_ACTIVATION="false"
+                fi
+            elif [ "$VALIDATION_INPUT" = "n" ]; then
+                # Flip the detection
+                if [ "$ACTUAL_ACTIVATION" = "true" ]; then
+                    ACTUAL_ACTIVATION="false"
+                else
+                    ACTUAL_ACTIVATION="true"
+                fi
             fi
         fi
 
@@ -209,8 +244,8 @@ done
 # Generate report
 echo "Generating report..."
 
-# Calculate metrics
-TOTAL_TESTS=$(jq '[.[] | select(.test_passed != null)] | length' "$RESULTS_FILE")
+# Calculate metrics using simpler jq filters
+TOTAL_TESTS=$(jq '[.[] | select(has("test_passed"))] | length' "$RESULTS_FILE")
 PASSED_TESTS=$(jq '[.[] | select(.test_passed == true)] | length' "$RESULTS_FILE")
 FAILED_TESTS=$(jq '[.[] | select(.test_passed == false)] | length' "$RESULTS_FILE")
 TRUE_POSITIVES=$(jq '[.[] | select(.expected_activation == true and .actual_activation == true)] | length' "$RESULTS_FILE")

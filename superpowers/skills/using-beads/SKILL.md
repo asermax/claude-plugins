@@ -1,6 +1,6 @@
 ---
 name: using-beads
-description: Use when starting work in a new codebase, discovering work during implementation, receiving feedback, or working in codebases using bd - dependency-aware task management with bd for tracking all work and modeling dependencies
+description: Use when user explicitly mentions beads or bd, when user asks to run a bd command (invoke skill first, then run command), or when project CLAUDE.md indicates beads/bd is used for tracking. Do NOT use when project uses other task tracking mechanisms (GitHub Issues, Jira, Linear, TODO.md, README todos, etc.)
 ---
 
 # Using Beads for Issue Tracking

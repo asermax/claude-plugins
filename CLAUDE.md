@@ -103,6 +103,9 @@ The plugin provides a collection of proven workflow skills organized by category
 *Project Management:*
 - **using-beads**: Dependency-aware task management with bd - track all work, model dependencies, use bd ready for next tasks
 
+*Multi-Agent Collaboration:*
+- **agent-communication**: Enable communication between multiple Claude Code instances across repositories using ZeroMQ-based chat system (broker, agent daemon, chat CLI)
+
 **Key workflows:**
 - Skills directory contains full skill definitions from two upstream repositories
 - Update command syncs with `~/workspace/random/superpowers` and `~/workspace/random/anthropic_skills`
@@ -229,6 +232,11 @@ The plugin provides a collection of proven workflow skills organized by category
   - Copied directly from upstream `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
   - NOT customized - we use upstream version as-is
 - Agent definitions include frontmatter with name, description, tools, and model
+
+**Hooks:**
+- `hooks/hooks.json`: Plugin hooks configuration
+- `hooks/background-agent.sh`: PreToolUse hook that auto-backgrounds `agent.py` and `broker.py` commands
+- `hooks/auto-approve.sh`: PermissionRequest hook that auto-approves superpowers skill invocations and bash commands referencing superpowers paths
 
 **Beads integration:**
 - Epic-task hierarchy pattern: epic beads contain design documentation, child task beads contain implementation steps

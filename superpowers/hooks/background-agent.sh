@@ -7,21 +7,19 @@ tool_name=$(echo "$hook_input" | jq -r '.tool_name')
 
 if [[ "$tool_name" == "Bash" ]]; then
     command=$(echo "$hook_input" | jq -r '.tool_input.command // empty')
+    run_in_background=$(echo "$hook_input" | jq -r '.tool_input.run_in_background // "null"')
 
     # Check if command is calling agent.py or broker.py
     if [[ "$command" == *"/agent.py"* ]] || [[ "$command" == *"/broker.py"* ]]; then
-        # Check if command doesn't already end with &
-        if [[ ! "$command" =~ \&[[:space:]]*$ ]]; then
-            # Add & at the end
-            modified_command="${command} &"
-
+        # Check if run_in_background is not already set to true
+        if [[ "$run_in_background" != "true" ]]; then
             echo "{
               \"hookSpecificOutput\": {
                 \"hookEventName\": \"PreToolUse\",
                 \"permissionDecision\": \"allow\",
                 \"permissionDecisionReason\": \"Running agent/broker in background\",
                 \"updatedInput\": {
-                  \"command\": $(echo "$modified_command" | jq -Rs .)
+                  \"run_in_background\": true
                 }
               }
             }"

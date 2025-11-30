@@ -64,15 +64,9 @@ In the examples below, we use `scripts/broker.py` as shorthand, but you should r
 
 ## Background Execution Requirements
 
-**CRITICAL**: Always run `broker.py` and `agent.py` in the background using the `&` suffix:
+**CRITICAL**: `broker.py` and `agent.py` automatically run in the background. The plugin hook ensures they never block your terminal.
 
-- ✅ **Correct**: `scripts/broker.py &`
-- ❌ **Wrong**: `scripts/broker.py` (will block your terminal)
-
-- ✅ **Correct**: `scripts/agent.py --name "..." --context "..." --presentation "..." &`
-- ❌ **Wrong**: `scripts/agent.py --name "..." --context "..." --presentation "..."` (will block)
-
-The `chat.py` script runs in the foreground (no `&`) since it's a synchronous command-line tool.
+The `chat.py` script runs in the foreground since it's a synchronous command-line tool.
 
 ## The Process
 
@@ -102,7 +96,7 @@ Try to start the agent daemon:
 ```bash
 scripts/agent.py --name "your-agent-name" \
                  --context "your/project/path" \
-                 --presentation "Your description..." &
+                 --presentation "Your description..."
 ```
 
 **Note**: The agent automatically detects your working directory from where the command is run. The `.unread-messages` notification file will be created in this directory. If you need to override the location, you can use `--cwd /path/to/directory`.
@@ -117,7 +111,7 @@ Exit codes:
 
 1. Start the broker first:
 ```bash
-scripts/broker.py &
+scripts/broker.py
 ```
 
 2. Wait a moment for broker to initialize
@@ -126,7 +120,7 @@ scripts/broker.py &
 ```bash
 scripts/agent.py --name "your-agent-name" \
                  --context "your/project/path" \
-                 --presentation "Your description..." &
+                 --presentation "Your description..."
 ```
 
 **On success:**
@@ -353,9 +347,9 @@ Broadcast messages from other agents:
 
 **Solution**:
 ```bash
-scripts/broker.py &
+scripts/broker.py
 # Wait a moment
-scripts/agent.py --name "..." --context "..." --presentation "..." &
+scripts/agent.py --name "..." --context "..." --presentation "..."
 ```
 
 ### Agent Not Running
@@ -369,7 +363,7 @@ scripts/agent.py --name "..." --context "..." --presentation "..." &
 If broker dies while agents connected:
 - Agents detect broken connection
 - New messages cannot be sent/received
-- Restart broker: `scripts/broker.py &`
+- Restart broker: `scripts/broker.py`
 - Agents will attempt reconnection
 
 ## Practical Example
@@ -381,7 +375,7 @@ If broker dies while agents connected:
 # Join chat
 scripts/agent.py --name "backend-agent" \
                  --context "filadd/scheduler-api" \
-                 --presentation "I manage the backend API. Working on new scheduling endpoint." &
+                 --presentation "I manage the backend API. Working on new scheduling endpoint."
 
 # Do work
 vim src/routes/schedule.ts
@@ -404,7 +398,7 @@ scripts/chat.py --agent backend-agent ask "Great! Let me know if you need any ch
 # Join chat
 scripts/agent.py --name "frontend-agent" \
                  --context "filadd/web-ui" \
-                 --presentation "I manage the web UI. Working on schedule creation form." &
+                 --presentation "I manage the web UI. Working on schedule creation form."
 
 # Wait for backend's message
 scripts/chat.py --agent frontend-agent receive --timeout 120
@@ -449,8 +443,8 @@ superpowers/skills/agent-communication/scripts/
 
 | Command | Purpose | Output |
 |---------|---------|--------|
-| `scripts/broker.py &` | Start central router | Background process |
-| `scripts/agent.py --name X --context Y --presentation Z &` | Start your agent | Background process |
+| `scripts/broker.py` | Start central router | Background process |
+| `scripts/agent.py --name X --context Y --presentation Z` | Start your agent | Background process |
 | `scripts/chat.py --agent X send "msg"` | Broadcast message | JSON status |
 | `scripts/chat.py --agent X receive --timeout 30` | Wait for messages | JSON array |
 | `scripts/chat.py --agent X ask "question" --timeout 60` | Send and wait for response | JSON array |

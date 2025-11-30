@@ -44,17 +44,19 @@ def get_agent_socket_path(agent_name):
 class Agent:
     """Agent daemon."""
 
-    def __init__(self, name, context, presentation):
+    def __init__(self, name, context, presentation, cwd):
         """Initialize agent."""
         self.name = name
         self.context = context
         self.presentation = presentation
+        self.cwd = Path(cwd)
 
         self.zmq_ctx = None
         self.pub_sock = None
         self.sub_sock = None
         self.local_sock = None
         self.local_socket_path = get_agent_socket_path(self.name)
+        self.unread_file_path = self.cwd / ".unread-messages"
 
         self.message_queue = deque(maxlen=100)
         self.members = {}
@@ -78,6 +80,9 @@ class Agent:
             self.local_sock.close()
         if self.zmq_ctx:
             self.zmq_ctx.term()
+
+        # Remove unread messages file
+        self.clear_unread_file()
 
         # Remove local socket file
         if os.path.exists(self.local_socket_path):
@@ -115,6 +120,23 @@ class Agent:
         time.sleep(0.1)
 
         print(f"Connected to broker", file=sys.stderr)
+
+    def update_unread_file(self):
+        """Update .unread-messages file with current queue size."""
+        count = len(self.message_queue)
+        if count > 0:
+            try:
+                self.unread_file_path.write_text(str(count))
+            except Exception as e:
+                print(f"Error updating unread file: {e}", file=sys.stderr)
+
+    def clear_unread_file(self):
+        """Remove .unread-messages file when messages are read."""
+        if self.unread_file_path.exists():
+            try:
+                self.unread_file_path.unlink()
+            except Exception as e:
+                print(f"Error clearing unread file: {e}", file=sys.stderr)
 
     def send_message(self, msg_type, content):
         """Send a message to the broker."""
@@ -180,6 +202,7 @@ class Agent:
                         if sender_name and sender_name != self.name:
                             self.members[sender_name] = sender
                             self.message_queue.append(msg)
+                            self.update_unread_file()
 
                     elif msg_type == 'leave':
                         # Update members
@@ -188,12 +211,14 @@ class Agent:
                         if sender_name and sender_name in self.members:
                             del self.members[sender_name]
                         self.message_queue.append(msg)
+                        self.update_unread_file()
 
                     elif msg_type == 'message':
                         # Queue message if not from self
                         sender = msg.get('sender', {})
                         if sender.get('name') != self.name:
                             self.message_queue.append(msg)
+                            self.update_unread_file()
 
             except Exception as e:
                 if self.running:
@@ -240,6 +265,9 @@ class Agent:
                             messages.append(self.message_queue.popleft())
                         break
                     time.sleep(0.1)  # Poll every 100ms
+
+            # Clear unread file since messages have been read
+            self.clear_unread_file()
 
             return {'status': 'ok', 'data': {'messages': messages}}
 
@@ -301,16 +329,35 @@ class Agent:
         self.run_local_server()
 
 
+def get_parent_cwd():
+    """Get the working directory of the parent process."""
+    try:
+        parent_pid = os.getppid()
+        # Read the cwd from /proc filesystem (Linux)
+        cwd_link = f"/proc/{parent_pid}/cwd"
+        if os.path.exists(cwd_link):
+            return os.readlink(cwd_link)
+    except Exception as e:
+        print(f"Warning: Could not determine parent cwd: {e}", file=sys.stderr)
+
+    # Fallback to current directory
+    return os.getcwd()
+
+
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description='Agent daemon for multi-agent communication')
     parser.add_argument('--name', required=True, help='Agent name')
     parser.add_argument('--context', required=True, help='Agent context (e.g., project/repo)')
     parser.add_argument('--presentation', required=True, help='Agent self-presentation')
+    parser.add_argument('--cwd', required=False, help='Working directory for unread notifications (default: auto-detect from parent process)')
 
     args = parser.parse_args()
 
-    agent = Agent(args.name, args.context, args.presentation)
+    # Use provided cwd or auto-detect from parent process
+    cwd = args.cwd if args.cwd else get_parent_cwd()
+
+    agent = Agent(args.name, args.context, args.presentation, cwd)
 
     # Register cleanup
     atexit.register(agent.cleanup)

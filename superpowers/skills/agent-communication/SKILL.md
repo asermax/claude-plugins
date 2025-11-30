@@ -32,6 +32,18 @@ Three components work together:
 2. **agent.py** - Your agent daemon (one per Claude instance, background)
 3. **chat.py** - CLI for interaction (foreground, synchronous)
 
+### Unread Message Notifications
+
+The agent automatically creates a `.unread-messages` file in your working directory when new messages arrive:
+
+- **File location**: Created in the directory where you launched agent.py
+- **File content**: Plain text number indicating unread message count (e.g., `3`)
+- **When created**: Automatically when join/leave/message events arrive
+- **When deleted**: Automatically when you read messages via `chat.py receive` or `chat.py ask`
+- **On shutdown**: File is cleaned up when agent.py exits
+
+**Why this matters**: Claude Code can detect when this file appears or changes, alerting you to check messages without constantly polling. If you see `.unread-messages` in your working directory, use `chat.py receive` to read the messages.
+
 ## Script Path Construction
 
 **IMPORTANT**: Always use full paths to call scripts. Do NOT use `cd` to change to the scripts directory.
@@ -93,6 +105,8 @@ scripts/agent.py --name "your-agent-name" \
                  --presentation "Your description..." &
 ```
 
+**Note**: The agent automatically detects your working directory from where the command is run. The `.unread-messages` notification file will be created in this directory. If you need to override the location, you can use `--cwd /path/to/directory`.
+
 **The agent will fail if the broker is not running or not responding:**
 
 Exit codes:
@@ -135,10 +149,16 @@ Output:
 {"status": "ok", "message": "Message sent"}
 ```
 
+**Check for unread messages:**
+
+If you notice a `.unread-messages` file in your working directory, messages are waiting. The file contains the count of unread messages.
+
 **Receive messages from other agents:**
 ```bash
 scripts/chat.py --agent your-agent-name receive --timeout 30
 ```
+
+This command will retrieve messages and automatically delete the `.unread-messages` file.
 
 Output if messages available:
 ```json
@@ -405,13 +425,14 @@ scripts/chat.py --agent frontend-agent ask "All good, thanks!" --timeout 10
 
 ## Tips
 
-1. **Use ask for conversations**: Always use `ask` instead of `send` when you expect a response. This creates natural back-and-forth flow.
-2. **Explicit completion**: End conversations clearly with phrases like "All done!", "Thanks, conversation complete!", or "Got it, closing this thread."
-3. **Appropriate timeouts**: Use longer timeouts (60s) for initial asks, shorter (10-30s) for final confirmations.
-4. **Agent naming**: Use descriptive names that indicate role/project
-5. **Presentations**: Be specific about what you manage and current focus
-6. **Don't interrupt flow**: When using `ask`, don't do other work while waiting - focus on the conversation
-7. **Document decisions**: Important decisions should also go in code/docs, not just chat
+1. **Monitor for notifications**: If you see a `.unread-messages` file appear in your working directory, check for messages with `receive`
+2. **Use ask for conversations**: Always use `ask` instead of `send` when you expect a response. This creates natural back-and-forth flow.
+3. **Explicit completion**: End conversations clearly with phrases like "All done!", "Thanks, conversation complete!", or "Got it, closing this thread."
+4. **Appropriate timeouts**: Use longer timeouts (60s) for initial asks, shorter (10-30s) for final confirmations.
+5. **Agent naming**: Use descriptive names that indicate role/project
+6. **Presentations**: Be specific about what you manage and current focus
+7. **Don't interrupt flow**: When using `ask`, don't do other work while waiting - focus on the conversation
+8. **Document decisions**: Important decisions should also go in code/docs, not just chat
 
 ## Scripts Location
 

@@ -7,7 +7,7 @@ description: Use when user explicitly requests to coordinate with other Claude C
 
 ## Overview
 
-Enable multiple Claude Code instances to communicate and coordinate work across different repositories using a lightweight ZeroMQ-based chat system.
+Enable multiple Claude Code instances to communicate and coordinate work across different repositories using a lightweight file-based chat system.
 
 ## When to Use
 
@@ -26,11 +26,14 @@ Do NOT use this skill for:
 
 ## Architecture
 
-Three components work together:
+Two components work together:
 
-1. **broker.py** - Central message router (single instance, shared)
-2. **agent.py** - Your agent daemon (one per Claude instance, background)
-3. **chat.py** - CLI for interaction (foreground, synchronous)
+1. **agent.py** - Your agent daemon (one per Claude instance, background)
+2. **chat.py** - CLI for interaction (foreground, synchronous)
+
+The system uses file-based communication with OS-level file locking (fcntl.flock()) for coordination:
+- **Registry file**: `/run/user/{uid}/claude-agent-chat/registry.json` - tracks all active agents
+- **Message files**: `/run/user/{uid}/claude-agent-chat/messages/{agent-name}.jsonl` - messages FOR each agent
 
 ### Unread Message Notifications
 
@@ -48,15 +51,15 @@ To call scripts, concatenate:
 Example:
 ```bash
 # If skill base is: /home/agus/workspace/asermax/claude-plugins/superpowers/skills/agent-communication
-# Then broker.py is at:
-/home/agus/workspace/asermax/claude-plugins/superpowers/skills/agent-communication/scripts/broker.py
+# Then agent.py is at:
+/home/agus/workspace/asermax/claude-plugins/superpowers/skills/agent-communication/scripts/agent.py
 ```
 
-In the examples below, we use `scripts/broker.py` as shorthand, but you should replace `scripts/` with the full path to the scripts directory based on the skill's base directory.
+In the examples below, we use `scripts/agent.py` as shorthand, but you should replace `scripts/` with the full path to the scripts directory based on the skill's base directory.
 
 ## Background Execution Requirements
 
-**CRITICAL**: `broker.py` and `agent.py` automatically run in the background. The plugin hook ensures they never block your terminal.
+**CRITICAL**: `agent.py` automatically runs in the background. The plugin hook ensures it never blocks your terminal.
 
 The `chat.py` script runs in the foreground since it's a synchronous command-line tool.
 
@@ -83,7 +86,7 @@ Before joining, generate your identity based on context:
 
 ### Step 2: Start Your Agent
 
-Try to start the agent daemon:
+Start the agent daemon:
 
 ```bash
 scripts/agent.py --name "your-agent-name" \
@@ -93,33 +96,12 @@ scripts/agent.py --name "your-agent-name" \
 
 **Note**: The agent automatically detects your working directory from where the command is run. If you need to override the location, you can use `--cwd /path/to/directory`.
 
-**The agent will fail if the broker is not running or not responding:**
-
-Exit codes:
-- `3`: Broker socket files don't exist (broker never started)
-- `4`: Broker not responding (stale sockets, broker crashed)
-
-**If agent fails, start the broker:**
-
-1. Start the broker first:
-```bash
-scripts/broker.py
-```
-
-2. Wait a moment for broker to initialize
-
-3. Retry starting your agent:
-```bash
-scripts/agent.py --name "your-agent-name" \
-                 --context "your/project/path" \
-                 --presentation "Your description..."
-```
-
 **On success:**
 - Agent daemon runs in background
 - You'll see: "Joined chat. N member(s) present."
 - Agent name is displayed
 - Socket created at `/run/user/1000/claude-agent-{agent-name}.sock`
+- Registry and message files created at `/run/user/1000/claude-agent-chat/`
 
 ### Step 3: Interact via chat.py
 
@@ -263,6 +245,44 @@ scripts/chat.py --agent backend-agent send "Updated the API"
 vim other-file.ts
 ```
 
+### Waiting for Responses
+
+When expecting a response from another agent, use a **persistent waiting pattern** with long timeouts and periodic pings if needed:
+
+**Correct approach:**
+```bash
+# Initial ask with long timeout (60-120 seconds)
+scripts/chat.py --agent backend-agent ask "Question for frontend agent..." --timeout 120
+
+# If no response, send a follow-up ping
+scripts/chat.py --agent backend-agent ask "Ping: Still waiting on the previous question about..." --timeout 120
+
+# Continue checking with receive if ask times out
+scripts/chat.py --agent backend-agent receive --timeout 60
+```
+
+**Key principles:**
+- Use **long timeouts** (60-120 seconds) when expecting responses - other agents may be processing or thinking
+- If your ask times out without response, **send a follow-up ping** - the other agent might have missed your message
+- **Don't give up quickly** - agent coordination requires patience
+- Use `receive` with timeout to continue checking for delayed responses
+- Consider the other agent may be:
+  - Still processing your previous message
+  - Working on a complex task before responding
+  - Waiting for their own approvals or tool completions
+
+**Example: Persistent waiting**
+```bash
+# Ask with long timeout
+scripts/chat.py --agent docs-agent ask "Can you review the API documentation draft?" --timeout 120
+
+# No response? Send ping
+scripts/chat.py --agent docs-agent ask "Following up: Did you see my message about reviewing the API docs?" --timeout 120
+
+# Still nothing? Keep checking
+scripts/chat.py --agent docs-agent receive --timeout 60
+```
+
 ## Message Types You'll See
 
 ### Join Messages
@@ -327,16 +347,11 @@ Broadcast messages from other agents:
 
 ## Error Handling
 
-### Broker Not Running
+### Agent Name Already In Use
 
-**Error**: Agent fails with "Broker not running"
+**Error**: Agent fails with "Agent name already in use"
 
-**Solution**:
-```bash
-scripts/broker.py
-# Wait a moment
-scripts/agent.py --name "..." --context "..." --presentation "..."
-```
+**Solution**: Choose a different agent name or check if there's a stale agent process
 
 ### Agent Not Running
 
@@ -344,13 +359,11 @@ scripts/agent.py --name "..." --context "..." --presentation "..."
 
 **Solution**: Start your agent first (see Step 2)
 
-### Connection Lost
+### File Permissions
 
-If broker dies while agents connected:
-- Agents detect broken connection
-- New messages cannot be sent/received
-- Restart broker: `scripts/broker.py`
-- Agents will attempt reconnection
+If you encounter file permission errors:
+- Ensure `/run/user/{uid}/` directory exists and is writable
+- Check that your user has access to the runtime directory
 
 ## Practical Example
 
@@ -403,6 +416,66 @@ scripts/chat.py --agent frontend-agent ask "All good, thanks!" --timeout 10
 # Conversation complete
 ```
 
+## Agent Lifecycle
+
+### Stopping an Agent Properly
+
+**IMPORTANT**: Always stop agents gracefully to ensure proper cleanup and registry updates.
+
+**Correct way to stop:**
+```bash
+# 1. Find running agents
+ps aux | grep 'agent.py' | grep -v grep
+
+# 2. Kill by pattern (replace with actual agent name)
+pkill -TERM -f 'agent.py --name "agent-name"'
+
+# 3. Wait a moment for cleanup
+sleep 1
+
+# 4. Verify stopped
+ps aux | grep 'agent.py --name "agent-name"' | grep -v grep
+# (no output = successfully stopped)
+```
+
+**What happens during proper shutdown:**
+1. Agent receives SIGTERM signal
+2. Signal handler executes cleanup:
+   - Removes agent from registry.json
+   - Sends leave message to all other agents
+   - Removes .unread-messages file
+   - Removes Unix socket file
+   - Removes agent's message file
+3. Registry is updated - other agents won't see the stopped agent
+
+**Don't use SIGKILL:**
+```bash
+# BAD - prevents cleanup from running
+kill -9 <agent-pid>
+pkill -9 -f 'agent.py'
+```
+
+Using `kill -9` (SIGKILL) prevents the cleanup handlers from running, leaving:
+- Stale entry in registry.json
+- Orphaned socket files
+- Leftover message files
+
+**Recovery from improper shutdown:**
+
+If an agent was killed with SIGKILL and left a stale registry entry, the system will auto-recover:
+- Next agent joining with the same name will detect the stale entry (via socket probe)
+- Stale entry will be automatically cleaned up
+- New agent will register successfully
+
+**How to check if agents are running:**
+```bash
+# List all agent processes
+ps aux | grep 'agent.py' | grep -v grep
+
+# Check specific agent
+ps aux | grep 'agent.py --name "your-agent-name"' | grep -v grep
+```
+
 ## Tips
 
 1. **Automatic notification**: The plugin will notify you directly when you have unread messages - you don't need to monitor any files.
@@ -414,22 +487,82 @@ scripts/chat.py --agent frontend-agent ask "All good, thanks!" --timeout 10
 7. **Don't interrupt flow**: When using `ask`, don't do other work while waiting - focus on the conversation
 8. **Document decisions**: Important decisions should also go in code/docs, not just chat
 
+## Human CLI Tool
+
+For humans who want to join the agent chat interactively, use `human-cli.py`:
+
+### Usage
+
+```bash
+scripts/human-cli.py [--name NAME] [--context CONTEXT] [--presentation TEXT]
+```
+
+### Options
+
+- `--name`: Agent name (default: `human-{username}`)
+- `--context`: Your context/project (default: `human-terminal`)
+- `--presentation`: Brief description of yourself (default: `Human operator joining the chat`)
+
+### Interactive Commands
+
+Once in the REPL:
+
+- `/help` - Show available commands
+- `/status` - Show agent status and queue size
+- `/members` - List all connected agents with their contexts
+- `/quit` or `/exit` - Exit the chat gracefully
+
+Anything else you type will be sent as a message to all agents.
+
+### Features
+
+- **Real-time messages**: Messages from agents appear immediately, interrupting the prompt
+- **Colored output**: Different colors for joins, leaves, and messages (when terminal supports it)
+- **Embedded daemon**: Automatically starts and stops the agent daemon for you
+- **Full participation**: You join as a real agent, can send and receive just like Claude agents
+
+### Example Session
+
+```bash
+# Start the human CLI
+scripts/human-cli.py --name human-alice --context "myproject/docs"
+
+# You'll see:
+# Starting agent daemon...
+# Connected as: human-alice
+# Context: myproject/docs
+# Type /help for commands
+#
+# >
+
+# Check who's connected
+/members
+
+# Send a message
+Hello agents! I'm here to help coordinate.
+
+# Messages from agents will appear automatically:
+# [15:30:45] backend-agent: Hi Alice! We're working on the API refactor.
+
+# Exit when done
+/quit
+```
+
 ## Scripts Location
 
 All scripts are in the skill directory:
 
 ```
 superpowers/skills/agent-communication/scripts/
-├── broker.py   # Central router
-├── agent.py    # Agent daemon
-└── chat.py     # CLI tool
+├── agent.py      # Agent daemon
+├── chat.py       # CLI tool for agents
+└── human-cli.py  # Interactive CLI for humans
 ```
 
 ## Quick Reference
 
 | Command | Purpose | Output |
 |---------|---------|--------|
-| `scripts/broker.py` | Start central router | Background process |
 | `scripts/agent.py --name X --context Y --presentation Z` | Start your agent | Background process |
 | `scripts/chat.py --agent X send "msg"` | Broadcast message | JSON status |
 | `scripts/chat.py --agent X receive --timeout 30` | Wait for messages | JSON array |

@@ -418,6 +418,7 @@ class Agent:
     def run_local_server(self):
         """Run local server loop."""
         while self.running:
+            conn = None
             try:
                 conn, addr = self.local_sock.accept()
 
@@ -430,13 +431,21 @@ class Agent:
 
                 # Send response
                 conn.send(json.dumps(response).encode('utf-8'))
-                conn.close()
 
             except sock.timeout:
                 continue
+            except BrokenPipeError:
+                # Client disconnected before receiving response - expected behavior
+                pass
             except Exception as e:
                 if self.running:
                     print(f"Error in local server: {e}", file=sys.stderr)
+            finally:
+                if conn:
+                    try:
+                        conn.close()
+                    except:
+                        pass
 
     def run(self):
         """Run the agent."""
@@ -471,6 +480,9 @@ def get_parent_cwd():
 
 def main():
     """Main entry point."""
+    # Ignore SIGPIPE - prevents process death when writing to closed sockets
+    signal.signal(signal.SIGPIPE, signal.SIG_IGN)
+
     parser = argparse.ArgumentParser(description='Agent daemon for multi-agent communication')
     parser.add_argument('--name', required=True, help='Agent name')
     parser.add_argument('--context', required=True, help='Agent context (e.g., project/repo)')

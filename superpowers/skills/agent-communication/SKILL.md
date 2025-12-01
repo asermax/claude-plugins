@@ -24,20 +24,14 @@ Do NOT use this skill for:
 - Communication with external services/APIs
 - User asking about other forms of collaboration (git, PRs, etc.)
 
-## Architecture
+## Components
 
 Two components work together:
 
-1. **agent.py** - Your agent daemon (one per Claude instance, background)
-2. **chat.py** - CLI for interaction (foreground, synchronous)
+1. **agent.py** - Your agent daemon (one per Claude instance, runs in background)
+2. **chat.py** - CLI for interaction (runs in foreground, synchronous)
 
-The system uses file-based communication with OS-level file locking (fcntl.flock()) for coordination:
-- **Registry file**: `/run/user/{uid}/claude-agent-chat/registry.json` - tracks all active agents
-- **Message files**: `/run/user/{uid}/claude-agent-chat/messages/{agent-name}.jsonl` - messages FOR each agent
-
-### Unread Message Notifications
-
-When new messages arrive from other agents, you will be automatically notified by the plugin. The notification happens via a stop hook that prevents you from completing your turn until you've read the messages. You don't need to monitor any files or poll for messages - the system handles this automatically.
+When new messages arrive from other agents, you will be automatically notified by the plugin. You don't need to monitor any files or poll for messages - the system handles this automatically.
 
 ## Script Path Construction
 
@@ -100,8 +94,6 @@ scripts/agent.py --name "your-agent-name" \
 - Agent daemon runs in background
 - You'll see: "Joined chat. N member(s) present."
 - Agent name is displayed
-- Socket created at `/run/user/1000/claude-agent-{agent-name}.sock`
-- Registry and message files created at `/run/user/1000/claude-agent-chat/`
 
 ### Step 3: Interact via chat.py
 
@@ -361,9 +353,7 @@ Broadcast messages from other agents:
 
 ### File Permissions
 
-If you encounter file permission errors:
-- Ensure `/run/user/{uid}/` directory exists and is writable
-- Check that your user has access to the runtime directory
+If you encounter file permission errors, check that your user has access to the runtime directory
 
 ## Practical Example
 
@@ -420,14 +410,14 @@ scripts/chat.py --agent frontend-agent ask "All good, thanks!" --timeout 10
 
 ### Stopping an Agent Properly
 
-**IMPORTANT**: Always stop agents gracefully to ensure proper cleanup and registry updates.
+**IMPORTANT**: Always stop agents gracefully using SIGTERM (not SIGKILL).
 
 **Correct way to stop:**
 ```bash
 # 1. Find running agents
 ps aux | grep 'agent.py' | grep -v grep
 
-# 2. Kill by pattern (replace with actual agent name)
+# 2. Kill by pattern (replace with actual agent name) - use SIGTERM, not SIGKILL
 pkill -TERM -f 'agent.py --name "agent-name"'
 
 # 3. Wait a moment for cleanup
@@ -437,35 +427,6 @@ sleep 1
 ps aux | grep 'agent.py --name "agent-name"' | grep -v grep
 # (no output = successfully stopped)
 ```
-
-**What happens during proper shutdown:**
-1. Agent receives SIGTERM signal
-2. Signal handler executes cleanup:
-   - Removes agent from registry.json
-   - Sends leave message to all other agents
-   - Removes .unread-messages file
-   - Removes Unix socket file
-   - Removes agent's message file
-3. Registry is updated - other agents won't see the stopped agent
-
-**Don't use SIGKILL:**
-```bash
-# BAD - prevents cleanup from running
-kill -9 <agent-pid>
-pkill -9 -f 'agent.py'
-```
-
-Using `kill -9` (SIGKILL) prevents the cleanup handlers from running, leaving:
-- Stale entry in registry.json
-- Orphaned socket files
-- Leftover message files
-
-**Recovery from improper shutdown:**
-
-If an agent was killed with SIGKILL and left a stale registry entry, the system will auto-recover:
-- Next agent joining with the same name will detect the stale entry (via socket probe)
-- Stale entry will be automatically cleaned up
-- New agent will register successfully
 
 **How to check if agents are running:**
 ```bash
@@ -546,17 +507,6 @@ Hello agents! I'm here to help coordinate.
 
 # Exit when done
 /quit
-```
-
-## Scripts Location
-
-All scripts are in the skill directory:
-
-```
-superpowers/skills/agent-communication/scripts/
-├── agent.py      # Agent daemon
-├── chat.py       # CLI tool for agents
-└── human-cli.py  # Interactive CLI for humans
 ```
 
 ## Quick Reference

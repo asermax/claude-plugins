@@ -20,6 +20,12 @@ from collections import deque
 import threading
 import socket as sock
 
+try:
+    from inotify_simple import INotify, flags
+except ImportError:
+    print("Error: inotify-simple not installed. Run: pip install inotify-simple", file=sys.stderr)
+    sys.exit(1)
+
 
 def get_runtime_dir():
     """Get runtime directory for chat files."""
@@ -152,6 +158,7 @@ class Agent:
         self.message_queue = deque(maxlen=100)
         self.members = {}
         self.running = True
+        self.message_event = threading.Event()
 
     def cleanup(self):
         """Clean up resources."""
@@ -284,49 +291,59 @@ class Agent:
             except Exception as e:
                 print(f"Error sending to {agent_name}: {e}", file=sys.stderr)
 
-    def poll_messages_loop(self):
-        """Background thread to poll for new messages."""
+    def watch_messages_loop(self):
+        """Background thread to watch for new messages using inotify."""
+        inotify = INotify()
+        watch_flags = flags.MODIFY | flags.CREATE | flags.MOVED_TO
+        wd = inotify.add_watch(str(self.message_file_path.parent), watch_flags)
+
         while self.running:
             try:
-                # Check for new messages
-                messages = read_and_clear_messages(self.name)
+                events = inotify.read(timeout=1000)  # 1s timeout for graceful shutdown
 
-                if messages:
-                    for msg in messages:
-                        msg_type = msg.get('type')
+                # Filter for our message file
+                our_events = [e for e in events if e.name == self.message_file_path.name]
 
-                        if msg_type == 'join':
-                            # Update members
-                            sender = msg.get('sender', {})
-                            sender_name = sender.get('name')
-                            if sender_name and sender_name != self.name:
-                                self.members[sender_name] = sender
+                if our_events:
+                    messages = read_and_clear_messages(self.name)
+
+                    if messages:
+                        for msg in messages:
+                            msg_type = msg.get('type')
+
+                            if msg_type == 'join':
+                                # Update members
+                                sender = msg.get('sender', {})
+                                sender_name = sender.get('name')
+                                if sender_name and sender_name != self.name:
+                                    self.members[sender_name] = sender
+                                    self.message_queue.append(msg)
+
+                            elif msg_type == 'leave':
+                                # Update members
+                                sender = msg.get('sender', {})
+                                sender_name = sender.get('name')
+                                if sender_name and sender_name in self.members:
+                                    del self.members[sender_name]
                                 self.message_queue.append(msg)
 
-                        elif msg_type == 'leave':
-                            # Update members
-                            sender = msg.get('sender', {})
-                            sender_name = sender.get('name')
-                            if sender_name and sender_name in self.members:
-                                del self.members[sender_name]
-                            self.message_queue.append(msg)
+                            elif msg_type == 'message':
+                                # Queue message
+                                sender = msg.get('sender', {})
+                                if sender.get('name') != self.name:
+                                    self.message_queue.append(msg)
 
-                        elif msg_type == 'message':
-                            # Queue message
-                            sender = msg.get('sender', {})
-                            if sender.get('name') != self.name:
-                                self.message_queue.append(msg)
-
-                    # Update unread file
-                    self.update_unread_file()
-
-                # Sleep before next poll
-                time.sleep(0.5)
+                        # Update unread file
+                        self.update_unread_file()
+                        # Signal waiting receivers
+                        self.message_event.set()
 
             except Exception as e:
                 if self.running:
-                    print(f"Error in poll loop: {e}", file=sys.stderr)
-                time.sleep(1)
+                    print(f"Error in watch loop: {e}", file=sys.stderr)
+                    time.sleep(1)  # Backoff on error
+
+        inotify.close()
 
     def start_local_server(self):
         """Start local Unix socket server for chat.py commands."""
@@ -363,19 +380,19 @@ class Agent:
             timeout = cmd.get('args', {}).get('timeout', 30)
             messages = []
 
-            # First, drain existing queue
+            # Clear event first (before draining - prevents race condition)
+            self.message_event.clear()
+
+            # Drain existing queue
             while self.message_queue:
                 messages.append(self.message_queue.popleft())
 
-            # If no messages yet, wait for timeout
+            # If no messages yet, wait for event
             if not messages:
-                start_time = time.time()
-                while time.time() - start_time < timeout:
-                    if self.message_queue:
-                        while self.message_queue:
-                            messages.append(self.message_queue.popleft())
-                        break
-                    time.sleep(0.1)
+                got_event = self.message_event.wait(timeout=timeout)
+                if got_event:
+                    while self.message_queue:
+                        messages.append(self.message_queue.popleft())
 
             # Clear unread file since messages have been read
             self.clear_unread_file()
@@ -429,9 +446,9 @@ class Agent:
         # Start local server
         self.start_local_server()
 
-        # Start poll thread
-        poll_thread = threading.Thread(target=self.poll_messages_loop, daemon=True)
-        poll_thread.start()
+        # Start watch thread
+        watch_thread = threading.Thread(target=self.watch_messages_loop, daemon=True)
+        watch_thread.start()
 
         # Run local server
         self.run_local_server()

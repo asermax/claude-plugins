@@ -244,6 +244,13 @@ class Agent:
         command = cmd.get('command')
 
         if command == 'send':
+            # Block sending if there are unread messages
+            if self.message_queue:
+                return {
+                    'status': 'error',
+                    'error': f'Cannot send: {len(self.message_queue)} unread message(s). Use "receive" first.'
+                }
+
             content = cmd.get('args', {}).get('content', '')
             self.send_message('message', content)
             return {'status': 'ok', 'data': {}}

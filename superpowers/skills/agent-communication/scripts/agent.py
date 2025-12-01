@@ -2,11 +2,11 @@
 """
 Multi-agent communication agent daemon.
 
-Per-instance background process that maintains connection to broker,
+Per-instance background process that manages file-based communication,
 queues incoming messages, and exposes local socket for chat.py commands.
 """
 
-import zmq
+import fcntl
 import json
 import os
 import sys
@@ -22,23 +22,116 @@ import socket as sock
 
 
 def get_runtime_dir():
-    """Get runtime directory for socket files."""
+    """Get runtime directory for chat files."""
     return Path(os.environ.get('XDG_RUNTIME_DIR', '/tmp'))
 
 
-def get_broker_paths():
-    """Get broker socket paths."""
-    runtime_dir = get_runtime_dir()
-    return {
-        'pub': str(runtime_dir / "claude-agent-chat-pub.sock"),
-        'sub': str(runtime_dir / "claude-agent-chat-sub.sock"),
-    }
+def get_chat_dir():
+    """Get chat directory for registry and messages."""
+    chat_dir = get_runtime_dir() / "claude-agent-chat"
+    chat_dir.mkdir(exist_ok=True)
+    (chat_dir / "messages").mkdir(exist_ok=True)
+    return chat_dir
+
+
+def get_registry_path():
+    """Get path to registry file."""
+    return get_chat_dir() / "registry.json"
+
+
+def get_message_file_path(agent_name):
+    """Get path to agent's message file."""
+    return get_chat_dir() / "messages" / f"{agent_name}.jsonl"
 
 
 def get_agent_socket_path(agent_name):
     """Get agent's local socket path."""
     runtime_dir = get_runtime_dir()
     return str(runtime_dir / f"claude-agent-{agent_name}.sock")
+
+
+def read_registry():
+    """Read registry with shared lock."""
+    registry_path = get_registry_path()
+
+    if not registry_path.exists():
+        return {}
+
+    with open(registry_path, 'r') as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+        try:
+            data = f.read()
+            return json.loads(data) if data else {}
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+
+def write_registry(registry):
+    """Write registry with exclusive lock."""
+    registry_path = get_registry_path()
+
+    with open(registry_path, 'w') as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            json.dump(registry, f, indent=2)
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+
+def check_agent_alive(agent_name):
+    """Check if agent is alive by probing its socket."""
+    socket_path = get_agent_socket_path(agent_name)
+
+    if not os.path.exists(socket_path):
+        return False
+
+    try:
+        s = sock.socket(sock.AF_UNIX, sock.SOCK_STREAM)
+        s.settimeout(1.0)
+        s.connect(socket_path)
+        s.close()
+        return True
+    except:
+        return False
+
+
+def append_message_to_file(agent_name, message):
+    """Append message to agent's message file with exclusive lock."""
+    message_file = get_message_file_path(agent_name)
+
+    with open(message_file, 'a') as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            f.write(json.dumps(message) + '\n')
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+
+def read_and_clear_messages(agent_name):
+    """Read all messages from agent's file and clear it."""
+    message_file = get_message_file_path(agent_name)
+
+    if not message_file.exists():
+        return []
+
+    messages = []
+    with open(message_file, 'r+') as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        messages.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        print(f"Invalid JSON in message file: {line}", file=sys.stderr)
+
+            f.seek(0)
+            f.truncate()
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+    return messages
 
 
 class Agent:
@@ -51,12 +144,10 @@ class Agent:
         self.presentation = presentation
         self.cwd = Path(cwd)
 
-        self.zmq_ctx = None
-        self.pub_sock = None
-        self.sub_sock = None
         self.local_sock = None
         self.local_socket_path = get_agent_socket_path(self.name)
         self.unread_file_path = self.cwd / ".unread-messages"
+        self.message_file_path = get_message_file_path(self.name)
 
         self.message_queue = deque(maxlen=100)
         self.members = {}
@@ -64,22 +155,18 @@ class Agent:
 
     def cleanup(self):
         """Clean up resources."""
-        # Send leave message
-        if self.pub_sock:
-            try:
-                self.send_message('leave', '')
-            except:
-                pass
+        # Unregister from registry
+        try:
+            registry = read_registry()
+            if self.name in registry:
+                del registry[self.name]
+                write_registry(registry)
+        except Exception as e:
+            print(f"Error unregistering: {e}", file=sys.stderr)
 
-        # Close sockets
-        if self.pub_sock:
-            self.pub_sock.close()
-        if self.sub_sock:
-            self.sub_sock.close()
+        # Close local socket
         if self.local_sock:
             self.local_sock.close()
-        if self.zmq_ctx:
-            self.zmq_ctx.term()
 
         # Remove unread messages file
         self.clear_unread_file()
@@ -92,34 +179,12 @@ class Agent:
             except OSError as e:
                 print(f"Error cleaning up socket: {e}", file=sys.stderr)
 
-    def connect_to_broker(self):
-        """Connect to broker. Fails if broker not running."""
-        paths = get_broker_paths()
-
-        # Check if broker sockets exist
-        if not os.path.exists(paths['pub']) or not os.path.exists(paths['sub']):
-            print(f"Error: Broker not running", file=sys.stderr)
-            print(f"Expected sockets at:", file=sys.stderr)
-            print(f"  {paths['pub']}", file=sys.stderr)
-            print(f"  {paths['sub']}", file=sys.stderr)
-            sys.exit(3)  # Special exit code for "broker not running"
-
-        # Initialize ZeroMQ
-        self.zmq_ctx = zmq.Context()
-
-        # PUB socket - send messages to broker
-        self.pub_sock = self.zmq_ctx.socket(zmq.PUB)
-        self.pub_sock.connect(f"ipc://{paths['pub']}")
-
-        # SUB socket - receive messages from broker
-        self.sub_sock = self.zmq_ctx.socket(zmq.SUB)
-        self.sub_sock.connect(f"ipc://{paths['sub']}")
-        self.sub_sock.subscribe(b"")  # Subscribe to all messages
-
-        # Small delay to allow ZeroMQ connections to establish (slow joiner problem)
-        time.sleep(0.1)
-
-        print(f"Connected to broker", file=sys.stderr)
+        # Remove message file
+        if self.message_file_path.exists():
+            try:
+                self.message_file_path.unlink()
+            except Exception as e:
+                print(f"Error removing message file: {e}", file=sys.stderr)
 
     def update_unread_file(self):
         """Update .unread-messages file with current queue size."""
@@ -138,13 +203,73 @@ class Agent:
             except Exception as e:
                 print(f"Error clearing unread file: {e}", file=sys.stderr)
 
-    def send_message(self, msg_type, content):
-        """Send a message to the broker."""
+    def register(self):
+        """Register agent in registry."""
+        registry = read_registry()
+
+        # Check if name already exists
+        if self.name in registry:
+            if check_agent_alive(self.name):
+                print(f"Error: Agent name '{self.name}' already in use", file=sys.stderr)
+                sys.exit(1)
+            else:
+                # Stale entry, clean it up
+                print(f"Cleaning up stale entry for '{self.name}'", file=sys.stderr)
+                del registry[self.name]
+
+        # Add self to registry
+        registry[self.name] = {
+            'name': self.name,
+            'context': self.context,
+            'presentation': self.presentation,
+            'joined_at': datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
+        }
+
+        write_registry(registry)
+
+        # Update local members cache
+        self.members = {k: v for k, v in registry.items() if k != self.name}
+
+        # Create message file if doesn't exist
+        self.message_file_path.touch()
+
+        print(f"Joined chat. {len(registry)} member(s) present.", file=sys.stderr)
+
+        # Broadcast join message to other agents
+        if self.members:
+            join_msg = {
+                'id': f"{self.name}-{datetime.now(UTC).isoformat().replace('+00:00', 'Z')}",
+                'timestamp': datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
+                'type': 'join',
+                'sender': {
+                    'name': self.name,
+                    'context': self.context,
+                    'presentation': self.presentation,
+                },
+                'content': self.presentation,
+            }
+
+            for agent_name in self.members.keys():
+                try:
+                    append_message_to_file(agent_name, join_msg)
+                except Exception as e:
+                    print(f"Error sending join to {agent_name}: {e}", file=sys.stderr)
+
+    def send_message_to_agents(self, content):
+        """Send message to all other agents."""
+        registry = read_registry()
+
+        # Update members cache
+        self.members = {k: v for k, v in registry.items() if k != self.name}
+
+        if not self.members:
+            return
+
         timestamp = datetime.now(UTC).isoformat().replace('+00:00', 'Z')
         msg = {
             'id': f"{self.name}-{timestamp}",
             'timestamp': timestamp,
-            'type': msg_type,
+            'type': 'message',
             'sender': {
                 'name': self.name,
                 'context': self.context,
@@ -153,76 +278,55 @@ class Agent:
             'content': content,
         }
 
-        self.pub_sock.send(json.dumps(msg).encode('utf-8'))
+        for agent_name in self.members.keys():
+            try:
+                append_message_to_file(agent_name, msg)
+            except Exception as e:
+                print(f"Error sending to {agent_name}: {e}", file=sys.stderr)
 
-    def join(self):
-        """Send join message and wait for members response."""
-        self.send_message('join', self.presentation)
-
-        # Wait for members message
-        poller = zmq.Poller()
-        poller.register(self.sub_sock, zmq.POLLIN)
-
-        timeout = 5000  # 5 seconds
-        events = dict(poller.poll(timeout))
-
-        if self.sub_sock in events:
-            raw_msg = self.sub_sock.recv()
-            msg = json.loads(raw_msg.decode('utf-8'))
-
-            if msg.get('type') == 'members':
-                self.members = msg.get('content', {})
-                print(f"Joined chat. {len(self.members)} member(s) present.", file=sys.stderr)
-            else:
-                # Put back in queue
-                self.message_queue.append(msg)
-        else:
-            print("Error: Broker not responding", file=sys.stderr)
-            print("No members response received within timeout", file=sys.stderr)
-            sys.exit(4)  # Exit code 4: broker not responding
-
-    def receive_messages_loop(self):
-        """Background thread to receive messages from broker."""
+    def poll_messages_loop(self):
+        """Background thread to poll for new messages."""
         while self.running:
             try:
-                if self.sub_sock.poll(timeout=1000):
-                    raw_msg = self.sub_sock.recv()
-                    msg = json.loads(raw_msg.decode('utf-8'))
+                # Check for new messages
+                messages = read_and_clear_messages(self.name)
 
-                    # Filter out messages targeted to other agents
-                    if 'target' in msg and msg['target'] != self.name:
-                        continue
+                if messages:
+                    for msg in messages:
+                        msg_type = msg.get('type')
 
-                    msg_type = msg.get('type')
+                        if msg_type == 'join':
+                            # Update members
+                            sender = msg.get('sender', {})
+                            sender_name = sender.get('name')
+                            if sender_name and sender_name != self.name:
+                                self.members[sender_name] = sender
+                                self.message_queue.append(msg)
 
-                    if msg_type == 'join':
-                        # Update members
-                        sender = msg.get('sender', {})
-                        sender_name = sender.get('name')
-                        if sender_name and sender_name != self.name:
-                            self.members[sender_name] = sender
+                        elif msg_type == 'leave':
+                            # Update members
+                            sender = msg.get('sender', {})
+                            sender_name = sender.get('name')
+                            if sender_name and sender_name in self.members:
+                                del self.members[sender_name]
                             self.message_queue.append(msg)
-                            self.update_unread_file()
 
-                    elif msg_type == 'leave':
-                        # Update members
-                        sender = msg.get('sender', {})
-                        sender_name = sender.get('name')
-                        if sender_name and sender_name in self.members:
-                            del self.members[sender_name]
-                        self.message_queue.append(msg)
-                        self.update_unread_file()
+                        elif msg_type == 'message':
+                            # Queue message
+                            sender = msg.get('sender', {})
+                            if sender.get('name') != self.name:
+                                self.message_queue.append(msg)
 
-                    elif msg_type == 'message':
-                        # Queue message if not from self
-                        sender = msg.get('sender', {})
-                        if sender.get('name') != self.name:
-                            self.message_queue.append(msg)
-                            self.update_unread_file()
+                    # Update unread file
+                    self.update_unread_file()
+
+                # Sleep before next poll
+                time.sleep(0.5)
 
             except Exception as e:
                 if self.running:
-                    print(f"Error in receive loop: {e}", file=sys.stderr)
+                    print(f"Error in poll loop: {e}", file=sys.stderr)
+                time.sleep(1)
 
     def start_local_server(self):
         """Start local Unix socket server for chat.py commands."""
@@ -252,7 +356,7 @@ class Agent:
                 }
 
             content = cmd.get('args', {}).get('content', '')
-            self.send_message('message', content)
+            self.send_message_to_agents(content)
             return {'status': 'ok', 'data': {}}
 
         elif command == 'receive':
@@ -271,7 +375,7 @@ class Agent:
                         while self.message_queue:
                             messages.append(self.message_queue.popleft())
                         break
-                    time.sleep(0.1)  # Poll every 100ms
+                    time.sleep(0.1)
 
             # Clear unread file since messages have been read
             self.clear_unread_file()
@@ -319,18 +423,15 @@ class Agent:
 
     def run(self):
         """Run the agent."""
-        # Connect to broker
-        self.connect_to_broker()
-
-        # Join the chat
-        self.join()
+        # Register
+        self.register()
 
         # Start local server
         self.start_local_server()
 
-        # Start receive thread
-        receive_thread = threading.Thread(target=self.receive_messages_loop, daemon=True)
-        receive_thread.start()
+        # Start poll thread
+        poll_thread = threading.Thread(target=self.poll_messages_loop, daemon=True)
+        poll_thread.start()
 
         # Run local server
         self.run_local_server()
@@ -373,6 +474,27 @@ def main():
     def signal_handler(sig, frame):
         print("\nAgent shutting down...", file=sys.stderr)
         agent.running = False
+
+        # Broadcast leave message
+        if agent.members:
+            leave_msg = {
+                'id': f"{agent.name}-{datetime.now(UTC).isoformat().replace('+00:00', 'Z')}",
+                'timestamp': datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
+                'type': 'leave',
+                'sender': {
+                    'name': agent.name,
+                    'context': agent.context,
+                    'presentation': agent.presentation,
+                },
+                'content': '',
+            }
+
+            for agent_name in agent.members.keys():
+                try:
+                    append_message_to_file(agent_name, leave_msg)
+                except:
+                    pass
+
         agent.cleanup()
         sys.exit(0)
 

@@ -104,7 +104,7 @@ The plugin provides a collection of proven workflow skills organized by category
 - **using-beads**: Dependency-aware task management with bd - track all work, model dependencies, use bd ready for next tasks
 
 *Multi-Agent Collaboration:*
-- **agent-communication**: Enable communication between multiple Claude Code instances across repositories using ZeroMQ-based chat system (broker, agent daemon, chat CLI)
+- **agent-communication**: Enable communication between multiple Claude Code instances across repositories using file-based chat system (agent daemon, chat CLI)
 
 **Key workflows:**
 - Skills directory contains full skill definitions from two upstream repositories

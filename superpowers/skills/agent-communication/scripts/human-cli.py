@@ -12,6 +12,7 @@ import argparse
 import subprocess
 import signal
 import time
+import struct
 import threading
 import socket as sock
 from pathlib import Path
@@ -23,10 +24,17 @@ def get_runtime_dir():
     return Path(os.environ.get('XDG_RUNTIME_DIR', '/tmp'))
 
 
+def get_chat_dir():
+    """Get chat directory for registry and sockets."""
+    chat_dir = get_runtime_dir() / "claude-agent-chat"
+    chat_dir.mkdir(exist_ok=True)
+    return chat_dir
+
+
 def get_agent_socket_path(agent_name):
     """Get agent's local socket path."""
-    runtime_dir = get_runtime_dir()
-    return str(runtime_dir / f"claude-agent-{agent_name}.sock")
+    chat_dir = get_chat_dir()
+    return str(chat_dir / f"{agent_name}.sock")
 
 
 def send_command(sock_path, command, args=None):
@@ -39,15 +47,35 @@ def send_command(sock_path, command, args=None):
         s.settimeout(5.0)
         s.connect(sock_path)
 
-        cmd = {
+        # Wrap in envelope
+        envelope = {
+            'type': 'command',
             'command': command,
             'args': args,
         }
-        s.send(json.dumps(cmd).encode('utf-8'))
 
-        data = s.recv(4096)
-        response = json.loads(data.decode('utf-8'))
+        # Send with length prefix
+        payload = json.dumps(envelope).encode('utf-8')
+        s.sendall(struct.pack('>I', len(payload)) + payload)
 
+        # Receive response with length prefix
+        length_data = b''
+        while len(length_data) < 4:
+            chunk = s.recv(4 - len(length_data))
+            if not chunk:
+                raise Exception("Connection closed by server")
+            length_data += chunk
+
+        response_length = struct.unpack('>I', length_data)[0]
+
+        response_data = b''
+        while len(response_data) < response_length:
+            chunk = s.recv(min(4096, response_length - len(response_data)))
+            if not chunk:
+                break
+            response_data += chunk
+
+        response = json.loads(response_data.decode('utf-8'))
         s.close()
 
         return response

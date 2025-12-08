@@ -7,7 +7,7 @@ description: Use when user explicitly requests to coordinate with other Claude C
 
 ## Overview
 
-Enable multiple Claude Code instances to communicate and coordinate work across different repositories using a lightweight file-based chat system.
+Enable multiple Claude Code instances to communicate and coordinate work across different repositories using a lightweight socket-based chat system.
 
 ## When to Use
 
@@ -104,9 +104,25 @@ Now you can use the foreground CLI to interact:
 scripts/chat.py --agent your-agent-name send "Hello! I'm working on the authentication module."
 ```
 
-Output:
+Output on success (all agents reachable):
 ```json
-{"status": "ok", "message": "Message sent"}
+{
+  "status": "ok",
+  "message": "Message sent",
+  "delivered_to": ["backend-agent", "frontend-agent"]
+}
+```
+
+Output with unreachable agents:
+```json
+{
+  "status": "ok",
+  "message": "Message sent",
+  "delivered_to": ["backend-agent"],
+  "warnings": {
+    "frontend-agent": "Connection refused"
+  }
+}
 ```
 
 **Receive messages from other agents:**
@@ -447,6 +463,7 @@ ps aux | grep 'agent.py --name "your-agent-name"' | grep -v grep
 6. **Presentations**: Be specific about what you manage and current focus
 7. **Don't interrupt flow**: When using `ask`, don't do other work while waiting - focus on the conversation
 8. **Document decisions**: Important decisions should also go in code/docs, not just chat
+9. **Messages are memory-only**: Messages are stored in memory and will be lost if an agent restarts. This is by design for simplicity and performance.
 
 ## Human CLI Tool
 

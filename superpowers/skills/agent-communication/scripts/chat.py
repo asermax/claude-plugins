@@ -10,6 +10,7 @@ import sys
 import json
 import argparse
 import socket
+import struct
 import os
 from pathlib import Path
 
@@ -19,6 +20,13 @@ def get_runtime_dir():
     return Path(os.environ.get('XDG_RUNTIME_DIR', '/tmp'))
 
 
+def get_chat_dir():
+    """Get chat directory for registry and sockets."""
+    chat_dir = get_runtime_dir() / "claude-agent-chat"
+    chat_dir.mkdir(exist_ok=True)
+    return chat_dir
+
+
 def send_command(sock_path, command, args=None):
     """Send command to agent and return response."""
     if args is None:
@@ -26,21 +34,40 @@ def send_command(sock_path, command, args=None):
 
     try:
         # Connect to agent
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect(sock_path)
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.settimeout(35.0)  # Slightly longer than server's 30s
+        s.connect(sock_path)
 
-        # Send command
-        cmd = {
+        # Wrap in envelope
+        envelope = {
+            'type': 'command',
             'command': command,
             'args': args,
         }
-        sock.send(json.dumps(cmd).encode('utf-8'))
 
-        # Receive response
-        data = sock.recv(4096)
-        response = json.loads(data.decode('utf-8'))
+        # Send with length prefix
+        payload = json.dumps(envelope).encode('utf-8')
+        s.sendall(struct.pack('>I', len(payload)) + payload)
 
-        sock.close()
+        # Receive response with length prefix
+        length_data = b''
+        while len(length_data) < 4:
+            chunk = s.recv(4 - len(length_data))
+            if not chunk:
+                raise Exception("Connection closed by server")
+            length_data += chunk
+
+        response_length = struct.unpack('>I', length_data)[0]
+
+        response_data = b''
+        while len(response_data) < response_length:
+            chunk = s.recv(min(4096, response_length - len(response_data)))
+            if not chunk:
+                break
+            response_data += chunk
+
+        response = json.loads(response_data.decode('utf-8'))
+        s.close()
 
         return response
 
@@ -61,8 +88,19 @@ def cmd_send(args, sock_path):
     response = send_command(sock_path, 'send', {'content': args.message})
 
     if response['status'] == 'ok':
-        print(json.dumps({'status': 'ok', 'message': 'Message sent'}))
-        return 0
+        data = response.get('data', {})
+        delivered = data.get('delivered_to', [])
+        failed = data.get('failed', {})
+
+        result = {'status': 'ok', 'message': 'Message sent'}
+
+        if delivered:
+            result['delivered_to'] = delivered
+        if failed:
+            result['warnings'] = {agent: error for agent, error in failed.items()}
+
+        print(json.dumps(result))
+        return 0  # Success even with warnings
     else:
         print(json.dumps(response))
         return 1
@@ -157,8 +195,8 @@ Examples:
         return 1
 
     # Get agent socket path
-    runtime_dir = get_runtime_dir()
-    sock_path = str(runtime_dir / f"claude-agent-{args.agent}.sock")
+    chat_dir = get_chat_dir()
+    sock_path = str(chat_dir / f"{args.agent}.sock")
 
     if not os.path.exists(sock_path):
         print(json.dumps({

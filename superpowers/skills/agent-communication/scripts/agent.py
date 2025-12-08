@@ -14,17 +14,12 @@ import atexit
 import signal
 import argparse
 import time
+import struct
 from datetime import datetime, UTC
 from pathlib import Path
 from collections import deque
 import threading
 import socket as sock
-
-try:
-    from inotify_simple import INotify, flags
-except ImportError:
-    print("Error: inotify-simple not installed. Run: pip install inotify-simple", file=sys.stderr)
-    sys.exit(1)
 
 
 def get_runtime_dir():
@@ -33,10 +28,9 @@ def get_runtime_dir():
 
 
 def get_chat_dir():
-    """Get chat directory for registry and messages."""
+    """Get chat directory for registry."""
     chat_dir = get_runtime_dir() / "claude-agent-chat"
     chat_dir.mkdir(exist_ok=True)
-    (chat_dir / "messages").mkdir(exist_ok=True)
     return chat_dir
 
 
@@ -45,15 +39,10 @@ def get_registry_path():
     return get_chat_dir() / "registry.json"
 
 
-def get_message_file_path(agent_name):
-    """Get path to agent's message file."""
-    return get_chat_dir() / "messages" / f"{agent_name}.jsonl"
-
-
 def get_agent_socket_path(agent_name):
     """Get agent's local socket path."""
-    runtime_dir = get_runtime_dir()
-    return str(runtime_dir / f"claude-agent-{agent_name}.sock")
+    chat_dir = get_chat_dir()
+    return str(chat_dir / f"{agent_name}.sock")
 
 
 def read_registry():
@@ -101,45 +90,6 @@ def check_agent_alive(agent_name):
         return False
 
 
-def append_message_to_file(agent_name, message):
-    """Append message to agent's message file with exclusive lock."""
-    message_file = get_message_file_path(agent_name)
-
-    with open(message_file, 'a') as f:
-        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-        try:
-            f.write(json.dumps(message) + '\n')
-        finally:
-            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-
-
-def read_and_clear_messages(agent_name):
-    """Read all messages from agent's file and clear it."""
-    message_file = get_message_file_path(agent_name)
-
-    if not message_file.exists():
-        return []
-
-    messages = []
-    with open(message_file, 'r+') as f:
-        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-        try:
-            for line in f:
-                line = line.strip()
-                if line:
-                    try:
-                        messages.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        print(f"Invalid JSON in message file: {line}", file=sys.stderr)
-
-            f.seek(0)
-            f.truncate()
-        finally:
-            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-
-    return messages
-
-
 class Agent:
     """Agent daemon."""
 
@@ -153,7 +103,6 @@ class Agent:
         self.local_sock = None
         self.local_socket_path = get_agent_socket_path(self.name)
         self.unread_file_path = self.cwd / ".unread-messages"
-        self.message_file_path = get_message_file_path(self.name)
 
         self.message_queue = deque(maxlen=100)
         self.members = {}
@@ -186,13 +135,6 @@ class Agent:
             except OSError as e:
                 print(f"Error cleaning up socket: {e}", file=sys.stderr)
 
-        # Remove message file
-        if self.message_file_path.exists():
-            try:
-                self.message_file_path.unlink()
-            except Exception as e:
-                print(f"Error removing message file: {e}", file=sys.stderr)
-
     def update_unread_file(self):
         """Update .unread-messages file with current queue size."""
         count = len(self.message_queue)
@@ -210,6 +152,113 @@ class Agent:
             except Exception as e:
                 print(f"Error clearing unread file: {e}", file=sys.stderr)
 
+    def recv_framed_message(self, conn):
+        """Read a length-prefixed JSON message from socket."""
+        # Read 4-byte length prefix
+        length_data = b''
+        while len(length_data) < 4:
+            chunk = conn.recv(4 - len(length_data))
+            if not chunk:
+                return None
+            length_data += chunk
+
+        message_length = struct.unpack('>I', length_data)[0]
+
+        # Sanity check on message size (prevent DoS)
+        MAX_MESSAGE_SIZE = 1024 * 1024  # 1MB
+        if message_length > MAX_MESSAGE_SIZE:
+            raise ValueError(f"Message too large: {message_length}")
+
+        # Read message body
+        message_data = b''
+        while len(message_data) < message_length:
+            chunk = conn.recv(min(4096, message_length - len(message_data)))
+            if not chunk:
+                return None
+            message_data += chunk
+
+        return json.loads(message_data.decode('utf-8'))
+
+    def send_framed_message(self, conn, message):
+        """Send a length-prefixed JSON message to socket."""
+        payload = json.dumps(message).encode('utf-8')
+        conn.sendall(struct.pack('>I', len(payload)) + payload)
+
+    def send_to_agent(self, target_name, message):
+        """Send message directly to another agent's socket.
+
+        Returns:
+            (success: bool, error_message: str | None)
+        """
+        # Look up socket path from registry
+        registry = read_registry()
+        target = registry.get(target_name)
+
+        if not target:
+            return (False, f"Agent {target_name} not in registry")
+
+        socket_path = target.get('socket_path')
+        if not socket_path:
+            return (False, f"No socket path for {target_name}")
+
+        # Connect and send
+        try:
+            s = sock.socket(sock.AF_UNIX, sock.SOCK_STREAM)
+            s.settimeout(5.0)  # 5 second timeout for connection
+            s.connect(socket_path)
+
+            envelope = {
+                "type": "remote_message",
+                "message": message
+            }
+
+            # Send with length prefix
+            self.send_framed_message(s, envelope)
+
+            # Read response
+            response = self.recv_framed_message(s)
+
+            s.close()
+
+            return (True, None)
+
+        except (sock.error, ConnectionRefusedError, FileNotFoundError) as e:
+            # Remove from members cache if unreachable
+            if target_name in self.members:
+                del self.members[target_name]
+            return (False, str(e))
+
+    def handle_remote_message(self, envelope):
+        """Handle message received from another agent."""
+        message = envelope.get('message', {})
+        msg_type = message.get('type')
+        sender = message.get('sender', {})
+        sender_name = sender.get('name')
+
+        if msg_type == 'join':
+            # Update members cache
+            if sender_name and sender_name != self.name:
+                self.members[sender_name] = sender
+            self.message_queue.append(message)
+
+        elif msg_type == 'leave':
+            # Remove from members
+            if sender_name and sender_name in self.members:
+                del self.members[sender_name]
+            self.message_queue.append(message)
+
+        elif msg_type == 'message':
+            if sender.get('name') != self.name:
+                self.message_queue.append(message)
+
+        # Update unread file
+        self.update_unread_file()
+
+        # Signal waiting receivers
+        self.message_event.set()
+
+        return {'status': 'ok'}
+
     def register(self):
         """Register agent in registry."""
         registry = read_registry()
@@ -224,12 +273,13 @@ class Agent:
                 print(f"Cleaning up stale entry for '{self.name}'", file=sys.stderr)
                 del registry[self.name]
 
-        # Add self to registry
+        # Add self to registry WITH socket path
         registry[self.name] = {
             'name': self.name,
             'context': self.context,
             'presentation': self.presentation,
             'joined_at': datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
+            'socket_path': self.local_socket_path,
         }
 
         write_registry(registry)
@@ -237,12 +287,9 @@ class Agent:
         # Update local members cache
         self.members = {k: v for k, v in registry.items() if k != self.name}
 
-        # Create message file if doesn't exist
-        self.message_file_path.touch()
-
         print(f"Joined chat. {len(registry)} member(s) present.", file=sys.stderr)
 
-        # Broadcast join message to other agents
+        # Broadcast join message via socket (not file)
         if self.members:
             join_msg = {
                 'id': f"{self.name}-{datetime.now(UTC).isoformat().replace('+00:00', 'Z')}",
@@ -256,21 +303,24 @@ class Agent:
                 'content': self.presentation,
             }
 
-            for agent_name in self.members.keys():
-                try:
-                    append_message_to_file(agent_name, join_msg)
-                except Exception as e:
-                    print(f"Error sending join to {agent_name}: {e}", file=sys.stderr)
+            for agent_name in list(self.members.keys()):
+                success, error = self.send_to_agent(agent_name, join_msg)
+                if not success:
+                    print(f"Could not notify {agent_name} of join: {error}", file=sys.stderr)
 
     def send_message_to_agents(self, content):
-        """Send message to all other agents."""
+        """Send message to all other agents via direct socket.
+
+        Returns:
+            dict with 'delivered_to' and 'failed' keys
+        """
         registry = read_registry()
 
         # Update members cache
         self.members = {k: v for k, v in registry.items() if k != self.name}
 
         if not self.members:
-            return
+            return {'delivered_to': [], 'failed': {}}
 
         timestamp = datetime.now(UTC).isoformat().replace('+00:00', 'Z')
         msg = {
@@ -285,65 +335,18 @@ class Agent:
             'content': content,
         }
 
-        for agent_name in self.members.keys():
-            try:
-                append_message_to_file(agent_name, msg)
-            except Exception as e:
-                print(f"Error sending to {agent_name}: {e}", file=sys.stderr)
+        delivered = []
+        failed = {}
 
-    def watch_messages_loop(self):
-        """Background thread to watch for new messages using inotify."""
-        inotify = INotify()
-        watch_flags = flags.MODIFY | flags.CREATE | flags.MOVED_TO
-        wd = inotify.add_watch(str(self.message_file_path.parent), watch_flags)
+        # Create a list to avoid dictionary changed size during iteration
+        for agent_name in list(self.members.keys()):
+            success, error = self.send_to_agent(agent_name, msg)
+            if success:
+                delivered.append(agent_name)
+            else:
+                failed[agent_name] = error
 
-        while self.running:
-            try:
-                events = inotify.read(timeout=1000)  # 1s timeout for graceful shutdown
-
-                # Filter for our message file
-                our_events = [e for e in events if e.name == self.message_file_path.name]
-
-                if our_events:
-                    messages = read_and_clear_messages(self.name)
-
-                    if messages:
-                        for msg in messages:
-                            msg_type = msg.get('type')
-
-                            if msg_type == 'join':
-                                # Update members
-                                sender = msg.get('sender', {})
-                                sender_name = sender.get('name')
-                                if sender_name and sender_name != self.name:
-                                    self.members[sender_name] = sender
-                                    self.message_queue.append(msg)
-
-                            elif msg_type == 'leave':
-                                # Update members
-                                sender = msg.get('sender', {})
-                                sender_name = sender.get('name')
-                                if sender_name and sender_name in self.members:
-                                    del self.members[sender_name]
-                                self.message_queue.append(msg)
-
-                            elif msg_type == 'message':
-                                # Queue message
-                                sender = msg.get('sender', {})
-                                if sender.get('name') != self.name:
-                                    self.message_queue.append(msg)
-
-                        # Update unread file
-                        self.update_unread_file()
-                        # Signal waiting receivers
-                        self.message_event.set()
-
-            except Exception as e:
-                if self.running:
-                    print(f"Error in watch loop: {e}", file=sys.stderr)
-                    time.sleep(1)  # Backoff on error
-
-        inotify.close()
+        return {'delivered_to': delivered, 'failed': failed}
 
     def start_local_server(self):
         """Start local Unix socket server for chat.py commands."""
@@ -373,8 +376,13 @@ class Agent:
                 }
 
             content = cmd.get('args', {}).get('content', '')
-            self.send_message_to_agents(content)
-            return {'status': 'ok', 'data': {}}
+            result = self.send_message_to_agents(content)
+
+            # Include delivery report
+            return {
+                'status': 'ok',
+                'data': result
+            }
 
         elif command == 'receive':
             timeout = cmd.get('args', {}).get('timeout', 30)
@@ -416,21 +424,32 @@ class Agent:
             return {'status': 'error', 'error': f'Unknown command: {command}'}
 
     def run_local_server(self):
-        """Run local server loop."""
+        """Run server loop handling both local and remote connections."""
         while self.running:
             conn = None
             try:
                 conn, addr = self.local_sock.accept()
+                conn.settimeout(30.0)  # Timeout for slow clients
 
-                # Receive command
-                data = conn.recv(4096)
-                cmd = json.loads(data.decode('utf-8'))
+                # Read framed message
+                envelope = self.recv_framed_message(conn)
+                if not envelope:
+                    continue
 
-                # Handle command
-                response = self.handle_command(cmd)
+                # Route based on type
+                msg_type = envelope.get('type')
+
+                if msg_type == 'command':
+                    # Local command from chat.py
+                    response = self.handle_command(envelope)
+                elif msg_type == 'remote_message':
+                    # Message from another agent
+                    response = self.handle_remote_message(envelope)
+                else:
+                    response = {'status': 'error', 'error': f'Unknown message type: {msg_type}'}
 
                 # Send response
-                conn.send(json.dumps(response).encode('utf-8'))
+                self.send_framed_message(conn, response)
 
             except sock.timeout:
                 continue
@@ -439,7 +458,7 @@ class Agent:
                 pass
             except Exception as e:
                 if self.running:
-                    print(f"Error in local server: {e}", file=sys.stderr)
+                    print(f"Error in server: {e}", file=sys.stderr)
             finally:
                 if conn:
                     try:
@@ -454,10 +473,6 @@ class Agent:
 
         # Start local server
         self.start_local_server()
-
-        # Start watch thread
-        watch_thread = threading.Thread(target=self.watch_messages_loop, daemon=True)
-        watch_thread.start()
 
         # Run local server
         self.run_local_server()
@@ -504,7 +519,7 @@ def main():
         print("\nAgent shutting down...", file=sys.stderr)
         agent.running = False
 
-        # Broadcast leave message
+        # Broadcast leave message via socket (not file)
         if agent.members:
             leave_msg = {
                 'id': f"{agent.name}-{datetime.now(UTC).isoformat().replace('+00:00', 'Z')}",
@@ -518,11 +533,11 @@ def main():
                 'content': '',
             }
 
-            for agent_name in agent.members.keys():
+            for agent_name in list(agent.members.keys()):
                 try:
-                    append_message_to_file(agent_name, leave_msg)
+                    agent.send_to_agent(agent_name, leave_msg)
                 except:
-                    pass
+                    pass  # Best effort
 
         agent.cleanup()
         sys.exit(0)

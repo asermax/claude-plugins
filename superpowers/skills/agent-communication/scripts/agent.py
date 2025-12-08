@@ -106,6 +106,7 @@ class Agent:
 
         self.message_queue = deque(maxlen=100)
         self.members = {}
+        self.members_lock = threading.Lock()
         self.running = True
         self.message_event = threading.Event()
 
@@ -238,13 +239,15 @@ class Agent:
         if msg_type == 'join':
             # Update members cache
             if sender_name and sender_name != self.name:
-                self.members[sender_name] = sender
+                with self.members_lock:
+                    self.members[sender_name] = sender
             self.message_queue.append(message)
 
         elif msg_type == 'leave':
             # Remove from members
             if sender_name and sender_name in self.members:
-                del self.members[sender_name]
+                with self.members_lock:
+                    del self.members[sender_name]
             self.message_queue.append(message)
 
         elif msg_type == 'message':
@@ -285,12 +288,16 @@ class Agent:
         write_registry(registry)
 
         # Update local members cache
-        self.members = {k: v for k, v in registry.items() if k != self.name}
+        with self.members_lock:
+            self.members = {k: v for k, v in registry.items() if k != self.name}
 
         print(f"Joined chat. {len(registry)} member(s) present.", file=sys.stderr)
 
         # Broadcast join message via socket (not file)
-        if self.members:
+        with self.members_lock:
+            members_to_notify = list(self.members.keys())
+
+        if members_to_notify:
             join_msg = {
                 'id': f"{self.name}-{datetime.now(UTC).isoformat().replace('+00:00', 'Z')}",
                 'timestamp': datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
@@ -303,7 +310,7 @@ class Agent:
                 'content': self.presentation,
             }
 
-            for agent_name in list(self.members.keys()):
+            for agent_name in members_to_notify:
                 success, error = self.send_to_agent(agent_name, join_msg)
                 if not success:
                     print(f"Could not notify {agent_name} of join: {error}", file=sys.stderr)
@@ -317,9 +324,11 @@ class Agent:
         registry = read_registry()
 
         # Update members cache
-        self.members = {k: v for k, v in registry.items() if k != self.name}
+        with self.members_lock:
+            self.members = {k: v for k, v in registry.items() if k != self.name}
+            members_to_send = list(self.members.keys())
 
-        if not self.members:
+        if not members_to_send:
             return {'delivered_to': [], 'failed': {}}
 
         timestamp = datetime.now(UTC).isoformat().replace('+00:00', 'Z')
@@ -338,8 +347,8 @@ class Agent:
         delivered = []
         failed = {}
 
-        # Create a list to avoid dictionary changed size during iteration
-        for agent_name in list(self.members.keys()):
+        # Iterate over copy to avoid dictionary changed size during iteration
+        for agent_name in members_to_send:
             success, error = self.send_to_agent(agent_name, msg)
             if success:
                 delivered.append(agent_name)
@@ -423,48 +432,50 @@ class Agent:
         else:
             return {'status': 'error', 'error': f'Unknown command: {command}'}
 
+    def _handle_connection(self, conn):
+        """Handle a single connection in its own thread."""
+        try:
+            conn.settimeout(30.0)
+            envelope = self.recv_framed_message(conn)
+            if not envelope:
+                return
+
+            msg_type = envelope.get('type')
+            if msg_type == 'command':
+                response = self.handle_command(envelope)
+            elif msg_type == 'remote_message':
+                response = self.handle_remote_message(envelope)
+            else:
+                response = {'status': 'error', 'error': f'Unknown message type: {msg_type}'}
+
+            self.send_framed_message(conn, response)
+        except BrokenPipeError:
+            pass
+        except Exception as e:
+            if self.running:
+                print(f"Error handling connection: {e}", file=sys.stderr)
+        finally:
+            try:
+                conn.close()
+            except:
+                pass
+
     def run_local_server(self):
-        """Run server loop handling both local and remote connections."""
+        """Run server loop spawning handler threads for each connection."""
         while self.running:
-            conn = None
             try:
                 conn, addr = self.local_sock.accept()
-                conn.settimeout(30.0)  # Timeout for slow clients
-
-                # Read framed message
-                envelope = self.recv_framed_message(conn)
-                if not envelope:
-                    continue
-
-                # Route based on type
-                msg_type = envelope.get('type')
-
-                if msg_type == 'command':
-                    # Local command from chat.py
-                    response = self.handle_command(envelope)
-                elif msg_type == 'remote_message':
-                    # Message from another agent
-                    response = self.handle_remote_message(envelope)
-                else:
-                    response = {'status': 'error', 'error': f'Unknown message type: {msg_type}'}
-
-                # Send response
-                self.send_framed_message(conn, response)
-
+                handler = threading.Thread(
+                    target=self._handle_connection,
+                    args=(conn,),
+                    daemon=True
+                )
+                handler.start()
             except sock.timeout:
                 continue
-            except BrokenPipeError:
-                # Client disconnected before receiving response - expected behavior
-                pass
             except Exception as e:
                 if self.running:
-                    print(f"Error in server: {e}", file=sys.stderr)
-            finally:
-                if conn:
-                    try:
-                        conn.close()
-                    except:
-                        pass
+                    print(f"Error accepting connection: {e}", file=sys.stderr)
 
     def run(self):
         """Run the agent."""
@@ -520,7 +531,10 @@ def main():
         agent.running = False
 
         # Broadcast leave message via socket (not file)
-        if agent.members:
+        with agent.members_lock:
+            members_to_notify = list(agent.members.keys())
+
+        if members_to_notify:
             leave_msg = {
                 'id': f"{agent.name}-{datetime.now(UTC).isoformat().replace('+00:00', 'Z')}",
                 'timestamp': datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
@@ -533,7 +547,7 @@ def main():
                 'content': '',
             }
 
-            for agent_name in list(agent.members.keys()):
+            for agent_name in members_to_notify:
                 try:
                     agent.send_to_agent(agent_name, leave_msg)
                 except:

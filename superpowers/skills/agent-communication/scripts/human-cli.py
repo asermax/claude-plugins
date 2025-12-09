@@ -15,6 +15,7 @@ import time
 import struct
 import threading
 import socket as sock
+import readline
 from pathlib import Path
 from datetime import datetime
 
@@ -106,6 +107,7 @@ class HumanCLI:
         self.agent_process = None
         self.running = True
         self.message_thread = None
+        self.display_lock = threading.Lock()
 
         # ANSI color codes
         self.COLOR_RESET = '\033[0m'
@@ -130,38 +132,54 @@ class HumanCLI:
         except:
             return iso_timestamp
 
+    def unescape_content(self, content):
+        """Unescape common shell escape sequences in message content."""
+        # Remove backslashes before characters that don't need escaping in display
+        # This fixes messages that were sent via shell with escaped special chars
+        return content.replace('\\!', '!').replace('\\?', '?').replace('\\$', '$')
+
     def display_message(self, msg):
         """Display a message with formatting."""
-        msg_type = msg.get('type', 'message')
-        sender = msg.get('sender', {})
-        sender_name = sender.get('name', 'unknown')
-        timestamp = self.format_timestamp(msg.get('timestamp', ''))
-        content = msg.get('content', '')
+        with self.display_lock:
+            msg_type = msg.get('type', 'message')
+            sender = msg.get('sender', {})
+            sender_name = sender.get('name', 'unknown')
+            timestamp = self.format_timestamp(msg.get('timestamp', ''))
+            content = self.unescape_content(msg.get('content', ''))
 
-        # Clear current line and move to start
-        print('\r\033[K', end='')
+            # Save the current line buffer and cursor position
+            saved_line = readline.get_line_buffer()
+            saved_point = readline.get_begidx()
 
-        if msg_type == 'join':
-            self.print_colored(
-                f"[{timestamp}] → {sender_name} joined the chat",
-                self.COLOR_GREEN
-            )
-            context = sender.get('context', '')
-            if context:
-                self.print_colored(f"  Context: {context}", self.COLOR_GRAY)
-        elif msg_type == 'leave':
-            self.print_colored(
-                f"[{timestamp}] ← {sender_name} left the chat",
-                self.COLOR_YELLOW
-            )
-        else:
-            self.print_colored(
-                f"[{timestamp}] {sender_name}: {content}",
-                self.COLOR_BLUE
-            )
+            # Move to beginning of line and clear it
+            sys.stdout.write('\r\033[K')
+            sys.stdout.flush()
 
-        # Redisplay prompt
-        print('> ', end='', flush=True)
+            if msg_type == 'join':
+                self.print_colored(
+                    f"[{timestamp}] → {sender_name} joined the chat",
+                    self.COLOR_GREEN
+                )
+                context = sender.get('context', '')
+                if context:
+                    self.print_colored(f"  Context: {context}", self.COLOR_GRAY)
+            elif msg_type == 'leave':
+                self.print_colored(
+                    f"[{timestamp}] ← {sender_name} left the chat",
+                    self.COLOR_YELLOW
+                )
+            else:
+                self.print_colored(
+                    f"[{timestamp}] {sender_name}: {content}",
+                    self.COLOR_BLUE
+                )
+
+            # Restore the prompt and the user's input
+            sys.stdout.write('> ' + saved_line)
+            sys.stdout.flush()
+
+            # Force readline to redraw (if terminal supports it)
+            readline.redisplay()
 
     def start_agent(self):
         """Start agent daemon as subprocess."""
@@ -279,19 +297,23 @@ class HumanCLI:
 
     def run_repl(self):
         """Run the REPL loop."""
-        print('> ', end='', flush=True)
-
         try:
             while self.running:
-                line = sys.stdin.readline()
-
-                if not line:  # EOF
+                try:
+                    # Use input() for proper readline integration
+                    # Don't use lock here - let messages interrupt
+                    line = input('> ')
+                except EOFError:
+                    # Ctrl+D pressed
                     break
+                except KeyboardInterrupt:
+                    # Ctrl+C pressed
+                    print()
+                    continue
 
                 line = line.strip()
 
                 if not line:
-                    print('> ', end='', flush=True)
                     continue
 
                 # Handle commands
@@ -314,8 +336,6 @@ class HumanCLI:
                 else:
                     # Send as message
                     self.cmd_send(line)
-
-                print('> ', end='', flush=True)
 
         except KeyboardInterrupt:
             print("\nGoodbye!")

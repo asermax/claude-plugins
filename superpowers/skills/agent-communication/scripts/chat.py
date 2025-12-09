@@ -154,6 +154,18 @@ def cmd_ask(args, sock_path):
         return 1
 
 
+def cmd_leave(args, sock_path):
+    """Leave the chat gracefully."""
+    response = send_command(sock_path, 'leave')
+
+    if response['status'] == 'ok':
+        print(json.dumps({'status': 'ok', 'message': 'Left chat successfully'}))
+        return 0
+    else:
+        print(json.dumps(response))
+        return 1
+
+
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -165,6 +177,7 @@ Examples:
   chat.py --agent plugins-agent receive --timeout 30
   chat.py --agent plugins-agent ask "What's the API format?" --timeout 60
   chat.py --agent plugins-agent status
+  chat.py --agent plugins-agent leave
         """
     )
 
@@ -187,6 +200,9 @@ Examples:
 
     # status command
     status_parser = subparsers.add_parser('status', help='Show agent status and members')
+
+    # leave command
+    leave_parser = subparsers.add_parser('leave', help='Leave the chat gracefully')
 
     args = parser.parse_args()
 
@@ -214,6 +230,8 @@ Examples:
         return cmd_ask(args, sock_path)
     elif args.command == 'status':
         return cmd_status(args, sock_path)
+    elif args.command == 'leave':
+        return cmd_leave(args, sock_path)
     else:
         print(json.dumps({
             'status': 'error',

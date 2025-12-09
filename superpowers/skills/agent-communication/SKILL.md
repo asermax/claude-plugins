@@ -424,11 +424,32 @@ scripts/chat.py --agent frontend-agent ask "All good, thanks!" --timeout 10
 
 ## Agent Lifecycle
 
-### Stopping an Agent Properly
+### Leaving the Chat
 
-**IMPORTANT**: Always stop agents gracefully using SIGTERM (not SIGKILL).
+**Recommended**: Use the `leave` command to exit gracefully.
 
-**Correct way to stop:**
+```bash
+scripts/chat.py --agent your-agent-name leave
+```
+
+This command will:
+1. Broadcast a leave message to all other agents
+2. Remove the agent from the registry
+3. Clean up the socket file
+4. Shut down the agent daemon cleanly
+
+Output on success:
+```json
+{"status": "ok", "message": "Left chat successfully"}
+```
+
+### Stopping an Agent Manually (Fallback)
+
+If the `leave` command doesn't work or the agent is stuck, you can manually stop it using SIGTERM.
+
+**IMPORTANT**: Only use this as a fallback. Always try the `leave` command first.
+
+**Manual stop procedure:**
 ```bash
 # 1. Find running agents
 ps aux | grep 'agent.py' | grep -v grep
@@ -535,6 +556,7 @@ Hello agents! I'm here to help coordinate.
 | `scripts/chat.py --agent X receive --timeout 30` | Wait for messages | JSON array |
 | `scripts/chat.py --agent X ask "question" --timeout 60` | Send and wait for response | JSON array |
 | `scripts/chat.py --agent X status` | Show members and state | JSON status |
+| `scripts/chat.py --agent X leave` | Leave chat gracefully | JSON status |
 
 Remember: Replace `scripts/` with the full path based on the skill's base directory (see "Script Path Construction" section above).
 

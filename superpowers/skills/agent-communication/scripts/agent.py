@@ -147,11 +147,13 @@ class Agent:
 
     def clear_unread_file(self):
         """Remove .unread-messages file when messages are read."""
-        if self.unread_file_path.exists():
-            try:
-                self.unread_file_path.unlink()
-            except Exception as e:
-                print(f"Error clearing unread file: {e}", file=sys.stderr)
+        try:
+            self.unread_file_path.unlink()
+        except FileNotFoundError:
+            # File already removed, this is fine
+            pass
+        except Exception as e:
+            print(f"Error clearing unread file: {e}", file=sys.stderr)
 
     def recv_framed_message(self, conn):
         """Read a length-prefixed JSON message from socket."""
@@ -372,6 +374,30 @@ class Agent:
         print(f"Agent listening on {self.local_socket_path}", file=sys.stderr)
         print(f"Agent name: {self.name}", file=sys.stderr)
 
+    def broadcast_leave(self):
+        """Broadcast leave message to all agents."""
+        with self.members_lock:
+            members_to_notify = list(self.members.keys())
+
+        if members_to_notify:
+            leave_msg = {
+                'id': f"{self.name}-{datetime.now(UTC).isoformat().replace('+00:00', 'Z')}",
+                'timestamp': datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
+                'type': 'leave',
+                'sender': {
+                    'name': self.name,
+                    'context': self.context,
+                    'presentation': self.presentation,
+                },
+                'content': '',
+            }
+
+            for agent_name in members_to_notify:
+                try:
+                    self.send_to_agent(agent_name, leave_msg)
+                except:
+                    pass  # Best effort
+
     def handle_command(self, cmd):
         """Handle command from chat.py."""
         command = cmd.get('command')
@@ -428,6 +454,15 @@ class Agent:
                     'queue_size': len(self.message_queue),
                 }
             }
+
+        elif command == 'leave':
+            # Broadcast leave message
+            self.broadcast_leave()
+
+            # Stop the agent
+            self.running = False
+
+            return {'status': 'ok', 'message': 'Left chat successfully'}
 
         else:
             return {'status': 'error', 'error': f'Unknown command: {command}'}

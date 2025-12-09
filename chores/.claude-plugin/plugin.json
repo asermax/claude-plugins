@@ -1,8 +1,0 @@
-{
-  "name": "chores",
-  "version": "1.0.0",
-  "description": "Repository maintenance commands for releases and pull requests using GitHub",
-  "author": {
-    "name": "Agustin Carrasco"
-  }
-}

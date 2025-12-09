@@ -9,7 +9,7 @@ This is a personal collection of Claude Code plugins that provide workflow autom
 ## Repository Structure
 
 - **Root level**: Marketplace configuration (`.claude-plugin/marketplace.json`)
-- **Plugin directories**: Each subdirectory (`aur/`, `chores/`, `superpowers/`) is a separate plugin
+- **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`) is a separate plugin
   - `.claude-plugin/plugin.json`: Plugin metadata
   - `commands/`: Slash command definitions (`.md` files)
   - `.mcp.json`: MCP server configuration (if applicable)
@@ -49,27 +49,6 @@ AUR (Arch User Repository) package management automation.
 - Handles NPM package specifics (scoped packages, registry URLs, permission fixes)
 - Uses conventional commits (`chore: bump to <version>`)
 - Commands: `updpkgsums`, `makepkg --printsrcinfo`
-
-### chores
-Repository maintenance automation for GitHub workflows, primarily targeting the "filadd" organization.
-
-**Commands:**
-- `/chores:create-pull-request <repo-name> <branch-name>`: Creates PR from feature branch, analyzes all commits, generates description, auto-assigns Copilot reviewer
-- `/chores:release-repo <repo-name>`: Finds/creates release PR, analyzes changes, merges and creates GitHub release
-- `/chores:get-auth-token <email-or-user-id> [--k8s]`: Generates authentication tokens for users
-- `/chores:update-common-db-models [async-commit] [pydantic_v2-commit] [main-commit]`: Bulk updates common-db-models dependency across 12 repositories
-
-**Key workflows:**
-- Repository names can be short (e.g., `scheduler-api`) or full (`filadd/scheduler-api`)
-- Branch names can be partial matches (e.g., `fix-typo` matches `feat/fix-migratio-typo`)
-- PR descriptions are generated from comprehensive commit analysis (all commits, not just latest)
-- Release PRs use timestamp format: `Release YYYY-MM-DD HH:MM:SS +0000`
-- Releases created via `gh release create` with auto-generated notes
-- Semantic versioning: patch for fixes, minor for features
-
-**MCP Integration:**
-- Uses GitHub MCP server for all GitHub operations
-- Configuration in `.mcp.json` with GitHub Copilot API endpoint
 
 ### superpowers
 Development workflow skills for systematic debugging, code review, planning, and more.
@@ -151,28 +130,6 @@ The plugin provides a collection of proven workflow skills organized by category
    ```
 
 ## Important Implementation Details
-
-### Chores Plugin Specifics
-
-**Release workflow critical rules:**
-- ALWAYS create releases using `gh release create` directly, never delegate to GitHub Copilot
-- ALWAYS use `merge_method: "merge"` for release PRs (never squash/rebase)
-- When no release PR exists, check for unreleased commits and offer to create one
-- Version format in release title: `<version-number>: <descriptive-title>`
-
-**PR creation critical rules:**
-- Analyze ALL commits on branch, not just the latest
-- Generate clean titles without conventional commit prefixes (no "feat:", "fix:", etc.)
-- Keep descriptions concise and factual - only what's actually in the commits
-- List only most relevant files, omit minor config changes
-- Always assign GitHub Copilot as reviewer after creation
-
-**Common-db-models update specifics:**
-- 12 repositories across 3 branch groups (async, pydantic_v2, main)
-- Poetry-based repos: update pyproject.toml, Dockerfile, run `poetry lock`
-- Dockerfile-only repos: modify git clone to checkout specific commit
-- All work done locally, then push and create PRs
-- Branch naming: `update-common-db-models-{timestamp}`
 
 ### AUR Plugin Specifics
 

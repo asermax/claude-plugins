@@ -435,7 +435,7 @@ class Agent:
     def _handle_connection(self, conn):
         """Handle a single connection in its own thread."""
         try:
-            conn.settimeout(30.0)
+            conn.settimeout(120.0)
             envelope = self.recv_framed_message(conn)
             if not envelope:
                 return

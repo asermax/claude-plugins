@@ -216,11 +216,29 @@ class HumanCLI:
     def stop_agent(self):
         """Stop agent daemon gracefully."""
         if self.agent_process:
-            self.agent_process.send_signal(signal.SIGTERM)
+            # Send leave command to agent
             try:
-                self.agent_process.wait(timeout=3)
-            except subprocess.TimeoutExpired:
-                self.agent_process.kill()
+                response = send_command(self.sock_path, 'leave')
+                if response['status'] == 'ok':
+                    # Wait for agent to exit
+                    try:
+                        self.agent_process.wait(timeout=3)
+                    except subprocess.TimeoutExpired:
+                        self.agent_process.kill()
+                else:
+                    # Fallback to SIGTERM if leave command failed
+                    self.agent_process.send_signal(signal.SIGTERM)
+                    try:
+                        self.agent_process.wait(timeout=3)
+                    except subprocess.TimeoutExpired:
+                        self.agent_process.kill()
+            except Exception:
+                # Fallback to SIGTERM if we can't connect
+                self.agent_process.send_signal(signal.SIGTERM)
+                try:
+                    self.agent_process.wait(timeout=3)
+                except subprocess.TimeoutExpired:
+                    self.agent_process.kill()
 
     def message_receiver_loop(self):
         """Background thread to poll for messages."""
@@ -305,11 +323,14 @@ class HumanCLI:
                     line = input('> ')
                 except EOFError:
                     # Ctrl+D pressed
+                    print("\nGoodbye!")
+                    self.running = False
                     break
                 except KeyboardInterrupt:
                     # Ctrl+C pressed
-                    print()
-                    continue
+                    print("\nGoodbye!")
+                    self.running = False
+                    break
 
                 line = line.strip()
 
@@ -343,14 +364,6 @@ class HumanCLI:
 
     def run(self):
         """Run the CLI."""
-        # Setup signal handlers
-        def signal_handler(sig, frame):
-            print("\nShutting down...")
-            self.running = False
-
-        signal.signal(signal.SIGINT, signal_handler)
-        signal.signal(signal.SIGTERM, signal_handler)
-
         try:
             # Start agent
             self.start_agent()

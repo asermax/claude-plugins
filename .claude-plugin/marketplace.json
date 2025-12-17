@@ -1,5 +1,8 @@
 {
   "name": "asermax-plugins",
+  "metadata": {
+    "version": "1.0.0"
+  },
   "owner": {
     "name": "Agustin Carrasco"
   },

@@ -241,17 +241,21 @@ class HumanCLI:
                     self.agent_process.kill()
 
     def message_receiver_loop(self):
-        """Background thread to poll for messages."""
+        """Background thread to wait for and display messages."""
         while self.running:
             try:
-                response = send_command(self.sock_path, 'receive', {'timeout': 1})
+                # Use notify to wait for messages (will wait indefinitely)
+                # The socket timeout in send_command (5s) will cause this to retry periodically
+                notify_response = send_command(self.sock_path, 'notify', {})
 
-                if response['status'] == 'ok':
-                    messages = response.get('data', {}).get('messages', [])
-                    for msg in messages:
-                        self.display_message(msg)
+                if notify_response['status'] == 'ok' and self.running:
+                    # Messages available, receive them
+                    receive_response = send_command(self.sock_path, 'receive', {})
 
-                time.sleep(1.5)
+                    if receive_response['status'] == 'ok':
+                        messages = receive_response.get('data', {}).get('messages', [])
+                        for msg in messages:
+                            self.display_message(msg)
 
             except Exception as e:
                 if self.running:

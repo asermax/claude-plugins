@@ -102,7 +102,6 @@ class Agent:
 
         self.local_sock = None
         self.local_socket_path = get_agent_socket_path(self.name)
-        self.unread_file_path = self.cwd / ".unread-messages"
 
         self.message_queue = deque(maxlen=100)
         self.members = {}
@@ -125,9 +124,6 @@ class Agent:
         if self.local_sock:
             self.local_sock.close()
 
-        # Remove unread messages file
-        self.clear_unread_file()
-
         # Remove local socket file
         if os.path.exists(self.local_socket_path):
             try:
@@ -135,25 +131,6 @@ class Agent:
                 print(f"Cleaned up agent socket: {self.local_socket_path}", file=sys.stderr)
             except OSError as e:
                 print(f"Error cleaning up socket: {e}", file=sys.stderr)
-
-    def update_unread_file(self):
-        """Update .unread-messages file with current queue size."""
-        count = len(self.message_queue)
-        if count > 0:
-            try:
-                self.unread_file_path.write_text(str(count))
-            except Exception as e:
-                print(f"Error updating unread file: {e}", file=sys.stderr)
-
-    def clear_unread_file(self):
-        """Remove .unread-messages file when messages are read."""
-        try:
-            self.unread_file_path.unlink()
-        except FileNotFoundError:
-            # File already removed, this is fine
-            pass
-        except Exception as e:
-            print(f"Error clearing unread file: {e}", file=sys.stderr)
 
     def recv_framed_message(self, conn):
         """Read a length-prefixed JSON message from socket."""
@@ -255,9 +232,6 @@ class Agent:
         elif msg_type == 'message':
             if sender.get('name') != self.name:
                 self.message_queue.append(message)
-
-        # Update unread file
-        self.update_unread_file()
 
         # Signal waiting receivers
         self.message_event.set()
@@ -420,7 +394,6 @@ class Agent:
             }
 
         elif command == 'receive':
-            timeout = cmd.get('args', {}).get('timeout', 30)
             messages = []
 
             # Clear event first (before draining - prevents race condition)
@@ -432,15 +405,23 @@ class Agent:
 
             # If no messages yet, wait for event
             if not messages:
-                got_event = self.message_event.wait(timeout=timeout)
-                if got_event:
-                    while self.message_queue:
-                        messages.append(self.message_queue.popleft())
-
-            # Clear unread file since messages have been read
-            self.clear_unread_file()
+                self.message_event.wait()
+                while self.message_queue:
+                    messages.append(self.message_queue.popleft())
 
             return {'status': 'ok', 'data': {'messages': messages}}
+
+        elif command == 'notify':
+            # Check if there are already messages in queue
+            if self.message_queue:
+                return {'status': 'ok', 'data': {'count': len(self.message_queue)}}
+
+            # No messages, wait for the event (indefinitely)
+            self.message_event.clear()
+            self.message_event.wait()
+
+            # Message arrived, return count
+            return {'status': 'ok', 'data': {'count': len(self.message_queue)}}
 
         elif command == 'status':
             return {
@@ -470,12 +451,14 @@ class Agent:
     def _handle_connection(self, conn):
         """Handle a single connection in its own thread."""
         try:
-            conn.settimeout(120.0)
+            # No timeout - wait indefinitely
+            conn.settimeout(None)
             envelope = self.recv_framed_message(conn)
             if not envelope:
                 return
 
             msg_type = envelope.get('type')
+
             if msg_type == 'command':
                 response = self.handle_command(envelope)
             elif msg_type == 'remote_message':

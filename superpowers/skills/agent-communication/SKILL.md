@@ -53,9 +53,9 @@ In the examples below, we use `scripts/agent.py` as shorthand, but you should re
 
 ## Background Execution Requirements
 
-**CRITICAL**: `agent.py` automatically runs in the background. The plugin hook ensures it never blocks your terminal.
+**CRITICAL**: `agent.py` automatically runs in the background via plugin hook.
 
-The `chat.py` script runs in the foreground since it's a synchronous command-line tool.
+`chat.py` typically runs in foreground, but **receive** should run in background using `run_in_background: true` to allow continuous message listening while doing other work.
 
 ## The Process
 
@@ -127,7 +127,8 @@ Output with unreachable agents:
 
 **Receive messages from other agents:**
 ```bash
-scripts/chat.py --agent your-agent-name receive --timeout 30
+# Waits indefinitely for messages (for background use with run_in_background: true)
+scripts/chat.py --agent your-agent-name receive
 ```
 
 Output if messages available:
@@ -150,15 +151,22 @@ Output if messages available:
 }
 ```
 
-Output if no messages (timeout):
-```json
-{"status": "ok", "messages": []}
+**Wait for message notifications:**
+```bash
+# Waits indefinitely until a message arrives, then returns count without consuming
+scripts/chat.py --agent your-agent-name notify
 ```
-Exit code: 2
+
+Output when message(s) arrive:
+```json
+{"status": "ok", "count": 2}
+```
+
+This is useful for background monitoring - notify returns when messages arrive, then use `receive` to actually get them.
 
 **Send a message and wait for response:**
 ```bash
-scripts/chat.py --agent your-agent-name ask "What's the API format?" --timeout 60
+scripts/chat.py --agent your-agent-name ask "What's the API format?"
 ```
 
 Output if responses received:
@@ -213,7 +221,7 @@ Output:
 **IMPORTANT**: Use conversational back-and-forth communication. Always use the `ask` command to send a message and wait for response. Continue the conversation until both agents agree it's complete.
 
 **The Pattern:**
-1. **Initiate with ask** - Use `scripts/chat.py --agent X ask "message" --timeout 60`
+1. **Initiate with ask** - Use `scripts/chat.py --agent X ask "message"`
 2. **Wait for response** - The ask command automatically waits
 3. **Respond with ask** - When you receive a message, respond using ask (not just send)
 4. **Continue until done** - Keep the conversation going until both agents agree to end
@@ -233,13 +241,13 @@ Output:
 
 ```bash
 # Agent A initiates
-scripts/chat.py --agent backend-agent ask "I've updated the /api/schedule endpoint. Can you review the new schema?" --timeout 60
+scripts/chat.py --agent backend-agent ask "I've updated the /api/schedule endpoint. Can you review the new schema?"
 
 # Receives response from frontend-agent, then continues conversation
-scripts/chat.py --agent backend-agent ask "The date field is ISO8601 format. Does that work for your UI components?" --timeout 60
+scripts/chat.py --agent backend-agent ask "The date field is ISO8601 format. Does that work for your UI components?"
 
 # Receives confirmation, closes conversation
-scripts/chat.py --agent backend-agent ask "Perfect! Integration looks good. All done on my end." --timeout 30
+scripts/chat.py --agent backend-agent ask "Perfect! Integration looks good. All done on my end."
 
 # Other agent confirms completion, conversation ends
 ```
@@ -253,43 +261,45 @@ scripts/chat.py --agent backend-agent send "Updated the API"
 vim other-file.ts
 ```
 
-### Waiting for Responses
+**Alternative: Background notify loop**
 
-When expecting a response from another agent, use a **persistent waiting pattern** with long timeouts and periodic pings if needed:
+For long-running work where you want to stay responsive but not block on responses, use background notify (see "Background Notify Pattern" below).
 
-**Correct approach:**
-```bash
-# Initial ask with long timeout (60-120 seconds)
-scripts/chat.py --agent backend-agent ask "Question for frontend agent..." --timeout 120
+### Background Notify Pattern
 
-# If no response, send a follow-up ping
-scripts/chat.py --agent backend-agent ask "Ping: Still waiting on the previous question about..." --timeout 120
+**Recommended workflow**: Keep a background notify running at all times to stay responsive.
 
-# Continue checking with receive if ask times out
-scripts/chat.py --agent backend-agent receive --timeout 60
-```
+1. **Start background notify** after joining:
+   ```bash
+   scripts/chat.py --agent your-name notify
+   ```
+   (use with `run_in_background: true`)
 
-**Key principles:**
-- Use **long timeouts** (60-120 seconds) when expecting responses - other agents may be processing or thinking
-- If your ask times out without response, **send a follow-up ping** - the other agent might have missed your message
-- **Don't give up quickly** - agent coordination requires patience
-- Use `receive` with timeout to continue checking for delayed responses
-- Consider the other agent may be:
-  - Still processing your previous message
-  - Working on a complex task before responding
-  - Waiting for their own approvals or tool completions
+2. **Continue with other work** - the notify runs in background, waiting for messages
 
-**Example: Persistent waiting**
-```bash
-# Ask with long timeout
-scripts/chat.py --agent docs-agent ask "Can you review the API documentation draft?" --timeout 120
+3. **Detect completion with TaskOutput** - Use the TaskOutput tool to detect when the notify task completes (indicating messages have arrived):
+   ```bash
+   # When notify task completes, TaskOutput will return the result
+   ```
+   Do not try to read the task output file directly - use the TaskOutput tool
 
-# No response? Send ping
-scripts/chat.py --agent docs-agent ask "Following up: Did you see my message about reviewing the API docs?" --timeout 120
+4. **Read messages**:
+   ```bash
+   scripts/chat.py --agent your-name receive
+   ```
 
-# Still nothing? Keep checking
-scripts/chat.py --agent docs-agent receive --timeout 60
-```
+5. **Process and respond** - Handle messages, send responses
+
+6. **Restart notify loop** - Start background notify again to wait for next message
+
+**When to use background notify:**
+- Working on time-consuming tasks (coding, testing, debugging)
+- Want to stay responsive to other agents without blocking
+- Coordinating across repos where responses may come anytime
+
+**When to use `ask` instead:**
+- Active conversation with quick back-and-forth
+- Waiting for a specific response you need immediately
 
 ## Message Types You'll See
 
@@ -386,15 +396,15 @@ scripts/agent.py --name "backend-agent" \
 vim src/routes/schedule.ts
 
 # Initiate conversation with ask
-scripts/chat.py --agent backend-agent ask "New /api/schedule endpoint ready. Schema: {date, recurrence, callback_url}. Can you review?" --timeout 60
+scripts/chat.py --agent backend-agent ask "New /api/schedule endpoint ready. Schema: {date, recurrence, callback_url}. Can you review?"
 # Receives frontend's question about recurrence format
 
 # Continue conversation
-scripts/chat.py --agent backend-agent ask "Recurrence format: {type: 'daily'|'weekly'|'monthly', interval: number}. Example: {type: 'weekly', interval: 2} for every 2 weeks. Does this work for your UI?" --timeout 60
+scripts/chat.py --agent backend-agent ask "Recurrence format: {type: 'daily'|'weekly'|'monthly', interval: number}. Example: {type: 'weekly', interval: 2} for every 2 weeks. Does this work for your UI?"
 # Receives confirmation
 
 # Close conversation
-scripts/chat.py --agent backend-agent ask "Great! Let me know if you need any changes after testing." --timeout 30
+scripts/chat.py --agent backend-agent ask "Great! Let me know if you need any changes after testing."
 # Receives "All good, thanks!" - conversation complete
 ```
 
@@ -406,19 +416,19 @@ scripts/agent.py --name "frontend-agent" \
                  --presentation "I manage the web UI. Working on schedule creation form."
 
 # Wait for backend's message
-scripts/chat.py --agent frontend-agent receive --timeout 120
+scripts/chat.py --agent frontend-agent receive
 # Sees backend's ask about reviewing endpoint
 
 # Respond with ask
-scripts/chat.py --agent frontend-agent ask "What's the format for recurrence? Daily/weekly/monthly?" --timeout 60
+scripts/chat.py --agent frontend-agent ask "What's the format for recurrence? Daily/weekly/monthly?"
 # Receives format details
 
 # Continue conversation
-scripts/chat.py --agent frontend-agent ask "Perfect! That format works great for my dropdown. Starting implementation now." --timeout 30
+scripts/chat.py --agent frontend-agent ask "Perfect! That format works great for my dropdown. Starting implementation now."
 # Receives backend's offer to help
 
 # Close conversation
-scripts/chat.py --agent frontend-agent ask "All good, thanks!" --timeout 10
+scripts/chat.py --agent frontend-agent ask "All good, thanks!"
 # Conversation complete
 ```
 
@@ -476,15 +486,18 @@ ps aux | grep 'agent.py --name "your-agent-name"' | grep -v grep
 
 ## Tips
 
-1. **Automatic notification**: The plugin will notify you directly when you have unread messages - you don't need to monitor any files.
+1. **Background notify loop**: After joining, start a background notify to stay responsive:
+   - Use `run_in_background: true` on the Bash tool
+   - Use TaskOutput tool to detect when notify task completes
+   - When notify completes, read messages with `receive`
+   - Process, respond, restart background notify
 2. **Use ask for conversations**: Always use `ask` instead of `send` when you expect a response. This creates natural back-and-forth flow.
 3. **Explicit completion**: End conversations clearly with phrases like "All done!", "Thanks, conversation complete!", or "Got it, closing this thread."
-4. **Appropriate timeouts**: Use longer timeouts (60s) for initial asks, shorter (10-30s) for final confirmations.
-5. **Agent naming**: Use descriptive names that indicate role/project
-6. **Presentations**: Be specific about what you manage and current focus
-7. **Don't interrupt flow**: When using `ask`, don't do other work while waiting - focus on the conversation
-8. **Document decisions**: Important decisions should also go in code/docs, not just chat
-9. **Messages are memory-only**: Messages are stored in memory and will be lost if an agent restarts. This is by design for simplicity and performance.
+4. **Agent naming**: Use descriptive names that indicate role/project
+5. **Presentations**: Be specific about what you manage and current focus
+6. **Don't interrupt flow**: When using `ask`, don't do other work while waiting - focus on the conversation
+7. **Document decisions**: Important decisions should also go in code/docs, not just chat
+8. **Messages are memory-only**: Messages are stored in memory and will be lost if an agent restarts. This is by design for simplicity and performance.
 
 ## Human CLI Tool
 
@@ -553,8 +566,9 @@ Hello agents! I'm here to help coordinate.
 |---------|---------|--------|
 | `scripts/agent.py --name X --context Y --presentation Z` | Start your agent | Background process |
 | `scripts/chat.py --agent X send "msg"` | Broadcast message | JSON status |
-| `scripts/chat.py --agent X receive --timeout 30` | Wait for messages | JSON array |
-| `scripts/chat.py --agent X ask "question" --timeout 60` | Send and wait for response | JSON array |
+| `scripts/chat.py --agent X receive` | Wait for and consume messages | JSON array |
+| `scripts/chat.py --agent X notify` | Wait for message notification (doesn't consume) | JSON count |
+| `scripts/chat.py --agent X ask "question"` | Send and wait for response | JSON array |
 | `scripts/chat.py --agent X status` | Show members and state | JSON status |
 | `scripts/chat.py --agent X leave` | Leave chat gracefully | JSON status |
 

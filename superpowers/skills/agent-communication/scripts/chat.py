@@ -35,7 +35,7 @@ def send_command(sock_path, command, args=None):
     try:
         # Connect to agent
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        s.settimeout(35.0)  # Slightly longer than server's 30s
+        s.settimeout(None)  # Always wait indefinitely
         s.connect(sock_path)
 
         # Wrap in envelope
@@ -108,12 +108,12 @@ def cmd_send(args, sock_path):
 
 def cmd_receive(args, sock_path):
     """Receive messages."""
-    response = send_command(sock_path, 'receive', {'timeout': args.timeout})
+    response = send_command(sock_path, 'receive', {})
 
     if response['status'] == 'ok':
         messages = response['data']['messages']
         print(json.dumps({'status': 'ok', 'messages': messages}, indent=2))
-        return 0 if messages else 2  # Exit code 2 if no messages (timeout)
+        return 0 if messages else 2  # Exit code 2 if no messages
     else:
         print(json.dumps(response))
         return 1
@@ -143,14 +143,27 @@ def cmd_ask(args, sock_path):
     print(json.dumps({'status': 'ok', 'message': 'Message sent, waiting for response...'}), file=sys.stderr)
 
     # Then wait for responses
-    receive_response = send_command(sock_path, 'receive', {'timeout': args.timeout})
+    receive_response = send_command(sock_path, 'receive', {})
 
     if receive_response['status'] == 'ok':
         messages = receive_response['data']['messages']
         print(json.dumps({'status': 'ok', 'messages': messages}, indent=2))
-        return 0 if messages else 2  # Exit code 2 if no messages (timeout)
+        return 0 if messages else 2  # Exit code 2 if no messages
     else:
         print(json.dumps(receive_response))
+        return 1
+
+
+def cmd_notify(args, sock_path):
+    """Wait for a message notification without consuming messages."""
+    response = send_command(sock_path, 'notify', {})
+
+    if response['status'] == 'ok':
+        count = response['data']['count']
+        print(json.dumps({'status': 'ok', 'count': count}))
+        return 0
+    else:
+        print(json.dumps(response))
         return 1
 
 
@@ -174,8 +187,9 @@ def main():
         epilog="""
 Examples:
   chat.py --agent plugins-agent send "Hello other agents!"
-  chat.py --agent plugins-agent receive --timeout 30
-  chat.py --agent plugins-agent ask "What's the API format?" --timeout 60
+  chat.py --agent plugins-agent receive
+  chat.py --agent plugins-agent ask "What's the API format?"
+  chat.py --agent plugins-agent notify
   chat.py --agent plugins-agent status
   chat.py --agent plugins-agent leave
         """
@@ -191,12 +205,13 @@ Examples:
 
     # receive command
     receive_parser = subparsers.add_parser('receive', help='Receive messages')
-    receive_parser.add_argument('--timeout', type=int, default=30, help='Timeout in seconds')
 
     # ask command (send + receive)
     ask_parser = subparsers.add_parser('ask', help='Send a message and wait for response')
     ask_parser.add_argument('message', help='Message content')
-    ask_parser.add_argument('--timeout', type=int, default=30, help='Timeout in seconds to wait for response')
+
+    # notify command
+    notify_parser = subparsers.add_parser('notify', help='Wait for message notification without consuming')
 
     # status command
     status_parser = subparsers.add_parser('status', help='Show agent status and members')
@@ -228,6 +243,8 @@ Examples:
         return cmd_receive(args, sock_path)
     elif args.command == 'ask':
         return cmd_ask(args, sock_path)
+    elif args.command == 'notify':
+        return cmd_notify(args, sock_path)
     elif args.command == 'status':
         return cmd_status(args, sock_path)
     elif args.command == 'leave':

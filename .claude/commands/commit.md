@@ -32,21 +32,61 @@ This command automates the commit process for the plugin marketplace by:
 
 ## Semantic Versioning Rules
 
-### Major (Breaking Changes)
-- Adding or removing a plugin from the marketplace
+### Marketplace Versioning (Consumer-focused)
+
+The marketplace version reflects what consumers installing the marketplace should know. These are **guidelines**, not rigid rules. Use judgment based on the actual impact to marketplace consumers.
+
+| Version | General Guideline | Examples |
+|---------|-------------------|----------|
+| **Major** | Something removed that might break existing setups | Plugin removed from marketplace, root command deleted |
+| **Minor** | New functionality available to consumers | New plugin added, new root command, significant new capabilities |
+| **Patch** | Improvements to existing functionality | Bug fixes in plugins, documentation updates, small enhancements |
+
+#### Guidelines for `.claude/` folder changes
+
+- **New command added** → typically Minor (new functionality available)
+- **Existing command modified** → depends on scope:
+  - Adding significant new capabilities → Minor (e.g., adding a whole new workflow to `/commit`)
+  - Fixing bugs or small improvements → Patch (e.g., fixing a typo, clarifying instructions)
+  - Major rewrite that changes behavior → could be Minor or even Major if breaking
+
+#### Guidelines for plugin changes
+
+- **Any plugin modification** → typically Patch for marketplace (the plugin itself may have its own major/minor/patch)
+- **New plugin added** → Minor (new functionality available)
+- **Plugin removed** → Major (breaking change for consumers using that plugin)
+
+#### Examples
+
+| Change | Marketplace Version | Reasoning |
+|--------|---------------------|-----------|
+| Fix typo in `/commit` command | Patch | Minor improvement |
+| Add new root command | Minor | New functionality |
+| Expand `/commit` with new grouping feature | Minor | Significant new capability |
+| Remove root command | Major | Breaking - consumers may depend on it |
+| Update superpowers skill prompts | Patch | Improvement to existing plugin |
+| Add new agent to superpowers | Patch | Plugin change (plugin itself gets minor) |
+| Add new plugin to marketplace | Minor | New plugin available |
+| Remove aur plugin | Major | Breaking change |
+
+### Plugin Versioning (Feature-focused)
+
+Individual plugin versions track their own feature development:
+
+#### Major (Breaking Changes)
 - Removing a command, agent, or skill entirely
 - Renaming a command (breaks existing `/command` usage)
 - Changing command arguments in a breaking way
 - Removing significant functionality
 
-### Minor (Features)
+#### Minor (Features)
 - Adding a new command, agent, or skill
 - Adding new functionality to existing commands
 - Adding new templates or guides
 - Significant improvements to prompts that change behavior
 - Adding new configuration options
 
-### Patch (Fixes)
+#### Patch (Fixes)
 - Small prompt tweaks/improvements
 - Typo fixes in documentation
 - Bug fixes in command logic
@@ -139,26 +179,46 @@ Map file paths to scopes:
 | `.claude/commands/**` | `marketplace` |
 | Root files (`README.md`, etc.) | `marketplace` |
 
+**Important**: The marketplace is **always** an affected scope for any change (since all changes impact the marketplace version), but the version bump type varies based on what changed. Use the guidelines in the "Analyze Change Significance" section to determine the appropriate marketplace version bump.
+
 A commit can affect multiple scopes (e.g., adding a plugin affects both the plugin AND marketplace).
 
 #### b. Analyze Change Significance
 
 For each affected scope, determine the change type:
 
-**Check for Major changes**:
-- Files deleted in `commands/`, `agents/`, `skills/` → Removing feature (major)
-- Command file renamed → Breaking change (major)
-- Plugin added/removed from `marketplace.json` → Breaking change (major)
+**For plugin scopes** (aur, superpowers):
 
-**Check for Minor changes**:
-- New files in `commands/`, `agents/`, `skills/` → New feature (minor)
-- New templates or guides added → New feature (minor)
-- Significant prompt rewrites (use git diff to check size) → Feature (minor)
+- **Check for Major changes**:
+  - Files deleted in `commands/`, `agents/`, `skills/` → Removing feature (major)
+  - Command file renamed → Breaking change (major)
+  - Significant functionality removed → Breaking change (major)
 
-**Default to Patch**:
-- Small changes, typos, formatting → Patch
-- Catalog updates → Patch
-- Documentation improvements → Patch
+- **Check for Minor changes**:
+  - New files in `commands/`, `agents/`, `skills/` → New feature (minor)
+  - New templates or guides added → New feature (minor)
+  - Significant prompt rewrites (use git diff to check size) → Feature (minor)
+
+- **Default to Patch**:
+  - Small changes, typos, formatting → Patch
+  - Catalog updates → Patch
+  - Documentation improvements → Patch
+
+**For marketplace scope** (use judgment based on these guidelines):
+
+- **Typically Major**:
+  - Plugin removed from `marketplace.json` → Breaking change
+  - Root command deleted from `.claude/commands/` → Breaking change
+
+- **Typically Minor**:
+  - New plugin added to `marketplace.json` → New functionality
+  - New root command added to `.claude/commands/` → New functionality
+  - Significant new capabilities added to existing `.claude/` files → New feature
+
+- **Typically Patch**:
+  - Any plugin file changes (aur, superpowers) → Improvement to existing plugins
+  - Small fixes/improvements to `.claude/` files → Bug fixes or minor improvements
+  - Root config file updates → Configuration improvements
 
 #### c. Read Current Versions
 
@@ -188,14 +248,17 @@ Present the analysis to the user:
 
 ```
 Commit: Update agent communication skill
-Affected: superpowers plugin
+Affected scopes:
+  - superpowers plugin
+  - marketplace
+
 Changes:
   - Updated SKILL.md documentation
   - Modified chat.py script
-Detected change type: PATCH
 
-Proposed version bump:
-- superpowers: 1.0.0 → 1.0.1
+Proposed version bumps:
+- superpowers: 1.0.0 → 1.0.1 (patch: small fix)
+- marketplace: 2.2.0 → 2.2.1 (patch: improvement to existing plugin)
 
 Proposed commit message:
 fix(superpowers): update agent communication documentation
@@ -203,8 +266,10 @@ fix(superpowers): update agent communication documentation
 Updated agent-communication skill documentation to clarify
 the notify→receive pattern and added examples.
 
-Version bump: superpowers 1.0.0 → 1.0.1
+Version bump: superpowers 1.0.0 → 1.0.1, marketplace 2.2.0 → 2.2.1
 ```
+
+**Include brief reasoning** for each version bump in parentheses so the user can validate the judgment call.
 
 Use AskUserQuestion to confirm or adjust:
 - Confirm and proceed
@@ -296,21 +361,21 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 ### Examples
 
-**Patch commit**:
+**Patch commit** (plugin improvement):
 ```
 fix(superpowers): correct agent communication documentation
 
 Fixed unclear instructions in agent-communication SKILL.md
 regarding the notify→receive pattern.
 
-Version bump: superpowers 1.0.0 → 1.0.1
+Version bump: superpowers 1.0.0 → 1.0.1, marketplace 2.2.0 → 2.2.1
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
-**Minor commit**:
+**Minor commit** (new marketplace command):
 ```
 feat(marketplace): add commit command with version management
 
@@ -329,14 +394,14 @@ Version bump: marketplace 1.0.0 → 1.1.0
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
-**Major commit**:
+**Major commit** (plugin removal):
 ```
 feat(aur): remove deprecated bump-version command
 
 BREAKING CHANGE: The /aur:bump-version command has been removed.
 Use /aur:update-package instead which provides better functionality.
 
-Version bump: aur 1.0.0 → 2.0.0
+Version bump: aur 1.0.0 → 2.0.0, marketplace 2.0.0 → 3.0.0
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 

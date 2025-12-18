@@ -54,7 +54,7 @@ AUR (Arch User Repository) package management automation.
 Development workflow skills for systematic debugging, code review, planning, and more.
 
 **Commands:**
-- `/update-superpowers-skills`: Sync skills from two upstream repositories (superpowers and anthropic_skills), compare differences, and intelligently merge updates while preserving plugin customizations
+- `/update-superpowers-skills`: Sync skills from upstream repository (superpowers), compare differences, and intelligently merge updates while preserving plugin customizations
 
 **Skills:**
 The plugin provides a collection of proven workflow skills organized by category:
@@ -75,7 +75,6 @@ The plugin provides a collection of proven workflow skills organized by category
 
 *Documentation and Research:*
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
-- **skill-creator**: Guide for creating effective skills with specialized knowledge and workflows
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
 - **writing-skills**: Create and refine process documentation skills using TDD methodology
 
@@ -86,8 +85,8 @@ The plugin provides a collection of proven workflow skills organized by category
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories using file-based chat system (agent daemon, chat CLI)
 
 **Key workflows:**
-- Skills directory contains full skill definitions from two upstream repositories
-- Update command syncs with `~/workspace/random/superpowers` and `~/workspace/random/anthropic_skills`
+- Skills directory contains full skill definitions from upstream repository
+- Update command syncs with `~/workspace/random/superpowers`
 - Shows high-level summary of changes before updating
 - Intelligently merges updates while preserving plugin-specific customizations
 - Skills are automatically available via Claude Code's skill system
@@ -159,9 +158,9 @@ The plugin provides a collection of proven workflow skills organized by category
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
-- Two upstream repositories: `~/workspace/random/superpowers` and `~/workspace/random/anthropic_skills`
-- Pull latest changes from both repositories' `main` branch
-- Compare 10 superpowers skills and 1 anthropic_skills skill
+- Upstream repository: `~/workspace/random/superpowers`
+- Pull latest changes from repository's `main` branch
+- Compare 10 superpowers skills
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
 - Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation) are never modified

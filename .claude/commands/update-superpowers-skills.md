@@ -4,13 +4,12 @@ description: Sync superpowers plugin skills from upstream repositories
 
 # Update Superpowers Skills
 
-This command synchronizes the skills in the superpowers plugin with two upstream repositories:
+This command synchronizes the skills in the superpowers plugin with the upstream repository:
 - **superpowers**: `~/workspace/random/superpowers` - Core workflow skills
-- **anthropic_skills**: `~/workspace/random/anthropic_skills` - Official Anthropic skills
 
 ## Process Overview
 
-1. **Pull Latest Changes**: Update both upstream repositories
+1. **Pull Latest Changes**: Update upstream repository
 2. **Compare Skills**: Check differences between upstream and plugin skills
 3. **Show Differences**: Display general comparison summary
 4. **Update Skills**: Intelligently merge updates while preserving plugin customizations
@@ -19,7 +18,7 @@ This command synchronizes the skills in the superpowers plugin with two upstream
 
 ### Step 1: Pull Latest Changes from Upstream
 
-Navigate to each upstream repository and pull the latest changes:
+Navigate to the upstream repository and pull the latest changes:
 
 **Superpowers repository:**
 ```bash
@@ -27,13 +26,7 @@ cd ~/workspace/random/superpowers
 git pull origin main
 ```
 
-**Anthropic Skills repository:**
-```bash
-cd ~/workspace/random/anthropic_skills
-git pull origin main
-```
-
-If either git pull fails, inform the user about the error and ask them to resolve it manually.
+If the git pull fails, inform the user about the error and ask them to resolve it manually.
 
 ### Step 2: Identify Skills to Update
 
@@ -49,9 +42,6 @@ If either git pull fails, inform the user about the error and ask them to resolv
 - writing-plans
 - writing-skills
 
-**From anthropic_skills repository (`~/workspace/random/anthropic_skills/`):**
-- skill-creator
-
 **Plugin-specific skills (not synced from upstream):**
 - using-beads
 - using-live-documentation
@@ -61,9 +51,9 @@ If either git pull fails, inform the user about the error and ask them to resolv
 - code-reviewer agent: Synced from `~/workspace/random/superpowers/agents/code-reviewer.md`
 - code-reviewer template: Synced from `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
 
-### Step 3: Identify What Changed in Upstream Repositories
+### Step 3: Identify What Changed in Upstream Repository
 
-**Process for each upstream repository:**
+**Process:**
 
 1. **Capture the current commit** before pulling (this was already done in Step 1, the output shows the old and new commits)
 2. **Analyze the git pull output** to identify which files changed
@@ -98,10 +88,6 @@ git diff 7fc125e..e3d881b -- skills/requesting-code-review/SKILL.md
 git show e3d881b:agents/code-reviewer.md  # For new files
 ```
 
-**For anthropic_skills repository:**
-
-Same process - analyze the git pull output, then use git diff to see the actual changes.
-
 **Files we track from superpowers:**
 - `skills/brainstorming/SKILL.md`
 - `skills/executing-plans/SKILL.md`
@@ -116,9 +102,6 @@ Same process - analyze the git pull output, then use git diff to see the actual 
 - `agents/code-reviewer.md` (synced to our `agents/code-reviewer.md`)
 - `skills/requesting-code-review/code-reviewer.md` (synced to our `skills/requesting-code-review/code-reviewer.md`)
 
-**Files we track from anthropic_skills:**
-- `skill-creator/SKILL.md`
-
 **Important**: Only analyze files that:
 1. Are in the changed files list from git pull output
 2. Are files we actually track in our plugin
@@ -129,7 +112,6 @@ Same process - analyze the git pull output, then use git diff to see the actual 
 
 For each skill with differences, show:
 - Skill name
-- Source repository (superpowers or anthropic_skills)
 - General nature of changes (e.g., "content updates", "new test cases added", "workflow improvements")
 - Whether the skill has plugin customizations that need special handling
 
@@ -223,17 +205,10 @@ The plugin maintains conceptual modifications to certain skills. When updating t
         ~/workspace/asermax/claude-plugins/superpowers/skills/
   ```
 
-**Type 4: Anthropic skills (skill-creator)**
-- Copy directly from upstream:
-  ```bash
-  cp -r ~/workspace/random/anthropic_skills/<skill-name> \
-        ~/workspace/asermax/claude-plugins/superpowers/skills/
-  ```
-
-**Type 5: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md)**
+**Type 4: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md)**
 - Never modify (no upstream source)
 
-**Type 6: Code-reviewer agent and template**
+**Type 5: Code-reviewer agent and template**
 - Copy directly from upstream (no customizations):
   ```bash
   cp ~/workspace/random/superpowers/agents/code-reviewer.md \
@@ -256,7 +231,6 @@ Confirm successful update:
 - skill-1 (adapted from superpowers, beads integration preserved)
 - skill-2 (adapted from superpowers, simplified workflow preserved)
 - skill-3 (copied directly from superpowers)
-- skill-creator (copied directly from anthropic_skills)
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references

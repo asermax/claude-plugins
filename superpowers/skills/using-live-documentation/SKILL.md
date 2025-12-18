@@ -1,6 +1,6 @@
 ---
 name: using-live-documentation
-description: Use when working with third-party libraries or frameworks (react-query, FastAPI, pydantic, Django, Express, pandas, Next.js, NestJS, Celery, pytest, Pinia, etc.) for implementing features, debugging library-specific behavior, or answering API questions - fetches current documentation ensuring accurate implementation. Do NOT use for language built-ins (Python dict/list, JavaScript Array), standard library (fs, json, os.path), or pure algorithms.
+description: Use BEFORE implementing, writing, configuring, or setting up ANY feature involving libraries, frameworks, or complex APIs - even before reading existing code. Fetches current documentation to ensure correct usage. Triggers on third-party libraries (such as react-query, FastAPI, Django, pytest), complex standard library modules (such as subprocess, streams, pathlib, logging), and "how to" questions about library usage. Do NOT use for trivial built-ins (such as dict.get, Array.map) or pure algorithms. Load this skill first to receive guidance on finding current documentation when implementing features, exploring code, or answering library-related questions.
 ---
 
 # Using Live Documentation

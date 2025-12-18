@@ -73,8 +73,8 @@
     "id": 11,
     "user_message": "how do I read a file in Python?",
     "project_context": "General Python script",
-    "expected_activation": false,
-    "rationale": "Python built-in functionality (open, read), no third-party library"
+    "expected_activation": true,
+    "rationale": "File I/O has multiple approaches and best practices - should verify correct patterns even for standard library"
   },
   {
     "id": 12,
@@ -122,8 +122,8 @@
     "id": 18,
     "user_message": "configure the logger to write errors to a file",
     "project_context": "Python application using standard logging module",
-    "expected_activation": false,
-    "rationale": "Python's logging module is part of standard library, not a third-party library"
+    "expected_activation": true,
+    "rationale": "Python's logging module is complex with multiple handlers and formatters - should verify correct configuration patterns"
   },
   {
     "id": 19,
@@ -152,5 +152,61 @@
     "project_context": "Vue 3 application using Pinia",
     "expected_activation": true,
     "rationale": "Pinia is Vue's state management library - requires understanding its API and patterns"
+  },
+  {
+    "id": 23,
+    "user_message": "implement subprocess execution to run git commands and capture output",
+    "project_context": "Python CLI tool",
+    "expected_activation": true,
+    "rationale": "subprocess is standard library but has complex API with security considerations - should verify correct usage"
+  },
+  {
+    "id": 24,
+    "user_message": "set up file streaming with createReadStream and pipe",
+    "project_context": "Node.js application handling large files",
+    "expected_activation": true,
+    "rationale": "Node.js streams are standard library but complex - proper usage patterns should be verified"
+  },
+  {
+    "id": 25,
+    "user_message": "implement path manipulation with path.join and check if file exists",
+    "project_context": "Node.js file management utility",
+    "expected_activation": true,
+    "rationale": "Node.js path and fs modules are standard library but have best practices to follow"
+  },
+  {
+    "id": 26,
+    "user_message": "use pathlib to handle cross-platform file paths",
+    "project_context": "Python cross-platform application",
+    "expected_activation": true,
+    "rationale": "pathlib is standard library but has specific patterns for cross-platform compatibility"
+  },
+  {
+    "id": 27,
+    "user_message": "implement async/await with proper error handling using try/catch",
+    "project_context": "TypeScript async function with complex flow",
+    "expected_activation": true,
+    "rationale": "Complex async patterns with error handling - best practices should be verified"
+  },
+  {
+    "id": 28,
+    "user_message": "set up async context managers for database connection pooling",
+    "project_context": "Python async application",
+    "expected_activation": true,
+    "rationale": "Async context managers are complex language feature - proper usage pattern should be verified"
+  },
+  {
+    "id": 29,
+    "user_message": "add a comment explaining what this function does",
+    "project_context": "Code documentation",
+    "expected_activation": false,
+    "rationale": "Simple documentation task, no implementation, no library usage"
+  },
+  {
+    "id": 30,
+    "user_message": "rename this variable from x to userCount",
+    "project_context": "Code refactoring",
+    "expected_activation": false,
+    "rationale": "Simple refactoring, no implementation, no library usage"
   }
 ]

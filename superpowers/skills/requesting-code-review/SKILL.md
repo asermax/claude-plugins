@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: Use when starting ANY task that modifies code (bug fixes, features, refactors - all sizes) or before merging to verify work meets requirements - dispatches superpowers:code-reviewer subagent to review implementation against plan or requirements before proceeding
+description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
 ---
 
 # Requesting Code Review
@@ -12,8 +12,8 @@ Dispatch superpowers:code-reviewer subagent to catch issues before they cascade.
 ## When to Request Review
 
 **Mandatory:**
-- After completing ANY task that modifies code (all sizes: bug fixes, features, refactors)
 - After each task in subagent-driven development
+- After completing major feature
 - Before merge to main
 
 **Optional but valuable:**
@@ -25,8 +25,8 @@ Dispatch superpowers:code-reviewer subagent to catch issues before they cascade.
 
 **1. Get git SHAs:**
 ```bash
-git rev-parse HEAD~1  # BASE_SHA (or use: git merge-base main HEAD)
-git rev-parse HEAD    # HEAD_SHA
+BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
+HEAD_SHA=$(git rev-parse HEAD)
 ```
 
 **2. Dispatch code-reviewer subagent:**
@@ -53,9 +53,8 @@ Use Task tool with superpowers:code-reviewer type, fill template at `code-review
 
 You: Let me request code review before proceeding.
 
-[Run git commands to get SHAs:]
-git rev-parse HEAD~1  # Returns: a7981ec
-git rev-parse HEAD    # Returns: 3df7661
+BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
+HEAD_SHA=$(git rev-parse HEAD)
 
 [Dispatch superpowers:code-reviewer subagent]
   WHAT_WAS_IMPLEMENTED: Verification and repair functions for conversation index

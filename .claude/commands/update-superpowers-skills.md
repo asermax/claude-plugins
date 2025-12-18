@@ -35,12 +35,10 @@ If the git pull fails, inform the user about the error and ask them to resolve i
 - executing-plans
 - receiving-code-review
 - requesting-code-review (SKILL.md only - agent is maintained separately)
-- root-cause-tracing
-- systematic-debugging
-- test-driven-development
-- testing-skills-with-subagents
+- systematic-debugging (includes supporting techniques as .md files)
+- test-driven-development (includes supporting documentation as .md files)
 - writing-plans
-- writing-skills
+- writing-skills (includes supporting documentation as .md files)
 
 **Plugin-specific skills (not synced from upstream):**
 - using-beads
@@ -93,12 +91,10 @@ git show e3d881b:agents/code-reviewer.md  # For new files
 - `skills/executing-plans/SKILL.md`
 - `skills/receiving-code-review/SKILL.md`
 - `skills/requesting-code-review/SKILL.md`
-- `skills/root-cause-tracing/SKILL.md`
-- `skills/systematic-debugging/SKILL.md`
-- `skills/test-driven-development/SKILL.md`
-- `skills/testing-skills-with-subagents/SKILL.md`
+- `skills/systematic-debugging/` (entire directory - includes supporting .md files)
+- `skills/test-driven-development/` (entire directory - includes supporting .md files)
 - `skills/writing-plans/SKILL.md`
-- `skills/writing-skills/SKILL.md`
+- `skills/writing-skills/` (entire directory - includes supporting .md files)
 - `agents/code-reviewer.md` (synced to our `agents/code-reviewer.md`)
 - `skills/requesting-code-review/code-reviewer.md` (synced to our `skills/requesting-code-review/code-reviewer.md`)
 
@@ -191,21 +187,22 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 - Apply `superpowers:` namespace prefix to all skill references
 - Example: If upstream adds better guidance about design validation, add that guidance but keep the beads epic-task structure
 
-**Type 2: Skills with simplified workflows (systematic-debugging)**
-- Read both upstream and plugin versions
-- Identify conceptual improvements in upstream
-- Manually adapt improvements while maintaining simplified workflow (without removed skill references)
-- Apply `superpowers:` namespace prefix to all skill references (except removed ones)
-- Example: If upstream improves debugging guidance, incorporate that while keeping removed skill references out
-
-**Type 3: Unmodified skills (receiving-code-review, root-cause-tracing, test-driven-development, testing-skills-with-subagents, writing-skills)**
-- Copy directly from upstream:
+**Type 2: Unmodified skills (receiving-code-review, requesting-code-review, test-driven-development, writing-skills)**
+- Copy directly from upstream (entire directory to include supporting documentation):
   ```bash
   cp -r ~/workspace/random/superpowers/skills/<skill-name> \
         ~/workspace/asermax/claude-plugins/superpowers/skills/
   ```
 
-**Type 4: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md)**
+**Type 3: Skills with minor customizations (systematic-debugging)**
+- Copy directly from upstream (entire directory):
+  ```bash
+  cp -r ~/workspace/random/superpowers/skills/systematic-debugging \
+        ~/workspace/asermax/claude-plugins/superpowers/skills/
+  ```
+- Remove any references to skills not in plugin (e.g., verification-before-completion)
+
+**Type 4: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation)
 - Never modify (no upstream source)
 
 **Type 5: Code-reviewer agent and template**
@@ -237,8 +234,7 @@ Confirm successful update:
 - brainstorming: merged design and planning into epic-task bead structure, worktree dependencies removed
 - writing-plans: epic-task hierarchy pattern for design documentation
 - executing-plans: simplified completion workflow, epic-task hierarchy awareness
-- systematic-debugging: complementary skill references removed
-- requesting-code-review: kept plugin version with broadened scope
+- systematic-debugging: removed reference to verification-before-completion skill
 ```
 
 ## Error Handling

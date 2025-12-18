@@ -152,5 +152,12 @@
     "project_context": "Personal project with no existing tooling",
     "expected_activation": false,
     "rationale": "Too vague - asking for general options, not specifically about beads"
+  },
+  {
+    "id": 23,
+    "user_message": "help me add another epic with its research bead about adding screen capture as well, and another epic with the posibility of transcribing while recording",
+    "project_context": "Working on a project that uses beads for task tracking",
+    "expected_activation": true,
+    "rationale": "Uses beads-specific terminology (epic, research bead) indicating familiarity with beads workflow"
   }
 ]

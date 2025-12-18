@@ -1,6 +1,6 @@
 ---
 name: using-beads
-description: Use when user explicitly mentions beads or bd, when user asks to run a bd command (invoke skill first, then run command), or when project CLAUDE.md indicates beads/bd is used for tracking. Do NOT use when project uses other task tracking mechanisms (GitHub Issues, Jira, Linear, TODO.md, README todos, etc.)
+description: Use when user mentions beads, bd, bead, epic, research bead, task bead, design bead, parent-child beads, add epic, create bead, track dependencies, show dependency tree, what's blocking, bd ready, bd create, bd close, bd list, bd init, bd dep, mark task complete, or when project CLAUDE.md indicates beads/bd is used for tracking. ALWAYS invoke before running any bd command.
 ---
 
 # Using Beads for Issue Tracking

@@ -4,8 +4,9 @@ description: Sync superpowers plugin skills from upstream repositories
 
 # Update Superpowers Skills
 
-This command synchronizes the skills in the superpowers plugin with the upstream repository:
+This command synchronizes the skills in the superpowers plugin with the upstream repositories:
 - **superpowers**: `~/workspace/random/superpowers` - Core workflow skills
+- **claudekit-skills**: `~/workspace/random/claudekit-skills` - Browser automation and other utilities
 
 ## Process Overview
 
@@ -18,7 +19,7 @@ This command synchronizes the skills in the superpowers plugin with the upstream
 
 ### Step 1: Pull Latest Changes from Upstream
 
-Navigate to the upstream repository and pull the latest changes:
+Navigate to the upstream repositories and pull the latest changes:
 
 **Superpowers repository:**
 ```bash
@@ -26,7 +27,13 @@ cd ~/workspace/random/superpowers
 git pull origin main
 ```
 
-If the git pull fails, inform the user about the error and ask them to resolve it manually.
+**Claudekit-skills repository:**
+```bash
+cd ~/workspace/random/claudekit-skills
+git pull origin main
+```
+
+If any git pull fails, inform the user about the error and ask them to resolve it manually.
 
 ### Step 2: Identify Skills to Update
 
@@ -40,10 +47,17 @@ If the git pull fails, inform the user about the error and ask them to resolve i
 - writing-plans
 - writing-skills (includes supporting documentation as .md files)
 
+**From claudekit-skills repository (`~/workspace/random/claudekit-skills/.claude/skills/`):**
+- chrome-devtools (entire directory - includes scripts/ and references/)
+
 **Plugin-specific skills (not synced from upstream):**
 - using-beads
 - using-live-documentation
 - self-maintaining-claude-md
+- testing-skills-activation
+- using-gemini
+- agent-communication
+- financial-summary
 
 **Agents (separate from skills):**
 - code-reviewer agent: Synced from `~/workspace/random/superpowers/agents/code-reviewer.md`
@@ -97,6 +111,9 @@ git show e3d881b:agents/code-reviewer.md  # For new files
 - `skills/writing-skills/` (entire directory - includes supporting .md files)
 - `agents/code-reviewer.md` (synced to our `agents/code-reviewer.md`)
 - `skills/requesting-code-review/code-reviewer.md` (synced to our `skills/requesting-code-review/code-reviewer.md`)
+
+**Files we track from claudekit-skills:**
+- `.claude/skills/chrome-devtools/` (entire directory - includes scripts/ and references/)
 
 **Important**: Only analyze files that:
 1. Are in the changed files list from git pull output
@@ -202,7 +219,7 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - Remove any references to skills not in plugin (e.g., verification-before-completion)
 
-**Type 4: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation)
+**Type 4: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary)**
 - Never modify (no upstream source)
 
 **Type 5: Code-reviewer agent and template**
@@ -213,6 +230,16 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   cp ~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md \
      ~/workspace/asermax/claude-plugins/superpowers/skills/requesting-code-review/code-reviewer.md
   ```
+
+**Type 6: Claudekit skills (direct copy)**
+- Copy entire skill directories without modification
+- Preserves original frontmatter (includes license, allowed-tools, etc.)
+- Copy entire directory to include scripts/ and references/:
+  ```bash
+  cp -r ~/workspace/random/claudekit-skills/.claude/skills/<skill-name> \
+        ~/workspace/asermax/claude-plugins/superpowers/skills/
+  ```
+- Current skills: chrome-devtools
 
 **Process for manual merge:**
 1. Read the upstream version completely

@@ -82,9 +82,14 @@ The plugin provides a collection of proven workflow skills organized by category
 *Multi-Agent Collaboration:*
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories using file-based chat system (agent daemon, chat CLI)
 
+*Browser Automation:*
+- **chrome-devtools**: Browser automation using Puppeteer CLI scripts - navigate, screenshot, click, fill, network monitoring, performance analysis
+
 **Key workflows:**
-- Skills directory contains full skill definitions from upstream repository
-- Update command syncs with `~/workspace/random/superpowers`
+- Skills directory contains full skill definitions from upstream repositories
+- Update command syncs with two upstream sources:
+  - `~/workspace/random/superpowers` - Core workflow skills
+  - `~/workspace/random/claudekit-skills` - Browser automation and other utilities
 - Shows high-level summary of changes before updating
 - Intelligently merges updates while preserving plugin-specific customizations
 - Skills are automatically available via Claude Code's skill system
@@ -156,12 +161,15 @@ The plugin provides a collection of proven workflow skills organized by category
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
-- Upstream repository: `~/workspace/random/superpowers`
-- Pull latest changes from repository's `main` branch
-- Compare 8 tracked skills (brainstorming, executing-plans, receiving-code-review, requesting-code-review, systematic-debugging, test-driven-development, writing-plans, writing-skills)
+- Upstream repositories:
+  - `~/workspace/random/superpowers` - Core workflow skills
+  - `~/workspace/random/claudekit-skills` - Browser automation and other utilities
+- Pull latest changes from both repositories' `main` branch
+- Tracked skills from superpowers (8 skills): brainstorming, executing-plans, receiving-code-review, requesting-code-review, systematic-debugging, test-driven-development, writing-plans, writing-skills
+- Tracked skills from claudekit-skills: chrome-devtools (entire directory with scripts/ and references/)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
-- Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation) are never modified
+- Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary) are never modified
 - Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
 

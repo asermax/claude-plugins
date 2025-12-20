@@ -54,7 +54,7 @@ AUR (Arch User Repository) package management automation.
 Development workflow skills for systematic debugging, code review, planning, and more.
 
 **Commands:**
-- `/update-superpowers-skills`: Sync skills from upstream repository (superpowers), compare differences, and intelligently merge updates while preserving plugin customizations
+- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint), compare differences, and intelligently merge updates while preserving plugin customizations
 
 **Skills:**
 The plugin provides a collection of proven workflow skills organized by category:
@@ -87,13 +87,49 @@ The plugin provides a collection of proven workflow skills organized by category
 
 **Key workflows:**
 - Skills directory contains full skill definitions from upstream repositories
-- Update command syncs with two upstream sources:
+- Sync command updates from multiple upstream sources:
   - `~/workspace/random/superpowers` - Core workflow skills
   - `~/workspace/random/claudekit-skills` - Browser automation and other utilities
 - Shows high-level summary of changes before updating
 - Intelligently merges updates while preserving plugin-specific customizations
 - Skills are automatically available via Claude Code's skill system
 - All skills use `superpowers:` namespace prefix for skill references
+
+### quint
+FPF (First Principles Framework) methodology for structured decision-making.
+
+**Commands:**
+- `/q0-init`: Initialize knowledge base and bounded context
+- `/q1-hypothesize`: Generate L0 hypotheses (abduction)
+- `/q1-add`: Manually add hypothesis
+- `/q2-verify`: Verify logic, promote L0→L1 (deduction)
+- `/q3-validate`: Validate empirically, promote L1→L2 (induction)
+- `/q4-audit`: Calculate trust scores and assurance
+- `/q5-decide`: Select winner, create Design Rationale Record
+- `/q-status`: Display current cycle state
+- `/q-query`: Search knowledge base
+- `/q-decay`: Report expired evidence (epistemic debt)
+- `/q-actualize`: Reconcile KB with code changes
+- `/q-reset`: Discard current cycle
+
+**MCP Server:**
+- Binary built from source via `/sync-upstream` command
+- Installed to `~/.local/bin/quint-code`
+- Manages state in SQLite database (`.quint/quint.db`)
+
+**Key concepts:**
+- **Knowledge levels**: L0 (raw) → L1 (verified) → L2 (validated) → Invalid
+- **WLNK**: Weakest link principle for trust calculation
+- **Congruence Level**: CL0-CL3 rating for evidence applicability to project context
+- **Epistemic debt**: Evidence that expires over time, requires conscious re-evaluation
+- **Design Rationale Records**: Auditable decision documentation with alternatives considered
+
+**Key workflows:**
+- Commands synced from `~/workspace/random/quint-code`
+- MCP binary rebuilt from source during sync
+- Commands use MCP tools directly (no customization)
+- Use for architectural decisions with long-term consequences
+- Skip for quick fixes or easily reversible decisions
 
 ## Development Patterns
 

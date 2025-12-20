@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -16,6 +16,11 @@
       "name": "superpowers",
       "source": "./superpowers",
       "description": "Development workflow skills for systematic debugging, code review, planning, and more"
+    },
+    {
+      "name": "quint",
+      "source": "./quint",
+      "description": "FPF reasoning methodology for structured decision-making with auditable hypothesis-evidence trails"
     }
   ]
 }

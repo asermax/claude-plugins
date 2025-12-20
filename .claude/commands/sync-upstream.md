@@ -1,19 +1,21 @@
 ---
-description: Sync superpowers plugin skills from upstream repositories
+description: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint)
 ---
 
-# Update Superpowers Skills
+# Sync Upstream
 
-This command synchronizes the skills in the superpowers plugin with the upstream repositories:
+This command synchronizes plugins with their upstream repositories:
 - **superpowers**: `~/workspace/random/superpowers` - Core workflow skills
 - **claudekit-skills**: `~/workspace/random/claudekit-skills` - Browser automation and other utilities
+- **quint**: `~/workspace/random/quint-code` - FPF reasoning methodology
 
 ## Process Overview
 
-1. **Pull Latest Changes**: Update upstream repository
-2. **Compare Skills**: Check differences between upstream and plugin skills
-3. **Show Differences**: Display general comparison summary
-4. **Update Skills**: Intelligently merge updates while preserving plugin customizations
+1. **Pull Latest Changes**: Update upstream repositories
+2. **Sync Superpowers**: Compare and update skills with intelligent merging
+3. **Sync Claudekit**: Copy skills directly from upstream
+4. **Sync Quint**: Copy commands and build MCP binary
+5. **Report Summary**: Display successful updates
 
 ## Implementation Steps
 
@@ -33,6 +35,12 @@ cd ~/workspace/random/claudekit-skills
 git pull origin main
 ```
 
+**Quint-code repository:**
+```bash
+cd ~/workspace/random/quint-code
+git pull origin main
+```
+
 If any git pull fails, inform the user about the error and ask them to resolve it manually.
 
 ### Step 2: Identify Skills to Update
@@ -49,6 +57,12 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 
 **From claudekit-skills repository (`~/workspace/random/claudekit-skills/.claude/skills/`):**
 - chrome-devtools (entire directory - includes scripts/ and references/)
+
+**From quint-code repository (`~/workspace/random/quint-code/src/mcp/cmd/commands/`):**
+- All 13 command files (q0-init, q1-hypothesize, q1-add, q2-verify, q3-validate, q4-audit, q5-decide, q-status, q-query, q-decay, q-actualize, q-reset, q-audit)
+
+**MCP Binary:**
+- Build from `~/workspace/random/quint-code/src/mcp` and install to `~/.local/bin/quint-code`
 
 **Plugin-specific skills (not synced from upstream):**
 - using-beads
@@ -114,6 +128,9 @@ git show e3d881b:agents/code-reviewer.md  # For new files
 
 **Files we track from claudekit-skills:**
 - `.claude/skills/chrome-devtools/` (entire directory - includes scripts/ and references/)
+
+**Files we track from quint-code:**
+- `src/mcp/cmd/commands/*.md` (all 13 command files - synced to our `quint/commands/`)
 
 **Important**: Only analyze files that:
 1. Are in the changed files list from git pull output
@@ -241,6 +258,29 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - Current skills: chrome-devtools
 
+**Type 7: Quint commands and MCP binary**
+- Copy command files directly from upstream (no customization):
+  ```bash
+  cp ~/workspace/random/quint-code/src/mcp/cmd/commands/*.md \
+     ~/workspace/asermax/claude-plugins/quint/commands/
+  ```
+- Apply patch to remove Claude setup from init command:
+  ```bash
+  cd ~/workspace/random/quint-code
+  git apply ~/workspace/asermax/claude-plugins/quint/patches/init-skip-claude-setup.patch
+  ```
+- Build and install MCP binary:
+  ```bash
+  cd ~/workspace/random/quint-code/src/mcp
+  go build -o ~/.local/bin/quint-code -trimpath .
+  ```
+- Reset patch after building:
+  ```bash
+  cd ~/workspace/random/quint-code
+  git checkout -- src/mcp/cmd/init.go
+  ```
+- Commands use MCP tools directly, no modification needed
+
 **Process for manual merge:**
 1. Read the upstream version completely
 2. Read the plugin version completely
@@ -251,10 +291,19 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 Confirm successful update:
 
 ```
-✅ Skills updated successfully:
+✅ Plugins synced successfully:
+
+Superpowers:
 - skill-1 (adapted from superpowers, beads integration preserved)
 - skill-2 (adapted from superpowers, simplified workflow preserved)
 - skill-3 (copied directly from superpowers)
+
+Claudekit:
+- chrome-devtools (copied directly from claudekit-skills)
+
+Quint:
+- 13 command files synced (Q0-Q5 cycle + utilities)
+- MCP binary built and installed to ~/.local/bin/quint-code
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references

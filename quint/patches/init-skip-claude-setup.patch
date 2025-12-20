@@ -1,0 +1,24 @@
+diff --git a/src/mcp/cmd/init.go b/src/mcp/cmd/init.go
+index d047631..f9d69c2 100644
+--- a/src/mcp/cmd/init.go
++++ b/src/mcp/cmd/init.go
+@@ -95,19 +95,6 @@ func runInit(cmd *cobra.Command, args []string) error {
+ 		initClaude = true
+ 	}
+ 
+-	if initClaude {
+-		if err := configureMCPClaude(cwd, binaryPath); err != nil {
+-			fmt.Printf("  ⚠ Failed to configure Claude Code MCP: %v\n", err)
+-		} else {
+-			fmt.Println("  ✓ Configured MCP for Claude Code (.mcp.json)")
+-		}
+-		if destPath, count, err := installCommands(cwd, "claude", initLocal); err != nil {
+-			fmt.Printf("  ⚠ Failed to install Claude commands: %v\n", err)
+-		} else {
+-			fmt.Printf("  ✓ Installed %d slash commands (%s)\n", count, destPath)
+-		}
+-	}
+-
+ 	if initCursor {
+ 		if err := configureMCPCursor(cwd, binaryPath); err != nil {
+ 			fmt.Printf("  ⚠ Failed to configure Cursor MCP: %v\n", err)

@@ -1,0 +1,8 @@
+{
+  "name": "quint",
+  "version": "1.0.0",
+  "description": "FPF reasoning methodology for structured decision-making",
+  "author": {
+    "name": "Agustin Carrasco"
+  }
+}

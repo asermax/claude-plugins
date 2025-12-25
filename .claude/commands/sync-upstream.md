@@ -258,27 +258,18 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - Current skills: chrome-devtools
 
-**Type 7: Quint commands and MCP binary**
+**Type 7: Quint commands and context**
 - Copy command files directly from upstream (no customization):
   ```bash
   cp ~/workspace/random/quint-code/src/mcp/cmd/commands/*.md \
      ~/workspace/asermax/claude-plugins/quint/commands/
   ```
-- Apply patch to remove Claude setup from init command:
+- Copy CLAUDE.md to PRINCIPLES.md for context injection:
   ```bash
-  cd ~/workspace/random/quint-code
-  git apply ~/workspace/asermax/claude-plugins/quint/patches/init-skip-claude-setup.patch
+  cp ~/workspace/random/quint-code/CLAUDE.md \
+     ~/workspace/asermax/claude-plugins/quint/context/PRINCIPLES.md
   ```
-- Build and install MCP binary:
-  ```bash
-  cd ~/workspace/random/quint-code/src/mcp
-  go build -o ~/.local/bin/quint-code -trimpath .
-  ```
-- Reset patch after building:
-  ```bash
-  cd ~/workspace/random/quint-code
-  git checkout -- src/mcp/cmd/init.go
-  ```
+- MCP binary is built on-demand by the SessionStart hook (see `quint/hooks/session-init.sh`)
 - Commands use MCP tools directly, no modification needed
 
 **Process for manual merge:**
@@ -303,7 +294,8 @@ Claudekit:
 
 Quint:
 - 13 command files synced (Q0-Q5 cycle + utilities)
-- MCP binary built and installed to ~/.local/bin/quint-code
+- PRINCIPLES.md context updated from upstream CLAUDE.md
+- MCP binary builds on-demand via SessionStart hook
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references

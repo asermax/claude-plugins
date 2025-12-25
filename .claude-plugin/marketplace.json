@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "1.3.0"
+    "version": "1.3.1"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -21,6 +21,11 @@
       "name": "quint",
       "source": "./quint",
       "description": "FPF reasoning methodology for structured decision-making with auditable hypothesis-evidence trails"
+    },
+    {
+      "name": "openspec",
+      "source": "./openspec",
+      "description": "Spec-driven development with Draft -> Review -> Implement -> Archive workflow for requirement alignment"
     }
   ]
 }

@@ -113,9 +113,15 @@ FPF (First Principles Framework) methodology for structured decision-making.
 - `/q-reset`: Discard current cycle
 
 **MCP Server:**
-- Binary built from source via `/sync-upstream` command
-- Installed to `~/.local/bin/quint-code`
+- Binary built on-demand via SessionStart hook (first use)
+- Built to `${CLAUDE_PLUGIN_ROOT}/bin/quint-code` (within plugin)
+- Source cached in `~/.cache/claude-plugins/quint-code/` for building
 - Manages state in SQLite database (`.quint/quint.db`)
+
+**Context Injection:**
+- SessionStart hook injects PRINCIPLES.md (upstream's CLAUDE.md)
+- Prepares agent with FPF methodology and decision frameworks
+- Context synced from `~/workspace/random/quint-code/CLAUDE.md`
 
 **Key concepts:**
 - **Knowledge levels**: L0 (raw) → L1 (verified) → L2 (validated) → Invalid
@@ -126,7 +132,8 @@ FPF (First Principles Framework) methodology for structured decision-making.
 
 **Key workflows:**
 - Commands synced from `~/workspace/random/quint-code`
-- MCP binary rebuilt from source during sync
+- PRINCIPLES.md updated from upstream CLAUDE.md during sync
+- MCP binary builds automatically on first session start (slow), then cached (fast)
 - Commands use MCP tools directly (no customization)
 - Use for architectural decisions with long-term consequences
 - Skip for quick fixes or easily reversible decisions

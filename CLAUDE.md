@@ -54,8 +54,9 @@ AUR (Arch User Repository) package management automation.
 Development workflow skills for systematic debugging, code review, planning, and more.
 
 **Commands:**
-- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint), compare differences, and intelligently merge updates while preserving plugin customizations
+- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve), compare differences, and intelligently merge updates while preserving plugin customizations
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
+- `/superpowers:evolve <problem>`: Evolve novel algorithms through LLM-driven mutation, crossover, and selection using 8 parallel mutation strategies
 
 **Skills:**
 The plugin provides a collection of proven workflow skills organized by category:
@@ -208,9 +209,11 @@ FPF (First Principles Framework) methodology for structured decision-making.
 - Upstream repositories:
   - `~/workspace/random/superpowers` - Core workflow skills
   - `~/workspace/random/claudekit-skills` - Browser automation and other utilities
-- Pull latest changes from both repositories' `main` branch
+  - `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
+- Pull latest changes from all repositories' `main` branch
 - Tracked skills from superpowers (8 skills): brainstorming, executing-plans, receiving-code-review, requesting-code-review, systematic-debugging, test-driven-development, writing-plans, writing-skills
 - Tracked skills from claudekit-skills: chrome-devtools (entire directory with scripts/ and references/)
+- Tracked command from agentic-evolve: evolve (copied directly to superpowers/commands/)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
 - Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary) are never modified

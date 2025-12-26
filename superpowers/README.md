@@ -35,6 +35,13 @@ The plugin includes the following skills:
 
 - `/superpowers:update-skills`: Pull latest changes from the upstream superpowers repository and show differences
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from transcripts, documents, and external sources
+- `/superpowers:evolve <problem>`: Evolve novel algorithms through LLM-driven mutation, crossover, and selection
+  - Uses 8 parallel mutation strategies: tweak, unroll, specialize, vectorize, memoize, restructure, hybrid, alien
+  - Dynamically scales from 10-32 agents based on problem complexity
+  - Supports configurable token budgets (e.g., `50k`, `20gen`, `unlimited`)
+  - Adaptive stopping when improvements plateau
+  - Resume capability via `--resume` flag
+  - Example: `/superpowers:evolve "fibonacci sequence"` or `/superpowers:evolve "Optimize the string search in src/search.rs" --budget 50k`
 
 ## Installation
 

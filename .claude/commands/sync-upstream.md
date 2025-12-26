@@ -1,5 +1,5 @@
 ---
-description: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint)
+description: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve)
 ---
 
 # Sync Upstream
@@ -8,6 +8,7 @@ This command synchronizes plugins with their upstream repositories:
 - **superpowers**: `~/workspace/random/superpowers` - Core workflow skills
 - **claudekit-skills**: `~/workspace/random/claudekit-skills` - Browser automation and other utilities
 - **quint**: `~/workspace/random/quint-code` - FPF reasoning methodology
+- **agentic-evolve**: `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
 
 ## Process Overview
 
@@ -15,7 +16,8 @@ This command synchronizes plugins with their upstream repositories:
 2. **Sync Superpowers**: Compare and update skills with intelligent merging
 3. **Sync Claudekit**: Copy skills directly from upstream
 4. **Sync Quint**: Copy commands and build MCP binary
-5. **Report Summary**: Display successful updates
+5. **Sync Agentic-Evolve**: Copy evolve command directly from upstream
+6. **Report Summary**: Display successful updates
 
 ## Implementation Steps
 
@@ -41,6 +43,12 @@ cd ~/workspace/random/quint-code
 git pull origin main
 ```
 
+**Agentic-evolve repository:**
+```bash
+cd ~/workspace/random/agentic-evolve
+git pull origin main
+```
+
 If any git pull fails, inform the user about the error and ask them to resolve it manually.
 
 ### Step 2: Identify Skills to Update
@@ -63,6 +71,9 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 
 **MCP Binary:**
 - Build from `~/workspace/random/quint-code/src/mcp` and install to `~/.local/bin/quint-code`
+
+**From agentic-evolve repository (`~/workspace/random/agentic-evolve/.claude/commands/`):**
+- evolve.md
 
 **Plugin-specific skills (not synced from upstream):**
 - using-beads
@@ -131,6 +142,9 @@ git show e3d881b:agents/code-reviewer.md  # For new files
 
 **Files we track from quint-code:**
 - `src/mcp/cmd/commands/*.md` (all 13 command files - synced to our `quint/commands/`)
+
+**Files we track from agentic-evolve:**
+- `.claude/commands/evolve.md` (synced to our `superpowers/commands/evolve.md`)
 
 **Important**: Only analyze files that:
 1. Are in the changed files list from git pull output
@@ -272,6 +286,13 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 - MCP binary is built on-demand by the SessionStart hook (see `quint/hooks/session-init.sh`)
 - Commands use MCP tools directly, no modification needed
 
+**Type 8: Agentic-evolve command (direct copy)**
+- Copy command file directly from upstream (no customization):
+  ```bash
+  cp ~/workspace/random/agentic-evolve/.claude/commands/evolve.md \
+     ~/workspace/asermax/claude-plugins/superpowers/commands/evolve.md
+  ```
+
 **Process for manual merge:**
 1. Read the upstream version completely
 2. Read the plugin version completely
@@ -296,6 +317,9 @@ Quint:
 - 13 command files synced (Q0-Q5 cycle + utilities)
 - PRINCIPLES.md context updated from upstream CLAUDE.md
 - MCP binary builds on-demand via SessionStart hook
+
+Agentic-Evolve:
+- evolve command synced (copied directly from agentic-evolve)
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references

@@ -57,6 +57,7 @@ Development workflow skills for systematic debugging, code review, planning, and
 - `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve), compare differences, and intelligently merge updates while preserving plugin customizations
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
 - `/superpowers:evolve <problem>`: Evolve novel algorithms through LLM-driven mutation, crossover, and selection using 8 parallel mutation strategies
+- `/superpowers:process-directives <request>`: Scan and process code directives (@implement, @docs, @refactor, @test, @todo) based on natural language request; applies context-dependent transformations
 
 **Skills:**
 The plugin provides a collection of proven workflow skills organized by category:
@@ -66,6 +67,7 @@ The plugin provides a collection of proven workflow skills organized by category
 - **executing-plans**: Execute implementation plans in controlled batches with review checkpoints
 - **receiving-code-review**: Process code review feedback with technical rigor and verification
 - **requesting-code-review**: Request code reviews before merging to verify work meets requirements
+- **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations and security validation for external URLs
 - **writing-plans**: Create comprehensive implementation plans using beads issues with dependencies
 
 *Debugging and Testing:*

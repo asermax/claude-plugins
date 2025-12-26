@@ -15,6 +15,7 @@ The plugin includes the following skills:
 - **executing-plans**: Execute implementation plans in controlled batches with review checkpoints
 - **receiving-code-review**: Process code review feedback with technical rigor and verification
 - **requesting-code-review**: Request code reviews before merging to verify work meets requirements
+- **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations
 - **writing-plans**: Create comprehensive implementation plans using beads issues with dependencies
 
 ### Debugging and Testing
@@ -42,6 +43,11 @@ The plugin includes the following skills:
   - Adaptive stopping when improvements plateau
   - Resume capability via `--resume` flag
   - Example: `/superpowers:evolve "fibonacci sequence"` or `/superpowers:evolve "Optimize the string search in src/search.rs" --budget 50k`
+- `/superpowers:process-directives <request>`: Scan and process code directives based on natural language request
+  - Example: `/superpowers:process-directives "implement all @implement directives in src/"`
+  - Example: `/superpowers:process-directives "process @todo comments in auth module"`
+  - Supports @implement, @docs, @refactor, @test, @todo directives
+  - Applies context-dependent transformations (remove vs. convert to docs)
 
 ## Installation
 

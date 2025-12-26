@@ -17,10 +17,11 @@ Maintain a living state document that reflects the current reality of a project 
 
 1. Validate and detect input type
 2. Load or initialize state file
-3. Fetch content using available tools
-4. Extract state-relevant information
-5. Merge updates into state
-6. Log change and report summary
+3. Clarify context if needed
+4. Fetch content using available tools
+5. Extract state-relevant information
+6. Merge updates into state
+7. Log change and report summary
 
 ---
 
@@ -108,6 +109,31 @@ Read the current state file to understand:
 - Current decisions, blockers, action items, questions
 - Previous sources processed
 - Overall situation context
+
+---
+
+## Step 2.5: Clarify Context When Needed
+
+**Before processing the input**, assess whether you have enough context to properly extract and update information.
+
+**Clarify with the user if:**
+- The state file doesn't exist (new situation)
+- The input's purpose or type is unclear from its name/content
+- You're uncertain what aspects to focus on during extraction
+- The situation context is ambiguous or missing key information
+
+**What to clarify:**
+Use AskUserQuestion to gather whatever context you need to understand:
+- What this situation/project is about and what's being tracked
+- What this specific input represents and why it matters
+- What information is most relevant to extract
+- Any specific concerns or focus areas for this situation
+
+**Guidelines:**
+- Ask only what you actually need - don't ask unnecessary questions
+- Frame questions based on what's unclear from the existing state and input
+- Be specific about why you're asking (what will it help you do better)
+- Skip clarification if the context is clear from the state file and input
 
 ---
 

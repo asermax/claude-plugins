@@ -55,6 +55,7 @@ Development workflow skills for systematic debugging, code review, planning, and
 
 **Commands:**
 - `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint), compare differences, and intelligently merge updates while preserving plugin customizations
+- `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
 
 **Skills:**
 The plugin provides a collection of proven workflow skills organized by category:

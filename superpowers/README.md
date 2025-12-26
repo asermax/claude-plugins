@@ -34,6 +34,7 @@ The plugin includes the following skills:
 ## Commands
 
 - `/superpowers:update-skills`: Pull latest changes from the upstream superpowers repository and show differences
+- `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from transcripts, documents, and external sources
 
 ## Installation
 

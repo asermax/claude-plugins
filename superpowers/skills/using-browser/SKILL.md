@@ -181,16 +181,17 @@ scripts/browser-cli close-browsing-context <name>
 **CRITICAL:** Always provide:
 1. **Scripts path** - Where browser-cli lives
 2. **Browsing context** - Which tab to work in
+3. **Bounded task** - What to do on the current page
 
 ```python
 Task(
-    description="Search Amazon",
+    description="Extract product info",
     subagent_type="superpowers:browser-agent",
     model="haiku",
     prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
 Browsing context: shopping
 
-Navigate to Amazon and search for 'laptop'. Return the first 3 product titles."""
+Extract the first 3 product titles and prices from this page."""
 )
 ```
 
@@ -202,149 +203,215 @@ Navigate to Amazon and search for 'laptop'. Return the first 3 product titles.""
 4. **Natural communication** - No CSS selectors or technical jargon in responses
 5. **Resumability** - Can resume from previous work using context history
 
+### Bounded Exploration Model
+
+**Browser-agent is bounded to the current page:**
+- ✅ Can explore current page freely (find elements, answer questions, extract data)
+- ✅ Can perform compound actions on current page ("search for X and extract Y")
+- ✅ Executes navigation when you explicitly tell it to
+- ❌ Does NOT make navigation decisions (you orchestrate multi-page workflows)
+
+## Orchestrating Browser Tasks
+
+You are the brain. Browser-agent is your eyes and hands for ONE PAGE at a time.
+
+### Pattern: Use Agent as Eyes
+
+When you don't know page structure:
+
+```python
+Task(prompt="Is there a search box on this page?")
+# Returns: "Yes, there's a search box at the top labeled 'Search Amazon'"
+
+Task(prompt="What navigation links are available?")
+# Returns: "I see links for: Products, About, Contact, Login"
+
+Task(prompt="Find the login button")
+# Returns: "Found login button in the top-right corner"
+```
+
+### Pattern: Give Specific Instructions
+
+When you know what to do, give compound instructions that work on current page:
+
+```python
+# Navigation (if needed)
+Task(prompt="Navigate to amazon.com")
+
+# Compound actions on current page
+Task(prompt="Search for 'laptop' and extract the first 5 product titles and prices")
+
+# Or break into logical steps
+Task(prompt="Type 'laptop' in the search box and click search")
+Task(prompt="Wait for results and extract first 5 products with prices")
+```
+
+### Pattern: Repetitive Tasks (Script Generation + Distribution)
+
+For repetitive extraction (same data from multiple pages):
+
+1. **Get list of targets:**
+```python
+Task(prompt="Extract all category names and links from this page")
+# Returns: ["Electronics: /electronics", "Books: /books", "Clothing: /clothing"]
+```
+
+2. **Generate reusable script (agent explores examples, YOU navigate between them):**
+```python
+# Navigate to first example
+Task(prompt="Navigate to /electronics")
+Task(prompt="Explore the page structure and manually extract product names and prices. Document what you find.")
+# Returns: Extracted products using selectors .product-card h3 and .product-card .price
+
+# Navigate to second example
+Task(prompt="Navigate to /books")
+Task(prompt="Extract products using the same approach. Identify what's constant vs variable.")
+# Returns: Same selectors work. Constant: selectors. Variable: data values.
+
+# Get validated script
+Task(prompt="Create and validate a reusable eval script for extracting products")
+# Returns: Script + validation results
+```
+
+3. **Distribute script to remaining pages (you iterate):**
+```python
+for category in remaining_categories:
+    Task(prompt=f"""Navigate to {category['link']}
+    Run this eval script: {script}
+    Return the extracted data""")
+```
+
+This keeps script generation intelligence in the agent while orchestration stays with you.
+
+### Error Handling with Retries
+
+If step fails, retry up to 3 times:
+
+1. **Retry 1:** Same command (transient failure)
+2. **Retry 2:** Ask agent to explore: "Find the search input, it might be labeled differently"
+3. **Retry 3:** Alternative approach
+
+After 3 failures: Report to user with context and last error.
+
 ## Complete Workflow Examples
 
 ### Example 1: Simple Search Task
 
+User: "Find laptop prices on Amazon"
+
 ```python
-# 1. Start daemon with initial context
-scripts/browser-daemon --initial-context-name shopping --initial-context-url https://amazon.com
-# Auto-backgrounded by hook
+# 1. Start daemon
+scripts/browser-daemon --initial-context-name amazon --initial-context-url https://amazon.com
 
-# 2. Delegate to browser-agent (context already exists)
-Task(
-    description="Amazon product search",
-    subagent_type="superpowers:browser-agent",
-    model="haiku",
-    prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
-Browsing context: shopping
+# 2. Search for laptops
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: amazon
 
-Search for 'mechanical keyboard' and return the top 3 product names with prices."""
-)
+Type 'laptop' in the search box and click search""")
 
-# Browser stays open for potential follow-up work
-# Only quit if user explicitly asks to close: scripts/browser-cli quit
+# 3. Extract results
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: amazon
+
+Wait for results to load, then extract first 5 products with prices""")
+# Returns: ["Dell Laptop - $599", "HP Pavilion - $649", ...]
+
+# 4. Present to user
+"Found 5 laptops on Amazon: Dell - $599, HP - $649, ..."
+
+# Browser stays open for follow-up work
+# Only quit if user explicitly asks: scripts/browser-cli quit
 ```
 
-### Example 2: Multi-Step Workflow with Context Reuse
+### Example 2: Unknown Page Structure
+
+User: "Check if this page has a login form"
 
 ```python
-# Start daemon with initial context
-scripts/browser-daemon --initial-context-name shopping --initial-context-url https://amazon.com
+# Already on some page in browsing context "research"
 
-# Step 1: Search
-Task(
-    description="Search for products",
-    subagent_type="superpowers:browser-agent",
-    model="haiku",
-    prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
-Browsing context: shopping
+# Ask agent to explore current page
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: research
 
-Search for 'laptop' and return the first 3 product titles."""
-)
-# Returns: "Found 3 products: Dell Inspiron..., HP Pavilion..., Lenovo..."
+Is this a login page? Look for username/password fields""")
+# Returns: "Yes, this is a login page. I see email and password inputs, plus a 'Sign In' button"
 
-# Step 2: Click first result (context preserved)
-Task(
-    description="Get product details",
-    subagent_type="superpowers:browser-agent",
-    model="haiku",
-    prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
-Browsing context: shopping
+# Now you know what to do - fill and submit in one action
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: research
 
-Click the first product and extract its price and rating."""
-)
-# Agent checks history, sees search already done, continues from there
+Fill in email 'user@example.com' and password 'password123', then click Sign In""")
 
-# Browser stays open for potential follow-up work
-# Only quit if user explicitly asks to close: scripts/browser-cli quit
+# Browser stays open for follow-up work
 ```
 
 ### Example 3: Parallel Multi-Tab Automation
 
+User: "Compare laptop prices on Amazon, eBay, and Walmart"
+
 ```python
-# Start daemon with initial context
+# 1. Start daemon with initial context
 scripts/browser-daemon --initial-context-name amazon --initial-context-url https://amazon.com
 
-# Create additional contexts for parallel work
+# 2. Create additional contexts for parallel work
 scripts/browser-cli create-browsing-context ebay --url https://ebay.com
 scripts/browser-cli create-browsing-context walmart --url https://walmart.com
 
-# Launch parallel browser-agents (single message, multiple tool calls)
-# IMPORTANT: Use a single message for true parallelism
+# 3. Execute search on each site and extract prices
+# (Can run in parallel by making multiple Task calls in single message)
 
-# Agent 1: Search Amazon (in parallel)
-Task(
-    description="Search Amazon for laptops",
-    subagent_type="superpowers:browser-agent",
-    model="haiku",
-    prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
 Browsing context: amazon
+Search for 'laptop' and extract top 3 prices""")
+# Returns: ["$599", "$649", "$549"]
 
-Search for 'laptop', return top 3 prices."""
-)
-
-# Agent 2: Search eBay (in parallel)
-Task(
-    description="Search eBay for laptops",
-    subagent_type="superpowers:browser-agent",
-    model="haiku",
-    prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
 Browsing context: ebay
+Search for 'laptop' and extract top 3 prices""")
+# Returns: ["$550", "$620", "$510"]
 
-Search for 'laptop', return top 3 prices."""
-)
-
-# Agent 3: Search Walmart (in parallel)
-Task(
-    description="Search Walmart for laptops",
-    subagent_type="superpowers:browser-agent",
-    model="haiku",
-    prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
 Browsing context: walmart
+Search for 'laptop' and extract top 3 prices""")
+# Returns: ["$579", "$639", "$529"]
 
-Search for 'laptop', return top 3 prices."""
-)
+# 4. Compare and present
+"Price comparison:
+Amazon: $599, $649, $549 (avg: $599)
+eBay: $550, $620, $510 (avg: $560)
+Walmart: $579, $639, $529 (avg: $582)
+eBay has the lowest average price."
 
-# All three agents work concurrently in their own tabs!
-
-# Browser stays open for potential follow-up work
-# Only quit if user explicitly asks to close: scripts/browser-cli quit
+# Browser stays open for follow-up work
 ```
 
 ## Browsing Context History
 
-Browser-agents can check what happened before them:
+Browser-agents can check what happened in the same context:
 
 ```python
-# First agent does initial work
-Task(
-    description="Start research",
-    subagent_type="superpowers:browser-agent",
-    model="haiku",
-    prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
+# You navigate to Wikipedia
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
 Browsing context: research
+Navigate to wikipedia.org""")
 
-Navigate to Wikipedia and search for 'Artificial Intelligence'"""
-)
-
-# Later agent continues (different invocation)
-Task(
-    description="Continue research",
-    subagent_type="superpowers:browser-agent",
-    model="haiku",
-    prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
+# You tell agent to search
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
 Browsing context: research
+Type 'Artificial Intelligence' in the search box and click search""")
 
-Click on the 'History of AI' section and extract the first paragraph."""
-)
-# Agent checks history, sees it's already on Wikipedia AI article, continues from there
+# Later, you ask agent to continue
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: research
+Click on the 'History of AI' section and extract the first paragraph""")
+# Agent checks browsing-context-history, sees previous actions, knows it's already on AI article
 ```
 
-The second agent uses `browsing-context-history research` to see:
-- Previous agent navigated to Wikipedia
-- Searched for "Artificial Intelligence"
-- Currently on the AI article page
+The agent uses context history to understand:
+- What page it's currently on
+- What actions have been performed
+- What the current state is
 
 ## When to Create Multiple Contexts
 

@@ -118,6 +118,12 @@ def main():
     wait_parser.add_argument("selector", help="CSS selector or text to wait for")
     wait_parser.add_argument("--timeout", type=int, default=10, help="Timeout in seconds")
 
+    scroll_parser = subparsers.add_parser("scroll", help="Scroll the page")
+    scroll_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
+    scroll_parser.add_argument("--intention", required=True, help="Why performing this action")
+    scroll_parser.add_argument("--direction", choices=["up", "down"], default="down", help="Scroll direction")
+    scroll_parser.add_argument("--amount", choices=["page", "half", "full"], default="page", help="Scroll amount")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -190,6 +196,13 @@ def main():
         cmd_args["selector"] = args.selector
         cmd_args["timeout"] = args.timeout
         response = send_command("wait", cmd_args)
+
+    elif args.command == "scroll":
+        cmd_args["browsing_context"] = getattr(args, "browsing_context")
+        cmd_args["intention"] = args.intention
+        cmd_args["direction"] = args.direction
+        cmd_args["amount"] = args.amount
+        response = send_command("scroll", cmd_args)
 
     # Daemon commands
     elif args.command in ["status", "quit"]:

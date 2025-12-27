@@ -188,6 +188,40 @@ Browser-agent works on ONE PAGE at a time. When a user asks for work spanning mu
 **WRONG:** "Go to Amazon, click 3 products, extract specs from each"
 **RIGHT:** Separate calls: "Extract product links" → "Navigate to link 1" → "Extract specs" → "Navigate to link 2" → ...
 
+### Recognizing Bulk/Repetitive Queries
+
+**Trigger phrases that require the Repetitive Tasks pattern:**
+- "find all...", "get all...", "extract all..."
+- "list of...", "every...", "each..."
+- "scrape...", "collect..."
+
+**When you see these, ALWAYS:**
+1. First: Ask agent to explore page structure
+2. Then: Check if data is available on current page
+3. If single-page: Use script generation pattern
+4. If multi-page needed: Agent will report infeasibility
+
+**Handling Infinite Scroll:**
+
+If agent reports infinite scroll, YOU decide how much to load:
+
+```python
+# Agent reported: "Page uses infinite scroll. Currently 20 items visible."
+
+# Option 1: Extract what's visible
+Task(prompt="Extract all currently visible products")
+
+# Option 2: Load more, then extract
+for _ in range(3):  # Load 3 more batches
+    Task(prompt="Scroll to bottom and wait for content")
+    Task(prompt="Take snapshot --diff to see new items")
+Task(prompt="Extract all products now visible")
+
+# Option 3: Load until target count
+while extracted_count < 100:
+    Task(prompt="Scroll to bottom, extract new products")
+```
+
 ### ⚠️ CRITICAL: Ask Questions Before Giving Instructions
 
 **YOU must explore the page by asking questions before giving specific instructions.**
@@ -338,7 +372,52 @@ After 3 failures: Report to user with context and last error.
 
 ## Complete Workflow Examples
 
-### Example 1: Simple Search Task
+### Example 1: Bulk Extraction with Script Generation
+
+User: "Get all product prices from the site"
+
+```python
+# 1. Explore structure
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: shopping
+
+What products are visible on this page? Is there pagination?""")
+# Returns: "I see 20 products with names and prices. Pagination shows 5 more pages."
+
+# 2. Generate reusable extraction script
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: shopping
+
+Extract all product names and prices from THIS page. Create a reusable eval script I can run on subsequent pages.""")
+# Returns:
+# - Extracted data: [{"name": "Product 1", "price": "$29.99"}, ...]
+# - Script: "() => [...document.querySelectorAll('.product')].map(p => ({name: p.querySelector('h3').textContent, price: p.querySelector('.price').textContent}))"
+
+# 3. Save the script and navigate to next page
+script = "() => [...document.querySelectorAll('.product')].map(p => ({name: p.querySelector('h3').textContent, price: p.querySelector('.price').textContent}))"
+
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: shopping
+
+Navigate to page 2""")
+
+# 4. Reuse script on next page
+Task(prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
+Browsing context: shopping
+
+Run this extraction script: {script}""")
+# Returns: [{"name": "Product 21", "price": "$19.99"}, ...]
+
+# 5. Repeat step 3-4 for remaining pages
+```
+
+**Key points:**
+- ✅ Explored structure first to understand pagination
+- ✅ Generated reusable script on first page
+- ✅ Main agent orchestrates navigation between pages
+- ✅ Script reuse makes subsequent extractions fast and consistent
+
+### Example 2: Simple Search Task
 
 User: "Find laptop prices on Amazon"
 

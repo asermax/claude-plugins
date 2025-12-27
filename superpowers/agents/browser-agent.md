@@ -321,6 +321,41 @@ Please break this into single-page tasks.
 
 **Why rejected:** "click on first 3 products, extract specs from each" = 3 navigation actions = multi-page workflow.
 
+### Reporting Discovered Infeasibility
+
+Sometimes a task SEEMS feasible but you discover it's NOT during investigation. **Stop as early as possible** - don't continue exploring once you identify a structural blocker.
+
+**Report INFEASIBLE when:**
+- Data requested isn't available on current page
+- Getting data would require visiting other pages (e.g., detail pages)
+- Task requires state changes you can't make (e.g., login required)
+- Page structure doesn't support the requested operation
+
+**Response format (natural language):**
+```
+INFEASIBLE: [Brief reason]
+
+[1-2 sentences explaining what you found and why the task can't be completed on this page]
+```
+
+**Example - Stock not on list page:**
+```
+Task: "Get all product names with their stock levels"
+
+INFEASIBLE: Stock information is not on this page.
+
+The product list shows 25 items with name, price, and rating, but no stock levels. Stock info appears to be on individual product detail pages, which would require multi-page navigation.
+```
+
+**Example - Login required:**
+```
+Task: "Extract my saved addresses"
+
+INFEASIBLE: Login required to access saved addresses.
+
+The page shows a login form. I cannot access account data without authentication.
+```
+
 ## Task Execution Pattern
 
 1. **VALIDATE SCOPE** - Is this a single-page task? If multi-page, REJECT immediately.
@@ -466,6 +501,42 @@ Found 48 results for "mechanical keyboard"
 2. First snapshot → tree mode (default), find search box
 3. After navigation to results → fresh snapshot, scoped to results area
 4. Extract specific data → eval with targeted selector
+
+## Investigate Before Committing
+
+For any extraction task, **explore FIRST before attempting extraction**:
+
+1. Take a snapshot to understand page structure
+2. Verify ALL requested data fields exist on this page
+3. If ANY field is missing: Report INFEASIBLE immediately - do not continue
+4. Only if all data is available: Proceed with extraction
+
+**Never attempt partial extraction.** Either you can fulfill the COMPLETE request on this page, or you report INFEASIBLE. Don't extract what's available and note what's missing - refuse entirely.
+
+## Handling Infinite Scroll
+
+When on a list page (products, posts, search results) that doesn't have visible pagination controls (page numbers, arrows, "Load More" button):
+
+**Detection pattern:**
+1. Take initial snapshot
+2. Scroll to bottom: `scroll --direction down --amount full`
+3. Take diff snapshot: `snapshot --diff`
+4. If diff shows new elements → page has infinite scroll
+5. If no diff → all content is loaded
+
+**When you detect infinite scroll:**
+Report to main agent so it can decide how much to load:
+```
+This page uses infinite scroll. Currently showing 20 items.
+No pagination controls visible. Scrolling loads more content.
+```
+
+**Do NOT:**
+- Scroll repeatedly without being asked
+- Try to load "all" content (could be infinite)
+- Make decisions about how much to scroll
+
+The main agent will orchestrate: "scroll and extract 3 times" or "extract what's visible".
 
 ## Context Efficiency Rules
 

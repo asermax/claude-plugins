@@ -548,6 +548,13 @@ class BrowserDaemon:
                         args.get("selector"),
                         args.get("timeout", 10)
                     )
+                elif command == "scroll":
+                    result = await self.cmd_scroll(
+                        args.get("browsing_context"),
+                        args.get("intention"),
+                        args.get("direction", "down"),
+                        args.get("amount", "page")
+                    )
                 else:
                     result = {"error": f"Unknown command: {command}"}
             except Exception as e:
@@ -1455,6 +1462,80 @@ class BrowserDaemon:
                     await asyncio.sleep(0.5)
 
                 return {"error": f"Timeout waiting for: {selector}"}
+
+        except Exception as e:
+            return {"error": str(e)}
+
+    async def cmd_scroll(self, browsing_context: str, intention: str,
+                        direction: str = "down", amount: str = "page") -> Dict[str, Any]:
+        """Scroll the page in a direction."""
+        if not browsing_context:
+            return {"error": "browsing_context is required"}
+        if not intention:
+            return {"error": "intention is required"}
+        if direction not in ["up", "down"]:
+            return {"error": "direction must be 'up' or 'down'"}
+        if amount not in ["page", "half", "full"]:
+            return {"error": "amount must be 'page', 'half', or 'full'"}
+
+        try:
+            ctx = self._get_browsing_context(browsing_context)
+
+            async with ctx.lock:
+                # Scroll based on amount
+                if amount == "full":
+                    if direction == "down":
+                        expression = "window.scrollTo(0, document.body.scrollHeight)"
+                    else:
+                        expression = "window.scrollTo(0, 0)"
+                    await self._send_cdp_to_context(browsing_context, "Runtime.evaluate", {
+                        "expression": expression
+                    })
+                elif amount == "page":
+                    # Use Page Down/Up key
+                    key = "PageDown" if direction == "down" else "PageUp"
+                    await self._send_cdp_to_context(browsing_context, "Input.dispatchKeyEvent", {
+                        "type": "keyDown",
+                        "key": key
+                    })
+                    await self._send_cdp_to_context(browsing_context, "Input.dispatchKeyEvent", {
+                        "type": "keyUp",
+                        "key": key
+                    })
+                elif amount == "half":
+                    # Scroll by half viewport
+                    delta = 400 if direction == "down" else -400  # Approximate half page
+                    await self._send_cdp_to_context(browsing_context, "Input.dispatchMouseEvent", {
+                        "type": "mouseWheel",
+                        "x": 0,
+                        "y": 0,
+                        "deltaX": 0,
+                        "deltaY": delta
+                    })
+
+                # Wait for content to potentially load
+                await asyncio.sleep(1)
+
+                # Record action
+                self._record_action(browsing_context, "scroll", intention,
+                                  {"direction": direction, "amount": amount},
+                                  f"Scrolled {direction} ({amount})")
+
+                # Get state summary
+                state_summary = await self._get_brief_state_summary(browsing_context)
+
+                return {
+                    "success": True,
+                    "scrolled": direction,
+                    "amount": amount,
+                    "browsing_context_state": {
+                        "name": ctx.name,
+                        "url": ctx.url,
+                        "title": ctx.title,
+                        "history_length": len(ctx.history),
+                        "state_summary": state_summary["summary"]
+                    }
+                }
 
         except Exception as e:
             return {"error": str(e)}

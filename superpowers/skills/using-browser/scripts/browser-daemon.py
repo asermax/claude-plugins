@@ -756,12 +756,47 @@ class BrowserDaemon:
 
     async def _shutdown(self) -> None:
         """Handle shutdown signal."""
+        if not self.running:
+            return  # Already shutting down
+
         print("Received shutdown signal", file=sys.stderr)
         self.running = False
 
-        # Close the server to stop accepting new connections
+        # Cancel background tasks
+        tasks_to_cancel = []
+
+        if hasattr(self, 'cdp_receiver_task') and self.cdp_receiver_task:
+            self.cdp_receiver_task.cancel()
+            tasks_to_cancel.append(self.cdp_receiver_task)
+
+        if hasattr(self, 'monitor_task') and self.monitor_task:
+            self.monitor_task.cancel()
+            tasks_to_cancel.append(self.monitor_task)
+
+        # Wait for tasks to cancel with timeout
+        if tasks_to_cancel:
+            try:
+                await asyncio.wait_for(
+                    asyncio.gather(*tasks_to_cancel, return_exceptions=True),
+                    timeout=2.0
+                )
+            except asyncio.TimeoutError:
+                print("Task cancellation timed out", file=sys.stderr)
+
+        # Close WebSocket to unblock CDP receiver
+        if self.cdp_ws:
+            try:
+                await self.cdp_ws.close()
+            except Exception:
+                pass
+
+        # Close server
         if self.server:
             self.server.close()
+            try:
+                await asyncio.wait_for(self.server.wait_closed(), timeout=1.0)
+            except asyncio.TimeoutError:
+                pass
 
     async def cmd_quit(self) -> Dict[str, Any]:
         """Stop the daemon server loop."""
@@ -1431,8 +1466,15 @@ class BrowserDaemon:
 
         # Set up signal handlers for graceful shutdown
         loop = asyncio.get_event_loop()
+
+        def create_shutdown_handler():
+            def handler():
+                if not hasattr(self, '_shutdown_task') or self._shutdown_task.done():
+                    self._shutdown_task = asyncio.create_task(self._shutdown())
+            return handler
+
         for sig in (signal.SIGTERM, signal.SIGINT):
-            loop.add_signal_handler(sig, lambda: asyncio.create_task(self._shutdown()))
+            loop.add_signal_handler(sig, create_shutdown_handler())
 
         try:
             # Start Chrome

@@ -54,40 +54,61 @@ def main():
     parser = argparse.ArgumentParser(description="Browser CLI")
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
-    # status
-    subparsers.add_parser("status", help="Get daemon status")
-
-    # quit
+    # Daemon commands
+    subparsers.add_parser("status", help="Get daemon status with all browsing contexts")
     subparsers.add_parser("quit", help="Stop daemon")
 
-    # navigate
-    nav_parser = subparsers.add_parser("navigate", help="Navigate to URL")
-    nav_parser.add_argument("url", help="URL to navigate to")
+    # Browsing context lifecycle commands
+    create_ctx_parser = subparsers.add_parser("create-browsing-context",
+                                              help="Create new browsing context (tab)")
+    create_ctx_parser.add_argument("name", help="Name for the browsing context")
+    create_ctx_parser.add_argument("--url", help="Optional URL to navigate to")
 
-    # extract
+    close_ctx_parser = subparsers.add_parser("close-browsing-context",
+                                            help="Close browsing context")
+    close_ctx_parser.add_argument("browsing_context", help="Browsing context name")
+
+    history_parser = subparsers.add_parser("browsing-context-history",
+                                          help="Get action history for browsing context")
+    history_parser.add_argument("browsing_context", help="Browsing context name")
+    history_parser.add_argument("--limit", type=int, default=50, help="Max history entries")
+
+    # Action commands (require browsing context and intention)
+    navigate_parser = subparsers.add_parser("navigate", help="Navigate to URL")
+    navigate_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
+    navigate_parser.add_argument("--intention", required=True, help="Why performing this action")
+    navigate_parser.add_argument("url", help="URL to navigate to")
+
     extract_parser = subparsers.add_parser("extract", help="Extract text/HTML from element")
+    extract_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
+    extract_parser.add_argument("--intention", required=True, help="Why performing this action")
     extract_parser.add_argument("--selector", help="CSS selector (optional, extracts whole page if not provided)")
 
-    # eval
-    eval_parser = subparsers.add_parser("eval", help="Execute JavaScript from file")
-    eval_parser.add_argument("script_file", help="Path to JavaScript file to execute")
+    eval_parser = subparsers.add_parser("eval", help="Execute JavaScript")
+    eval_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
+    eval_parser.add_argument("--intention", required=True, help="Why performing this action")
+    eval_parser.add_argument("javascript", help="JavaScript code to execute")
 
-    # snapshot
     snapshot_parser = subparsers.add_parser("snapshot", help="Get page structure")
+    snapshot_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
+    snapshot_parser.add_argument("--intention", required=True, help="Why performing this action")
     snapshot_parser.add_argument("--mode", choices=["tree", "dom"], default="tree",
                                 help="Snapshot mode (tree=accessibility, dom=simplified DOM)")
 
-    # click
     click_parser = subparsers.add_parser("click", help="Click element")
+    click_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
+    click_parser.add_argument("--intention", required=True, help="Why performing this action")
     click_parser.add_argument("selector", help="CSS selector")
 
-    # type
     type_parser = subparsers.add_parser("type", help="Type text into element")
+    type_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
+    type_parser.add_argument("--intention", required=True, help="Why performing this action")
     type_parser.add_argument("selector", help="CSS selector")
     type_parser.add_argument("text", help="Text to type")
 
-    # wait
     wait_parser = subparsers.add_parser("wait", help="Wait for element or text")
+    wait_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
+    wait_parser.add_argument("--intention", required=True, help="Why performing this action")
     wait_parser.add_argument("selector", help="CSS selector or text to wait for")
     wait_parser.add_argument("--timeout", type=int, default=10, help="Timeout in seconds")
 
@@ -99,25 +120,75 @@ def main():
 
     # Build command args
     cmd_args = {}
-    if args.command == "navigate":
+
+    # Browsing context lifecycle
+    if args.command == "create-browsing-context":
+        cmd_args["name"] = args.name
+        if args.url:
+            cmd_args["url"] = args.url
+        response = send_command("create_browsing_context", cmd_args)
+
+    elif args.command == "close-browsing-context":
+        cmd_args["browsing_context"] = args.browsing_context
+        response = send_command("close_browsing_context", cmd_args)
+
+    elif args.command == "browsing-context-history":
+        cmd_args["browsing_context"] = args.browsing_context
+        cmd_args["limit"] = args.limit
+        response = send_command("get_browsing_context_history", cmd_args)
+
+    # Action commands
+    elif args.command == "navigate":
+        cmd_args["browsing_context"] = getattr(args, "browsing_context")
+        cmd_args["intention"] = args.intention
         cmd_args["url"] = args.url
+        response = send_command("navigate", cmd_args)
+
     elif args.command == "extract":
+        cmd_args["browsing_context"] = getattr(args, "browsing_context")
+        cmd_args["intention"] = args.intention
         cmd_args["selector"] = getattr(args, "selector", None)
+        response = send_command("extract", cmd_args)
+
     elif args.command == "eval":
-        cmd_args["script_file"] = args.script_file
+        cmd_args["browsing_context"] = getattr(args, "browsing_context")
+        cmd_args["intention"] = args.intention
+        cmd_args["javascript"] = args.javascript
+        response = send_command("eval", cmd_args)
+
     elif args.command == "snapshot":
+        cmd_args["browsing_context"] = getattr(args, "browsing_context")
+        cmd_args["intention"] = args.intention
         cmd_args["mode"] = args.mode
+        response = send_command("snapshot", cmd_args)
+
     elif args.command == "click":
+        cmd_args["browsing_context"] = getattr(args, "browsing_context")
+        cmd_args["intention"] = args.intention
         cmd_args["selector"] = args.selector
+        response = send_command("click", cmd_args)
+
     elif args.command == "type":
+        cmd_args["browsing_context"] = getattr(args, "browsing_context")
+        cmd_args["intention"] = args.intention
         cmd_args["selector"] = args.selector
         cmd_args["text"] = args.text
+        response = send_command("type", cmd_args)
+
     elif args.command == "wait":
+        cmd_args["browsing_context"] = getattr(args, "browsing_context")
+        cmd_args["intention"] = args.intention
         cmd_args["selector"] = args.selector
         cmd_args["timeout"] = args.timeout
+        response = send_command("wait", cmd_args)
 
-    # Send command
-    response = send_command(args.command, cmd_args)
+    # Daemon commands
+    elif args.command in ["status", "quit"]:
+        response = send_command(args.command, {})
+
+    else:
+        print(json.dumps({"error": f"Unknown command: {args.command}"}), file=sys.stderr)
+        sys.exit(1)
 
     # Output JSON
     print(json.dumps(response, indent=2))

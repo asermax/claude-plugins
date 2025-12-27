@@ -176,12 +176,52 @@ scripts/browser-cli close-browsing-context <name>
 
 ## Delegating to Browser-Agent
 
+### ⚠️ CRITICAL: Task Decomposition Before Delegation
+
+**YOU must decompose multi-page requests into single-page tasks.**
+
+Browser-agent works on ONE PAGE at a time. When a user asks for work spanning multiple pages:
+1. YOU break it down into individual page tasks
+2. YOU orchestrate navigation between pages
+3. Browser-agent executes ONE task on ONE page per call
+
+**WRONG:** "Go to Amazon, click 3 products, extract specs from each"
+**RIGHT:** Separate calls: "Extract product links" → "Navigate to link 1" → "Extract specs" → "Navigate to link 2" → ...
+
+### ⚠️ CRITICAL: Ask Questions Before Giving Instructions
+
+**YOU must explore the page by asking questions before giving specific instructions.**
+
+Don't make assumptions about page structure. Use the agent as your eyes first:
+
+**WRONG:** Assume structure and give blind instructions
+```python
+Task(prompt="Click the 'Sign In' button in the top-right corner")
+# Fails if button is labeled differently or in a different location
+```
+
+**RIGHT:** Ask questions first, then give specific instructions
+```python
+# Step 1: Explore
+Task(prompt="Is there a sign-in or login button on this page? Where is it located?")
+# Returns: "Yes, there's a 'Log In' link in the header navigation"
+
+# Step 2: Act based on what you learned
+Task(prompt="Click the 'Log In' link in the header")
+```
+
+**Benefits:**
+- ✅ Agents don't have to explore on their own - you direct their focus
+- ✅ You avoid making wrong assumptions about page structure
+- ✅ You get information to make better decisions about next steps
+- ✅ Reduces wasted agent calls and token usage
+
 ### Basic Pattern
 
 **CRITICAL:** Always provide:
 1. **Scripts path** - Where browser-cli lives
 2. **Browsing context** - Which tab to work in
-3. **Bounded task** - What to do on the current page
+3. **Single-page task** - ONE operation on the CURRENT page only
 
 ```python
 Task(
@@ -205,11 +245,14 @@ Extract the first 3 product titles and prices from this page."""
 
 ### Bounded Exploration Model
 
-**Browser-agent is bounded to the current page:**
-- ✅ Can explore current page freely (find elements, answer questions, extract data)
-- ✅ Can perform compound actions on current page ("search for X and extract Y")
-- ✅ Executes navigation when you explicitly tell it to
-- ❌ Does NOT make navigation decisions (you orchestrate multi-page workflows)
+**Browser-agent is bounded to the CURRENT PAGE ONLY:**
+- ✅ Explores current page freely (find elements, answer questions, extract data)
+- ✅ Performs compound actions on current page ("search for X and extract Y")
+- ✅ Executes navigation when YOU explicitly tell it to
+- ❌ Does NOT make navigation decisions
+- ❌ Does NOT accept multi-page tasks
+
+**If you send a multi-page task, the agent SHOULD reject it.** This is by design.
 
 ## Orchestrating Browser Tasks
 

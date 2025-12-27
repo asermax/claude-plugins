@@ -39,30 +39,37 @@ This skill enables browser automation through a two-layer architecture:
 
 ## Daemon Lifecycle Management
 
-**You are responsible for managing the daemon lifecycle.** The browser subagent does NOT start or stop the daemon.
+**CRITICAL: You MUST start the daemon before any browser operations and stop it when done.**
 
-### Start the daemon
+The browser subagent does NOT start or stop the daemon - that's YOUR responsibility.
 
-**Default (auto-start browser):**
+### Starting the Daemon
+
+**ALWAYS start the daemon as your first action when the user requests browser automation.**
+
+**Default approach (auto-start Chrome):**
 ```bash
 scripts/browser-daemon
 ```
 
-The daemon will:
-- Auto-start Chrome with remote debugging enabled
+This will:
+- Automatically launch a new Chrome instance with remote debugging enabled
 - Connect via Chrome DevTools Protocol
 - Listen on Unix socket for commands
 
 **Note:** The PreToolUse hook automatically runs this in the background.
 
-**Connect to existing browser:**
+**Use existing Chrome (ONLY when user explicitly requests it):**
 ```bash
 scripts/browser-daemon --existing-browser
 ```
 
-Use this when you already have Chrome running with `--remote-debugging-port=9222`.
+Use this ONLY if the user explicitly says:
+- "use my existing browser"
+- "connect to my current Chrome session"
+- "use the browser I already have open"
 
-To start Chrome manually with debugging:
+For this to work, the user must have Chrome running with:
 ```bash
 google-chrome-stable --remote-debugging-port=9222 --remote-allow-origins=* &
 ```
@@ -73,15 +80,23 @@ google-chrome-stable --remote-debugging-port=9222 --remote-allow-origins=* &
 scripts/browser-cli status
 ```
 
-### Stop the daemon
+### Stopping the Daemon
 
-**You are responsible for stopping the daemon when the user's task is complete:**
+**CRITICAL: You MUST stop the daemon when the user's task is complete.**
 
 ```bash
 scripts/browser-cli quit
 ```
 
-This will close both the daemon and the browser.
+This will:
+- Close the daemon connection
+- Shut down the Chrome browser instance
+- Clean up resources
+
+**ALWAYS run this when:**
+- The user's browser task is complete
+- You've finished all data extraction
+- Before ending your response to the user
 
 ## Browser Operations via Subagent
 
@@ -135,13 +150,13 @@ prompt='''
 
 ### Complete workflow with daemon lifecycle
 
-This example shows the full pattern: start daemon → use subagent → stop daemon.
+**MANDATORY PATTERN: Always follow this sequence**
 
 ```python
-# 1. Start the daemon
+# 1. FIRST: Start the daemon (REQUIRED)
 scripts/browser-daemon  # Auto-backgrounded by hook
 
-# 2. Delegate browser operations to subagent
+# 2. THEN: Delegate browser operations to subagent
 Task(
     description="Extract product info",
     subagent_type="superpowers:browser-agent",
@@ -149,9 +164,11 @@ Task(
     prompt="Navigate to https://example.com/products and extract the top 3 product names"
 )
 
-# 3. Stop the daemon when done
+# 3. FINALLY: Stop the daemon (REQUIRED)
 scripts/browser-cli quit
 ```
+
+**Never skip steps 1 or 3.** The subagent cannot function without a running daemon, and leaving the daemon running wastes resources.
 
 ### Extract data from a page
 
@@ -218,10 +235,12 @@ Task(
 
 ## Notes
 
-### Lifecycle Management
-- **You start and stop the daemon** - this is your responsibility
-- **The subagent never touches daemon lifecycle** - it only performs browser operations
-- Always stop the daemon when the user's task is complete
+### Lifecycle Management - CRITICAL RULES
+1. **ALWAYS start the daemon first** - before any browser subagent calls
+2. **ALWAYS stop the daemon last** - after all browser operations complete
+3. **The subagent never manages daemon lifecycle** - it only performs browser operations
+4. **Use `--existing-browser` ONLY when user explicitly requests it** - default is to auto-start Chrome
+5. **Stopping the daemon closes the browser** - don't forget this step
 
 ### Browser State
 - Browser state persists across subagent invocations within a session

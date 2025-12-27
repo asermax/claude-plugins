@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/background-agent.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/background-daemons.sh"
           }
         ]
       }

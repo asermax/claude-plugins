@@ -76,6 +76,22 @@ class BrowserDaemon:
         # Browsing contexts (named tabs/windows with history)
         self.browsing_contexts: Dict[str, BrowsingContext] = {}
 
+        # Chrome process monitor
+        self.monitor_thread: Optional[threading.Thread] = None
+
+    def monitor_chrome_process(self) -> None:
+        """Monitor Chrome subprocess and shutdown daemon if it exits."""
+        while self.running:
+            time.sleep(1)  # Check every second
+
+            # Check if Chrome process is still running
+            if self.chrome_process:
+                returncode = self.chrome_process.poll()
+                if returncode is not None:
+                    print("Chrome process exited, shutting down daemon...", file=sys.stderr)
+                    self.running = False
+                    break
+
     def start_chrome(self) -> None:
         """Start Chrome with remote debugging enabled."""
         import subprocess
@@ -1066,6 +1082,10 @@ class BrowserDaemon:
                                   {"url": initial_context_url}, f"Navigated to {initial_context_url}")
 
             print(f"Initial browsing context created: {initial_context_name} ({initial_context_url})", file=sys.stderr)
+
+            # Start Chrome process monitor
+            self.monitor_thread = threading.Thread(target=self.monitor_chrome_process, daemon=True)
+            self.monitor_thread.start()
 
             # Start socket server
             self.start_unix_socket_server()

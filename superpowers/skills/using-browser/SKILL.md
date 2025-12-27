@@ -10,7 +10,7 @@ description: Use when the user asks to browse websites, navigate web pages, extr
 > 2. Delegate to browser-agent with context assignment
 > 3. Create additional contexts if needed: `scripts/browser-cli create-browsing-context <name>`
 > 4. Close extra contexts when done (optional)
-> 5. Stop daemon: `scripts/browser-cli quit`
+> 5. Stop daemon ONLY when user explicitly requests: `scripts/browser-cli quit`
 
 ## What are Browsing Contexts?
 
@@ -25,7 +25,7 @@ description: Use when the user asks to browse websites, navigate web pages, extr
 ### 1. Daemon Lifecycle
 - ✅ Start the daemon with initial browsing context name (required)
 - ✅ Optionally provide initial URL (defaults to about:blank)
-- ✅ Stop the daemon when all work is complete
+- ✅ Stop the daemon ONLY when user explicitly requests to close the browser
 
 ### 2. Browsing Context Management
 - ✅ Initial context is created automatically when daemon starts
@@ -84,20 +84,13 @@ Returns:
   - Age (time since creation)
   - Recent history (last 5 actions with intentions)
 
-### Stop Daemon (Final Step)
+### Stop Daemon
 
-**Before stopping, confirm with the user:**
-Use the AskUserQuestion tool to ask if the user wants to close the browser, especially when:
-- The user's request was open-ended or exploratory
-- There might be follow-up tasks
-- The user was browsing interactively
+**IMPORTANT:** Only stop the daemon when the user explicitly requests to close the browser.
 
-**When to stop immediately (without asking):**
-- The user explicitly said they're done
-- The task was clearly one-shot (e.g., "get the title of this page")
-- The user requested something else unrelated to browsing
+**DO NOT automatically stop the daemon after completing tasks.** The browser should remain open for potential follow-up work unless the user specifically asks to close it.
 
-**To stop the daemon:**
+**To stop the daemon (only when explicitly requested):**
 
 ```bash
 scripts/browser-cli quit
@@ -229,8 +222,8 @@ Browsing context: shopping
 Search for 'mechanical keyboard' and return the top 3 product names with prices."""
 )
 
-# 3. Stop daemon
-scripts/browser-cli quit
+# Browser stays open for potential follow-up work
+# Only quit if user explicitly asks to close: scripts/browser-cli quit
 ```
 
 ### Example 2: Multi-Step Workflow with Context Reuse
@@ -263,8 +256,8 @@ Click the first product and extract its price and rating."""
 )
 # Agent checks history, sees search already done, continues from there
 
-# Cleanup
-scripts/browser-cli quit
+# Browser stays open for potential follow-up work
+# Only quit if user explicitly asks to close: scripts/browser-cli quit
 ```
 
 ### Example 3: Parallel Multi-Tab Automation
@@ -315,8 +308,8 @@ Search for 'laptop', return top 3 prices."""
 
 # All three agents work concurrently in their own tabs!
 
-# Cleanup (optional - quit closes all contexts)
-scripts/browser-cli quit
+# Browser stays open for potential follow-up work
+# Only quit if user explicitly asks to close: scripts/browser-cli quit
 ```
 
 ## Browsing Context History
@@ -372,8 +365,9 @@ The second agent uses `browsing-context-history research` to see:
 ### ⚠️ Daemon Lifecycle
 1. **START daemon with initial context name** (required parameter)
 2. **PROVIDE initial URL** (optional, defaults to about:blank)
-3. **STOP daemon AFTER all work complete**
-4. One daemon serves all browsing contexts
+3. **STOP daemon ONLY when user explicitly requests** - Do NOT auto-stop after tasks
+4. **AUTO-SHUTDOWN when user closes browser** - Daemon detects Chrome exit and stops automatically
+5. One daemon serves all browsing contexts
 
 ### ⚠️ Browsing Context Management
 1. **INITIAL context created automatically** when daemon starts
@@ -418,3 +412,5 @@ The second agent uses `browsing-context-history research` to see:
 - Actions are logged with timestamps and intentions for full traceability
 - Status command shows real-time view of all contexts
 - Browser-agent can check context history to understand previous work
+- Daemon automatically shuts down if user closes the browser window
+- Browser stays open after tasks complete to allow follow-up work

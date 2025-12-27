@@ -1,0 +1,15 @@
+[project]
+name = "using-browser"
+version = "0.1.0"
+description = "Browser automation skill using Chrome DevTools Protocol"
+authors = [
+    { name = "Agustin Carrasco", email = "asermax@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "websocket-client",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"

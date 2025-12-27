@@ -16,15 +16,29 @@ Use this skill when the user needs to:
 
 ## What this skill provides
 
-This skill manages the browser daemon lifecycle. **ALL browser operations MUST be delegated to the browser subagent.**
+This skill enables browser automation through a two-layer architecture:
 
-## Lifecycle Commands
+### Responsibility Division
+
+**Main Agent (YOU):**
+- Start the browser daemon
+- Stop the daemon when done
+- Check daemon status
+
+**Browser Subagent (`superpowers:browser-agent`):**
+- All browser operations (navigate, click, type, extract, etc.)
+- Returns filtered, relevant results only
+- Prevents token waste from full page dumps
+
+## Main Agent Responsibilities: Daemon Lifecycle
+
+**YOU are responsible for managing the daemon lifecycle.** The browser subagent does NOT start or stop the daemon.
 
 ### Start the daemon
 
 **Default (auto-start browser):**
 ```bash
-scripts/browser-daemon.py
+uv run scripts/browser-daemon.py
 ```
 
 The daemon will:
@@ -36,7 +50,7 @@ The daemon will:
 
 **Connect to existing browser:**
 ```bash
-scripts/browser-daemon.py --existing-browser
+uv run scripts/browser-daemon.py --existing-browser
 ```
 
 Use this when you already have Chrome running with `--remote-debugging-port=9222`.
@@ -49,18 +63,20 @@ google-chrome-stable --remote-debugging-port=9222 --remote-allow-origins=* &
 ### Check status
 
 ```bash
-scripts/browser-cli.py status
+uv run scripts/browser-cli.py status
 ```
 
 ### Stop the daemon
 
+**YOU are responsible for stopping the daemon when the user's task is complete:**
+
 ```bash
-scripts/browser-cli.py quit
+uv run scripts/browser-cli.py quit
 ```
 
 This will close both the daemon and the browser.
 
-## CRITICAL: Browser Operations Protocol
+## Subagent Responsibilities: Browser Operations
 
 **DO NOT** use browser commands (navigate, click, type, extract, etc.) directly from the main agent.
 
@@ -95,6 +111,26 @@ The browser subagent has access to these commands:
 - `wait <selector> [--timeout <sec>]` - Wait for element to appear
 
 ## Example Workflows
+
+### Complete workflow with daemon lifecycle
+
+This example shows the full pattern: start daemon → use subagent → stop daemon.
+
+```python
+# 1. Main agent starts the daemon
+uv run scripts/browser-daemon.py  # Auto-backgrounded by hook
+
+# 2. Main agent delegates browser operations to subagent
+Task(
+    description="Extract product info",
+    subagent_type="superpowers:browser-agent",
+    model="haiku",
+    prompt="Navigate to https://example.com/products and extract the top 3 product names"
+)
+
+# 3. Main agent stops the daemon when done
+uv run scripts/browser-cli.py quit
+```
 
 ### Extract data from a page
 
@@ -162,6 +198,12 @@ Task(
 
 ## Notes
 
+### Lifecycle Management
+- **Main agent starts and stops the daemon** - this is YOUR responsibility
+- **Subagent never touches daemon lifecycle** - only performs browser operations
+- Always stop the daemon when the user's task is complete
+
+### Browser State
 - Browser state persists across subagent invocations within a session
 - The daemon auto-starts Chrome with a dedicated profile
 - All browser operations are synchronous via CDP

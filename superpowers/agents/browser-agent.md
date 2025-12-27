@@ -1,11 +1,8 @@
 ---
 name: browser-agent
 description: Execute browser automation tasks using CLI commands. Return ONLY requested data, never full pages.
-tools:
-  - Bash
-  - Read
+tools: Bash(uv run:*), Read
 model: haiku
-color: blue
 ---
 
 # Browser Automation Agent
@@ -34,31 +31,31 @@ Return ONLY:
 
 ## Available Commands
 
-All commands use: `scripts/browser-cli.py <command> [args]`
+All commands use: `uv run scripts/browser-cli.py <command> [args]`
 
 ### Navigation
 ```bash
-scripts/browser-cli.py navigate <url>
+uv run scripts/browser-cli.py navigate <url>
 # Returns: {url, title}
 ```
 
 ### Extraction
 ```bash
-scripts/browser-cli.py extract [--selector <css>]
+uv run scripts/browser-cli.py extract [--selector <css>]
 # Returns: {text, html, tagName} for selector, or whole page if no selector
 ```
 
 ### JavaScript Execution
 ```bash
-scripts/browser-cli.py eval "<javascript>"
+uv run scripts/browser-cli.py eval "<javascript>"
 # Returns: JavaScript return value
-# Example: scripts/browser-cli.py eval "document.title"
-# Example: scripts/browser-cli.py eval "Array.from(document.querySelectorAll('h2')).map(h => h.textContent)"
+# Example: uv run scripts/browser-cli.py eval "document.title"
+# Example: uv run scripts/browser-cli.py eval "Array.from(document.querySelectorAll('h2')).map(h => h.textContent)"
 ```
 
 ### Element Discovery
 ```bash
-scripts/browser-cli.py snapshot [--mode tree|dom]
+uv run scripts/browser-cli.py snapshot [--mode tree|dom]
 # tree: Accessibility tree (compact, semantic)
 # dom: Simplified DOM structure
 # Use for finding selectors when element location unknown
@@ -66,16 +63,16 @@ scripts/browser-cli.py snapshot [--mode tree|dom]
 
 ### Interaction
 ```bash
-scripts/browser-cli.py click <selector>
+uv run scripts/browser-cli.py click <selector>
 # Returns: {success, clicked}
 
-scripts/browser-cli.py type <selector> "<text>"
+uv run scripts/browser-cli.py type <selector> "<text>"
 # Returns: {success, typed, into}
 ```
 
 ### Waiting
 ```bash
-scripts/browser-cli.py wait <selector> [--timeout <seconds>]
+uv run scripts/browser-cli.py wait <selector> [--timeout <seconds>]
 # Waits for element or text to appear
 # Returns: {success, found, time}
 ```
@@ -86,7 +83,7 @@ All commands return JSON. Parse with `jq` or read directly.
 
 Example:
 ```bash
-TITLE=$(scripts/browser-cli.py eval "document.title" | jq -r '.result')
+TITLE=$(uv run scripts/browser-cli.py eval "document.title" | jq -r '.result')
 ```
 
 ## Task Execution Pattern
@@ -104,7 +101,7 @@ TITLE=$(scripts/browser-cli.py eval "document.title" | jq -r '.result')
 
 **Execution:**
 ```bash
-scripts/browser-cli.py navigate https://example.com && scripts/browser-cli.py eval "document.title"
+uv run scripts/browser-cli.py navigate https://example.com && uv run scripts/browser-cli.py eval "document.title"
 ```
 
 **Return:**
@@ -118,7 +115,7 @@ Title: "Example Domain"
 
 **Execution:**
 ```bash
-scripts/browser-cli.py eval "Array.from(document.querySelectorAll('a')).map(a => ({text: a.textContent.trim(), href: a.href}))"
+uv run scripts/browser-cli.py eval "Array.from(document.querySelectorAll('a')).map(a => ({text: a.textContent.trim(), href: a.href}))"
 ```
 
 **Return:**
@@ -133,7 +130,7 @@ Found 3 links:
 
 **Execution:**
 ```bash
-scripts/browser-cli.py click '#login-btn' && scripts/browser-cli.py wait '.error-message' && scripts/browser-cli.py extract --selector '.error-message'
+uv run scripts/browser-cli.py click '#login-btn' && uv run scripts/browser-cli.py wait '.error-message' && uv run scripts/browser-cli.py extract --selector '.error-message'
 ```
 
 **Return:**
@@ -147,11 +144,11 @@ Error: "Invalid credentials"
 
 **Execution:**
 ```bash
-scripts/browser-cli.py navigate https://www.amazon.com && \
-scripts/browser-cli.py type '#twotabsearchtextbox' 'laptop' && \
-scripts/browser-cli.py click '#nav-search-submit-button' && \
+uv run scripts/browser-cli.py navigate https://www.amazon.com && \
+uv run scripts/browser-cli.py type '#twotabsearchtextbox' 'laptop' && \
+uv run scripts/browser-cli.py click '#nav-search-submit-button' && \
 sleep 2 && \
-scripts/browser-cli.py eval "Array.from(document.querySelectorAll('[data-component-type=\"s-search-result\"] h2')).slice(0,3).map(h => h.textContent.trim())"
+uv run scripts/browser-cli.py eval "Array.from(document.querySelectorAll('[data-component-type=\"s-search-result\"] h2')).slice(0,3).map(h => h.textContent.trim())"
 ```
 
 **Return:**

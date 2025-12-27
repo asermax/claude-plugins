@@ -65,10 +65,12 @@ Where `<scripts_path>` is the path provided at the top of your task.
 
 ### JavaScript Execution
 ```bash
-<scripts_path>/browser-cli eval "<javascript>"
+<scripts_path>/browser-cli eval <script-file>
 # Returns: JavaScript return value
-# Example: <scripts_path>/browser-cli eval "document.title"
-# Example: <scripts_path>/browser-cli eval "Array.from(document.querySelectorAll('h2')).map(h => h.textContent)"
+# The script must be written to a file first (use /tmp)
+# Example:
+#   echo 'document.title' > /tmp/script.js
+#   <scripts_path>/browser-cli eval /tmp/script.js
 ```
 
 ### Element Discovery
@@ -101,7 +103,8 @@ All commands return JSON. Parse with `jq` or read directly.
 
 Example:
 ```bash
-TITLE=$(<scripts_path>/browser-cli eval "document.title" | jq -r '.result')
+echo 'document.title' > /tmp/get-title.js
+TITLE=$(<scripts_path>/browser-cli eval /tmp/get-title.js | jq -r '.result')
 ```
 
 ## Task Execution Pattern
@@ -126,7 +129,9 @@ Get the page title from https://example.com
 **Execution:**
 ```bash
 SCRIPTS="/home/user/.claude/plugins/superpowers/skills/using-browser/scripts"
-$SCRIPTS/browser-cli navigate https://example.com && $SCRIPTS/browser-cli eval "document.title"
+$SCRIPTS/browser-cli navigate https://example.com
+echo 'document.title' > /tmp/get-title.js
+$SCRIPTS/browser-cli eval /tmp/get-title.js
 ```
 
 **Return:**
@@ -146,7 +151,13 @@ Find all links on the current page
 **Execution:**
 ```bash
 SCRIPTS="/home/user/.claude/plugins/superpowers/skills/using-browser/scripts"
-$SCRIPTS/browser-cli eval "Array.from(document.querySelectorAll('a')).map(a => ({text: a.textContent.trim(), href: a.href}))"
+cat > /tmp/get-links.js << 'EOF'
+Array.from(document.querySelectorAll('a')).map(a => ({
+  text: a.textContent.trim(),
+  href: a.href
+}))
+EOF
+$SCRIPTS/browser-cli eval /tmp/get-links.js
 ```
 
 **Return:**
@@ -187,11 +198,16 @@ Search Amazon for 'laptop' and return the first 3 product titles
 **Execution:**
 ```bash
 SCRIPTS="/home/user/.claude/plugins/superpowers/skills/using-browser/scripts"
-$SCRIPTS/browser-cli navigate https://www.amazon.com && \
-$SCRIPTS/browser-cli type '#twotabsearchtextbox' 'laptop' && \
-$SCRIPTS/browser-cli click '#nav-search-submit-button' && \
-sleep 2 && \
-$SCRIPTS/browser-cli eval "Array.from(document.querySelectorAll('[data-component-type=\"s-search-result\"] h2')).slice(0,3).map(h => h.textContent.trim())"
+$SCRIPTS/browser-cli navigate https://www.amazon.com
+$SCRIPTS/browser-cli type '#twotabsearchtextbox' 'laptop'
+$SCRIPTS/browser-cli click '#nav-search-submit-button'
+sleep 2
+cat > /tmp/get-products.js << 'EOF'
+Array.from(document.querySelectorAll('[data-component-type="s-search-result"] h2'))
+  .slice(0,3)
+  .map(h => h.textContent.trim())
+EOF
+$SCRIPTS/browser-cli eval /tmp/get-products.js
 ```
 
 **Return:**
@@ -248,7 +264,13 @@ First, gather the complete list of items to iterate over.
 
 ```bash
 # Example: Get all category names
-$SCRIPTS/browser-cli eval "Array.from(document.querySelectorAll('.category-link')).map(c => ({name: c.textContent.trim(), href: c.href}))"
+cat > /tmp/get-categories.js << 'EOF'
+Array.from(document.querySelectorAll('.category-link')).map(c => ({
+  name: c.textContent.trim(),
+  href: c.href
+}))
+EOF
+$SCRIPTS/browser-cli eval /tmp/get-categories.js
 ```
 
 Store this list mentally - you'll process each item.
@@ -311,14 +333,25 @@ Create a reusable `eval` script that takes variables as inputs:
 Test the script against your manual iterations:
 
 ```bash
+# Create the extraction script
+cat > /tmp/extract-products.js << 'EOF'
+(() => {
+  const items = document.querySelectorAll('.product-card');
+  return Array.from(items).map(item => ({
+    name: item.querySelector('h3')?.textContent.trim(),
+    price: item.querySelector('.price')?.textContent.trim()
+  }));
+})()
+EOF
+
 # Navigate to first category (already did manually, know the expected output)
 $SCRIPTS/browser-cli navigate "https://example.com/cat/electronics"
-$SCRIPTS/browser-cli eval "(() => { ... })())"
+$SCRIPTS/browser-cli eval /tmp/extract-products.js
 # Verify output matches what you extracted manually
 
 # Navigate to second category
 $SCRIPTS/browser-cli navigate "https://example.com/cat/books"
-$SCRIPTS/browser-cli eval "(() => { ... })())"
+$SCRIPTS/browser-cli eval /tmp/extract-products.js
 # Verify output matches what you extracted manually
 ```
 
@@ -331,11 +364,11 @@ For each remaining item, execute the script **one at a time** (NOT in a loop):
 ```bash
 # Item 3
 $SCRIPTS/browser-cli navigate "https://example.com/cat/clothing"
-$SCRIPTS/browser-cli eval "(() => { ... })())"
+$SCRIPTS/browser-cli eval /tmp/extract-products.js
 
 # Item 4
 $SCRIPTS/browser-cli navigate "https://example.com/cat/toys"
-$SCRIPTS/browser-cli eval "(() => { ... })())"
+$SCRIPTS/browser-cli eval /tmp/extract-products.js
 ```
 
 **On failure - Evolve and Retry:**

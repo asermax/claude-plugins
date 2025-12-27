@@ -69,8 +69,8 @@ def main():
     extract_parser.add_argument("--selector", help="CSS selector (optional, extracts whole page if not provided)")
 
     # eval
-    eval_parser = subparsers.add_parser("eval", help="Execute JavaScript")
-    eval_parser.add_argument("javascript", help="JavaScript code to execute")
+    eval_parser = subparsers.add_parser("eval", help="Execute JavaScript from file")
+    eval_parser.add_argument("script_file", help="Path to JavaScript file to execute")
 
     # snapshot
     snapshot_parser = subparsers.add_parser("snapshot", help="Get page structure")
@@ -104,7 +104,7 @@ def main():
     elif args.command == "extract":
         cmd_args["selector"] = getattr(args, "selector", None)
     elif args.command == "eval":
-        cmd_args["javascript"] = args.javascript
+        cmd_args["script_file"] = args.script_file
     elif args.command == "snapshot":
         cmd_args["mode"] = args.mode
     elif args.command == "click":

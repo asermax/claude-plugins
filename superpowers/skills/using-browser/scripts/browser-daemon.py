@@ -206,7 +206,7 @@ class BrowserDaemon:
                 elif command == "extract":
                     result = self.cmd_extract(args.get("selector"))
                 elif command == "eval":
-                    result = self.cmd_eval(args.get("javascript"))
+                    result = self.cmd_eval(args.get("script_file"))
                 elif command == "snapshot":
                     result = self.cmd_snapshot(args.get("mode", "tree"))
                 elif command == "click":
@@ -267,12 +267,8 @@ class BrowserDaemon:
         """Clean up resources (Chrome, sockets, etc.)."""
         print("Cleaning up resources...", file=sys.stderr)
 
-        # Close browser via CDP
+        # Close CDP websocket (skip Browser.close - we'll terminate the process anyway)
         if self.cdp_ws:
-            try:
-                self._send_cdp("Browser.close", {})
-            except:
-                pass  # Browser might already be closing
             try:
                 self.cdp_ws.close()
             except:
@@ -371,10 +367,19 @@ class BrowserDaemon:
 
         return {"success": True, "data": value}
 
-    def cmd_eval(self, javascript: str) -> Dict[str, Any]:
-        """Execute JavaScript in page context."""
-        if not javascript:
-            return {"error": "javascript required"}
+    def cmd_eval(self, script_file: str) -> Dict[str, Any]:
+        """Execute JavaScript from file in page context."""
+        if not script_file:
+            return {"error": "script_file required"}
+
+        # Read JavaScript from file
+        try:
+            with open(script_file, 'r') as f:
+                javascript = f.read()
+        except FileNotFoundError:
+            return {"error": f"Script file not found: {script_file}"}
+        except Exception as e:
+            return {"error": f"Failed to read script file: {e}"}
 
         result = self._send_cdp("Runtime.evaluate", {
             "expression": javascript,

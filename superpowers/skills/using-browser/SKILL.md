@@ -18,27 +18,34 @@ Use this skill when the user needs to:
 
 This skill enables browser automation through a two-layer architecture:
 
-### Responsibility Division
+### Your Responsibilities
 
-**Main Agent (YOU):**
+**You manage the daemon lifecycle:**
 - Start the browser daemon
 - Stop the daemon when done
 - Check daemon status
 
-**Browser Subagent (`superpowers:browser-agent`):**
-- All browser operations (navigate, click, type, extract, etc.)
-- Returns filtered, relevant results only
+**The browser subagent handles operations:**
+- Navigation and page interaction (clicking, typing, waiting for elements)
+- Content extraction (text, data, page structure)
+- JavaScript execution in the page context
+- Returns filtered, relevant results only in natural language
 - Prevents token waste from full page dumps
 
-## Main Agent Responsibilities: Daemon Lifecycle
+**Important limitations:**
+- No screenshot or visual capture capabilities
+- No file download/upload handling
+- No multi-tab or window management
 
-**YOU are responsible for managing the daemon lifecycle.** The browser subagent does NOT start or stop the daemon.
+## Daemon Lifecycle Management
+
+**You are responsible for managing the daemon lifecycle.** The browser subagent does NOT start or stop the daemon.
 
 ### Start the daemon
 
 **Default (auto-start browser):**
 ```bash
-uv run scripts/browser-daemon.py
+scripts/browser-daemon
 ```
 
 The daemon will:
@@ -50,7 +57,7 @@ The daemon will:
 
 **Connect to existing browser:**
 ```bash
-uv run scripts/browser-daemon.py --existing-browser
+scripts/browser-daemon --existing-browser
 ```
 
 Use this when you already have Chrome running with `--remote-debugging-port=9222`.
@@ -63,22 +70,22 @@ google-chrome-stable --remote-debugging-port=9222 --remote-allow-origins=* &
 ### Check status
 
 ```bash
-uv run scripts/browser-cli.py status
+scripts/browser-cli status
 ```
 
 ### Stop the daemon
 
-**YOU are responsible for stopping the daemon when the user's task is complete:**
+**You are responsible for stopping the daemon when the user's task is complete:**
 
 ```bash
-uv run scripts/browser-cli.py quit
+scripts/browser-cli quit
 ```
 
 This will close both the daemon and the browser.
 
-## Subagent Responsibilities: Browser Operations
+## Browser Operations via Subagent
 
-**DO NOT** use browser commands (navigate, click, type, extract, etc.) directly from the main agent.
+**DO NOT** use browser commands (navigate, click, type, extract, etc.) directly.
 
 **ALWAYS** delegate browser operations to the browser subagent using the Task tool:
 
@@ -91,24 +98,38 @@ Task(
 )
 ```
 
+### Task instruction flexibility
+
+You can provide instructions at different levels of detail:
+
+**High-level (recommended):**
+```python
+prompt="Login to the page with username 'user@example.com' and password 'pass123'"
+# The subagent figures out: find login form, fill fields, click submit button
+```
+
+**Detailed (when needed):**
+```python
+prompt='''
+1. Navigate to https://example.com/login
+2. Type "user@example.com" into the email field
+3. Type "pass123" into the password field
+4. Click the login button
+5. Wait for dashboard to appear
+'''
+# Use this when you need precise control over each step
+```
+
+**Best practice:** Start with high-level instructions. Add detail only if the subagent needs guidance.
+
 ### Why use the subagent?
 
-1. **Context efficiency**: Subagent filters responses, returning only relevant data
+1. **Context efficiency**: Subagent filters responses, returning only relevant data in natural language
 2. **Cost savings**: Haiku model for browser operations
 3. **Resumability**: Long-running browser tasks can be resumed
-4. **Prevents token waste**: No full page dumps in main agent context
-
-## Available Browser Commands (via subagent)
-
-The browser subagent has access to these commands:
-
-- `navigate <url>` - Go to URL
-- `click <selector>` - Click element by CSS selector
-- `type <selector> <text>` - Type into element
-- `extract [--selector <sel>]` - Extract text/HTML
-- `eval <javascript>` - Execute JavaScript in page
-- `snapshot [--mode tree|dom]` - Get page structure for element discovery
-- `wait <selector> [--timeout <sec>]` - Wait for element to appear
+4. **Prevents token waste**: No full page dumps or technical jargon in responses
+5. **Natural communication**: Responses use plain language, not CSS selectors or HTML IDs
+6. **Adaptive execution**: Can work with vague or detailed instructions
 
 ## Example Workflows
 
@@ -117,10 +138,10 @@ The browser subagent has access to these commands:
 This example shows the full pattern: start daemon → use subagent → stop daemon.
 
 ```python
-# 1. Main agent starts the daemon
-uv run scripts/browser-daemon.py  # Auto-backgrounded by hook
+# 1. Start the daemon
+scripts/browser-daemon  # Auto-backgrounded by hook
 
-# 2. Main agent delegates browser operations to subagent
+# 2. Delegate browser operations to subagent
 Task(
     description="Extract product info",
     subagent_type="superpowers:browser-agent",
@@ -128,8 +149,8 @@ Task(
     prompt="Navigate to https://example.com/products and extract the top 3 product names"
 )
 
-# 3. Main agent stops the daemon when done
-uv run scripts/browser-cli.py quit
+# 3. Stop the daemon when done
+scripts/browser-cli quit
 ```
 
 ### Extract data from a page
@@ -149,19 +170,18 @@ Return ONLY the title text
 
 ### Multi-step automation
 
+**High-level approach:**
 ```python
 Task(
-    description="Login and extract data",
+    description="Login and extract username",
     subagent_type="superpowers:browser-agent",
     model="haiku",
     prompt='''
-1. Navigate to https://example.com/login
-2. Type "user@example.com" into #email
-3. Type "password123" into #password
-4. Click #login-button
-5. Wait for #dashboard to appear
-6. Extract the username from #user-display
-Return ONLY the username
+Go to https://example.com/login and login with:
+- Email: user@example.com
+- Password: password123
+
+Once logged in, extract and return the displayed username.
 '''
 )
 ```
@@ -199,8 +219,8 @@ Task(
 ## Notes
 
 ### Lifecycle Management
-- **Main agent starts and stops the daemon** - this is YOUR responsibility
-- **Subagent never touches daemon lifecycle** - only performs browser operations
+- **You start and stop the daemon** - this is your responsibility
+- **The subagent never touches daemon lifecycle** - it only performs browser operations
 - Always stop the daemon when the user's task is complete
 
 ### Browser State

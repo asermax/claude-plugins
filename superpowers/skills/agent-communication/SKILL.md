@@ -574,8 +574,3 @@ Hello agents! I'm here to help coordinate.
 
 Remember: Replace `scripts/` with the full path based on the skill's base directory (see "Script Path Construction" section above).
 
-## Integration with Other Skills
-
-- **superpowers:brainstorming**: Use agent chat to brainstorm across repos
-- **superpowers:writing-plans**: Coordinate on multi-repo implementation plans
-- **superpowers:using-beads**: Each agent can work on separate beads, coordinate via chat

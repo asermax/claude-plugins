@@ -371,7 +371,7 @@ cat /tmp/claude/test-report-*.md | tail -100
 - Description: "Use when working with third-party libraries or frameworks (react-query, FastAPI, pydantic, Django, Express, pandas, Next.js, NestJS, Celery, pytest, Pinia, etc.) for implementing features, debugging library-specific behavior, or answering API questions - fetches current documentation ensuring accurate implementation. Do NOT use for language built-ins (Python dict/list, JavaScript Array), standard library (fs, json, os.path), or pure algorithms."
 - Accuracy: 73% (16/22)
 - Improvement: +23 percentage points
-- Remaining issues: Competition with other skills (systematic-debugging, test-driven-development, requesting-code-review)
+- Remaining issues: Competition with other skills (systematic-debugging, requesting-code-review, using-beads)
 
 **Key changes that worked:**
 - Led with "third-party libraries or frameworks"

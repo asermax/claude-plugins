@@ -54,17 +54,8 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 ### Step 2: Identify Skills to Update
 
 **From superpowers repository (`~/workspace/random/superpowers/skills/`):**
-- brainstorming
-- executing-plans
-- receiving-code-review
 - requesting-code-review (SKILL.md only - agent is maintained separately)
 - systematic-debugging (includes supporting techniques as .md files)
-- test-driven-development (includes supporting documentation as .md files)
-- writing-plans
-- writing-skills (includes supporting documentation as .md files)
-
-**From claudekit-skills repository (`~/workspace/random/claudekit-skills/.claude/skills/`):**
-- chrome-devtools (entire directory - includes scripts/ and references/)
 
 **From quint-code repository (`~/workspace/random/quint-code/src/mcp/cmd/commands/`):**
 - All 13 command files (q0-init, q1-hypothesize, q1-add, q2-verify, q3-validate, q4-audit, q5-decide, q-status, q-query, q-decay, q-actualize, q-reset, q-audit)
@@ -126,19 +117,10 @@ git show e3d881b:agents/code-reviewer.md  # For new files
 ```
 
 **Files we track from superpowers:**
-- `skills/brainstorming/SKILL.md`
-- `skills/executing-plans/SKILL.md`
-- `skills/receiving-code-review/SKILL.md`
 - `skills/requesting-code-review/SKILL.md`
 - `skills/systematic-debugging/` (entire directory - includes supporting .md files)
-- `skills/test-driven-development/` (entire directory - includes supporting .md files)
-- `skills/writing-plans/SKILL.md`
-- `skills/writing-skills/` (entire directory - includes supporting .md files)
 - `agents/code-reviewer.md` (synced to our `agents/code-reviewer.md`)
 - `skills/requesting-code-review/code-reviewer.md` (synced to our `skills/requesting-code-review/code-reviewer.md`)
-
-**Files we track from claudekit-skills:**
-- `.claude/skills/chrome-devtools/` (entire directory - includes scripts/ and references/)
 
 **Files we track from quint-code:**
 - `src/mcp/cmd/commands/*.md` (all 13 command files - synced to our `quint/commands/`)
@@ -161,12 +143,9 @@ For each skill with differences, show:
 
 **General explanation of plugin modifications:**
 
-This plugin maintains customized versions of certain base skills to integrate with the beads task management system and remove dependencies on skills not included in the plugin:
+This plugin maintains customized versions of certain base skills to remove dependencies on skills not included in the plugin:
 
 - **All skills**: Use `superpowers:` namespace prefix for all skill references
-- **brainstorming**: Merges design and implementation into single "plan implementation" phase that creates epic beads with design docs and child task beads; removed git worktree dependencies
-- **writing-plans**: Uses epic-task hierarchy (parent-child beads) to document design in epic beads and implementation in task beads
-- **executing-plans**: Simplified completion workflow (removed finishing-a-development-branch skill dependency); aware of epic-task hierarchy
 - **systematic-debugging**: Removed references to skills not included in plugin (defense-in-depth, condition-based-waiting, verification-before-completion)
 - **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"; simplified SHA commands to run directly without variable assignment (use `git rev-parse HEAD~1` and `git rev-parse HEAD` directly instead of assigning to variables)
 
@@ -175,30 +154,15 @@ Format the output clearly:
 ```
 === Skills with Updates ===
 
-brainstorming (from superpowers)
-  Status: Has plugin customizations (beads integration)
-  Changes: Content updates in upstream version
-  Action: Manual merge required to preserve beads workflow
-
-writing-plans (from superpowers)
-  Status: Has plugin customizations (beads integration)
-  Changes: Content updates in upstream version
-  Action: Manual merge required to preserve beads workflow
-
 systematic-debugging (from superpowers)
   Status: Has plugin customizations (removed skill references)
   Changes: Content updates in upstream version
   Action: Manual merge required to preserve simplified workflow
 
-executing-plans (from superpowers)
-  Status: Has plugin customizations (simplified completion)
+requesting-code-review (from superpowers)
+  Status: Has plugin customizations (broadened scope, simplified SHA commands)
   Changes: Content updates in upstream version
-  Action: Manual merge required to preserve simplified workflow
-
-receiving-code-review (from superpowers)
-  Status: No customizations
-  Changes: Minor content updates
-  Action: Direct copy from upstream
+  Action: Manual merge required to preserve customizations
 
 ---
 ```
@@ -227,22 +191,14 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 
 **Update procedure by skill type:**
 
-**Type 1: Skills with beads integration (brainstorming, writing-plans, executing-plans)**
-- Read both upstream and plugin versions
-- Identify conceptual improvements in upstream (better explanations, workflow enhancements, etc.)
-- Manually adapt those improvements to preserve beads integration and epic-task hierarchy pattern
-- Remove all git worktree references and workflows
-- Apply `superpowers:` namespace prefix to all skill references
-- Example: If upstream adds better guidance about design validation, add that guidance but keep the beads epic-task structure
-
-**Type 2: Unmodified skills (receiving-code-review, requesting-code-review, test-driven-development, writing-skills)**
+**Type 1: Unmodified skills (requesting-code-review)**
 - Copy directly from upstream (entire directory to include supporting documentation):
   ```bash
-  cp -r ~/workspace/random/superpowers/skills/<skill-name> \
+  cp -r ~/workspace/random/superpowers/skills/requesting-code-review \
         ~/workspace/asermax/claude-plugins/superpowers/skills/
   ```
 
-**Type 3: Skills with minor customizations (systematic-debugging)**
+**Type 2: Skills with minor customizations (systematic-debugging)**
 - Copy directly from upstream (entire directory):
   ```bash
   cp -r ~/workspace/random/superpowers/skills/systematic-debugging \
@@ -250,10 +206,10 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - Remove any references to skills not in plugin (e.g., verification-before-completion)
 
-**Type 4: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary)**
+**Type 3: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives)**
 - Never modify (no upstream source)
 
-**Type 5: Code-reviewer agent and template**
+**Type 4: Code-reviewer agent and template**
 - Copy directly from upstream (no customizations):
   ```bash
   cp ~/workspace/random/superpowers/agents/code-reviewer.md \
@@ -262,17 +218,7 @@ The plugin maintains conceptual modifications to certain skills. When updating t
      ~/workspace/asermax/claude-plugins/superpowers/skills/requesting-code-review/code-reviewer.md
   ```
 
-**Type 6: Claudekit skills (direct copy)**
-- Copy entire skill directories without modification
-- Preserves original frontmatter (includes license, allowed-tools, etc.)
-- Copy entire directory to include scripts/ and references/:
-  ```bash
-  cp -r ~/workspace/random/claudekit-skills/.claude/skills/<skill-name> \
-        ~/workspace/asermax/claude-plugins/superpowers/skills/
-  ```
-- Current skills: chrome-devtools
-
-**Type 7: Quint commands and context**
+**Type 5: Quint commands and context**
 - Copy command files directly from upstream (no customization):
   ```bash
   cp ~/workspace/random/quint-code/src/mcp/cmd/commands/*.md \
@@ -286,7 +232,7 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 - MCP binary is built on-demand by the SessionStart hook (see `quint/hooks/session-init.sh`)
 - Commands use MCP tools directly, no modification needed
 
-**Type 8: Agentic-evolve command (direct copy)**
+**Type 6: Agentic-evolve command (direct copy)**
 - Copy command file directly from upstream (no customization):
   ```bash
   cp ~/workspace/random/agentic-evolve/.claude/commands/evolve.md \
@@ -306,12 +252,8 @@ Confirm successful update:
 ✅ Plugins synced successfully:
 
 Superpowers:
-- skill-1 (adapted from superpowers, beads integration preserved)
-- skill-2 (adapted from superpowers, simplified workflow preserved)
-- skill-3 (copied directly from superpowers)
-
-Claudekit:
-- chrome-devtools (copied directly from claudekit-skills)
+- requesting-code-review (copied directly from superpowers)
+- systematic-debugging (adapted from superpowers, skill references removed)
 
 Quint:
 - 13 command files synced (Q0-Q5 cycle + utilities)
@@ -323,10 +265,8 @@ Agentic-Evolve:
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references
-- brainstorming: merged design and planning into epic-task bead structure, worktree dependencies removed
-- writing-plans: epic-task hierarchy pattern for design documentation
-- executing-plans: simplified completion workflow, epic-task hierarchy awareness
-- systematic-debugging: removed reference to verification-before-completion skill
+- systematic-debugging: removed references to skills not in plugin
+- requesting-code-review: broadened scope and simplified SHA commands
 ```
 
 ## Error Handling
@@ -339,7 +279,7 @@ Agentic-Evolve:
 
 ## Important Notes
 
-- **Never lose plugin customizations**: The beads integration and simplified workflows are critical features
+- **Never lose plugin customizations**: The simplified workflows and namespace prefixes are critical features
 - **Conceptual merging**: Focus on understanding what improved upstream, then apply those improvements to the plugin's approach
 - **Manual review**: For modified skills, always read both versions completely before merging
 - **Test after update**: Verify updated skills work correctly by checking their SKILL.md files for correctness

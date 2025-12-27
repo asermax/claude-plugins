@@ -11,26 +11,26 @@ This plugin provides a collection of Claude Code skills that establish proven wo
 The plugin includes the following skills:
 
 ### Core Development Workflow
-- **brainstorming**: Refine rough ideas into fully-formed designs through structured exploration (integrates with beads for issue tracking)
-- **executing-plans**: Execute implementation plans in controlled batches with review checkpoints
-- **receiving-code-review**: Process code review feedback with technical rigor and verification
 - **requesting-code-review**: Request code reviews before merging to verify work meets requirements
 - **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations
-- **writing-plans**: Create comprehensive implementation plans using beads issues with dependencies
 
 ### Debugging and Testing
-- **root-cause-tracing**: Trace bugs backward through call stack to identify source of issues
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions
-- **test-driven-development**: Write test first, watch it fail, write minimal code to pass
+- **testing-skills-activation**: Systematically test and iterate on skill descriptions to ensure correct activation patterns
 
 ### Documentation and Research
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
-- **skill-creator**: Create skills with bundled resources (scripts, references, assets) using initialization templates and packaging workflows
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
-- **writing-skills**: Apply TDD to process documentation by testing with subagents
 
 ### Project Management
 - **using-beads**: Dependency-aware task management with bd - track all work, model dependencies, use bd ready for next tasks
+
+### Multi-Agent Collaboration
+- **agent-communication**: Enable communication between multiple Claude Code instances across repositories
+
+### Other
+- **using-gemini**: Analyze images, videos, fetch web content, and search Google using Gemini CLI
+- **financial-summary**: Parse and analyze financial transaction CSV exports
 
 ## Commands
 

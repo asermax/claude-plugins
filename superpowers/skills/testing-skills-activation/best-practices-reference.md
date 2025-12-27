@@ -9,7 +9,7 @@ This document captures best practices for designing Claude Code agent skills to 
 - **Format**: Use lowercase with hyphens only (kebab-case)
 - **Clarity**: Name should clearly indicate the skill's purpose
 - **Brevity**: Keep names concise but descriptive
-- **Examples**: `using-live-documentation`, `test-driven-development`, `systematic-debugging`
+- **Examples**: `using-live-documentation`, `requesting-code-review`, `systematic-debugging`
 
 ## Description Field - Critical for Discovery
 

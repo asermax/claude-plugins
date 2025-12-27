@@ -63,22 +63,16 @@ Development workflow skills for systematic debugging, code review, planning, and
 The plugin provides a collection of proven workflow skills organized by category:
 
 *Core Development Workflow:*
-- **brainstorming**: Refine rough ideas into fully-formed designs through structured exploration (integrates with beads for issue tracking)
-- **executing-plans**: Execute implementation plans in controlled batches with review checkpoints
-- **receiving-code-review**: Process code review feedback with technical rigor and verification
 - **requesting-code-review**: Request code reviews before merging to verify work meets requirements
 - **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations and security validation for external URLs
-- **writing-plans**: Create comprehensive implementation plans using beads issues with dependencies
 
 *Debugging and Testing:*
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions (includes supporting techniques: root-cause-tracing, defense-in-depth, condition-based-waiting)
-- **test-driven-development**: Write test first, watch it fail, write minimal code to pass (includes supporting documentation: testing-anti-patterns)
 - **testing-skills-activation**: Systematically test and iterate on skill descriptions to ensure correct activation patterns (15-25 test cases, 90%+ accuracy target)
 
 *Documentation and Research:*
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
-- **writing-skills**: Create and refine process documentation skills using TDD methodology (includes supporting documentation: testing-skills-with-subagents)
 
 *Project Management:*
 - **using-beads**: Dependency-aware task management with bd - track all work, model dependencies, use bd ready for next tasks
@@ -86,14 +80,10 @@ The plugin provides a collection of proven workflow skills organized by category
 *Multi-Agent Collaboration:*
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories using file-based chat system (agent daemon, chat CLI)
 
-*Browser Automation:*
-- **chrome-devtools**: Browser automation using Puppeteer CLI scripts - navigate, screenshot, click, fill, network monitoring, performance analysis
-
 **Key workflows:**
 - Skills directory contains full skill definitions from upstream repositories
-- Sync command updates from multiple upstream sources:
+- Sync command updates from upstream source:
   - `~/workspace/random/superpowers` - Core workflow skills
-  - `~/workspace/random/claudekit-skills` - Browser automation and other utilities
 - Shows high-level summary of changes before updating
 - Intelligently merges updates while preserving plugin-specific customizations
 - Skills are automatically available via Claude Code's skill system
@@ -199,26 +189,21 @@ FPF (First Principles Framework) methodology for structured decision-making.
 
 **Custom modifications:**
 - **All skills**: Use `superpowers:` namespace prefix for all skill references
-- **brainstorming**: Merges design and planning phases into epic-task bead structure; removed git worktree dependencies
-- **writing-plans**: Uses epic-task hierarchy with parent-child beads for design documentation
-- **executing-plans**: Simplified completion workflow; aware of epic-task hierarchy pattern
 - **systematic-debugging**: Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
 - **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"; simplified SHA commands to run directly without variable assignment
-- Four plugin-specific skills added: using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation
+- Multiple plugin-specific skills added: using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
 - Upstream repositories:
   - `~/workspace/random/superpowers` - Core workflow skills
-  - `~/workspace/random/claudekit-skills` - Browser automation and other utilities
   - `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
 - Pull latest changes from all repositories' `main` branch
-- Tracked skills from superpowers (8 skills): brainstorming, executing-plans, receiving-code-review, requesting-code-review, systematic-debugging, test-driven-development, writing-plans, writing-skills
-- Tracked skills from claudekit-skills: chrome-devtools (entire directory with scripts/ and references/)
+- Tracked skills from superpowers: requesting-code-review, systematic-debugging
 - Tracked command from agentic-evolve: evolve (copied directly to superpowers/commands/)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
-- Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary) are never modified
+- Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives) are never modified
 - Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
 
@@ -250,10 +235,7 @@ FPF (First Principles Framework) methodology for structured decision-making.
 - `hooks/auto-approve.sh`: PermissionRequest hook that auto-approves superpowers skill invocations and bash commands referencing superpowers paths
 
 **Beads integration:**
-- Epic-task hierarchy pattern: epic beads contain design documentation, child task beads contain implementation steps
-- brainstorming merges design and planning into single phase that creates epic and task beads
-- writing-plans, executing-plans, and using-beads skills all support epic-task hierarchy
-- using-beads skill provides full bd workflow documentation including parent-child relationships
+- using-beads skill provides full bd workflow documentation including parent-child relationships for task management
 
 ## Repository Conventions
 

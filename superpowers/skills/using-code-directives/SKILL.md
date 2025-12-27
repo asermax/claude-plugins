@@ -154,7 +154,7 @@ For simple deferrals:
 
 Write directives automatically when:
 - User says "skip X for now" or "we'll add Y later"
-- During brainstorming, marking implementation steps inline
+- During planning, marking implementation steps inline
 - Identifying improvements while working on something else
 
 ### Don't Write When

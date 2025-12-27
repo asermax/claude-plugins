@@ -5,6 +5,10 @@ description: Use when user needs browser automation. Start/stop browser daemon a
 
 # Browser Automation Skill
 
+> **⚠️ STOP: Before ANY browser operation, you MUST start the daemon first!**
+> Run `scripts/browser-daemon` BEFORE invoking the browser subagent.
+> The subagent CANNOT function without a running daemon.
+
 ## When to use this skill
 
 Use this skill when the user needs to:
@@ -47,7 +51,6 @@ The browser subagent does NOT start or stop the daemon - that's YOUR responsibil
 
 **ALWAYS start the daemon as your first action when the user requests browser automation.**
 
-**Default approach (auto-start Chrome):**
 ```bash
 scripts/browser-daemon
 ```
@@ -58,21 +61,6 @@ This will:
 - Listen on Unix socket for commands
 
 **Note:** The PreToolUse hook automatically runs this in the background.
-
-**Use existing Chrome (ONLY when user explicitly requests it):**
-```bash
-scripts/browser-daemon --existing-browser
-```
-
-Use this ONLY if the user explicitly says:
-- "use my existing browser"
-- "connect to my current Chrome session"
-- "use the browser I already have open"
-
-For this to work, the user must have Chrome running with:
-```bash
-google-chrome-stable --remote-debugging-port=9222 --remote-allow-origins=* &
-```
 
 ### Check status
 
@@ -100,16 +88,22 @@ This will:
 
 ## Browser Operations via Subagent
 
+> **REMINDER: Did you start the daemon? Run `scripts/browser-daemon` first!**
+
 **DO NOT** use browser commands (navigate, click, type, extract, etc.) directly.
 
-**ALWAYS** delegate browser operations to the browser subagent using the Task tool:
+**ALWAYS** delegate browser operations to the browser subagent using the Task tool.
+
+**IMPORTANT:** The subagent does not know the plugin directory. You MUST provide the full scripts path in your prompt:
 
 ```python
 Task(
     description="Navigate and search Amazon",
     subagent_type="superpowers:browser-agent",
-    model="haiku",  # Use haiku for cost efficiency
-    prompt="Navigate to Amazon and search for 'chair'. Return only the first 3 product titles."
+    model="haiku",
+    prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+
+Navigate to Amazon and search for 'chair'. Return only the first 3 product titles."""
 )
 ```
 
@@ -153,15 +147,17 @@ prompt='''
 **MANDATORY PATTERN: Always follow this sequence**
 
 ```python
-# 1. FIRST: Start the daemon (REQUIRED)
+# 1. FIRST: Start the daemon (REQUIRED - DO NOT SKIP!)
 scripts/browser-daemon  # Auto-backgrounded by hook
 
-# 2. THEN: Delegate browser operations to subagent
+# 2. THEN: Delegate browser operations to subagent (include scripts path!)
 Task(
     description="Extract product info",
     subagent_type="superpowers:browser-agent",
     model="haiku",
-    prompt="Navigate to https://example.com/products and extract the top 3 product names"
+    prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+
+Navigate to https://example.com/products and extract the top 3 product names"""
 )
 
 # 3. FINALLY: Stop the daemon (REQUIRED)
@@ -170,6 +166,10 @@ scripts/browser-cli quit
 
 **Never skip steps 1 or 3.** The subagent cannot function without a running daemon, and leaving the daemon running wastes resources.
 
+> **CHECKLIST before invoking subagent:**
+> - [ ] Started the daemon with `scripts/browser-daemon`?
+> - [ ] Including the scripts path in the prompt?
+
 ### Extract data from a page
 
 ```python
@@ -177,11 +177,11 @@ Task(
     description="Extract article title",
     subagent_type="superpowers:browser-agent",
     model="haiku",
-    prompt='''
+    prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+
 Navigate to https://example.com/article
 Extract the article title using the h1 selector
-Return ONLY the title text
-'''
+Return ONLY the title text"""
 )
 ```
 
@@ -193,13 +193,13 @@ Task(
     description="Login and extract username",
     subagent_type="superpowers:browser-agent",
     model="haiku",
-    prompt='''
+    prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+
 Go to https://example.com/login and login with:
 - Email: user@example.com
 - Password: password123
 
-Once logged in, extract and return the displayed username.
-'''
+Once logged in, extract and return the displayed username."""
 )
 ```
 
@@ -211,7 +211,9 @@ Task(
     description="Start Amazon search",
     subagent_type="superpowers:browser-agent",
     model="haiku",
-    prompt="Navigate to Amazon and search for 'laptop'. Return the first 3 product titles."
+    prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+
+Navigate to Amazon and search for 'laptop'. Return the first 3 product titles."""
 )
 # Agent completes and returns agentId: abc123
 ```
@@ -223,7 +225,9 @@ Task(
     subagent_type="superpowers:browser-agent",
     model="haiku",
     resume="abc123",  # Continue from previous agent's context
-    prompt="Click the first product and extract its price and rating. Return only price and rating."
+    prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+
+Click the first product and extract its price and rating. Return only price and rating."""
 )
 ```
 
@@ -239,8 +243,7 @@ Task(
 1. **ALWAYS start the daemon first** - before any browser subagent calls
 2. **ALWAYS stop the daemon last** - after all browser operations complete
 3. **The subagent never manages daemon lifecycle** - it only performs browser operations
-4. **Use `--existing-browser` ONLY when user explicitly requests it** - default is to auto-start Chrome
-5. **Stopping the daemon closes the browser** - don't forget this step
+4. **Stopping the daemon closes the browser** - don't forget this step
 
 ### Browser State
 - Browser state persists across subagent invocations within a session

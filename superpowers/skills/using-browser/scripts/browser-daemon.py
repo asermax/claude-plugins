@@ -44,6 +44,7 @@ class BrowserDaemon:
         self.cdp_message_id = 0
         self.local_sock: Optional[socket.socket] = None
         self.running = False
+        self.chrome_process: Optional[subprocess.Popen] = None
 
         # Current page state
         self.current_url = None
@@ -81,7 +82,7 @@ class BrowserDaemon:
         ]
 
         print(f"Starting Chrome: {' '.join(cmd)}", file=sys.stderr)
-        subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.chrome_process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Wait for Chrome to be ready
         for i in range(30):  # Wait up to 3 seconds
@@ -250,8 +251,21 @@ class BrowserDaemon:
         }
 
     def cmd_quit(self) -> Dict[str, Any]:
-        """Shutdown daemon and close browser."""
+        """Stop the daemon server loop."""
         self.running = False
+
+        # Close socket to unblock accept()
+        if self.local_sock:
+            try:
+                self.local_sock.close()
+            except:
+                pass
+
+        return {"status": "shutting down"}
+
+    def cleanup(self) -> None:
+        """Clean up resources (Chrome, sockets, etc.)."""
+        print("Cleaning up resources...", file=sys.stderr)
 
         # Close browser via CDP
         if self.cdp_ws:
@@ -259,12 +273,38 @@ class BrowserDaemon:
                 self._send_cdp("Browser.close", {})
             except:
                 pass  # Browser might already be closing
-            self.cdp_ws.close()
+            try:
+                self.cdp_ws.close()
+            except:
+                pass
 
+        # Terminate Chrome process if we started it
+        if self.chrome_process:
+            try:
+                print("Terminating Chrome process...", file=sys.stderr)
+                self.chrome_process.terminate()
+                self.chrome_process.wait(timeout=2)
+            except:
+                try:
+                    self.chrome_process.kill()
+                except:
+                    pass
+
+        # Close socket
         if self.local_sock:
-            self.local_sock.close()
+            try:
+                self.local_sock.close()
+            except:
+                pass
 
-        return {"status": "shutting down"}
+        # Remove socket file
+        if self.socket_path.exists():
+            try:
+                self.socket_path.unlink()
+            except:
+                pass
+
+        print("Cleanup complete", file=sys.stderr)
 
     def cmd_navigate(self, url: str) -> Dict[str, Any]:
         """Navigate to URL."""
@@ -528,23 +568,27 @@ class BrowserDaemon:
 
         return {"error": f"Timeout waiting for: {selector}"}
 
-    def run(self, auto_start: bool = True) -> None:
+    def run(self) -> None:
         """Main daemon loop."""
         # Setup signal handlers
         signal.signal(signal.SIGTERM, lambda s, f: self.cmd_quit())
         signal.signal(signal.SIGINT, lambda s, f: self.cmd_quit())
 
-        # Start Chrome if not running and auto_start is enabled
-        if auto_start:
+        try:
+            # Start Chrome
             self.start_chrome()
-        else:
-            print("Connecting to existing browser (auto-start disabled)", file=sys.stderr)
 
-        # Connect to Chrome
-        self.connect_to_chrome()
+            # Connect to Chrome
+            self.connect_to_chrome()
 
-        # Start socket server
-        self.start_unix_socket_server()
+            # Start socket server
+            self.start_unix_socket_server()
+        finally:
+            # Always clean up resources, even on crash or kill
+            self.cleanup()
+
+        # Exit cleanly after socket server stops
+        sys.exit(0)
 
 
 def main():
@@ -553,17 +597,15 @@ def main():
                        help="Path to browser executable")
     parser.add_argument("--debug-port", type=int, default=int(os.getenv("SUPERPOWERS_BROWSER_DEBUG_PORT", "9222")),
                        help="CDP debug port")
-    parser.add_argument("--existing-browser", action="store_true",
-                       help="Connect to existing browser instead of auto-starting (requires browser running with --remote-debugging-port)")
 
     args = parser.parse_args()
 
-    if not args.existing_browser and not args.browser_path:
-        print(json.dumps({"error": "SUPERPOWERS_BROWSER_PATH environment variable not set (or use --existing-browser)"}))
+    if not args.browser_path:
+        print(json.dumps({"error": "SUPERPOWERS_BROWSER_PATH environment variable not set"}))
         sys.exit(1)
 
     daemon = BrowserDaemon(browser_path=args.browser_path, debug_port=args.debug_port)
-    daemon.run(auto_start=not args.existing_browser)
+    daemon.run()
 
 
 if __name__ == "__main__":

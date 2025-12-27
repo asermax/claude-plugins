@@ -166,8 +166,9 @@ class BrowserDaemon:
 
             print(f"Connecting to WebSocket: {ws_url}", file=sys.stderr)
             # Connect to browser-level WebSocket with timeout
+            # Set max_size to 50MB to handle large responses (e.g., Accessibility.getFullAXTree on complex pages)
             self.cdp_ws = await asyncio.wait_for(
-                websockets.connect(ws_url),
+                websockets.connect(ws_url, max_size=50 * 1024 * 1024),
                 timeout=5.0
             )
             print(f"WebSocket connected successfully", file=sys.stderr)
@@ -179,17 +180,26 @@ class BrowserDaemon:
         """Background coroutine that receives CDP messages and dispatches to waiting callers."""
         try:
             async for message in self.cdp_ws:
-                data = json.loads(message)
-                if "id" in data:
-                    # Response to a command
-                    future = self.pending_requests.pop(data["id"], None)
-                    if future and not future.done():
-                        future.set_result(data)
-                # else: CDP event (page load, navigation, etc.) - ignore for now
-        except websockets.ConnectionClosed:
-            pass
+                try:
+                    data = json.loads(message)
+                    if "id" in data:
+                        # Response to a command
+                        future = self.pending_requests.pop(data["id"], None)
+                        if future and not future.done():
+                            future.set_result(data)
+                    # else: CDP event (page load, navigation, etc.) - ignore for now
+                except json.JSONDecodeError as e:
+                    print(f"CDP message parse error: {e}", file=sys.stderr)
+        except websockets.ConnectionClosed as e:
+            print(f"CDP connection closed: {e}", file=sys.stderr)
         except Exception as e:
             print(f"CDP receiver error: {e}", file=sys.stderr)
+        finally:
+            # Cancel all pending requests on disconnect
+            for msg_id, future in list(self.pending_requests.items()):
+                if not future.done():
+                    future.set_exception(RuntimeError("CDP connection closed"))
+            self.pending_requests.clear()
 
     async def _send_cdp(self, method: str, params: Dict[str, Any] = None) -> Dict[str, Any]:
         """Send CDP command and wait for response via future-based dispatch."""
@@ -208,7 +218,12 @@ class BrowserDaemon:
 
         await self.cdp_ws.send(json.dumps(message))
 
-        result = await future
+        try:
+            result = await asyncio.wait_for(future, timeout=5.0)
+        except asyncio.TimeoutError:
+            self.pending_requests.pop(msg_id, None)
+            raise RuntimeError(f"CDP request timed out: {method}")
+
         if "error" in result:
             raise RuntimeError(f"CDP error: {result['error']}")
         return result.get("result", {})
@@ -372,7 +387,12 @@ class BrowserDaemon:
 
         await self.cdp_ws.send(json.dumps(message))
 
-        result = await future
+        try:
+            result = await asyncio.wait_for(future, timeout=5.0)
+        except asyncio.TimeoutError:
+            self.pending_requests.pop(msg_id, None)
+            raise RuntimeError(f"CDP request timed out: {method}")
+
         if "error" in result:
             raise RuntimeError(f"CDP error: {result['error']}")
         return result.get("result", {})

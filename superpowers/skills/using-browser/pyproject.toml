@@ -4,5 +4,5 @@ version = "0.1.0"
 description = "Browser automation skill using Chrome DevTools Protocol"
 requires-python = ">=3.10"
 dependencies = [
-    "websocket-client",
+    "websockets",
 ]

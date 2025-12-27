@@ -1,6 +1,6 @@
 ---
 name: using-browser
-description: Use when user needs browser automation. Start daemon, create browsing contexts, and delegate operations to browser subagents (superpowers:browser-agent). Supports parallel multi-tab automation.
+description: Use when the user asks to browse websites, navigate web pages, extract data from sites, interact with web forms, search for online information, test web applications, or automate any web-based task. Trigger on requests like "go to website X", "search for Y on the web", "find Z online", "fill out this form", "get data from this page", or any task requiring a web browser.
 ---
 
 # Browser Automation Skill
@@ -86,7 +86,18 @@ Returns:
 
 ### Stop Daemon (Final Step)
 
-**ALWAYS stop when done:**
+**Before stopping, confirm with the user:**
+Use the AskUserQuestion tool to ask if the user wants to close the browser, especially when:
+- The user's request was open-ended or exploratory
+- There might be follow-up tasks
+- The user was browsing interactively
+
+**When to stop immediately (without asking):**
+- The user explicitly said they're done
+- The task was clearly one-shot (e.g., "get the title of this page")
+- The user requested something else unrelated to browsing
+
+**To stop the daemon:**
 
 ```bash
 scripts/browser-cli quit

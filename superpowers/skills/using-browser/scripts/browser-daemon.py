@@ -69,6 +69,10 @@ class BrowserDaemon:
         self.running = False
         self.chrome_process: Optional[subprocess.Popen] = None
 
+        # Track active client handler threads
+        self.active_handlers: set = set()
+        self.handlers_lock = threading.Lock()
+
         # Browsing contexts (named tabs/windows with history)
         self.browsing_contexts: Dict[str, BrowsingContext] = {}
 
@@ -140,8 +144,9 @@ class BrowserDaemon:
             if not ws_url:
                 raise ConnectionError("Browser WebSocket URL not available")
 
-            # Connect to browser-level WebSocket
+            # Connect to browser-level WebSocket with timeout
             self.cdp_ws = websocket.WebSocket()
+            self.cdp_ws.settimeout(5)  # Set 5 second timeout for recv() operations
             self.cdp_ws.connect(ws_url)
 
             # Enable Target domain for browsing context management
@@ -166,13 +171,18 @@ class BrowserDaemon:
 
         self.cdp_ws.send(json.dumps(message))
 
-        # Wait for response (simple synchronous approach)
-        while True:
-            response = json.loads(self.cdp_ws.recv())
-            if response.get("id") == msg_id:
-                if "error" in response:
-                    raise RuntimeError(f"CDP error: {response['error']}")
-                return response.get("result", {})
+        # Wait for response (with shutdown check and timeout handling)
+        while self.running:
+            try:
+                response = json.loads(self.cdp_ws.recv())
+                if response.get("id") == msg_id:
+                    if "error" in response:
+                        raise RuntimeError(f"CDP error: {response['error']}")
+                    return response.get("result", {})
+            except websocket.WebSocketTimeoutException:
+                continue  # Retry recv, allows checking self.running
+
+        raise RuntimeError("Daemon shutting down")
 
     def start_unix_socket_server(self) -> None:
         """Start Unix socket server for CLI commands."""
@@ -183,19 +193,32 @@ class BrowserDaemon:
         self.local_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.local_sock.bind(str(self.socket_path))
         self.local_sock.listen(5)
-        self.running = True
+        self.local_sock.settimeout(1.0)  # 1 second timeout to check running flag
 
         print(f"Browser daemon listening on {self.socket_path}", file=sys.stderr)
 
         while self.running:
             try:
                 conn, _ = self.local_sock.accept()
-                thread = threading.Thread(target=self.handle_client, args=(conn,))
+                thread = threading.Thread(target=self._handle_client_wrapper, args=(conn,))
                 thread.daemon = True
+                with self.handlers_lock:
+                    self.active_handlers.add(thread)
                 thread.start()
+            except socket.timeout:
+                # Timeout allows checking self.running periodically
+                continue
             except Exception as e:
                 if self.running:
                     print(f"Accept error: {e}", file=sys.stderr)
+
+    def _handle_client_wrapper(self, conn: socket.socket) -> None:
+        """Wrapper to track client handler thread lifecycle."""
+        try:
+            self.handle_client(conn)
+        finally:
+            with self.handlers_lock:
+                self.active_handlers.discard(threading.current_thread())
 
     def handle_client(self, conn: socket.socket) -> None:
         """Handle client connection."""
@@ -342,13 +365,18 @@ class BrowserDaemon:
 
         self.cdp_ws.send(json.dumps(message))
 
-        # Wait for response
-        while True:
-            response = json.loads(self.cdp_ws.recv())
-            if response.get("id") == msg_id:
-                if "error" in response:
-                    raise RuntimeError(f"CDP error: {response['error']}")
-                return response.get("result", {})
+        # Wait for response (with shutdown check and timeout handling)
+        while self.running:
+            try:
+                response = json.loads(self.cdp_ws.recv())
+                if response.get("id") == msg_id:
+                    if "error" in response:
+                        raise RuntimeError(f"CDP error: {response['error']}")
+                    return response.get("result", {})
+            except websocket.WebSocketTimeoutException:
+                continue  # Retry recv, allows checking self.running
+
+        raise RuntimeError("Daemon shutting down")
 
     # Browsing context lifecycle commands
 
@@ -483,12 +511,10 @@ class BrowserDaemon:
         """Stop the daemon server loop."""
         self.running = False
 
-        # Close socket to unblock accept()
-        if self.local_sock:
-            try:
-                self.local_sock.close()
-            except:
-                pass
+        # Brief delay to let in-flight CDP operations see shutdown flag
+        time.sleep(0.1)
+
+        # No need to close socket here - accept() has timeout and will check running flag
 
         return {"status": "shutting down"}
 
@@ -508,7 +534,7 @@ class BrowserDaemon:
             try:
                 print("Terminating Chrome process...", file=sys.stderr)
                 self.chrome_process.terminate()
-                self.chrome_process.wait(timeout=2)
+                self.chrome_process.wait(timeout=1)  # Reduced from 2s to 1s
             except:
                 try:
                     self.chrome_process.kill()
@@ -968,6 +994,9 @@ class BrowserDaemon:
 
     def run(self, initial_context_name: str, initial_context_url: str = "about:blank") -> None:
         """Main daemon loop."""
+        # Set running flag early so CDP operations work during startup
+        self.running = True
+
         # Setup signal handlers
         signal.signal(signal.SIGTERM, lambda s, f: self.cmd_quit())
         signal.signal(signal.SIGINT, lambda s, f: self.cmd_quit())
@@ -1041,6 +1070,13 @@ class BrowserDaemon:
             # Start socket server
             self.start_unix_socket_server()
         finally:
+            # Wait for active client handlers to finish sending responses
+            with self.handlers_lock:
+                active_threads = list(self.active_handlers)
+
+            for thread in active_threads:
+                thread.join(timeout=0.5)  # Wait up to 0.5s per thread
+
             # Always clean up resources, even on crash or kill
             self.cleanup()
 

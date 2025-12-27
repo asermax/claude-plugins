@@ -10,6 +10,7 @@ import fcntl
 import itertools
 import json
 import os
+import re
 import signal
 import socket
 import struct
@@ -17,13 +18,39 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Set
 
 try:
     import websockets
 except ImportError:
     print(json.dumps({"error": "websockets not installed. Run: uv pip install websockets"}))
     sys.exit(1)
+
+
+# Text cleaning patterns
+PRIVATE_USE_AREA_PATTERN = re.compile(r'[\uE000-\uF8FF]')
+WHITESPACE_PATTERN = re.compile(r'\s+')
+
+# Token limits
+DEFAULT_TOKEN_LIMIT = 70000  # ~280k chars at 4 chars/token
+
+# Semantic roles to keep (expanded from original 5)
+SEMANTIC_ROLES = frozenset({
+    # Interactive elements
+    'button', 'link', 'textbox', 'checkbox', 'radio', 'switch',
+    'combobox', 'listbox', 'option', 'menuitem', 'menu', 'menubar',
+    'tab', 'tablist', 'tabpanel', 'slider', 'spinbutton', 'searchbox',
+
+    # Structure elements
+    'heading', 'list', 'listitem', 'table', 'row', 'cell',
+
+    # Landmarks
+    'main', 'navigation', 'search', 'banner', 'form', 'region',
+    'dialog', 'alertdialog', 'alert', 'img', 'figure', 'tooltip',
+})
+
+# Structural roles (prune if no name and no semantic children)
+STRUCTURAL_ROLES = frozenset({'generic', 'none', 'presentation', 'group'})
 
 
 @dataclass
@@ -47,6 +74,204 @@ class BrowsingContext:
     created_at: float
     history: List[BrowsingContextAction] = field(default_factory=list)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
+
+    # For tree diffing
+    previous_tree_lines: Set[str] = field(default_factory=set)
+
+
+# Helper functions for accessibility tree processing
+
+def clean_text(text: str) -> str:
+    """
+    Clean accessibility text by removing icon fonts and normalizing whitespace.
+
+    Args:
+        text: Raw text from accessibility node
+
+    Returns:
+        Cleaned text string
+    """
+    if not text:
+        return ""
+
+    # Remove Private Use Area characters (U+E000-U+F8FF) - icon fonts
+    text = PRIVATE_USE_AREA_PATTERN.sub('', text)
+
+    # Normalize whitespace (collapse multiple spaces/newlines to single space)
+    text = WHITESPACE_PATTERN.sub(' ', text)
+
+    # Strip leading/trailing whitespace
+    return text.strip()
+
+
+def should_include_node(node: Dict, has_semantic_children: bool) -> bool:
+    """
+    Determine if node should be included in simplified tree.
+
+    Args:
+        node: Raw CDP accessibility node
+        has_semantic_children: Whether node has children with semantic meaning
+
+    Returns:
+        True if node should be included
+    """
+    role = node.get("role", {}).get("value", "")
+    name = clean_text(node.get("name", {}).get("value", ""))
+
+    # Always include semantic roles
+    if role in SEMANTIC_ROLES:
+        return True
+
+    # Include structural roles only if they have a name or semantic children
+    if role in STRUCTURAL_ROLES:
+        return bool(name) or has_semantic_children
+
+    # Skip ignored nodes
+    if node.get("ignored"):
+        return False
+
+    # Skip unknown roles with no name
+    if not name:
+        return False
+
+    return True
+
+
+def build_hierarchical_tree(cdp_nodes: List[Dict]) -> tuple[str, int]:
+    """
+    Build hierarchical tree from CDP accessibility nodes.
+
+    Args:
+        cdp_nodes: Raw nodes from Accessibility.getFullAXTree
+
+    Returns:
+        Tuple of (formatted_tree_text, node_count)
+    """
+    # Index nodes by ID for lookup
+    node_map: Dict[str, Dict] = {}
+    for node in cdp_nodes:
+        node_id = node.get("nodeId")
+        if node_id:
+            node_map[node_id] = node
+
+    # Build parent-child relationships
+    parent_map: Dict[str, str] = {}  # child_id -> parent_id
+
+    for node in cdp_nodes:
+        node_id = node.get("nodeId")
+        child_ids = node.get("childIds", [])
+
+        if node_id:
+            for child_id in child_ids:
+                parent_map[child_id] = node_id
+
+    # Identify root nodes (no parent)
+    all_ids = set(node_map.keys())
+    child_ids_set = set(parent_map.keys())
+    root_ids = list(all_ids - child_ids_set)
+
+    # Bottom-up pass: mark nodes that have semantic descendants
+    semantic_children: Set[str] = set()
+
+    def mark_semantic_ancestors(node_id: str) -> None:
+        current = parent_map.get(node_id)
+        while current:
+            semantic_children.add(current)
+            current = parent_map.get(current)
+
+    # First pass: identify all semantic nodes and mark their ancestors
+    for node_id, node in node_map.items():
+        role = node.get("role", {}).get("value", "")
+        if role in SEMANTIC_ROLES:
+            mark_semantic_ancestors(node_id)
+
+    # Build filtered tree
+    filtered_nodes: Dict[str, Dict] = {}
+
+    for node_id, node in node_map.items():
+        has_semantic_child = node_id in semantic_children
+
+        if should_include_node(node, has_semantic_child):
+            filtered_nodes[node_id] = node
+
+    # Format as indented text
+    lines: List[str] = []
+    visited: Set[str] = set()
+
+    def format_node(node_id: str, depth: int) -> None:
+        if node_id in visited or node_id not in filtered_nodes:
+            return
+
+        visited.add(node_id)
+        node = filtered_nodes[node_id]
+
+        indent = "  " * depth
+        role = node.get("role", {}).get("value", "")
+        name = clean_text(node.get("name", {}).get("value", ""))
+        name_part = f": {name}" if name else ""
+        lines.append(f"{indent}[{node_id}] {role}{name_part}")
+
+        # Recurse to children (only if they're in filtered set)
+        for child_id in node.get("childIds", []):
+            if child_id in filtered_nodes:
+                format_node(child_id, depth + 1)
+
+    # Format from roots
+    for root_id in root_ids:
+        if root_id in filtered_nodes:
+            format_node(root_id, 0)
+
+    tree_text = "\n".join(lines)
+    return tree_text, len(filtered_nodes)
+
+
+def truncate_tree(text: str, token_limit: int) -> tuple[str, bool]:
+    """
+    Truncate tree text to fit within token limit.
+
+    Args:
+        text: Formatted tree string
+        token_limit: Maximum tokens
+
+    Returns:
+        Tuple of (text, was_truncated)
+    """
+    # Estimate tokens: ~4 chars per token
+    char_limit = token_limit * 4
+
+    if len(text) <= char_limit:
+        return text, False
+
+    # Truncate at line boundary
+    lines = text[:char_limit].rsplit('\n', 1)
+    truncated = lines[0] if len(lines) > 1 else text[:char_limit]
+
+    message = f"\n\n[CONTENT TRUNCATED: Exceeded {token_limit} token limit]"
+
+    return truncated + message, True
+
+
+def compute_tree_diff(previous_lines: Set[str], current_text: str) -> str:
+    """
+    Compute diff between previous and current tree.
+
+    Returns only NEW lines (lines present in current but not in previous).
+
+    Args:
+        previous_lines: Set of lines from previous snapshot
+        current_text: Current tree text
+
+    Returns:
+        Tree text containing only new lines
+    """
+    current_lines = current_text.split('\n')
+    new_lines = [line for line in current_lines if line not in previous_lines]
+
+    # If no new lines, return full tree (something went wrong)
+    if not new_lines:
+        return current_text
+
+    return '\n'.join(new_lines)
 
 
 class BrowserDaemon:
@@ -298,7 +523,10 @@ class BrowserDaemon:
                     result = await self.cmd_snapshot(
                         args.get("browsing_context"),
                         args.get("intention"),
-                        args.get("mode", "tree")
+                        args.get("mode", "tree"),
+                        args.get("token_limit"),
+                        args.get("focus_selector"),
+                        args.get("diff", False)
                     )
                 elif command == "click":
                     result = await self.cmd_click(
@@ -468,7 +696,7 @@ class BrowserDaemon:
             return {"error": str(e)}
 
     async def cmd_get_browsing_context_history(self, browsing_context: str,
-                                        limit: int = 50) -> Dict[str, Any]:
+                                        limit: int = 10) -> Dict[str, Any]:
         """Get action history for a browsing context."""
         if not browsing_context:
             return {"error": "browsing_context is required"}
@@ -608,13 +836,17 @@ class BrowserDaemon:
                 self._record_action(browsing_context, "navigate", intention,
                                   {"url": url}, f"Navigated to {url}")
 
+                # Get brief state summary
+                state_summary = await self._get_brief_state_summary(browsing_context)
+
                 return {
                     "success": True,
                     "browsing_context_state": {
                         "name": ctx.name,
                         "url": ctx.url,
                         "title": ctx.title,
-                        "history_length": len(ctx.history)
+                        "history_length": len(ctx.history),
+                        "state_summary": state_summary["summary"]
                     }
                 }
 
@@ -730,9 +962,140 @@ class BrowserDaemon:
         except Exception as e:
             return {"error": str(e)}
 
-    async def cmd_snapshot(self, browsing_context: str, intention: str,
-                    mode: str = "tree") -> Dict[str, Any]:
-        """Get page structure for element discovery."""
+    async def _get_scoped_tree(self, browsing_context: str, focus_selector: str) -> List[Dict] | Dict[str, Any]:
+        """
+        Get accessibility tree scoped to element matching CSS selector.
+
+        Args:
+            browsing_context: Context name
+            focus_selector: CSS selector to scope tree
+
+        Returns:
+            List of nodes or error dict
+        """
+        try:
+            # Step 1: Find element and get its object reference
+            find_expr = f"""
+                (function() {{
+                    const el = document.querySelector('{focus_selector}');
+                    if (!el) return null;
+                    return el;
+                }})()
+            """
+
+            result = await self._send_cdp_to_context(
+                browsing_context,
+                "Runtime.evaluate",
+                {"expression": find_expr, "returnByValue": False}
+            )
+
+            if not result.get("result", {}).get("objectId"):
+                return {"error": f"Element not found: {focus_selector}"}
+
+            object_id = result["result"]["objectId"]
+
+            # Step 2: Get DOM node ID
+            dom_result = await self._send_cdp_to_context(
+                browsing_context,
+                "DOM.describeNode",
+                {"objectId": object_id}
+            )
+
+            backend_node_id = dom_result.get("node", {}).get("backendNodeId")
+            if not backend_node_id:
+                return {"error": "Could not get backend node ID"}
+
+            # Step 3: Get accessibility node for this DOM node
+            ax_result = await self._send_cdp_to_context(
+                browsing_context,
+                "Accessibility.getPartialAXTree",
+                {
+                    "backendNodeId": backend_node_id,
+                    "fetchRelatives": True,
+                }
+            )
+
+            return ax_result.get("nodes", [])
+
+        except Exception as e:
+            return {"error": str(e)}
+
+    async def _get_brief_state_summary(self, browsing_context: str) -> Dict[str, Any]:
+        """
+        Generate brief state summary after page changes.
+
+        Returns:
+            Dict with title and top interactive elements
+        """
+        try:
+            ctx = self._get_browsing_context(browsing_context)
+
+            # Get page title
+            title_result = await self._send_cdp_to_context(
+                browsing_context,
+                "Runtime.evaluate",
+                {"expression": "document.title", "returnByValue": True}
+            )
+            title = title_result.get("result", {}).get("value", "")
+
+            # Get top 5 interactive elements (fast, limited query)
+            ax_result = await self._send_cdp_to_context(
+                browsing_context,
+                "Accessibility.getFullAXTree",
+                {}
+            )
+
+            interactive_roles = {'button', 'link', 'textbox', 'checkbox', 'radio', 'combobox'}
+            interactive = []
+
+            for node in ax_result.get("nodes", []):
+                if len(interactive) >= 5:
+                    break
+                role = node.get("role", {}).get("value", "")
+                name = clean_text(node.get("name", {}).get("value", ""))
+                if role in interactive_roles and name:
+                    interactive.append(f"{role}: {name}")
+
+            summary = f"Page: {title}"
+            if interactive:
+                summary += f", elements: {', '.join(interactive[:3])}"
+
+            return {
+                "title": title,
+                "key_elements": interactive,
+                "summary": summary
+            }
+
+        except Exception as e:
+            return {
+                "title": "",
+                "key_elements": [],
+                "summary": f"Error getting state summary: {str(e)}"
+            }
+
+    async def cmd_snapshot(
+        self,
+        browsing_context: str,
+        intention: str,
+        mode: str = "tree",
+        token_limit: int | None = None,
+        focus_selector: str | None = None,
+        diff: bool = False,
+    ) -> Dict[str, Any]:
+        """
+        Get page structure for element discovery.
+
+        Args:
+            browsing_context: Browsing context name
+            intention: Why performing this action
+            mode: "tree" for accessibility tree, "dom" for DOM
+            token_limit: Max tokens (default 70000)
+            focus_selector: CSS selector to scope tree
+            diff: If True, return only new elements since last snapshot
+
+        Returns:
+            Snapshot result with tree/dom structure
+        """
         if not browsing_context:
             return {"error": "browsing_context is required"}
         if not intention:
@@ -740,31 +1103,67 @@ class BrowserDaemon:
 
         try:
             ctx = self._get_browsing_context(browsing_context)
+            effective_limit = token_limit or DEFAULT_TOKEN_LIMIT
 
             async with ctx.lock:
                 if mode == "tree":
-                    # Accessibility tree
-                    result = await self._send_cdp_to_context(browsing_context, "Accessibility.getFullAXTree", {})
-                    nodes = result.get("nodes", [])
+                    # Get nodes - either full or scoped
+                    if focus_selector:
+                        cdp_nodes = await self._get_scoped_tree(
+                            browsing_context,
+                            focus_selector
+                        )
+                        if isinstance(cdp_nodes, dict) and "error" in cdp_nodes:
+                            return cdp_nodes
+                    else:
+                        result = await self._send_cdp_to_context(
+                            browsing_context,
+                            "Accessibility.getFullAXTree",
+                            {}
+                        )
+                        cdp_nodes = result.get("nodes", [])
 
-                    # Simplify tree structure
-                    simplified = []
-                    for node in nodes:
-                        if node.get("role", {}).get("value") in ["button", "link", "textbox", "heading", "generic"]:
-                            simplified.append({
-                                "role": node.get("role", {}).get("value"),
-                                "name": node.get("name", {}).get("value", ""),
-                                "nodeId": node.get("nodeId")
-                            })
+                    # Build hierarchical tree with cleaning
+                    tree_text, node_count = build_hierarchical_tree(cdp_nodes)
+
+                    # Apply diff if requested
+                    if diff and ctx.previous_tree_lines:
+                        tree_text = compute_tree_diff(
+                            ctx.previous_tree_lines,
+                            tree_text
+                        )
+
+                    # Store for future diffing
+                    ctx.previous_tree_lines = set(tree_text.split('\n'))
+
+                    # Apply truncation
+                    tree_text, truncated = truncate_tree(tree_text, effective_limit)
 
                     # Record action
-                    self._record_action(browsing_context, "snapshot", intention,
-                                      {"mode": mode}, f"Captured {mode} snapshot")
+                    params = {"mode": mode}
+                    if focus_selector:
+                        params["focus_selector"] = focus_selector
+                    if diff:
+                        params["diff"] = True
+                    if token_limit:
+                        params["token_limit"] = token_limit
+
+                    self._record_action(
+                        browsing_context,
+                        "snapshot",
+                        intention,
+                        params,
+                        f"Captured {mode} snapshot ({node_count} nodes)"
+                    )
 
                     return {
                         "success": True,
                         "mode": "tree",
-                        "nodes": simplified,
+                        "tree": tree_text,
+                        "node_count": node_count,
+                        "truncated": truncated,
+                        "diff_mode": diff,
+                        "scoped_to": focus_selector,
                         "browsing_context_state": {
                             "name": ctx.name,
                             "url": ctx.url,
@@ -774,7 +1173,7 @@ class BrowserDaemon:
                     }
 
                 elif mode == "dom":
-                    # Simplified DOM structure
+                    # Simplified DOM structure (unchanged)
                     expression = """
                         (function() {
                             function simplifyElement(el, depth = 0) {
@@ -884,6 +1283,9 @@ class BrowserDaemon:
                 self._record_action(browsing_context, "click", intention,
                                   {"selector": selector}, f"Clicked {selector}")
 
+                # Get brief state summary
+                state_summary = await self._get_brief_state_summary(browsing_context)
+
                 return {
                     "success": True,
                     "clicked": selector,
@@ -891,7 +1293,8 @@ class BrowserDaemon:
                         "name": ctx.name,
                         "url": ctx.url,
                         "title": ctx.title,
-                        "history_length": len(ctx.history)
+                        "history_length": len(ctx.history),
+                        "state_summary": state_summary["summary"]
                     }
                 }
 
@@ -943,6 +1346,9 @@ class BrowserDaemon:
                 self._record_action(browsing_context, "type", intention,
                                   {"selector": selector, "text": text}, f"Typed into {selector}")
 
+                # Get brief state summary
+                state_summary = await self._get_brief_state_summary(browsing_context)
+
                 return {
                     "success": True,
                     "typed": text,
@@ -951,7 +1357,8 @@ class BrowserDaemon:
                         "name": ctx.name,
                         "url": ctx.url,
                         "title": ctx.title,
-                        "history_length": len(ctx.history)
+                        "history_length": len(ctx.history),
+                        "state_summary": state_summary["summary"]
                     }
                 }
 

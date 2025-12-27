@@ -71,7 +71,7 @@ def main():
     history_parser = subparsers.add_parser("browsing-context-history",
                                           help="Get action history for browsing context")
     history_parser.add_argument("browsing_context", help="Browsing context name")
-    history_parser.add_argument("--limit", type=int, default=50, help="Max history entries")
+    history_parser.add_argument("--limit", type=int, default=10, help="Max history entries")
 
     # Action commands (require browsing context and intention)
     navigate_parser = subparsers.add_parser("navigate", help="Navigate to URL")
@@ -94,6 +94,12 @@ def main():
     snapshot_parser.add_argument("--intention", required=True, help="Why performing this action")
     snapshot_parser.add_argument("--mode", choices=["tree", "dom"], default="tree",
                                 help="Snapshot mode (tree=accessibility, dom=simplified DOM)")
+    snapshot_parser.add_argument("--token-limit", type=int, default=None,
+                                help="Max tokens (default: 70000)")
+    snapshot_parser.add_argument("--focus-selector", type=str, default=None,
+                                help="CSS selector to scope tree to element subtree")
+    snapshot_parser.add_argument("--diff", action="store_true",
+                                help="Return only new elements since last snapshot")
 
     click_parser = subparsers.add_parser("click", help="Click element")
     click_parser.add_argument("--browsing-context", required=True, help="Browsing context name")
@@ -160,6 +166,9 @@ def main():
         cmd_args["browsing_context"] = getattr(args, "browsing_context")
         cmd_args["intention"] = args.intention
         cmd_args["mode"] = args.mode
+        cmd_args["token_limit"] = getattr(args, "token_limit", None)
+        cmd_args["focus_selector"] = getattr(args, "focus_selector", None)
+        cmd_args["diff"] = getattr(args, "diff", False)
         response = send_command("snapshot", cmd_args)
 
     elif args.command == "click":

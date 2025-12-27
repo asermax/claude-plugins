@@ -96,6 +96,41 @@ Where:
 
 **CRITICAL:** Always include meaningful intentions that explain the "why" of each action.
 
+## Snapshot Strategy
+
+**ALWAYS prefer `--mode tree` (accessibility tree) over `--mode dom`.**
+
+The accessibility tree is:
+- 10-100x smaller than DOM (semantic elements only)
+- Contains the same interactive elements you need (buttons, links, inputs)
+- Already cleaned of decorative/structural noise
+
+Only use `--mode dom` when tree mode fails to find an element you know exists.
+
+### Progressive Narrowing
+
+Use this pattern to minimize context while maximizing accuracy:
+
+1. **Initial exploration** → Full tree snapshot
+2. **Found target area** → Scoped snapshot with `--focus-selector`
+3. **After page change** → Diff snapshot with `--diff`
+
+**Example workflow:**
+```bash
+# 1. Initial: Find main content area
+$SCRIPTS/browser-cli snapshot --browsing-context "$CTX" --intention "Understanding page layout"
+# Output: Full tree, identifies #product-list as target area
+
+# 2. Scoped: Focus on products only
+$SCRIPTS/browser-cli snapshot --browsing-context "$CTX" --intention "Finding product elements" \
+  --focus-selector "#product-list"
+# Output: Only elements within product list (90% smaller)
+
+# 3. After clicking "Load More": See what's new
+$SCRIPTS/browser-cli snapshot --browsing-context "$CTX" --intention "Finding newly loaded products" --diff
+# Output: Only NEW elements since last snapshot (80% smaller)
+```
+
 ### Browsing Context History
 
 Check what happened before in your assigned context:
@@ -142,12 +177,35 @@ Check what happened before in your assigned context:
 <scripts_path>/browser-cli snapshot \
   --browsing-context "<context>" \
   --intention "<why>" \
-  [--mode tree|dom]
-# tree: Accessibility tree (compact, semantic)
-# dom: Simplified DOM structure
-# Use for finding selectors when element location unknown
-# Example intention: "Finding clickable elements on page"
+  [--mode tree|dom] \
+  [--focus-selector "<css>"] \
+  [--diff] \
+  [--token-limit <number>]
 ```
+
+**Options:**
+- `--mode tree` (default): Hierarchical accessibility tree (compact, semantic)
+- `--mode dom`: Simplified DOM structure
+- `--focus-selector "<css>"`: Scope to element subtree (faster, smaller)
+- `--diff`: Return only NEW elements since last snapshot
+- `--token-limit <N>`: Override default 70k token limit
+
+**Decision Guide:**
+
+| Your Situation | Use This |
+|----------------|----------|
+| First time on page | `snapshot` (tree mode is default) |
+| Looking for specific area | `snapshot --focus-selector "<area>"` |
+| After click/expand/navigate | `snapshot --diff` |
+| Element not found in tree | `snapshot --mode dom` (fallback only) |
+| Very large page (>100 elements) | `snapshot --focus-selector "<main-area>"` |
+
+**NEVER use `--mode dom` as first choice.** Tree mode finds the same elements with 10-100x less output.
+
+**Example intentions:**
+- "Finding clickable elements on page"
+- "Exploring navigation area" (with `--focus-selector "nav"`)
+- "Seeing new options after clicking dropdown" (with `--diff`)
 
 ### Interaction
 ```bash
@@ -165,6 +223,46 @@ Check what happened before in your assigned context:
 # Returns: {success, typed, into, browsing_context_state}
 # Example intention: "Entering search term for laptop"
 ```
+
+### Handling Page Changes
+
+After actions that change the page (navigate, click dropdown, expand section), commands return a `state_summary` in the `browsing_context_state` response.
+
+**Use this to report page changes concisely:**
+
+Example:
+```
+Page: Shopping Cart, elements: button: Checkout, button: Continue Shopping, link: Remove
+```
+
+**For dropdown/modal interactions:**
+1. Click to expand
+2. Use `snapshot --diff` to see only the new elements
+3. Interact with new elements
+
+**Example workflow:**
+```bash
+# Click dropdown
+$SCRIPTS/browser-cli click --browsing-context "$CTX" --intention "Expanding options" "#dropdown"
+
+# Get only new elements
+$SCRIPTS/browser-cli snapshot --browsing-context "$CTX" --intention "Finding new options" --diff
+
+# Interact with revealed elements
+$SCRIPTS/browser-cli click --browsing-context "$CTX" --intention "Selecting option" "#option-2"
+```
+
+**When to use `--diff` vs fresh snapshot:**
+
+| After This Action | Use |
+|-------------------|-----|
+| Click dropdown/accordion | `--diff` (see new options) |
+| Submit form (same page) | `--diff` (see validation/results) |
+| Scroll to load more | `--diff` (see new items) |
+| Navigate to new URL | Fresh snapshot (page completely changed) |
+| Click link to new page | Fresh snapshot (page completely changed) |
+
+**Key insight:** `--diff` compares to your LAST snapshot in this context. After navigation to a new URL, your first snapshot IS the baseline—no diff needed.
 
 ### Waiting
 ```bash
@@ -316,6 +414,59 @@ $SCRIPTS/browser-cli click '#login-btn' && $SCRIPTS/browser-cli wait '.error-mes
 Error: "Invalid credentials"
 ```
 
+### Example 4: Search workflow with progressive snapshots
+
+**Task:**
+```
+Scripts path: /home/user/.claude/plugins/superpowers/skills/using-browser/scripts
+Browsing context: shopping
+
+Navigate to amazon.com, find the search box, search for "mechanical keyboard", and report how many results appear.
+```
+
+**Execution:**
+```bash
+SCRIPTS="/home/user/.claude/plugins/superpowers/skills/using-browser/scripts"
+CONTEXT="shopping"
+
+# Navigate (state_summary tells us key elements)
+$SCRIPTS/browser-cli navigate --browsing-context "$CONTEXT" \
+  --intention "Going to Amazon homepage" "https://amazon.com"
+
+# Initial snapshot to find search
+$SCRIPTS/browser-cli snapshot --browsing-context "$CONTEXT" \
+  --intention "Finding search elements"
+
+# Type search term
+$SCRIPTS/browser-cli type --browsing-context "$CONTEXT" \
+  --intention "Entering search query" '#twotabsearchtextbox' 'mechanical keyboard'
+
+# Submit search
+$SCRIPTS/browser-cli click --browsing-context "$CONTEXT" \
+  --intention "Submitting search" '#nav-search-submit-button'
+
+# After navigation, fresh snapshot (new page = fresh baseline)
+$SCRIPTS/browser-cli snapshot --browsing-context "$CONTEXT" \
+  --intention "Examining search results" \
+  --focus-selector "[data-component-type='s-search-results']"
+
+# Extract count
+$SCRIPTS/browser-cli eval --browsing-context "$CONTEXT" \
+  --intention "Counting result items" \
+  "document.querySelectorAll('[data-component-type=\"s-search-result\"]').length"
+```
+
+**Return:**
+```
+Found 48 results for "mechanical keyboard"
+```
+
+**Key patterns used:**
+1. Navigate → state_summary shows key elements (no snapshot needed yet)
+2. First snapshot → tree mode (default), find search box
+3. After navigation to results → fresh snapshot, scoped to results area
+4. Extract specific data → eval with targeted selector
+
 ## Context Efficiency Rules
 
 ### DO Return
@@ -323,6 +474,8 @@ Error: "Invalid credentials"
 - ✅ Counts ("Found 5 items")
 - ✅ Simple confirmations ("Button clicked successfully")
 - ✅ Natural error messages ("Search box not found")
+- ✅ Brief state changes ("Page changed to: Product Details")
+- ✅ Key interactive elements after navigation
 
 ### DO NOT Return
 - ❌ Full page HTML

@@ -22,19 +22,91 @@ description: Use when the user asks to browse websites, navigate web pages, extr
 
 ## Your Responsibilities (Main Agent)
 
-### 1. Daemon Lifecycle
+### 1. Task Planning (REQUIRED FIRST STEP)
+
+**Before ANY browser work, you MUST create a high-level plan using TodoWrite.**
+
+This plan decomposes the user's request into actionable steps that browser-agents can execute. Plans evolve as you discover new information about the pages you're navigating.
+
+#### Initial Planning
+
+When the user makes a request, immediately create a high-level plan:
+
+**Example: "Get details of the latest blog post"**
+```
+TodoWrite:
+1. Navigate to main page and understand layout
+2. Look for link to blog posts list
+3. Find the latest blog post link
+4. Navigate to the blog post
+5. Extract blog post details (title, date, content, author)
+```
+
+**Example: "Find all products in the Electronics category"**
+```
+TodoWrite:
+1. Navigate to site and find categories
+2. Click into Electronics category
+3. Understand page structure (pagination? infinite scroll?)
+4. Extract product list from current page
+5. Handle additional pages if needed
+```
+
+#### Evolving the Plan
+
+As browser-agents return information, UPDATE your plan to reflect new understanding:
+
+**Discovery: Pagination exists**
+```
+Original plan step: "Extract all products"
+Updated plan:
+3a. Understand pagination structure (how many pages?)
+3b. Extract products from page 1
+3c. Generate reusable extraction script
+3d. Navigate through remaining pages applying script
+```
+
+**Discovery: Search functionality available**
+```
+Original plan: "Navigate through categories to find product X"
+Updated plan:
+1. ~~Navigate through categories~~ (SKIP - search available)
+2. Use search box to find product X directly
+3. Extract product details
+```
+
+**Discovery: Data requires detail pages**
+```
+Original plan step: "Extract product specs from list"
+Updated plan:
+3a. Extract product links from list page
+3b. Navigate to first product detail page
+3c. Extract specs from detail page
+3d. Return to list and repeat for remaining products
+```
+
+#### Plan Management Rules
+
+- ✅ **Create plan BEFORE starting daemon** - Know your strategy first
+- ✅ **Mark tasks as in_progress** when delegating to browser-agent
+- ✅ **Mark tasks as completed** immediately after browser-agent returns success
+- ✅ **Add new tasks** when you discover additional steps needed
+- ✅ **Update task descriptions** when approach changes based on page structure
+- ✅ **Keep plan high-level** - Browser-agent handles low-level element finding
+
+### 2. Daemon Lifecycle
 - ✅ Start the daemon with initial browsing context name (required)
 - ✅ Optionally provide initial URL (defaults to about:blank)
 - ✅ Stop the daemon ONLY when user explicitly requests to close the browser
 
-### 2. Browsing Context Management
+### 3. Browsing Context Management
 - ✅ Initial context is created automatically when daemon starts
 - ✅ **Create** additional browsing contexts if needed for parallel work
 - ✅ **Assign** contexts to browser-agents in prompts
 - ✅ **Monitor** contexts via status command
 - ✅ **Close** extra contexts when no longer needed (daemon quit closes all)
 
-### 3. Task Delegation
+### 4. Task Delegation
 - ✅ Spawn browser-agents with clear assignments
 - ✅ Provide scripts path and browsing context name
 - ✅ Delegate operations, not lifecycle management
@@ -372,19 +444,58 @@ After 3 failures: Report to user with context and last error.
 
 ## Complete Workflow Examples
 
-### Example 1: Bulk Extraction with Script Generation
+### Example 1: Bulk Extraction with Script Generation (with Planning)
 
 User: "Get all product prices from the site"
 
 ```python
-# 1. Explore structure
+# STEP 0: Create initial plan (REQUIRED)
+TodoWrite([
+    {"content": "Navigate to site and understand structure", "status": "pending", "activeForm": "Navigating to site and understanding structure"},
+    {"content": "Check if pagination or infinite scroll exists", "status": "pending", "activeForm": "Checking if pagination or infinite scroll exists"},
+    {"content": "Extract products from first page", "status": "pending", "activeForm": "Extracting products from first page"},
+    {"content": "Handle additional pages if needed", "status": "pending", "activeForm": "Handling additional pages if needed"}
+])
+
+# STEP 1: Mark first task in_progress and execute
+TodoWrite([
+    {"content": "Navigate to site and understand structure", "status": "in_progress", ...},
+    # ... rest unchanged
+])
+
+scripts/browser-daemon --initial-context-name shopping --initial-context-url https://shop.example.com
+
 Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
 Browsing context: shopping
 
-What products are visible on this page? Is there pagination?""")
-# Returns: "I see 20 products with names and prices. Pagination shows 5 more pages."
+What products are visible on this page? Describe the overall structure.""")
+# Returns: "I see 20 products with names and prices displayed in a grid."
 
-# 2. Generate reusable extraction script
+# Mark completed, move to next
+TodoWrite([
+    {"content": "Navigate to site and understand structure", "status": "completed", ...},
+    {"content": "Check if pagination or infinite scroll exists", "status": "in_progress", ...},
+    # ... rest
+])
+
+# STEP 2: Check pagination
+Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
+Browsing context: shopping
+
+Is there pagination? If so, how many pages?""")
+# Returns: "Yes, pagination shows 5 more pages (6 total). Page numbers at bottom."
+
+# UPDATE PLAN based on discovery - pagination exists!
+TodoWrite([
+    {"content": "Navigate to site and understand structure", "status": "completed", ...},
+    {"content": "Check if pagination or infinite scroll exists", "status": "completed", ...},
+    {"content": "Extract products from page 1 and generate reusable script", "status": "in_progress", ...},
+    {"content": "Navigate to page 2 and extract using script", "status": "pending", ...},
+    {"content": "Navigate to pages 3-6 and extract using script", "status": "pending", ...},
+    {"content": "Compile all results", "status": "pending", ...}
+])
+
+# STEP 3: Extract from page 1 and create script
 Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
 Browsing context: shopping
 
@@ -393,29 +504,37 @@ Extract all product names and prices from THIS page. Create a reusable eval scri
 # - Extracted data: [{"name": "Product 1", "price": "$29.99"}, ...]
 # - Script: "() => [...document.querySelectorAll('.product')].map(p => ({name: p.querySelector('h3').textContent, price: p.querySelector('.price').textContent}))"
 
-# 3. Save the script and navigate to next page
 script = "() => [...document.querySelectorAll('.product')].map(p => ({name: p.querySelector('h3').textContent, price: p.querySelector('.price').textContent}))"
 
+# Mark completed, move to next page
+TodoWrite([
+    # ... previous completed
+    {"content": "Extract products from page 1 and generate reusable script", "status": "completed", ...},
+    {"content": "Navigate to page 2 and extract using script", "status": "in_progress", ...},
+    # ... rest
+])
+
+# STEP 4: Navigate and extract from page 2
 Task(prompt="""Scripts path: ${CLAUDE_PLUGIN_ROOT}/skills/using-browser/scripts
 Browsing context: shopping
 
 Navigate to page 2""")
 
-# 4. Reuse script on next page
 Task(prompt=f"""Scripts path: ${{CLAUDE_PLUGIN_ROOT}}/skills/using-browser/scripts
 Browsing context: shopping
 
 Run this extraction script: {script}""")
 # Returns: [{"name": "Product 21", "price": "$19.99"}, ...]
 
-# 5. Repeat step 3-4 for remaining pages
+# Mark completed, continue with remaining pages
+# ... repeat for pages 3-6
 ```
 
 **Key points:**
-- ✅ Explored structure first to understand pagination
-- ✅ Generated reusable script on first page
-- ✅ Main agent orchestrates navigation between pages
-- ✅ Script reuse makes subsequent extractions fast and consistent
+- ✅ **Created plan BEFORE starting** - Knew general strategy upfront
+- ✅ **Evolved plan after discovering pagination** - Added specific page navigation tasks
+- ✅ **Marked tasks in_progress/completed** - Tracked progress throughout
+- ✅ **High-level planning** - Browser-agent handles element finding details
 
 ### Example 2: Simple Search Task
 

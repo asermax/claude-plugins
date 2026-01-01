@@ -2,6 +2,7 @@
 
 **Status**: Proposed | Accepted | Superseded by [ADR-XXX]
 **Date**: YYYY-MM-DD
+**Last Updated**: YYYY-MM-DD
 
 ## Context
 

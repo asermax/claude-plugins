@@ -60,6 +60,8 @@ class DependencyMatrix:
             self.column_abbrevs = [col.strip() for col in header.split('|') if col.strip()]
 
         # Extract legend to map abbreviations to full IDs
+        # Default to empty map - column headers will be used as-is if no legend
+        self.abbrev_map: Dict[str, str] = {}
         legend_section = re.search(r'\*\*Legend:\*\*(.+?)---', content, re.DOTALL)
         if legend_section:
             self.abbrev_map = self._parse_legend(legend_section.group(1))

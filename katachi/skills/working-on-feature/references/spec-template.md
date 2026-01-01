@@ -11,7 +11,7 @@ Use this template when creating feature specifications.
 
 As a [user type], I want to [action] so that [benefit].
 
-## What It Does
+## Behavior
 
 [2-3 sentences in plain English describing the behavior. Focus on WHAT, not HOW.]
 
@@ -50,7 +50,7 @@ The user story should answer:
 Bad: "As a user, I want better performance"
 Good: "As a developer, I want hot-reload so that I can see changes without restarting"
 
-### What It Does
+### Behavior
 
 Write in plain English, not technical jargon:
 - Describe observable behavior

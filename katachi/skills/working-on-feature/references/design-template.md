@@ -10,6 +10,17 @@ Use this template when creating feature design documents.
 **Feature Spec**: [../specs/FEATURE-ID.md](../specs/FEATURE-ID.md)
 **Status**: Draft | Approved | Superseded
 
+## Retrofit Note (if applicable)
+
+This design was created from existing code at:
+- `src/path/to/file.py`
+- `src/path/to/other.py`
+
+Original implementation date: [date or "Unknown (pre-framework)"]
+Decisions documented during retrofit: [ADR-NNN, DES-NNN]
+
+---
+
 ## Purpose
 
 This document explains the design rationale for this feature: the modeling choices, data flow, system behavior, and architectural approach.

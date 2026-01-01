@@ -190,12 +190,14 @@ File: specs/CATEGORY-NNN.md
 Status: ✓ Implementation (code exists)
 
 The feature has been added to the framework. You can now:
-- Create a design document: /katachi:design-feature CATEGORY-NNN
+- Retrofit design rationale: /katachi:retrofit-design CATEGORY-NNN
 - Retrofit another module: /katachi:retrofit-spec <path>
-- Document a decision: /katachi:retrofit-decision <topic>
+- Document a specific decision: /katachi:retrofit-decision <topic>
 
-Note: Since code exists, you may want to create a design document
-to capture the rationale behind the implementation."
+**Recommended next step:** Run `/katachi:retrofit-design CATEGORY-NNN` to:
+- Capture the design rationale behind the implementation
+- Automatically discover and document undocumented ADR/DES patterns
+- Create a complete design document from the existing code"
 ```
 
 ## Workflow

@@ -12,6 +12,7 @@ Create framework documentation from existing code.
 
 Load this skill for:
 - `/katachi:retrofit-spec <path>` - Create spec from existing code
+- `/katachi:retrofit-design <ID>` - Create design from existing code (with integrated decision discovery)
 - `/katachi:retrofit-decision <topic>` - Document existing decisions
 
 ## Philosophy
@@ -186,6 +187,95 @@ Write to appropriate location:
 
 ---
 
+## Retrofit Design Workflow
+
+Create design documentation from existing code with integrated decision discovery.
+
+### 1. Verify Prerequisites
+
+- Feature must have a retrofitted spec (`specs/FEATURE-ID.md`)
+- Status should be "✓ Implementation" (code exists)
+
+### 2. Dispatch Codebase Analyzer
+
+```python
+Task(
+    subagent_type="katachi:codebase-analyzer",
+    prompt=f"""
+Analyze this code to create a design document.
+
+## Analysis Type
+design
+
+## Retrofitted Spec
+{spec_content}
+
+## Implementation Code
+{code_content}
+
+## Project Context
+{vision_content if exists else "No VISION.md found"}
+
+Create a draft design document and identify undocumented decisions.
+"""
+)
+```
+
+### 3. Present Draft Design
+
+Show the inferred design:
+- Problem context extracted from code
+- Design overview from architecture
+- Modeling from code structure
+- Data flow from execution paths
+- Key decisions (flagged for ADR/DES)
+
+### 4. Integrated Decision Discovery
+
+For each flagged decision in Key Decisions:
+- Present ADR/DES recommendation to user
+- If user agrees, spawn retrofit-decision inline
+- Capture the created ADR/DES reference
+- Update design to reference new decisions
+
+Example interaction:
+```
+"I identified these undocumented decisions:
+
+1. **JWT for authentication** (architectural choice)
+   Recommendation: Create ADR
+
+2. **Repository pattern** (repeatable pattern)
+   Recommendation: Create DES
+
+Which should become formal documents?"
+```
+
+### 5. Iterate
+
+User provides corrections:
+- Clarify context
+- Adjust modeling
+- Add missing data flows
+- Correct decision rationale
+
+### 6. Validate
+
+Dispatch `katachi:design-reviewer`:
+- Review for completeness
+- Check pattern alignment
+- Identify missing elements
+
+### 7. Save Design
+
+Write to `designs/FEATURE-ID.md`
+Include retrofit note with:
+- Source code path (from spec)
+- Decisions created during retrofit
+- Assumptions made
+
+---
+
 ## Migration Strategies
 
 Detailed patterns for adopting the framework in existing projects.
@@ -204,11 +294,16 @@ For projects with clear direction but undocumented:
 
 For projects with existing code but unclear direction:
 
-1. Retrofit specs for key modules
-2. Retrofit decisions for major patterns
+1. Retrofit specs for key modules (`/katachi:retrofit-spec`)
+2. Retrofit designs with integrated decision discovery (`/katachi:retrofit-design`)
+   - ADR/DES patterns are discovered and documented automatically during this step
 3. Identify feature groupings
 4. Create FEATURES.md from retrofitted specs
 5. Synthesize VISION.md from features
+
+**Note:** Steps 1 and 2 are done per-module. The retrofit-design command
+chains naturally after retrofit-spec and handles decision discovery inline,
+eliminating the need for a separate retrofit-decision pass for most decisions.
 
 ### Strategy 3: Hybrid
 

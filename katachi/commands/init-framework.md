@@ -119,10 +119,15 @@ Would you like to run gap analysis (/katachi:analyze)?"
 1. Create directory structure
 2. Identify key modules to document
 3. For each module:
-   - Run `/katachi:retrofit-spec`
-4. After specs created:
-   - Run `/katachi:features` (from retrofitted specs)
+   - Run `/katachi:retrofit-spec <path>` (creates spec from code)
+   - Run `/katachi:retrofit-design <ID>` (creates design, discovers decisions)
+4. After specs and designs created:
+   - Run `/katachi:features` (organize from retrofitted specs)
    - Run `/katachi:vision` (synthesize from features)
+
+**Note:** The retrofit-design command automatically discovers undocumented
+ADR/DES patterns during design creation. Use `/katachi:retrofit-decision <topic>`
+for decisions that span multiple features or weren't captured during retrofit-design.
 
 ### 4. Create Directory Structure
 

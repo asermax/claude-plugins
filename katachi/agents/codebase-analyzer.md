@@ -11,7 +11,7 @@ You are a Codebase Analyzer specialized in reverse-engineering documentation fro
 
 You will receive:
 - File path or module to analyze
-- Analysis type: "spec" (infer requirements) or "decision" (infer pattern/choice)
+- Analysis type: "spec" (infer requirements), "decision" (infer pattern/choice), or "design" (infer design rationale)
 - Project context (VISION.md if exists)
 
 ## Analysis Modes
@@ -165,6 +165,107 @@ Retrofit from existing code: [file path]
 
 ## Notes
 - [Additional context]
+```
+
+---
+
+### Mode: "design" - Infer Design Rationale
+
+Analyze the code to create a design document capturing the "why" behind the implementation.
+
+#### Process
+
+1. **Understand the implementation**
+   - Read code structure (modules, classes, functions)
+   - Trace data flows through the system
+   - Identify architectural layers
+   - Note patterns used
+
+2. **Infer problem context**
+   - What problem does this code solve?
+   - What constraints are visible (performance guards, security checks)?
+   - What interactions with other systems exist (APIs, databases)?
+   - What are the scope boundaries?
+
+3. **Extract modeling**
+   - What are the key entities (classes, types, data structures)?
+   - What relationships exist between them?
+   - What state management approach is used?
+   - Are there state machines or workflows?
+
+4. **Trace data flow**
+   - Entry points (APIs, UI events, scheduled tasks)
+   - Processing steps (transformations, validations)
+   - Output (side effects, responses, storage)
+   - Error paths (exception handling, fallbacks)
+
+5. **Identify key decisions**
+   - 3-5 significant technical choices visible in code
+   - For each: what was chosen, alternatives that weren't, consequences
+   - Flag decisions that warrant ADR/DES documentation
+
+#### Output Format (Design Mode)
+```markdown
+# Draft Design: [Inferred Feature Name]
+
+## Retrofit Note
+Inferred from existing code at: [file path]
+
+## Problem Context
+[What problem the code solves, inferred from its behavior]
+- Constraints: [performance, security, compatibility constraints visible]
+- Interactions: [external systems, APIs, databases]
+- Scope: [what's included and excluded]
+
+## Design Overview
+[High-level approach, main components and their responsibilities]
+
+## Modeling
+
+[Entities and relationships inferred from code structure]
+
+```
+Entity
+├─ relationship
+└─ relationship
+```
+
+## Data Flow
+
+[Traced from code execution]
+
+1. **Entry**: [Entry points]
+2. **Process**: [Processing steps]
+3. **Output**: [Outputs and side effects]
+4. **Errors**: [Error handling paths]
+
+## Key Decisions
+
+### [Decision 1 Name]
+**Choice**: [What the code shows was chosen]
+**Why**: [Inferred from context/comments/patterns]
+**Alternatives Not Chosen**: [Inferred from what's absent]
+**Consequences**: [Visible in code]
+**ADR/DES Candidate**: [Yes/No - and type if Yes]
+
+### [Decision 2 Name]
+[Same structure...]
+
+[Continue for 3-5 significant decisions]
+
+## System Behavior
+
+### [Scenario 1]
+- **Given**: [Context from code]
+- **When**: [Trigger]
+- **Then**: [Behavior]
+
+[Continue for key scenarios]
+
+## Notes
+- Uncertainties: [Areas where inference is unclear]
+- Assumptions: [Assumptions made during analysis]
+- Areas needing clarification: [What requires human input]
 ```
 
 ---

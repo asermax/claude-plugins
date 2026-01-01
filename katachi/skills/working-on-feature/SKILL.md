@@ -15,6 +15,7 @@ Load this skill when executing:
 - `/katachi:design-feature <ID>`
 - `/katachi:plan-feature <ID>`
 - `/katachi:implement-feature <ID>`
+- `/katachi:retrofit-design <ID>` (retrofit mode)
 
 ## Key References
 
@@ -109,6 +110,7 @@ Each command dispatches its reviewer agent:
 | design-feature | `katachi:design-reviewer` | Spec, design, ADR/DES summaries |
 | plan-feature | `katachi:plan-reviewer` | Spec, design, plan, ADR/DES summaries |
 | implement-feature | `katachi:code-reviewer` | Spec, design, plan, code, ADR/DES |
+| retrofit-design | `katachi:codebase-analyzer`, `katachi:design-reviewer` | Spec, implementation code, ADR/DES indexes |
 
 Dispatch pattern:
 

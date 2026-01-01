@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "1.4.21"
+    "version": "1.5.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -26,6 +26,11 @@
       "name": "openspec",
       "source": "./openspec",
       "description": "Spec-driven development with Draft -> Review -> Implement -> Archive workflow for requirement alignment"
+    },
+    {
+      "name": "katachi",
+      "source": "./katachi",
+      "description": "Spec-driven development framework with iterative growth, progressive adoption, and retrofit support"
     }
   ]
 }

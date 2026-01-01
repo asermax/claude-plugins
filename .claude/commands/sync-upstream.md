@@ -64,7 +64,10 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 - Build from `~/workspace/random/quint-code/src/mcp` and install to `~/.local/bin/quint-code`
 
 **From agentic-evolve repository (`~/workspace/random/agentic-evolve/.claude/commands/`):**
-- evolve.md
+- evolve.md (master dispatcher)
+- evolve-perf.md (runtime speed optimization)
+- evolve-size.md (code size/bytes optimization)
+- evolve-ml.md (ML accuracy optimization)
 
 **Plugin-specific skills (not synced from upstream):**
 - using-beads
@@ -126,7 +129,10 @@ git show e3d881b:agents/code-reviewer.md  # For new files
 - `src/mcp/cmd/commands/*.md` (all 13 command files - synced to our `quint/commands/`)
 
 **Files we track from agentic-evolve:**
-- `.claude/commands/evolve.md` (synced to our `superpowers/commands/evolve.md`)
+- `.claude/commands/evolve.md` (master dispatcher - synced to `superpowers/commands/evolve.md`)
+- `.claude/commands/evolve-perf.md` (synced to `superpowers/commands/evolve-perf.md`)
+- `.claude/commands/evolve-size.md` (synced to `superpowers/commands/evolve-size.md`)
+- `.claude/commands/evolve-ml.md` (synced to `superpowers/commands/evolve-ml.md`)
 
 **Important**: Only analyze files that:
 1. Are in the changed files list from git pull output
@@ -232,12 +238,19 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 - MCP binary is built on-demand by the SessionStart hook (see `quint/hooks/session-init.sh`)
 - Commands use MCP tools directly, no modification needed
 
-**Type 6: Agentic-evolve command (direct copy)**
-- Copy command file directly from upstream (no customization):
+**Type 6: Agentic-evolve commands (direct copy)**
+- Copy all 4 command files directly from upstream (no customization):
   ```bash
   cp ~/workspace/random/agentic-evolve/.claude/commands/evolve.md \
      ~/workspace/asermax/claude-plugins/superpowers/commands/evolve.md
+  cp ~/workspace/random/agentic-evolve/.claude/commands/evolve-perf.md \
+     ~/workspace/asermax/claude-plugins/superpowers/commands/evolve-perf.md
+  cp ~/workspace/random/agentic-evolve/.claude/commands/evolve-size.md \
+     ~/workspace/asermax/claude-plugins/superpowers/commands/evolve-size.md
+  cp ~/workspace/random/agentic-evolve/.claude/commands/evolve-ml.md \
+     ~/workspace/asermax/claude-plugins/superpowers/commands/evolve-ml.md
   ```
+- The evolve.md is a master dispatcher that routes to specialized subskills based on optimization goal
 
 **Process for manual merge:**
 1. Read the upstream version completely
@@ -261,7 +274,7 @@ Quint:
 - MCP binary builds on-demand via SessionStart hook
 
 Agentic-Evolve:
-- evolve command synced (copied directly from agentic-evolve)
+- evolve commands synced (4 files: master dispatcher + perf/size/ml subskills)
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references

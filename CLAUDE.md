@@ -56,7 +56,10 @@ Development workflow skills for systematic debugging, code review, planning, and
 **Commands:**
 - `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve), compare differences, and intelligently merge updates while preserving plugin customizations
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
-- `/superpowers:evolve <problem>`: Evolve novel algorithms through LLM-driven mutation, crossover, and selection using 8 parallel mutation strategies
+- `/superpowers:evolve <problem>`: Master dispatcher for evolutionary algorithm discovery - routes to specialized modes:
+  - `/superpowers:evolve-perf`: Optimize runtime speed (ops/sec, latency)
+  - `/superpowers:evolve-size`: Optimize code size (bytes, chars) - code golf
+  - `/superpowers:evolve-ml`: Optimize ML metrics (F1, loss)
 - `/superpowers:process-directives <request>`: Scan and process code directives (@implement, @docs, @refactor, @test, @todo) based on natural language request; applies context-dependent transformations
 
 **Skills:**
@@ -200,7 +203,11 @@ FPF (First Principles Framework) methodology for structured decision-making.
   - `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
 - Pull latest changes from all repositories' `main` branch
 - Tracked skills from superpowers: requesting-code-review, systematic-debugging
-- Tracked command from agentic-evolve: evolve (copied directly to superpowers/commands/)
+- Tracked commands from agentic-evolve (copied directly to superpowers/commands/):
+  - evolve.md (master dispatcher)
+  - evolve-perf.md (runtime speed optimization)
+  - evolve-size.md (code size/bytes optimization)
+  - evolve-ml.md (ML accuracy optimization)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
 - Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives) are never modified

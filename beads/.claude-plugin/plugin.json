@@ -1,0 +1,8 @@
+{
+  "name": "beads",
+  "version": "1.0.0",
+  "description": "Dependency-aware issue tracking for AI-supervised workflows using bd CLI",
+  "author": {
+    "name": "Agustin Carrasco"
+  }
+}

@@ -22,9 +22,6 @@ The plugin includes the following skills:
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
 
-### Project Management
-- **using-beads**: Dependency-aware task management with bd - track all work, model dependencies, use bd ready for next tasks
-
 ### Multi-Agent Collaboration
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories
 

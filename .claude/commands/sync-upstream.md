@@ -70,13 +70,13 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 - evolve-ml.md (ML accuracy optimization)
 
 **Plugin-specific skills (not synced from upstream):**
-- using-beads
 - using-live-documentation
 - self-maintaining-claude-md
 - testing-skills-activation
 - using-gemini
 - agent-communication
 - financial-summary
+- using-code-directives
 
 **Agents (separate from skills):**
 - code-reviewer agent: Synced from `~/workspace/random/superpowers/agents/code-reviewer.md`
@@ -212,7 +212,7 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - Remove any references to skills not in plugin (e.g., verification-before-completion)
 
-**Type 3: Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives)**
+**Type 3: Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives)**
 - Never modify (no upstream source)
 
 **Type 4: Code-reviewer agent and template**

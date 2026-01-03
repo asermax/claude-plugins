@@ -9,7 +9,7 @@ This is a personal collection of Claude Code plugins that provide workflow autom
 ## Repository Structure
 
 - **Root level**: Marketplace configuration (`.claude-plugin/marketplace.json`)
-- **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`) is a separate plugin
+- **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`, `beads/`, `quint/`) is a separate plugin
   - `.claude-plugin/plugin.json`: Plugin metadata
   - `commands/`: Slash command definitions (`.md` files)
   - `.mcp.json`: MCP server configuration (if applicable)
@@ -77,9 +77,6 @@ The plugin provides a collection of proven workflow skills organized by category
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
 
-*Project Management:*
-- **using-beads**: Dependency-aware task management with bd - track all work, model dependencies, use bd ready for next tasks
-
 *Multi-Agent Collaboration:*
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories using file-based chat system (agent daemon, chat CLI)
 
@@ -134,6 +131,30 @@ FPF (First Principles Framework) methodology for structured decision-making.
 - Commands use MCP tools directly (no customization)
 - Use for architectural decisions with long-term consequences
 - Skip for quick fixes or easily reversible decisions
+
+### beads
+Dependency-aware issue tracking for AI-supervised workflows.
+
+**Context Injection:**
+- SessionStart hook injects full beads documentation on startup, resume, and compact
+- No skill invocation needed - documentation always available in context
+
+**Key concepts:**
+- **bd ready**: Find unblocked work ready to claim
+- **Dependency types**: blocks, related, parent-child, discovered-from
+- **Epic-task hierarchy**: Parent-child relationships for complex features
+- **Cycle prevention**: DAG enforcement prevents circular dependencies
+
+**Key workflows:**
+- Check for `.beads/*.db` before using bd (use `bd init` if missing)
+- Create issues immediately when discovering work
+- Model dependencies when creating issues (not later)
+- Use `bd ready` to find next work (not `bd list`)
+- Feedback from reviews becomes new tracked issues
+
+**Plugin-specific:**
+- No upstream repository - maintained locally
+- Documentation in `beads/hooks/BEADS.md` is injected directly via hook
 
 ## Development Patterns
 
@@ -194,7 +215,7 @@ FPF (First Principles Framework) methodology for structured decision-making.
 - **All skills**: Use `superpowers:` namespace prefix for all skill references
 - **systematic-debugging**: Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
 - **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"; simplified SHA commands to run directly without variable assignment
-- Multiple plugin-specific skills added: using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives
+- Multiple plugin-specific skills added: using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
@@ -210,7 +231,7 @@ FPF (First Principles Framework) methodology for structured decision-making.
   - evolve-ml.md (ML accuracy optimization)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
-- Plugin-specific skills (using-beads, using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives) are never modified
+- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives) are never modified
 - Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
 
@@ -240,9 +261,6 @@ FPF (First Principles Framework) methodology for structured decision-making.
 - `hooks/hooks.json`: Plugin hooks configuration
 - `hooks/background-agent.sh`: PreToolUse hook that auto-backgrounds `agent.py` and `broker.py` commands
 - `hooks/auto-approve.sh`: PermissionRequest hook that auto-approves superpowers skill invocations and bash commands referencing superpowers paths
-
-**Beads integration:**
-- using-beads skill provides full bd workflow documentation including parent-child relationships for task management
 
 ## Repository Conventions
 

@@ -29,6 +29,8 @@ This command automates the commit process for the plugin marketplace by:
 | Marketplace | `.claude-plugin/marketplace.json` | Read from file |
 | aur | `aur/.claude-plugin/plugin.json` | Read from file |
 | superpowers | `superpowers/.claude-plugin/plugin.json` | Read from file |
+| beads | `beads/.claude-plugin/plugin.json` | Read from file |
+| quint | `quint/.claude-plugin/plugin.json` | Read from file |
 
 ## Semantic Versioning Rules
 
@@ -175,6 +177,8 @@ Map file paths to scopes:
 |--------------|-------|
 | `aur/**` | `aur` (AUR plugin) |
 | `superpowers/**` | `superpowers` (superpowers plugin) |
+| `beads/**` | `beads` (beads plugin) |
+| `quint/**` | `quint` (quint plugin) |
 | `.claude-plugin/**` | `marketplace` |
 | `.claude/commands/**` | `marketplace` |
 | Root files (`README.md`, etc.) | `marketplace` |
@@ -228,6 +232,8 @@ Parse JSON files to get current versions:
 jq -r '.metadata.version' .claude-plugin/marketplace.json
 jq -r '.version' aur/.claude-plugin/plugin.json
 jq -r '.version' superpowers/.claude-plugin/plugin.json
+jq -r '.version' beads/.claude-plugin/plugin.json
+jq -r '.version' quint/.claude-plugin/plugin.json
 ```
 
 #### d. Calculate New Versions
@@ -287,13 +293,19 @@ jq '.metadata.version = "X.Y.Z"' .claude-plugin/marketplace.json > /tmp/marketpl
 mv /tmp/marketplace.json .claude-plugin/marketplace.json
 ```
 
-**For plugins** (`aur/.claude-plugin/plugin.json`, `superpowers/.claude-plugin/plugin.json`):
+**For plugins** (`aur/.claude-plugin/plugin.json`, `superpowers/.claude-plugin/plugin.json`, `beads/.claude-plugin/plugin.json`, `quint/.claude-plugin/plugin.json`):
 ```bash
 jq '.version = "X.Y.Z"' aur/.claude-plugin/plugin.json > /tmp/aur.json
 mv /tmp/aur.json aur/.claude-plugin/plugin.json
 
 jq '.version = "X.Y.Z"' superpowers/.claude-plugin/plugin.json > /tmp/superpowers.json
 mv /tmp/superpowers.json superpowers/.claude-plugin/plugin.json
+
+jq '.version = "X.Y.Z"' beads/.claude-plugin/plugin.json > /tmp/beads.json
+mv /tmp/beads.json beads/.claude-plugin/plugin.json
+
+jq '.version = "X.Y.Z"' quint/.claude-plugin/plugin.json > /tmp/quint.json
+mv /tmp/quint.json quint/.claude-plugin/plugin.json
 ```
 
 #### g. Stage Files
@@ -357,6 +369,8 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 |-------|-------------|
 | `aur` | Changes to aur plugin |
 | `superpowers` | Changes to superpowers plugin |
+| `beads` | Changes to beads plugin |
+| `quint` | Changes to quint plugin |
 | `marketplace` | Changes to marketplace config or root commands |
 
 ### Examples

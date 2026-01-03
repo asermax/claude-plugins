@@ -1,8 +1,3 @@
----
-name: using-beads
-description: Use when user mentions beads, bd, bead, epic, research bead, task bead, design bead, parent-child beads, add epic, create bead, track dependencies, show dependency tree, what's blocking, bd ready, bd create, bd close, bd list, bd init, bd dep, mark task complete, or when project CLAUDE.md indicates beads/bd is used for tracking. ALWAYS invoke before running any bd command.
----
-
 # Using Beads for Issue Tracking
 
 ## Overview
@@ -10,23 +5,6 @@ description: Use when user mentions beads, bd, bead, epic, research bead, task b
 **Beads (bd) is a dependency-aware issue tracker designed for AI-supervised workflows.** Track all discovered work immediately, model dependencies explicitly, and use `bd ready` to find unblocked work.
 
 **Core principle:** Every piece of work gets tracked as an issue with proper dependencies. No work is too small to track.
-
-## When to Use
-
-Use bd when:
-- Discovering new work while implementing a feature
-- Receiving feedback after completing implementation
-- Finding bugs, missing tests, or documentation issues
-- Planning new features that need task breakdown
-- Looking for next task to work on
-- Working in any codebase that uses bd for tracking
-
-**Critical symptoms that mean you should use bd:**
-- "This is too simple to create an issue for"
-- "I'll just fix this quickly without tracking"
-- "I can add dependencies later"
-- "Let me just start coding, I'll document it after"
-- "Partner feedback is just tweaks, I'll fix them now"
 
 ## Core Workflows
 

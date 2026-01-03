@@ -13,11 +13,21 @@ Follow these steps:
 1. Create a new directory for the package named after the package name
 2. Create a .gitignore file to exclude build artifacts
 3. Create a PKGBUILD file following the structure below (use placeholder checksums initially)
-4. Generate checksums using `updpkgsums`
-5. Generate the .SRCINFO file using `makepkg --printsrcinfo`
-6. Initialize a git repository
-7. Set up the AUR remote: `ssh://aur@aur.archlinux.org/<package-name>.git`
-8. Create the initial commit using conventional commits format: "feat: initial commit for <package-name> v<version>"
+4. Generate checksums using `updpkgsums` (skip for -git packages using `sha256sums=('SKIP')`)
+5. **Build and validate the package** using `makepkg -f` to ensure it compiles correctly
+6. Generate the .SRCINFO file using `makepkg --printsrcinfo > .SRCINFO`
+7. Initialize a git repository
+8. Set up the AUR remote: `ssh://aur@aur.archlinux.org/<package-name>.git`
+9. Create the initial commit using conventional commits format: "feat: initial commit for <package-name>"
+
+## Useful Commands Reference
+
+- `updpkgsums` - Update sha256sums in PKGBUILD from source files
+- `makepkg --printsrcinfo > .SRCINFO` - Generate .SRCINFO metadata file
+- `makepkg -f` - Build the package (force rebuild)
+- `makepkg -si` - Build and install the package
+- `namcap PKGBUILD` - Lint PKGBUILD for common issues
+- `namcap *.pkg.tar.zst` - Lint built package
 
 ## .gitignore
 
@@ -27,6 +37,7 @@ Create a .gitignore file with the following content:
 pkg
 src
 <package-name>-*
+*.tar.zst
 ```
 
 For NPM packages, replace `<package-name>` with the actual package name (without scope for scoped packages).
@@ -102,4 +113,89 @@ package() {
 ```bash
 # For more info about this package see:
 # https://wiki.archlinux.org/index.php/Node.js_package_guidelines
+```
+
+## Go Package Specific Instructions
+
+See [Go package guidelines](https://wiki.archlinux.org/title/Go_package_guidelines).
+
+**Package metadata:**
+- `arch=('x86_64')` - Go compiles to native binaries
+- `depends=('glibc')` - Standard runtime dependency
+- `makedepends=('go>=X.XX')` - Check go.mod for version requirement
+
+**Required build flags:**
+```bash
+build() {
+  cd "$pkgname"
+  export GOPATH="${srcdir}/gopath"
+  export CGO_CPPFLAGS="${CPPFLAGS}"
+  export CGO_CFLAGS="${CFLAGS}"
+  export CGO_CXXFLAGS="${CXXFLAGS}"
+  export CGO_LDFLAGS="${LDFLAGS}"
+  export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
+
+  go build -o <binary> ./cmd/<binary>
+}
+```
+
+**Go modules download (in prepare):**
+```bash
+go mod download
+```
+
+> **Important**: Do NOT set `GOPATH` when downloading modules. Setting `GOPATH="${srcdir}/gopath"` before `go mod download` causes dependencies to be installed in a custom folder inside the build directory, leading to permission issues during cleanup (root-owned files). The `GOPATH` should only be set in `build()` where it controls intermediate build artifacts.
+
+## VCS/Git Package Specific Instructions (-git)
+
+See [VCS package guidelines](https://wiki.archlinux.org/title/VCS_package_guidelines).
+
+**Key differences from regular packages:**
+- Package name suffix: `-git`
+- `makedepends` must include `'git'`
+- `provides=('pkgname')` and `conflicts=('pkgname')`
+- `sha256sums=('SKIP')`
+
+**Source format:**
+```bash
+source=("$pkgname::git+https://github.com/user/repo.git")
+```
+
+**pkgver() for repos with tags:**
+```bash
+pkgver() {
+  cd "$pkgname"
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
+```
+
+**pkgver() for repos without tags:**
+```bash
+pkgver() {
+  cd "$pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+```
+
+## Binary Package Specific Instructions (-bin)
+
+For packages distributing pre-compiled binaries from GitHub releases.
+
+**Key differences from regular packages:**
+- Package name suffix: `-bin`
+- `arch=('x86_64')` - Architecture-specific
+- `provides=('pkgname')` and `conflicts=('pkgname' 'pkgname-git')`
+- No makedepends (no compilation)
+
+**Source from GitHub releases:**
+```bash
+source_x86_64=("${url}/releases/download/v${pkgver}/${_pkgname}-${pkgver}-linux-amd64.tar.gz")
+```
+
+**latestver() helper for version detection:**
+```bash
+latestver() {
+  curl -s "https://api.github.com/repos/user/repo/releases/latest" | \
+    grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/' || true
+}
 ```

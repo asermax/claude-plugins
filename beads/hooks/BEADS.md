@@ -17,7 +17,7 @@
 ls .beads/*.db 2>/dev/null
 
 # If no .db file exists in .beads/:
-bd init
+bd init --stealth
 
 # Now you can use bd normally
 bd create "Your first issue"
@@ -293,7 +293,7 @@ Attempting to add a cycle-creating dependency returns an error immediately.
 
 | Task | Command | When |
 |------|---------|------|
-| **Check for database** | `ls .beads/*.db 2>/dev/null \|\| bd init` | First command in new codebase |
+| **Check for database** | `ls .beads/*.db 2>/dev/null \|\| bd init --stealth` | First command in new codebase |
 | **Create issue** | `bd create "description"` | Immediately when discovering work |
 | **Create with details** | `bd create "description" -t bug -p 0 -l "urgent"` | With type, priority, labels |
 | **Create with deps** | `bd create "Fix bug" --deps discovered-from:bd-20` | Create and link in one command |
@@ -326,7 +326,7 @@ bd create "Implement feature X"
 cd /path/to/new-project
 
 # Check for local database first
-ls .beads/*.db 2>/dev/null || bd init
+ls .beads/*.db 2>/dev/null || bd init --stealth
 
 # Now create issues
 bd create "Implement feature X"

@@ -9,7 +9,20 @@ Review code for spec compliance and pattern adherence.
 
 ## Input
 
-Context: $ARGUMENTS (optional - can be: branch, files, or description of what to review)
+Context: $ARGUMENTS (optional - can be: branch, files, description, or **backlog item ID** like BUG-XXX, IMP-XXX, DEBT-XXX)
+
+## Backlog Integration
+
+If a backlog item ID is provided (e.g., `/review-code BUG-001`):
+
+1. **Load item context**
+   - Run `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py show <ID>` to get item details
+   - Use title and notes as initial context for the review
+   - If item has related features, read those feature specs/designs
+
+2. **After successful commit**
+   - Prompt: "Mark <ID> as fixed?"
+   - If yes: Run `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID> --commit <hash>`
 
 ## Context
 

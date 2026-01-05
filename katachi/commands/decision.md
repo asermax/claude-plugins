@@ -1,10 +1,28 @@
 ---
 description: Document an architecture or design decision
+argument-hint: [topic, existing ID, or backlog ID]
 ---
 
 # Decision Documentation Workflow
 
 Document an architecture decision (ADR) or design pattern (DES).
+
+## Input
+
+$ARGUMENTS - Optional: topic to document, existing decision ID to update, or **backlog item ID** (Q-XXX)
+
+## Backlog Integration
+
+If a backlog item ID is provided (e.g., `/decision Q-001`):
+
+1. **Load item context**
+   - Run `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py show <ID>` to get item details
+   - Use title and notes as initial context for the decision
+   - If item has related features, consider how they're affected
+
+2. **After decision documented**
+   - Prompt: "Mark <ID> as resolved?"
+   - If yes: Run `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID>` (questions are resolved by documenting a decision)
 
 ## Context
 

@@ -23,6 +23,7 @@ These templates are used when creating project structure:
 - `references/VISION-template.md` - Vision document structure
 - `references/FEATURES-template.md` - Feature inventory structure
 - `references/DEPENDENCIES-template.md` - Dependency matrix structure
+- `references/BACKLOG-template.md` - Backlog for bugs, ideas, improvements, tech-debt, questions
 - `references/ADR-template.md` - Architecture Decision Record format
 - `references/DES-template.md` - Design Pattern document format
 
@@ -35,6 +36,26 @@ Load `references/decision-types.md` when:
 - Teaching users about ADR vs DES distinction
 
 This reference contains the full decision tree and examples for choosing between ADRs (one-time architectural choices) and DES (repeatable patterns).
+
+## Backlog System
+
+The backlog tracks items not ready for full feature treatment:
+- **Bugs** (BUG-) - Issues to fix via `/review-code`
+- **Ideas** (IDEA-) - May be promoted to features via `/add-feature`
+- **Improvements** (IMP-) - Enhancements to fix via `/review-code`
+- **Tech Debt** (DEBT-) - Cleanup items via `/review-code`
+- **Questions** (Q-) - Resolve via `/decision`
+
+Use `${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py` for management:
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py list      # List open items
+python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py show ID   # Show item details
+python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py add TYPE "TITLE" --priority N
+python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix ID    # Mark as fixed
+python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py promote ID --feature FEATURE-ID
+```
+
+Priority scale: 1=critical, 2=high, 3=medium, 4=low, 5=someday
 
 ## State Detection
 

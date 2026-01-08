@@ -266,10 +266,6 @@ Add a new section under Source History:
 ```markdown
 ### [Source Title] - [Date]
 - Type: [transcript/document/url/manual]
-- Key Extractions:
-  - [bullet point of main item 1]
-  - [bullet point of main item 2]
-  - ...
 - Link: [file path or URL if applicable]
 ```
 

@@ -1,0 +1,17 @@
+{
+  "description": "Auto-memorize conversations at session end",
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/memorize-session.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

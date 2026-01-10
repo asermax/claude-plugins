@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "1.6.8"
+    "version": "1.7.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -31,6 +31,11 @@
       "name": "katachi",
       "source": "./katachi",
       "description": "Spec-driven development framework with iterative growth, progressive adoption, and retrofit support"
+    },
+    {
+      "name": "memu",
+      "source": "./memu",
+      "description": "Agentic memory framework for long-term memory, user preferences, and conversation history"
     }
   ]
 }

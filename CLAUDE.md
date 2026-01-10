@@ -156,6 +156,38 @@ Dependency-aware issue tracking for AI-supervised workflows.
 - No upstream repository - maintained locally
 - Documentation in `beads/hooks/BEADS.md` is injected directly via hook
 
+### memu
+Agentic memory framework for long-term memory across sessions.
+
+**Skills:**
+- `recall-memory`: Retrieve information from past sessions and stored knowledge using fork capability
+
+**Hook:**
+- SessionEnd: Auto-memorizes conversations in background when session completes
+
+**Key concepts:**
+- **Resources**: Raw multimodal data (conversations, documents, images, video, audio)
+- **Items**: Extracted memory units (preferences, skills, opinions, habits)
+- **Categories**: Aggregated markdown summaries
+- **Retrieval methods**: RAG (fast, vector-based) and LLM (deep semantic understanding)
+
+**Key workflows:**
+- Auto-memorization: SessionEnd hook automatically saves conversations to memU cloud API
+- On-demand retrieval: `recall-memory` skill triggers on questions needing historical context
+- Per-project scoping: Memory isolated by project using git remote URL hash
+- Fork capability: Retrieval runs in forked process to avoid blocking main conversation
+
+**Environment setup:**
+- Requires `MEMU_API_KEY` environment variable (from memu.so cloud service)
+- Python 3.7+ (no external libraries required - uses built-in modules)
+- Script: `skills/recall-memory/scripts/memu.py` handles API communication
+
+**Plugin-specific:**
+- No upstream repository - maintained locally
+- Uses memU cloud API (https://api.memu.so) instead of local SDK
+- Background fork for memorization prevents session exit blocking
+- Skill description optimized for broad retrieval query triggering
+
 ## Development Patterns
 
 ### Creating New Commands

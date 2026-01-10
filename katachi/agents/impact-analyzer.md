@@ -74,8 +74,8 @@ You will receive:
 ### Documents Requiring Updates
 | Document | Type | Required Change |
 |----------|------|-----------------|
-| specs/CORE-001.md | Spec | Update acceptance criteria for X |
-| designs/API-002.md | Design | Add handling for Y |
+| docs/feature-specs/CORE-001.md | Spec | Update acceptance criteria for X |
+| docs/feature-designs/API-002.md | Design | Add handling for Y |
 | docs/architecture/ADR-005.md | ADR | Consider superseding |
 
 ### Risk Assessment: [Isolated | Moderate | Significant | Structural]

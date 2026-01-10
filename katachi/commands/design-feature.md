@@ -18,30 +18,30 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 - `katachi:working-on-feature` - Per-feature workflow
 
 **Feature inventory:**
-`@planning/FEATURES.md` - Feature definitions
-`@planning/DEPENDENCIES.md` - Feature dependencies
+`@docs/planning/FEATURES.md` - Feature definitions
+`@docs/planning/DEPENDENCIES.md` - Feature dependencies
 
 **Feature spec:**
-`@specs/$ARGUMENTS.md` - The specification we're designing for
+`@docs/feature-specs/$ARGUMENTS.md` - The specification we're designing for
 
 **Project decisions:**
 `@docs/architecture/README.md` - Architecture decisions (ADRs)
 `@docs/design/README.md` - Design patterns (DES)
 
 **Existing design (if present):**
-`@designs/$ARGUMENTS.md` - Current design to update or create
+`@docs/feature-designs/$ARGUMENTS.md` - Current design to update or create
 
 ## Pre-Check
 
 Verify spec exists:
-- If `specs/$ARGUMENTS.md` doesn't exist, suggest running `/katachi:spec-feature $ARGUMENTS` first
+- If `docs/feature-specs/$ARGUMENTS.md` doesn't exist, suggest running `/katachi:spec-feature $ARGUMENTS` first
 - Design requires a spec to design against
 
 ## Process
 
 ### 0. Check Existing State
 
-If `designs/$ARGUMENTS.md` exists:
+If `docs/feature-designs/$ARGUMENTS.md` exists:
 - Read current design
 - Check for drift: Has spec changed?
 - Summarize: design approach, key decisions, modeling choices
@@ -57,8 +57,8 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Desi
 
 ### 1. Research Phase (Silent)
 
-- Read feature spec (`specs/$ARGUMENTS.md`)
-- Read dependencies from `planning/DEPENDENCIES.md`
+- Read feature spec (`docs/feature-specs/$ARGUMENTS.md`)
+- Read dependencies from `docs/planning/DEPENDENCIES.md`
 - Read dependency specs if they exist
 - Read relevant ADRs from index
 - Read relevant DES patterns from index
@@ -138,7 +138,7 @@ If agent or user identifies repeatable patterns:
 Ask: "Should we iterate based on validation feedback, or is the design complete?"
 
 If gaps to address → refine relevant sections (go back to step 4)
-If complete → finalize document to `designs/$ARGUMENTS.md`
+If complete → finalize document to `docs/feature-designs/$ARGUMENTS.md`
 
 Update status:
 ```bash

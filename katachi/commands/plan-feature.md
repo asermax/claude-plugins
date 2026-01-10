@@ -18,32 +18,32 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 - `katachi:working-on-feature` - Per-feature workflow
 
 **Feature inventory:**
-`@planning/FEATURES.md` - Feature definitions
-`@planning/DEPENDENCIES.md` - Feature dependencies
+`@docs/planning/FEATURES.md` - Feature definitions
+`@docs/planning/DEPENDENCIES.md` - Feature dependencies
 
 **Feature documents:**
-`@specs/$ARGUMENTS.md` - What to build (requirements)
-`@designs/$ARGUMENTS.md` - Why/how (design rationale)
+`@docs/feature-specs/$ARGUMENTS.md` - What to build (requirements)
+`@docs/feature-designs/$ARGUMENTS.md` - Why/how (design rationale)
 
 **Project decisions:**
 `@docs/architecture/README.md` - Architecture decisions (ADRs)
 `@docs/design/README.md` - Design patterns (DES)
 
 **Existing plan (if present):**
-`@plans/$ARGUMENTS.md` - Current plan to update or create
+`@docs/feature-plans/$ARGUMENTS.md` - Current plan to update or create
 
 ## Pre-Check
 
 Verify spec and design exist:
-- If `specs/$ARGUMENTS.md` doesn't exist, suggest `/katachi:spec-feature $ARGUMENTS` first
-- If `designs/$ARGUMENTS.md` doesn't exist, suggest `/katachi:design-feature $ARGUMENTS` first
+- If `docs/feature-specs/$ARGUMENTS.md` doesn't exist, suggest `/katachi:spec-feature $ARGUMENTS` first
+- If `docs/feature-designs/$ARGUMENTS.md` doesn't exist, suggest `/katachi:design-feature $ARGUMENTS` first
 - Plan requires both spec and design
 
 ## Process
 
 ### 0. Check Existing State
 
-If `plans/$ARGUMENTS.md` exists:
+If `docs/feature-plans/$ARGUMENTS.md` exists:
 - Read current plan
 - Check for drift: Have spec or design changed?
 - Summarize: steps, pre-implementation items, files to change
@@ -59,8 +59,8 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Plan
 
 ### 1. Research Phase (Silent)
 
-- Read feature spec (`specs/$ARGUMENTS.md`)
-- Read feature design (`designs/$ARGUMENTS.md`)
+- Read feature spec (`docs/feature-specs/$ARGUMENTS.md`)
+- Read feature design (`docs/feature-designs/$ARGUMENTS.md`)
 - Read relevant ADRs and DES patterns (not just indexes)
 - Read dependency code as needed
 - Explore codebase for implementation patterns
@@ -145,7 +145,7 @@ Discuss which recommendations to accept.
 Ask: "Should we iterate based on validation feedback, or is the plan complete?"
 
 If gaps to address → refine relevant sections (go back to step 4)
-If complete → finalize document to `plans/$ARGUMENTS.md`
+If complete → finalize document to `docs/feature-plans/$ARGUMENTS.md`
 
 Update status:
 ```bash

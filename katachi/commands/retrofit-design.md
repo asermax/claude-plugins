@@ -17,27 +17,27 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 - `katachi:retrofit-existing` - Retrofit workflow
 
 **Feature inventory:**
-`@planning/FEATURES.md` - Feature definitions
-`@planning/DEPENDENCIES.md` - Feature dependencies
+`@docs/planning/FEATURES.md` - Feature definitions
+`@docs/planning/DEPENDENCIES.md` - Feature dependencies
 
 **Retrofitted spec:**
-`@specs/$ARGUMENTS.md` - The specification (created by retrofit-spec)
+`@docs/feature-specs/$ARGUMENTS.md` - The specification (created by retrofit-spec)
 
 **Project decisions:**
 `@docs/architecture/README.md` - Architecture decisions (ADRs)
 `@docs/design/README.md` - Design patterns (DES)
 
 **Existing design (if present):**
-`@designs/$ARGUMENTS.md` - Current design to update or create
+`@docs/feature-designs/$ARGUMENTS.md` - Current design to update or create
 
 **Vision (if present):**
-`@planning/VISION.md` - Project context for inference
+`@docs/planning/VISION.md` - Project context for inference
 
 ## Pre-Check
 
 Verify prerequisites:
 - Feature ID exists in FEATURES.md
-- Spec exists at `specs/$ARGUMENTS.md`
+- Spec exists at `docs/feature-specs/$ARGUMENTS.md`
 - Status shows "✓ Implementation" (code exists)
 - If spec doesn't exist, suggest running `/katachi:retrofit-spec` first
 
@@ -45,7 +45,7 @@ Verify prerequisites:
 
 ### 0. Check Existing State
 
-If `designs/$ARGUMENTS.md` exists:
+If `docs/feature-designs/$ARGUMENTS.md` exists:
 - Read current design
 - Summarize: design approach, key decisions, modeling choices
 - Ask: "What aspects need refinement? Or should we re-analyze the code?"
@@ -60,10 +60,10 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Desi
 
 ### 1. Research Phase (Silent)
 
-- Read retrofitted spec (`specs/$ARGUMENTS.md`)
+- Read retrofitted spec (`docs/feature-specs/$ARGUMENTS.md`)
 - Extract the source code path from spec's "Retrofit Note"
 - Read the implementation code
-- Read dependencies from `planning/DEPENDENCIES.md`
+- Read dependencies from `docs/planning/DEPENDENCIES.md`
 - Read ADR index (`docs/architecture/README.md`)
 - Read DES index (`docs/design/README.md`)
 - Read VISION.md if exists
@@ -228,12 +228,12 @@ Ask: "Should we iterate based on validation feedback, or is the design complete?
 If gaps to address → refine relevant sections (go back to step 4)
 If complete → finalize document
 
-Write design to `designs/$ARGUMENTS.md`:
+Write design to `docs/feature-designs/$ARGUMENTS.md`:
 
 ```markdown
 # Design: [FEATURE-ID] - [Feature Name]
 
-**Feature Spec**: [../specs/FEATURE-ID.md](../specs/FEATURE-ID.md)
+**Feature Spec**: [../feature-specs/FEATURE-ID.md](../feature-specs/FEATURE-ID.md)
 **Status**: Approved
 
 ## Retrofit Note
@@ -290,7 +290,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "✓ Desi
 ```
 "Design retrofitted for existing code:
 
-File: designs/$ARGUMENTS.md
+File: docs/feature-designs/$ARGUMENTS.md
 Status: ✓ Design
 Decisions created: [ADR-XXX, DES-YYY, ...]
 

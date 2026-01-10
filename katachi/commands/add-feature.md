@@ -32,13 +32,13 @@ If a backlog item ID is provided (e.g., `/add-feature IDEA-001`):
 Load the `katachi:iterative-development` skill for workflow guidance.
 
 **Feature inventory:**
-`@planning/FEATURES.md` - Existing feature definitions
-`@planning/DEPENDENCIES.md` - Feature dependencies and phases
+`@docs/planning/FEATURES.md` - Existing feature definitions
+`@docs/planning/DEPENDENCIES.md` - Feature dependencies and phases
 
 ## Pre-Check
 
 Verify framework is initialized:
-- If `planning/` doesn't exist, suggest `/katachi:init-framework` first
+- If `docs/planning/` doesn't exist, suggest `/katachi:init-framework` first
 - If FEATURES.md or DEPENDENCIES.md missing, explain what's needed
 
 ## Process

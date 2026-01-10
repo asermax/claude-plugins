@@ -1,6 +1,6 @@
 # Design: [FEATURE-ID] - [Feature Name]
 
-**Feature Spec**: [../specs/FEATURE-ID.md](../specs/FEATURE-ID.md)
+**Feature Spec**: [../feature-specs/FEATURE-ID.md](../feature-specs/FEATURE-ID.md)
 **Status**: Draft | Approved | Superseded
 
 ## Purpose

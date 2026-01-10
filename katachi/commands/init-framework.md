@@ -17,17 +17,17 @@ Load the `katachi:framework-core` skill for workflow principles and state detect
 ### 1. Detect Project State
 
 Check what exists:
-- Does `planning/` directory exist?
-- Does `planning/VISION.md` exist?
-- Does `planning/FEATURES.md` exist?
-- Does `planning/DEPENDENCIES.md` exist?
+- Does `docs/planning/` directory exist?
+- Does `docs/planning/VISION.md` exist?
+- Does `docs/planning/FEATURES.md` exist?
+- Does `docs/planning/DEPENDENCIES.md` exist?
 - Does significant source code exist (check for `src/`, `lib/`, `app/` with code files)?
 
 ### 2. Present Appropriate Path
 
 Based on state:
 
-**New Project (no planning/, no significant code):**
+**New Project (no docs/planning/, no significant code):**
 ```
 "This looks like a new project. I can help you get started.
 
@@ -45,7 +45,7 @@ B) Full framework
 Which approach fits your project?"
 ```
 
-**Existing Project (no planning/, has code):**
+**Existing Project (no docs/planning/, has code):**
 ```
 "I see you have existing code but no framework documentation.
 
@@ -65,7 +65,7 @@ B) Code-first (bottom-up)
 Which approach fits your situation?"
 ```
 
-**Partially Initialized (planning/ exists but incomplete):**
+**Partially Initialized (docs/planning/ exists but incomplete):**
 ```
 "I see you started framework setup but it's incomplete.
 
@@ -132,7 +132,7 @@ for decisions that span multiple features or weren't captured during retrofit-de
 ### 4. Create Directory Structure
 
 ```bash
-mkdir -p planning specs designs plans docs/architecture docs/design
+mkdir -p docs/planning docs/feature-specs docs/feature-designs docs/feature-plans docs/architecture docs/design
 ```
 
 Create CLAUDE.md if it doesn't exist:
@@ -146,9 +146,9 @@ Create CLAUDE.md if it doesn't exist:
 
 ## Key Files
 
-- `planning/VISION.md` - Project vision
-- `planning/FEATURES.md` - Feature inventory
-- `planning/DEPENDENCIES.md` - Implementation phases
+- `docs/planning/VISION.md` - Project vision
+- `docs/planning/FEATURES.md` - Feature inventory
+- `docs/planning/DEPENDENCIES.md` - Implementation phases
 
 ## Available Commands
 

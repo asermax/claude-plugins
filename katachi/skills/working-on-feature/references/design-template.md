@@ -7,7 +7,7 @@ Use this template when creating feature design documents.
 ```markdown
 # Design: [FEATURE-ID] - [Feature Name]
 
-**Feature Spec**: [../specs/FEATURE-ID.md](../specs/FEATURE-ID.md)
+**Feature Spec**: [../feature-specs/FEATURE-ID.md](../feature-specs/FEATURE-ID.md)
 **Status**: Draft | Approved | Superseded
 
 ## Retrofit Note (if applicable)

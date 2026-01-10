@@ -17,7 +17,7 @@ $ARGUMENTS - Optional, can be:
 ## Context
 
 **Backlog file:**
-@planning/BACKLOG.md
+@docs/planning/BACKLOG.md
 
 **Script reference:**
 `${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py` - CLI tool for backlog management

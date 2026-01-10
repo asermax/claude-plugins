@@ -21,7 +21,7 @@ Load the `katachi:retrofit-existing` skill for retrofit workflow.
 `@docs/design/README.md` - Design patterns (DES)
 
 **Vision (if present):**
-`@planning/VISION.md` - Project context for inference
+`@docs/planning/VISION.md` - Project context for inference
 
 ## Pre-Check
 

@@ -4,7 +4,7 @@ description: Create or update the project vision document
 
 # Vision Document Workflow
 
-Guide the user through creating planning/VISION.md.
+Guide the user through creating docs/planning/VISION.md.
 
 ## Context
 
@@ -12,7 +12,7 @@ Guide the user through creating planning/VISION.md.
 Load the `katachi:framework-core` skill for workflow principles.
 
 **Vision document:**
-`@planning/VISION.md` - if it exists
+`@docs/planning/VISION.md` - if it exists
 
 ## General Guidance
 
@@ -30,7 +30,7 @@ Follow the collaborative workflow principles from the framework-core skill.
 
 ### 0. Check Existing State
 
-If `planning/VISION.md` exists:
+If `docs/planning/VISION.md` exists:
 - Read current vision document
 - Read project state (features, specs, implementation progress if any)
 - Summarize current state to user

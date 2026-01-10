@@ -30,7 +30,7 @@ If a backlog item ID is provided (e.g., `/decision Q-001`):
 Load the `katachi:framework-core` skill for workflow principles and decision type guidance.
 
 **Feature inventory:**
-`@planning/FEATURES.md` - Feature definitions (to check for affected features)
+`@docs/planning/FEATURES.md` - Feature definitions (to check for affected features)
 
 **Decision indexes:**
 `@docs/architecture/README.md` - Architecture decisions (ADRs)

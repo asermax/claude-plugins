@@ -17,11 +17,11 @@ Path to file or module: $ARGUMENTS
 Load the `katachi:retrofit-existing` skill for retrofit workflow.
 
 **Feature inventory:**
-`@planning/FEATURES.md` - To add new feature entry
-`@planning/DEPENDENCIES.md` - To update dependency matrix
+`@docs/planning/FEATURES.md` - To add new feature entry
+`@docs/planning/DEPENDENCIES.md` - To update dependency matrix
 
 **Vision (if present):**
-`@planning/VISION.md` - Project context for inference
+`@docs/planning/VISION.md` - Project context for inference
 
 ## Pre-Check
 
@@ -158,7 +158,7 @@ Add reverse dependencies if identified.
 
 ### 9. Save Spec
 
-Write spec to `specs/CATEGORY-NNN.md`
+Write spec to `docs/feature-specs/CATEGORY-NNN.md`
 
 Include retrofit note:
 
@@ -186,7 +186,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set CATEGORY-NNN "✓ Im
 ```
 "Spec created for existing code:
 
-File: specs/CATEGORY-NNN.md
+File: docs/feature-specs/CATEGORY-NNN.md
 Status: ✓ Implementation (code exists)
 
 The feature has been added to the framework. You can now:

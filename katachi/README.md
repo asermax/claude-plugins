@@ -26,6 +26,7 @@ The framework will detect your project state and offer appropriate options:
 
 ### Initialization
 - `/katachi:init-framework` - Initialize framework in a project
+- `/katachi:eject` - Eject plugin into self-contained project structure
 
 ### Planning
 - `/katachi:vision` - Create/update project vision
@@ -74,16 +75,16 @@ After initialization, your project will have:
 
 ```
 your-project/
-├── planning/
-│   ├── VISION.md        # Project vision and scope
-│   ├── FEATURES.md      # Feature inventory
-│   └── DEPENDENCIES.md  # Dependency matrix
-├── specs/               # Feature specifications (WHAT)
-├── designs/             # Design rationale (WHY/HOW)
-├── plans/               # Implementation plans (STEPS)
 └── docs/
-    ├── architecture/    # Architecture Decision Records (ADRs)
-    └── design/          # Design patterns (DES)
+    ├── planning/
+    │   ├── VISION.md        # Project vision and scope
+    │   ├── FEATURES.md      # Feature inventory
+    │   └── DEPENDENCIES.md  # Dependency matrix
+    ├── feature-specs/       # Feature specifications (WHAT)
+    ├── feature-designs/     # Design rationale (WHY/HOW)
+    ├── feature-plans/       # Implementation plans (STEPS)
+    ├── architecture/        # Architecture Decision Records (ADRs)
+    └── design/              # Design patterns (DES)
 ```
 
 ## Workflow
@@ -108,3 +109,21 @@ your-project/
 1. `/katachi:add-feature` - Describe the new feature
 2. Framework assigns ID, analyzes dependencies, integrates into matrix
 3. Continue with spec → design → plan → implement
+
+## Ejecting the Plugin
+
+If you want to make your project self-contained and independent of the katachi plugin:
+
+```
+/katachi:eject
+```
+
+This will:
+- Copy all commands to `.claude/commands/`
+- Copy reviewer agents to `.claude/agents/`
+- Copy scripts (features.py, backlog.py) to `scripts/`
+- Generate framework documentation in `docs/`
+- Copy all templates to `docs/templates/`
+- Transform all plugin references to local paths
+
+After ejecting, you can uninstall the plugin and continue using all katachi commands as local commands.

@@ -62,14 +62,14 @@ Priority scale: 1=critical, 2=high, 3=medium, 4=low, 5=someday
 Before executing any command, detect project state:
 
 ### 1. Not Initialized
-**Condition:** No `planning/` directory exists
+**Condition:** No `docs/planning/` directory exists
 
 **Action:**
 - If no significant code exists → Offer `/katachi:init-framework`
 - If code exists → Explain retrofit options
 
 ### 2. Partially Initialized
-**Condition:** `planning/` exists but missing VISION.md, FEATURES.md, or DEPENDENCIES.md
+**Condition:** `docs/planning/` exists but missing VISION.md, FEATURES.md, or DEPENDENCIES.md
 
 **Action:**
 - List what's missing

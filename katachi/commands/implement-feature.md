@@ -18,13 +18,13 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 - `katachi:working-on-feature` - Per-feature workflow
 
 **Feature inventory:**
-`@planning/FEATURES.md` - Feature definitions
-`@planning/DEPENDENCIES.md` - Feature dependencies
+`@docs/planning/FEATURES.md` - Feature definitions
+`@docs/planning/DEPENDENCIES.md` - Feature dependencies
 
 **Feature documents:**
-`@specs/$ARGUMENTS.md` - What to build (requirements)
-`@designs/$ARGUMENTS.md` - Why/how (design rationale)
-`@plans/$ARGUMENTS.md` - Implementation steps to follow
+`@docs/feature-specs/$ARGUMENTS.md` - What to build (requirements)
+`@docs/feature-designs/$ARGUMENTS.md` - Why/how (design rationale)
+`@docs/feature-plans/$ARGUMENTS.md` - Implementation steps to follow
 
 **Project decisions:**
 `@docs/architecture/README.md` - Architecture decisions (ADRs)
@@ -47,7 +47,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Impl
 
 ### 1. Review Plan and Decisions (Silent)
 
-- Read implementation plan (`plans/$ARGUMENTS.md`)
+- Read implementation plan (`docs/feature-plans/$ARGUMENTS.md`)
 - Read spec and design
 - **Read full ADR/DES documents:**
   - Identify ADRs/DES listed in pre-implementation checklist

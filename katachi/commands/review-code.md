@@ -33,7 +33,7 @@ Load the `katachi:framework-core` skill for workflow principles.
 `@docs/architecture/README.md` - Architecture decisions (ADRs)
 `@docs/design/README.md` - Design patterns (DES)
 
-Read relevant specs/ and designs/ based on code being reviewed.
+Read relevant docs/feature-specs/ and docs/feature-designs/ based on code being reviewed.
 
 ## Process
 

@@ -17,19 +17,19 @@ Change description: $ARGUMENTS (optional - will prompt if not provided)
 Load the `katachi:iterative-development` skill for impact analysis workflow.
 
 **Feature inventory:**
-`@planning/FEATURES.md` - Feature definitions and status
-`@planning/DEPENDENCIES.md` - Feature dependencies and phases
+`@docs/planning/FEATURES.md` - Feature definitions and status
+`@docs/planning/DEPENDENCIES.md` - Feature dependencies and phases
 
 **Decision indexes:**
 `@docs/architecture/README.md` - Architecture decisions (ADRs)
 `@docs/design/README.md` - Design patterns (DES)
 
-Read specs/ and designs/ as needed during analysis.
+Read docs/feature-specs/ and docs/feature-designs/ as needed during analysis.
 
 ## Pre-Check
 
 Verify framework is initialized:
-- If `planning/` doesn't exist, explain this command requires initialized framework
+- If `docs/planning/` doesn't exist, explain this command requires initialized framework
 - If minimal features exist, note the analysis may be limited
 
 ## Process
@@ -96,8 +96,8 @@ Show the analysis results in a clear format:
 | UI-003 | CORE-001 → UI-003 | Medium |
 
 ### Documents Requiring Updates
-- specs/CORE-001.md - Update acceptance criteria for X
-- designs/API-002.md - Revise data flow for Y
+- docs/feature-specs/CORE-001.md - Update acceptance criteria for X
+- docs/feature-designs/API-002.md - Revise data flow for Y
 - docs/architecture/ADR-005.md - Consider superseding
 
 ### Recommendations

@@ -18,17 +18,17 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 - `katachi:working-on-feature` - Per-feature workflow
 
 **Feature inventory:**
-`@planning/FEATURES.md` - Feature definitions
-`@planning/DEPENDENCIES.md` - Feature dependencies
+`@docs/planning/FEATURES.md` - Feature definitions
+`@docs/planning/DEPENDENCIES.md` - Feature dependencies
 
 **Existing spec (if present):**
-`@specs/$ARGUMENTS.md` - Current spec to update or create
+`@docs/feature-specs/$ARGUMENTS.md` - Current spec to update or create
 
 ## Process
 
 ### 0. Check Existing State
 
-If `specs/$ARGUMENTS.md` exists:
+If `docs/feature-specs/$ARGUMENTS.md` exists:
 - Read current spec
 - Check for drift: Has FEATURES.md description changed?
 - Summarize to user: user story, key acceptance criteria, known edge cases
@@ -44,8 +44,8 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Spec
 
 ### 1. Research Phase (Silent)
 
-- Read feature description from `planning/FEATURES.md`
-- Read dependencies from `planning/DEPENDENCIES.md`
+- Read feature description from `docs/planning/FEATURES.md`
+- Read dependencies from `docs/planning/DEPENDENCIES.md`
 - Explore related codebase areas if needed
 - For features involving libraries/frameworks/APIs:
   - Research typical usage patterns
@@ -108,7 +108,7 @@ Discuss which recommendations to accept.
 Ask: "Should we iterate based on validation feedback, or is the spec complete?"
 
 If gaps to address → refine relevant sections (go back to step 4)
-If complete → finalize document to `specs/$ARGUMENTS.md`
+If complete → finalize document to `docs/feature-specs/$ARGUMENTS.md`
 
 Update status:
 ```bash

@@ -4,7 +4,7 @@ description: Build the dependency matrix for features
 
 # Dependency Matrix Workflow
 
-Build the dependency matrix in planning/DEPENDENCIES.md.
+Build the dependency matrix in docs/planning/DEPENDENCIES.md.
 
 ## Context
 
@@ -12,8 +12,8 @@ Build the dependency matrix in planning/DEPENDENCIES.md.
 Load the `katachi:framework-core` skill for workflow principles.
 
 **Required files:**
-`@planning/FEATURES.md` - Feature inventory to analyze
-`@planning/DEPENDENCIES.md` - Current matrix (if exists)
+`@docs/planning/FEATURES.md` - Feature inventory to analyze
+`@docs/planning/DEPENDENCIES.md` - Current matrix (if exists)
 
 ## General Guidance
 
@@ -35,7 +35,7 @@ Follow the collaborative workflow principles from the framework-core skill.
 
 ### 0. Check Existing State
 
-If `planning/DEPENDENCIES.md` exists:
+If `docs/planning/DEPENDENCIES.md` exists:
 - Read current dependency matrix
 - Read current features (check for new features)
 - Ask: "Should we update for new features, refine existing, or rebuild?"
@@ -130,7 +130,7 @@ Review findings with user.
 Ask: "Should we adjust phases based on validation, or are they ready?"
 
 If adjustments needed → discuss and adjust
-If complete → finalize and write to `planning/DEPENDENCIES.md`
+If complete → finalize and write to `docs/planning/DEPENDENCIES.md`
 
 ## Gap Detection Questions
 

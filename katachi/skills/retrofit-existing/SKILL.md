@@ -104,7 +104,7 @@ python scripts/features.py deps add-dep RETRO-001 CORE-001
 
 ### 8. Save Spec
 
-Write spec to `specs/RETRO-001.md`
+Write spec to `docs/feature-specs/RETRO-001.md`
 
 Note the retrofit source:
 
@@ -193,7 +193,7 @@ Create design documentation from existing code with integrated decision discover
 
 ### 1. Verify Prerequisites
 
-- Feature must have a retrofitted spec (`specs/FEATURE-ID.md`)
+- Feature must have a retrofitted spec (`docs/feature-specs/FEATURE-ID.md`)
 - Status should be "✓ Implementation" (code exists)
 
 ### 2. Dispatch Codebase Analyzer
@@ -268,7 +268,7 @@ Dispatch `katachi:design-reviewer`:
 
 ### 7. Save Design
 
-Write to `designs/FEATURE-ID.md`
+Write to `docs/feature-designs/FEATURE-ID.md`
 Include retrofit note with:
 - Source code path (from spec)
 - Decisions created during retrofit

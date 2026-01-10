@@ -12,8 +12,8 @@ Extract atomic features from VISION.md into FEATURES.md.
 Load the `katachi:framework-core` skill for workflow principles.
 
 **Required files:**
-`@planning/VISION.md` - Project vision to extract features from
-`@planning/FEATURES.md` - Current feature inventory (if exists)
+`@docs/planning/VISION.md` - Project vision to extract features from
+`@docs/planning/FEATURES.md` - Current feature inventory (if exists)
 
 ## General Guidance
 
@@ -38,7 +38,7 @@ Follow the collaborative workflow principles from the framework-core skill.
 
 ### 0. Check Existing State
 
-If `planning/FEATURES.md` exists:
+If `docs/planning/FEATURES.md` exists:
 - Read current feature inventory
 - Read current vision (check for changes)
 - Compare: Are there new workflows? Changed scope?
@@ -113,7 +113,7 @@ Review findings with user.
 Ask: "Should we iterate based on this feedback, or is the inventory complete?"
 
 If gaps to address → refine features
-If complete → finalize and write to `planning/FEATURES.md`
+If complete → finalize and write to `docs/planning/FEATURES.md`
 
 ## Atomicity Check
 

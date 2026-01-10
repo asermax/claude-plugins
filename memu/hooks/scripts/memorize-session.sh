@@ -13,9 +13,24 @@ if [ -z "$transcript_path" ] || [ ! -f "$transcript_path" ]; then
     exit 0
 fi
 
+# Calculate hash of transcript to detect duplicates
+transcript_hash=$(sha256sum "$transcript_path" | cut -d' ' -f1)
+state_file="/tmp/memu-memorized-hashes-${USER}"
+
+# Check if already memorized
+if [ -f "$state_file" ] && grep -q "^${transcript_hash}$" "$state_file"; then
+    # Already memorized, skip
+    echo '{}'
+    exit 0
+fi
+
 # Fork background process to memorize conversation
 # Using nohup to detach from parent process, doesn't block session end
-nohup python3 "${CLAUDE_PLUGIN_ROOT}/skills/recall-memory/scripts/memu.py" memorize < "$transcript_path" > /dev/null 2>&1 &
+# After successful memorization, record hash to prevent duplicates
+nohup sh -c "
+    python3 '${CLAUDE_PLUGIN_ROOT}/skills/recall-memory/scripts/memu.py' memorize < '$transcript_path' > /dev/null 2>&1 && \
+    echo '$transcript_hash' >> '$state_file'
+" > /dev/null 2>&1 &
 
 # Return empty object (hook completed successfully)
 echo '{}'

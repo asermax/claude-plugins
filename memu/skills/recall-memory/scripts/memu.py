@@ -12,7 +12,6 @@ import json
 import os
 import subprocess
 import sys
-import time
 import urllib.request
 import urllib.error
 from typing import Dict, Any
@@ -34,9 +33,41 @@ def get_api_key() -> str:
     return api_key
 
 
-def get_project_id() -> str:
-    """Derive unique project ID from git remote or folder name."""
-    # Try git remote
+def get_git_user_info() -> tuple:
+    """
+    Get git user identity (email, name).
+
+    Returns:
+        Tuple of (email, name) or (None, None) if not configured
+    """
+    email_result = subprocess.run(
+        ['git', 'config', 'user.email'],
+        capture_output=True,
+        text=True
+    )
+
+    name_result = subprocess.run(
+        ['git', 'config', 'user.name'],
+        capture_output=True,
+        text=True
+    )
+
+    email = email_result.stdout.strip() if email_result.returncode == 0 else None
+    name = name_result.stdout.strip() if name_result.returncode == 0 else None
+
+    return (email, name)
+
+
+def get_agent_info() -> tuple:
+    """
+    Get agent identity based on project.
+
+    Returns:
+        Tuple of (agent_id, agent_name)
+        - agent_id: git remote name (e.g., "owner/repo") or directory name
+        - agent_name: directory name + " Agent" (e.g., "Claude Plugins Agent")
+    """
+    # Try git remote for ID
     result = subprocess.run(
         ['git', 'remote', 'get-url', 'origin'],
         capture_output=True,
@@ -45,13 +76,41 @@ def get_project_id() -> str:
     )
 
     if result.returncode == 0 and result.stdout.strip():
-        # Hash git remote URL
+        # Extract remote name from URL
         remote_url = result.stdout.strip()
-        return hashlib.sha256(remote_url.encode()).hexdigest()[:16]
 
-    # Fallback to current directory path
-    cwd_path = os.getcwd()
-    return hashlib.sha256(cwd_path.encode()).hexdigest()[:16]
+        # Parse git URLs:
+        # - git@github.com:owner/repo.git
+        # - https://github.com/owner/repo.git
+        # - https://github.com/owner/repo
+        if ':' in remote_url and '@' in remote_url:
+            # SSH format: git@github.com:owner/repo.git
+            agent_id = remote_url.split(':')[1]
+        elif remote_url.startswith('http'):
+            # HTTPS format: https://github.com/owner/repo.git
+            parts = remote_url.split('/')
+            if len(parts) >= 2:
+                agent_id = '/'.join(parts[-2:])
+            else:
+                agent_id = parts[-1]
+        else:
+            # Unknown format, use as-is
+            agent_id = remote_url
+
+        # Remove .git suffix if present
+        if agent_id.endswith('.git'):
+            agent_id = agent_id[:-4]
+    else:
+        # Fallback to current directory name
+        agent_id = os.path.basename(os.getcwd())
+
+    # Generate agent name from directory
+    dir_name = os.path.basename(os.getcwd())
+    # Convert kebab-case or snake_case to Title Case
+    agent_name = ' '.join(word.capitalize() for word in dir_name.replace('-', ' ').replace('_', ' ').split())
+    agent_name = f"{agent_name} Agent"
+
+    return (agent_id, agent_name)
 
 
 def http_request(url: str, method: str = "GET", headers: Dict[str, str] = None,
@@ -101,22 +160,103 @@ def http_request(url: str, method: str = "GET", headers: Dict[str, str] = None,
         raise Exception(f"Network error: {str(e.reason)}")
 
 
+def parse_claude_transcript(transcript_data: str) -> list:
+    """
+    Parse Claude Code JSONL transcript format into simple message array.
+
+    Args:
+        transcript_data: JSONL string (one JSON object per line)
+
+    Returns:
+        List of {role, content} dicts suitable for memU API
+    """
+    messages = []
+
+    for line in transcript_data.strip().split('\n'):
+        if not line.strip():
+            continue
+
+        try:
+            entry = json.loads(line)
+
+            # Only process user and assistant messages
+            if entry.get('type') not in ('user', 'assistant'):
+                continue
+
+            message = entry.get('message', {})
+            role = message.get('role')
+            content = message.get('content')
+
+            if not role or not content:
+                continue
+
+            # Handle user messages (simple string content)
+            if role == 'user':
+                # Skip if content has tool_result blocks (internal tool outputs)
+                if isinstance(content, list):
+                    # User sent a message with tool results - skip this
+                    continue
+                if isinstance(content, str) and content.strip():
+                    messages.append({"role": "user", "content": content})
+
+            # Handle assistant messages (array of content blocks)
+            elif role == 'assistant':
+                if isinstance(content, list):
+                    # Extract text from content blocks
+                    # Skip: thinking blocks, tool_use blocks
+                    # Include: text blocks only
+                    text_parts = []
+                    for block in content:
+                        if isinstance(block, dict):
+                            block_type = block.get('type')
+                            if block_type == 'text':
+                                text_parts.append(block.get('text', ''))
+                            # Skip tool_use, thinking, and other structured blocks
+
+                    if text_parts:
+                        messages.append({
+                            "role": "assistant",
+                            "content": '\n'.join(text_parts)
+                        })
+                elif isinstance(content, str):
+                    messages.append({"role": "assistant", "content": content})
+
+        except json.JSONDecodeError:
+            continue
+
+    return messages
+
+
 def memorize(conversation_data: str) -> Dict[str, Any]:
     """
     Memorize conversation data via memU API.
 
     Args:
-        conversation_data: JSON string of conversation messages
+        conversation_data: JSON string of conversation messages or Claude JSONL transcript
 
     Returns:
         Dict with status and result data
     """
     api_key = get_api_key()
-    project_id = get_project_id()
+    user_email, user_name = get_git_user_info()
+    agent_id, agent_name = get_agent_info()
+
+    # Validate we have user identity
+    if not user_email:
+        return {
+            "status": "error",
+            "error": "Git user.email not configured. Set with: git config user.email 'your@email.com'"
+        }
 
     try:
-        # Parse conversation JSON
-        messages = json.loads(conversation_data)
+        # Try to parse as simple JSON array first
+        try:
+            messages = json.loads(conversation_data)
+            if not isinstance(messages, list):
+                raise ValueError("Not a list")
+        except (json.JSONDecodeError, ValueError):
+            # If that fails, try parsing as Claude JSONL transcript
+            messages = parse_claude_transcript(conversation_data)
 
         # Prepare headers
         headers = {
@@ -125,9 +265,11 @@ def memorize(conversation_data: str) -> Dict[str, Any]:
         }
 
         payload = {
-            "modality": "conversation",
-            "resource_data": messages,
-            "user": {"user_id": project_id}
+            "conversation": messages,
+            "user_id": user_email,
+            "user_name": user_name or user_email,  # Use email as fallback
+            "agent_id": agent_id,
+            "agent_name": agent_name
         }
 
         # Start memorization task
@@ -147,35 +289,11 @@ def memorize(conversation_data: str) -> Dict[str, Any]:
                 "error": "No task_id returned from memU API"
             }
 
-        # Poll for completion
-        max_polls = 60  # 60 * 2s = 2 minutes max
-        for _ in range(max_polls):
-            time.sleep(2)
-
-            status_data = http_request(
-                f"{API_BASE}/memorize/status/{task_id}",
-                method="GET",
-                headers=headers,
-                timeout=10
-            )
-
-            state = status_data.get("state", "")
-
-            if state == "completed":
-                return {
-                    "status": "ok",
-                    "message": "Conversation memorized successfully",
-                    "data": status_data.get("result", {})
-                }
-            elif state == "failed":
-                return {
-                    "status": "error",
-                    "error": status_data.get("error", "Memorization failed")
-                }
-
+        # Fire-and-forget: return immediately without polling
         return {
-            "status": "error",
-            "error": "Memorization timeout - task did not complete in time"
+            "status": "ok",
+            "message": "Memorization task started",
+            "task_id": task_id
         }
 
     except json.JSONDecodeError as e:
@@ -202,7 +320,15 @@ def retrieve(query: str, method: str = "rag") -> Dict[str, Any]:
         Dict with status and retrieved data
     """
     api_key = get_api_key()
-    project_id = get_project_id()
+    user_email, user_name = get_git_user_info()
+    agent_id, agent_name = get_agent_info()
+
+    # Validate we have user identity
+    if not user_email:
+        return {
+            "status": "error",
+            "error": "Git user.email not configured. Set with: git config user.email 'your@email.com'"
+        }
 
     try:
         headers = {
@@ -211,8 +337,9 @@ def retrieve(query: str, method: str = "rag") -> Dict[str, Any]:
         }
 
         payload = {
-            "queries": [{"role": "user", "content": {"text": query}}],
-            "where": {"user_id": project_id},
+            "query": query,
+            "user_id": user_email,
+            "agent_id": agent_id,
             "method": method
         }
 

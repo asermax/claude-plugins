@@ -1,6 +1,6 @@
 {
   "name": "memu",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Agentic memory framework for long-term memory, user preferences, and conversation history",
   "author": {
     "name": "Agustin Carrasco"

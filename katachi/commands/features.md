@@ -126,13 +126,6 @@ Ask: "Should we iterate based on this feedback, or is the inventory complete?"
 If gaps to address → refine features
 If complete → finalize and write to `docs/planning/FEATURES.md`
 
-## Atomicity Check
-
-Apply to each feature:
-- Can this be implemented in a single focused session?
-- Does it do ONE thing?
-- If no → split into smaller features
-
 ## Workflow
 
 **This is a collaborative process:**

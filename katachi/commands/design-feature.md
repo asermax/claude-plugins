@@ -24,6 +24,9 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 **Feature spec:**
 `@docs/feature-specs/$ARGUMENTS.md` - The specification we're designing for
 
+**Backlog:**
+`@docs/planning/BACKLOG.md` - Related bugs, ideas, improvements, questions
+
 **Project decisions:**
 `@docs/architecture/README.md` - Architecture decisions (ADRs)
 `@docs/design/README.md` - Design patterns (DES)
@@ -39,7 +42,7 @@ Verify spec exists:
 
 ## Process
 
-### 0. Check Existing State
+### 1. Check Existing State
 
 If `docs/feature-designs/$ARGUMENTS.md` exists:
 - Read current design
@@ -55,7 +58,28 @@ Update status:
 python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Design"
 ```
 
-### 1. Research Phase (Silent)
+### 2. Identify Related Backlog Items
+
+1. Read BACKLOG.md and identify items related to this feature:
+   - Items with `--related $ARGUMENTS`
+   - Q- items that might be answered by design decisions
+   - DEBT- items that might be addressed by the design approach
+   - IMP- items that could be incorporated
+
+2. If related items found, present them:
+   ```
+   "Found N backlog items related to this feature's design:
+
+   [ ] Q-002: What caching strategy should we use?
+   [ ] DEBT-001: Refactor data access layer
+   [ ] IMP-004: Support batch operations
+
+   Which items should be addressed in this design? (select numbers, 'all', or 'none')"
+   ```
+
+3. Track selected items for automatic resolution at the end
+
+### 3. Research Phase (Silent)
 
 - Read feature spec (`docs/feature-specs/$ARGUMENTS.md`)
 - Read dependencies from `docs/planning/DEPENDENCIES.md`
@@ -66,7 +90,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Desi
 - Research libraries/frameworks/APIs involved
 - Build complete understanding without asking questions
 
-### 2. Draft Complete Design Proposal
+### 4. Draft Complete Design Proposal
 
 Create full design document following template:
 - Problem context (what problem, constraints, interactions)
@@ -78,19 +102,19 @@ Create full design document following template:
 
 Note any uncertainties or assumptions.
 
-### 3. Present Proposal for Review
+### 5. Present Proposal for Review
 
 Show complete design document to user.
 Highlight uncertainties and ask about them.
 Invite feedback: "What needs adjustment in this design?"
 
-### 4. Iterate Based on Feedback
+### 6. Iterate Based on Feedback
 
 Apply user corrections, additions, or changes.
 Re-present updated sections if significant changes.
 Repeat until user approves the design.
 
-### 5. External Validation
+### 7. External Validation
 
 Dispatch the design-reviewer agent:
 
@@ -118,24 +142,37 @@ Review this feature design.
 Review agent findings with user.
 Discuss which recommendations to accept.
 
-### 6. Detect Patterns for DES
+### 8. Detect Patterns for DES
 
 If agent or user identifies repeatable patterns:
 - Ask if pattern should become a DES
 - Offer to create DES document
 - Update design to reference new DES
 
-### 7. Finalize with Iteration Check
+### 9. Finalize with Iteration Check
 
 Ask: "Should we iterate based on validation feedback, or is the design complete?"
 
-If gaps to address → refine relevant sections (go back to step 4)
-If complete → finalize document to `docs/feature-designs/$ARGUMENTS.md`
+If gaps to address → refine relevant sections (go back to step 6)
+If complete → proceed to finalization (step 10)
+
+### 10. Finalize and Resolve Backlog
+
+Finalize document to `docs/feature-designs/$ARGUMENTS.md`
 
 Update status:
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "✓ Design"
 ```
+
+**Automatically resolve selected backlog items:**
+
+For each item the user selected to include (from step 2):
+- Q- items: `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID>` (answered by design)
+- DEBT- items: `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID>` (addressed in design)
+- IMP- items: Note in item that it's incorporated in feature design
+
+Report: "Resolved N backlog items: Q-002, DEBT-001"
 
 ## Decision Detection
 

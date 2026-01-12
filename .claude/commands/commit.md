@@ -18,7 +18,7 @@ Creates conventional commits with automatic semantic versioning for the marketpl
 This command automates the commit process for the plugin marketplace by:
 1. Analyzing all changed files (staged and unstaged)
 2. Grouping related changes into logical commits
-3. Determining affected scopes (marketplace, aur, superpowers)
+3. Determining affected scopes (marketplace, aur, superpowers, beads, quint, katachi, memu)
 4. Auto-proposing semantic version bumps based on change significance
 5. Creating conventional commits with version updates
 
@@ -31,6 +31,8 @@ This command automates the commit process for the plugin marketplace by:
 | superpowers | `superpowers/.claude-plugin/plugin.json` | Read from file |
 | beads | `beads/.claude-plugin/plugin.json` | Read from file |
 | quint | `quint/.claude-plugin/plugin.json` | Read from file |
+| katachi | `katachi/.claude-plugin/plugin.json` | Read from file |
+| memu | `memu/.claude-plugin/plugin.json` | Read from file |
 
 ## Semantic Versioning Rules
 
@@ -128,6 +130,12 @@ Use these heuristics to cluster files into logical commit groups:
 | `superpowers/agents/*.md` | Group by agent (each agent = separate commit) |
 | `superpowers/skills/*/` | Group by skill directory |
 | `superpowers/hooks/*` | Group hooks together unless clearly unrelated |
+| `beads/hooks/*` | Group hooks together unless clearly unrelated |
+| `quint/commands/*.md` | Group by command (each command = separate commit) |
+| `katachi/commands/*.md` | Group by command (each command = separate commit) |
+| `katachi/agents/*.md` | Group by agent (each agent = separate commit) |
+| `katachi/skills/*/` | Group by skill directory |
+| `memu/skills/*/` | Group by skill directory |
 | `.claude/commands/*.md` | Each command file = separate commit |
 | `.claude-plugin/marketplace.json` | Separate commit unless part of plugin add/remove |
 | Root config files | Separate commits unless clearly related |
@@ -179,6 +187,8 @@ Map file paths to scopes:
 | `superpowers/**` | `superpowers` (superpowers plugin) |
 | `beads/**` | `beads` (beads plugin) |
 | `quint/**` | `quint` (quint plugin) |
+| `katachi/**` | `katachi` (katachi plugin) |
+| `memu/**` | `memu` (memu plugin) |
 | `.claude-plugin/**` | `marketplace` |
 | `.claude/commands/**` | `marketplace` |
 | Root files (`README.md`, etc.) | `marketplace` |
@@ -191,7 +201,7 @@ A commit can affect multiple scopes (e.g., adding a plugin affects both the plug
 
 For each affected scope, determine the change type:
 
-**For plugin scopes** (aur, superpowers):
+**For plugin scopes** (aur, superpowers, beads, quint, katachi, memu):
 
 - **Check for Major changes**:
   - Files deleted in `commands/`, `agents/`, `skills/` → Removing feature (major)
@@ -220,7 +230,7 @@ For each affected scope, determine the change type:
   - Significant new capabilities added to existing `.claude/` files → New feature
 
 - **Typically Patch**:
-  - Any plugin file changes (aur, superpowers) → Improvement to existing plugins
+  - Any plugin file changes (aur, superpowers, beads, quint, katachi, memu) → Improvement to existing plugins
   - Small fixes/improvements to `.claude/` files → Bug fixes or minor improvements
   - Root config file updates → Configuration improvements
 
@@ -234,6 +244,8 @@ jq -r '.version' aur/.claude-plugin/plugin.json
 jq -r '.version' superpowers/.claude-plugin/plugin.json
 jq -r '.version' beads/.claude-plugin/plugin.json
 jq -r '.version' quint/.claude-plugin/plugin.json
+jq -r '.version' katachi/.claude-plugin/plugin.json
+jq -r '.version' memu/.claude-plugin/plugin.json
 ```
 
 #### d. Calculate New Versions
@@ -277,11 +289,39 @@ Version bump: superpowers 1.0.0 → 1.0.1, marketplace 2.2.0 → 2.2.1
 
 **Include brief reasoning** for each version bump in parentheses so the user can validate the judgment call.
 
-Use AskUserQuestion to confirm or adjust:
+Use AskUserQuestion to confirm or adjust. **Important**: Offer version type alternatives based on what was proposed:
+
+**If proposing Major bump:**
 - Confirm and proceed
-- Change version type (major/minor/patch)
-- Edit commit message
-- Skip this commit
+- Downgrade to minor bump
+- Downgrade to patch bump
+
+**If proposing Minor bump:**
+- Confirm and proceed
+- Downgrade to patch bump
+
+**If proposing Patch bump:**
+- Confirm and proceed
+- Upgrade to minor bump (if it's actually a feature)
+
+Example question for a proposed minor bump:
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: "Ready to commit with these version bumps?",
+    header: "Commit",
+    multiSelect: false,
+    options: [
+      { label: "Confirm and proceed (Recommended)", description: "Create commit with: katachi 1.3.0→1.4.0 (minor), marketplace 1.7.2→1.7.3 (patch)" },
+      { label: "Downgrade to patch", description: "Make katachi 1.3.0→1.3.1 instead of minor bump" }
+    ]
+  }]
+})
+```
+
+**Processing user response:**
+- If "Confirm and proceed" → Continue to step f (Update Version Files)
+- If "Downgrade to patch/minor" or "Upgrade to minor" → Recalculate versions with new bump type, present updated summary, ask for confirmation again
 
 #### f. Update Version Files
 
@@ -293,7 +333,7 @@ jq '.metadata.version = "X.Y.Z"' .claude-plugin/marketplace.json > /tmp/marketpl
 mv /tmp/marketplace.json .claude-plugin/marketplace.json
 ```
 
-**For plugins** (`aur/.claude-plugin/plugin.json`, `superpowers/.claude-plugin/plugin.json`, `beads/.claude-plugin/plugin.json`, `quint/.claude-plugin/plugin.json`):
+**For plugins** (`aur/.claude-plugin/plugin.json`, `superpowers/.claude-plugin/plugin.json`, `beads/.claude-plugin/plugin.json`, `quint/.claude-plugin/plugin.json`, `katachi/.claude-plugin/plugin.json`, `memu/.claude-plugin/plugin.json`):
 ```bash
 jq '.version = "X.Y.Z"' aur/.claude-plugin/plugin.json > /tmp/aur.json
 mv /tmp/aur.json aur/.claude-plugin/plugin.json
@@ -306,6 +346,12 @@ mv /tmp/beads.json beads/.claude-plugin/plugin.json
 
 jq '.version = "X.Y.Z"' quint/.claude-plugin/plugin.json > /tmp/quint.json
 mv /tmp/quint.json quint/.claude-plugin/plugin.json
+
+jq '.version = "X.Y.Z"' katachi/.claude-plugin/plugin.json > /tmp/katachi.json
+mv /tmp/katachi.json katachi/.claude-plugin/plugin.json
+
+jq '.version = "X.Y.Z"' memu/.claude-plugin/plugin.json > /tmp/memu.json
+mv /tmp/memu.json memu/.claude-plugin/plugin.json
 ```
 
 #### g. Stage Files
@@ -371,6 +417,8 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 | `superpowers` | Changes to superpowers plugin |
 | `beads` | Changes to beads plugin |
 | `quint` | Changes to quint plugin |
+| `katachi` | Changes to katachi plugin |
+| `memu` | Changes to memu plugin |
 | `marketplace` | Changes to marketplace config or root commands |
 
 ### Examples

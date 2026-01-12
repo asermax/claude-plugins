@@ -42,12 +42,12 @@ python scripts/features.py status show FEATURE-ID         # Detailed view
 ### CAT1-001: [Feature name]
 **Status**: ✓ Defined
 **Complexity**: [Easy/Medium/Hard]
-**Description**: [One line description]
+**Description**: [Comprehensive description that explains what the feature does, who uses it, and why it's needed. Should be self-explanatory without reading the spec.]
 
 ### CAT1-002: [Feature name]
 **Status**: ✓ Defined
 **Complexity**: [Easy/Medium/Hard]
-**Description**: [One line description]
+**Description**: [Comprehensive description that explains what the feature does, who uses it, and why it's needed. Should be self-explanatory without reading the spec.]
 
 ---
 
@@ -56,7 +56,7 @@ python scripts/features.py status show FEATURE-ID         # Detailed view
 ### CAT2-001: [Feature name]
 **Status**: ✓ Defined
 **Complexity**: [Easy/Medium/Hard]
-**Description**: [One line description]
+**Description**: [Comprehensive description that explains what the feature does, who uses it, and why it's needed. Should be self-explanatory without reading the spec.]
 
 ---
 

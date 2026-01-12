@@ -68,15 +68,6 @@ decision
 
 ## Project Context
 {vision_content if exists else "Infer from code"}
-
-Determine if this is:
-- ADR (one-time architectural choice)
-- DES (repeatable pattern)
-
-Create a draft document with:
-- Context inferred from code
-- Alternatives that weren't chosen (infer from what exists)
-- Consequences observed in the implementation
 """
 )
 ```

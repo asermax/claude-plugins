@@ -110,15 +110,6 @@ Review this implementation.
 
 ## Relevant ADR/DES Documents
 {adr_des_content}
-
-Provide structured critique covering:
-- Acceptance criteria satisfaction
-- Design alignment
-- Pattern compliance with ADRs/DES
-- Production code purity (no test-specific logic)
-- Code quality
-- Decision references in comments
-- Documentation sync
 """
 )
 ```

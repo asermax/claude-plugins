@@ -63,17 +63,24 @@ For each feature, document source traceability (which vision section).
 
 ### 2. Agent Validation #1: Raw Feature List
 
-Dispatch a general-purpose subagent to review the raw feature list.
+Dispatch the feature-validator agent to review the raw feature list.
 
-Provide: vision document, raw feature list
+```python
+Task(
+    subagent_type="katachi:feature-validator",
+    prompt=f"""
+Validate this raw feature list.
 
-Request critique on:
-- **Completeness**: All workflows covered? What's missing?
-- **Redundancies**: Duplicate features?
-- **Atomicity**: Single-session features? Split or merge needed?
-- **Gaps**: What workflows lack supporting features?
+## Vision Document
+{vision_content}
 
-Review findings with user.
+## Raw Feature List
+{raw_features}
+"""
+)
+```
+
+Review agent findings with user.
 
 ### 3. User Iteration on Raw Features
 
@@ -96,17 +103,21 @@ Propose 3-7 natural groupings based on the features.
 
 ### 5. Agent Validation #2: Categorized Features
 
-Dispatch a general-purpose subagent to review the completed inventory.
+Dispatch the feature-validator agent to review the completed inventory.
 
-Request critique on:
-- **Completeness**: All requirements covered?
-- **Atomicity**: Single-session features?
-- **Category alignment**: Features in right categories?
-- **Complexity assessment**: Ratings reasonable?
-- **Gaps and redundancies**: Remaining issues?
-- **Dependencies**: Implicit dependency concerns?
+```python
+Task(
+    subagent_type="katachi:feature-validator",
+    prompt=f"""
+Validate this complete feature inventory.
 
-Review findings with user.
+## Feature Inventory
+{features_md_content}
+"""
+)
+```
+
+Review agent findings with user.
 
 ### 6. User Iteration and Finalization
 

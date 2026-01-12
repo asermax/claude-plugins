@@ -94,18 +94,6 @@ design
 
 ## Existing DES Index
 {des_index}
-
-Create a draft design document covering:
-- Problem context (inferred from what the code solves)
-- Design overview (high-level approach taken)
-- Modeling (entities/relationships from code structure)
-- Data flow (trace from code execution paths)
-- Key decisions (3-5 significant choices visible in implementation)
-
-For Key Decisions:
-- Identify significant undocumented decisions
-- For each, note: what was chosen, inferred alternatives, visible consequences
-- Flag which warrant formal ADR/DES documentation (mark as ADR/DES Candidate: Yes)
 """
 )
 ```
@@ -173,9 +161,6 @@ decision
 
 ## Project Context
 {vision_content}
-
-Determine if this is ADR (one-time choice) or DES (repeatable pattern).
-Create a draft document.
 """
 )
 ```
@@ -206,14 +191,7 @@ Review this retrofitted feature design.
 ## DES Index Summary
 {des_summary}
 
-This design was inferred from existing code. Provide structured critique covering:
-- Problem context clarity
-- Design coherence with actual implementation
-- Modeling completeness
-- Data flow clarity
-- Decision documentation quality
-- Pattern alignment with ADRs/DES
-- Missing elements that should be captured
+Note: This design was inferred from existing code.
 """
 )
 ```

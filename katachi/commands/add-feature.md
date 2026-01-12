@@ -48,9 +48,9 @@ Verify framework is initialized:
 If not provided in arguments, ask:
 ```
 "Describe the feature you want to add:
-- What does it do?
-- Who uses it?
-- Why is it needed?"
+- What does it do? (the behavior, not just the name)
+- Who uses it? (user type or context)
+- Why is it needed? (the benefit or problem it solves)"
 ```
 
 ### 2. Research Existing Features
@@ -75,6 +75,27 @@ Based on the description and existing patterns, draft a complete proposal:
 
 Does this look right? What needs adjustment?"
 ```
+
+### 3b. Validate Feature Quality
+
+Dispatch the feature-validator agent to validate the proposed feature.
+
+```python
+Task(
+    subagent_type="katachi:feature-validator",
+    prompt=f"""
+Validate this proposed feature (single feature mode).
+
+## Proposed Feature
+**ID**: {proposed_id}
+**Name**: {proposed_name}
+**Complexity**: {proposed_complexity}
+**Description**: {proposed_description}
+"""
+)
+```
+
+If validation finds issues, refine the feature based on recommendations before presenting to user.
 
 Optionally, dispatch impact analyzer to suggest dependencies:
 ```python
@@ -108,7 +129,7 @@ Add new feature entry:
 ### CATEGORY-NNN: Feature name
 **Status**: ✗ Defined
 **Complexity**: [complexity]
-**Description**: [description]
+**Description**: [Comprehensive description explaining what the feature does, who uses it, and why it's needed]
 ```
 
 ### 6. Update DEPENDENCIES.md

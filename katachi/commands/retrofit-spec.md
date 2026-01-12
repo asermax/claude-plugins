@@ -54,14 +54,6 @@ spec
 
 ## Project Context
 {vision_content if exists else "No VISION.md - infer project context from code"}
-
-Infer requirements from the code and create a draft spec document.
-
-Focus on:
-- What user/system action triggers this code
-- What behaviors are implemented
-- What error conditions are handled
-- What dependencies are required
 """
 )
 ```

@@ -93,12 +93,6 @@ Review this code.
 
 ## Relevant DES Patterns
 {des_content}
-
-Provide structured critique covering:
-- Acceptance criteria satisfaction (if spec provided)
-- Design alignment (if design provided)
-- Pattern compliance with ADRs/DES
-- General code quality
 """
 )
 ```

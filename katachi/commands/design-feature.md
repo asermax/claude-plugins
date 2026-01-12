@@ -111,14 +111,6 @@ Review this feature design.
 
 ## DES Index Summary
 {des_summary}
-
-Provide structured critique covering:
-- Problem context clarity
-- Design coherence
-- Modeling completeness
-- Data flow clarity
-- Decision quality
-- Pattern alignment with ADRs/DES
 """
 )
 ```

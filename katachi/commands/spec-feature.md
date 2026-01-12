@@ -89,13 +89,6 @@ Review this feature specification.
 
 ## Completed Spec
 {spec_content}
-
-Provide structured critique covering:
-- User story completeness
-- Acceptance criteria testability
-- Edge cases and error scenarios
-- Dependencies correctness
-- Gaps in coverage
 """
 )
 ```

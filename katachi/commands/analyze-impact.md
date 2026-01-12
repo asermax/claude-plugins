@@ -50,7 +50,7 @@ If not provided in arguments, ask:
 Task(
     subagent_type="katachi:impact-analyzer",
     prompt=f"""
-Analyze the impact of this proposed change:
+Analyze the impact of this proposed change.
 
 ## Change Description
 {change_description}
@@ -66,8 +66,6 @@ Analyze the impact of this proposed change:
 
 ## Existing Designs
 {list_of_design_paths}
-
-Trace dependencies and report affected features, documents, and risk level.
 """
 )
 ```

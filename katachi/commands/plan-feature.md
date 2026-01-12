@@ -125,14 +125,6 @@ Review this implementation plan.
 
 ## Relevant ADR/DES Summaries
 {adr_des_summaries}
-
-Provide structured critique covering:
-- Acceptance criteria coverage (map each to steps)
-- Pre-implementation checklist completeness
-- Step granularity
-- Verification points
-- Dependency order
-- File changes completeness
 """
 )
 ```

@@ -16,12 +16,13 @@ Maintain a living state document that reflects the current reality of a project 
 ## Processing Overview
 
 1. Validate and detect input type
-2. Load or initialize state file
+2. Load or initialize state file (with purpose inference for new files)
 3. Clarify context if needed
 4. Fetch content using available tools
-5. Extract state-relevant information
-6. Merge updates into state
-7. Log change and report summary
+5. Extract state-relevant information (guided by stored purpose)
+6. Confirm changes with user
+7. Merge updates into state
+8. Report summary
 
 ---
 
@@ -59,13 +60,26 @@ Ask user which file(s) to process if multiple files are found.
 **If state file doesn't exist:**
 
 1. Ask user for situation/project name using AskUserQuestion
-2. Initialize state file with this template:
+2. Infer the state's purpose from the provided input content, then confirm with the user
+
+   Analyze the input to determine what type of state this appears to be. Examples:
+   - **Project progress tracking**: Input discusses milestones, deliverables, timelines → focus on progress, not technical details
+   - **Feature design evolution**: Input contains technical decisions, architecture discussions → include technical details to keep design current
+   - **General situation status**: Input covers personal or evolving matters → include all details relevant to that situation
+
+   Present your inferred purpose to the user using AskUserQuestion:
+   - Show what you understood from the input
+   - Propose a purpose statement
+   - Ask user to confirm or adjust
+
+3. Initialize state file with this template:
 
 ```markdown
 # [Situation/Project Name] - State
 
 **Last Updated:** [current timestamp]
 **Status:** 🔵 Active
+**Purpose:** [confirmed purpose description]
 **Sources:** [empty initially]
 
 ---
@@ -112,7 +126,7 @@ Read the current state file to understand:
 
 ---
 
-## Step 2.5: Clarify Context When Needed
+## Step 3: Clarify Context When Needed
 
 **Before processing the input**, assess whether you have enough context to properly extract and update information.
 
@@ -137,7 +151,7 @@ Use AskUserQuestion to gather whatever context you need to understand:
 
 ---
 
-## Step 3: Content Fetching
+## Step 4: Content Fetching
 
 Use a smart, adaptive approach to fetch content:
 
@@ -182,7 +196,9 @@ gh api repos/owner/repo/readme
 
 ---
 
-## Step 4: Analysis & Extraction
+## Step 5: Analysis & Extraction
+
+**Before extracting, review the state file's Purpose field** to understand what level of detail and which aspects are most relevant. The purpose guides your extraction focus - for example, a "project progress" state needs less technical detail than a "feature design" state.
 
 This is a **content-driven** process - read and understand the actual content, then extract what's meaningful.
 
@@ -216,7 +232,51 @@ What to extract based on **what the document contains**:
 
 ---
 
-## Step 5: State Update with Intelligent Merging
+## Step 6: Confirm Changes with User
+
+Before updating the state file, present the extracted information to the user for confirmation.
+
+### Summary Guidelines
+
+Present a clear summary of what will be added or updated, organized in a way that makes sense for the state's purpose and the content extracted.
+
+**Tailor the summary to the state's purpose:**
+
+- For **project progress tracking**: Focus on milestones, deliverables, status changes, blockers affecting progress
+- For **feature design evolution**: Emphasize technical decisions, architecture changes, design rationale updates
+- For **general situation status**: Highlight key developments, status changes, resolved/new concerns
+
+**Types of information to include (when present):**
+
+- New items being added to the state
+- Existing items being updated or resolved
+- Status changes or transitions
+- Key participants or roles identified
+- Important context or details
+
+**Format guidance:**
+
+- Group related changes together logically
+- Use counts (X new, Y updates) to give scope at a glance
+- List items briefly - just enough detail for user to understand what's changing
+- Distinguish between new additions vs. updates to existing content
+
+### Confirmation
+
+Use AskUserQuestion with these options:
+- **Apply changes**: Proceed to update the state file
+- **Cancel**: Abort without modifying the state file
+
+If user cancels:
+- Report that no changes were made
+- Exit the command gracefully
+
+If user confirms:
+- Proceed to Step 7 (State Update)
+
+---
+
+## Step 7: State Update with Intelligent Merging
 
 Update the state file following these rules:
 
@@ -271,7 +331,7 @@ Add a new section under Source History:
 
 ---
 
-## Step 6: Summary Output
+## Step 8: Summary Output
 
 After updating the state, provide a clear summary to the user:
 

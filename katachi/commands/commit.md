@@ -63,77 +63,96 @@ Longer explanation if needed.
 Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ```
 
-### 5. Present Plan
+### 5. Present Plan and Get Confirmation
 
-Show user the commit plan:
+**CRITICAL**: ALWAYS use `AskUserQuestion` to present proposed groups and get user confirmation, even if:
+- There is only one commit group
+- The grouping seems obvious or trivial
+- All changes are clearly related
 
+Include the full group breakdown with file lists in the question text.
+
+Present options:
+- **Option 1**: "Proceed with these N commit group(s)" - Accept the proposed distribution
+- **Option 2** (conditional): If there are 4+ groups, offer "Merge into fewer commits"
+- **Note**: Do NOT include "Other" as an option - the system adds it automatically
+
+Example format:
 ```
-## Proposed Commits
+Question: "I've analyzed the changes and propose the following commit groups:
 
-### Commit 1
-feat(CORE-002): add audio capture functionality
+1. [feat(CORE-002)] Add audio capture functionality
+   - src/audio/capture.py (new)
+   - src/audio/__init__.py (modified)
+   - tests/test_audio.py (new)
 
-Files:
-- src/audio/capture.py (new)
-- src/audio/__init__.py (modified)
-- tests/test_audio.py (new)
+2. [docs] Update CLAUDE.md with current focus
+   - CLAUDE.md (modified)
 
-### Commit 2
-docs: update CLAUDE.md with current focus
+How would you like to proceed?"
 
-Files:
-- CLAUDE.md (modified)
-
-Proceed with these commits? [Y/N/Adjust]
+Options:
+- "Proceed with these 2 commit groups"
+- [Only if 4+ groups] "Merge into fewer commits"
 ```
 
-### 6. User Confirmation
-
-Wait for user to:
-- Approve as-is
-- Request adjustments
-- Cancel
-
-### 7. Execute Commits
+### 6. Execute Commits
 
 For each approved commit:
+```bash
+git add [files]
+git commit -m "type(scope): description"
+```
+
+For commits with body text:
 ```bash
 git add [files]
 git commit -m "$(cat <<'EOF'
 type(scope): description
 
-Details...
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+Optional body with additional details.
 EOF
 )"
 ```
 
-### 8. Verify Success
-
-After commits:
-```bash
-git status
-git log -N --oneline  # N = number of commits made
-```
-
-Show results to user.
-
 ## Guidelines
 
 **Commit message quality:**
-- Present tense ("add" not "added")
+- Use imperative mood in the description (present tense, not past or continuous)
+  - **WRONG**: "adding new feature" (present continuous)
+  - **WRONG**: "added new feature" (past tense)
+  - **RIGHT**: "add new feature" (imperative)
 - No period at end of subject line
-- Subject line under 50 chars
-- Body wrapped at 72 chars
+- Subject line under 50-72 characters
+- Body wrapped at 72 chars when needed
+- **CRITICAL**: Do NOT use the exclamation mark after the type/scope to indicate breaking changes. Use the `BREAKING CHANGE:` footer instead
 
 **Grouping rules:**
+- **IMPORTANT**: Do NOT mix unrelated changes in a single commit
+- Each commit should represent a single logical change
 - Don't mix features in one commit
 - Separate formatting from logic changes
 - Separate tests from implementation (unless closely related)
 - Keep commits atomic but meaningful
+
+**Examples:**
+
+**WRONG** - Mixing unrelated changes:
+```bash
+git add app/services/auth.py app/services/exception_handler.py
+git commit -m "fix: update auth and exception handler"
+```
+
+**RIGHT** - Separate commits for unrelated changes:
+```bash
+# First commit
+git add app/services/auth.py
+git commit -m "fix(auth): resolve token expiration issue"
+
+# Second commit
+git add app/services/exception_handler.py
+git commit -m "refactor(errors): simplify exception handler logic"
+```
 
 **Safety:**
 - Never force push
@@ -144,9 +163,9 @@ Show results to user.
 ## Workflow
 
 **This is a collaborative process:**
-- Analyze changes
-- Group logically
-- Draft messages
-- User approves
-- Execute commits
-- Verify success
+1. Analyze changes (git status, git diff)
+2. Understand what's changed
+3. Group logically (related changes together)
+4. Draft commit messages (conventional commits format)
+5. Present plan and get user confirmation (AskUserQuestion)
+6. Execute commits (git add + git commit)

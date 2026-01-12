@@ -33,19 +33,53 @@ Open difit (a GitHub-style git diff viewer) for reviewing changes, collect user 
 Interpret the optional `$1` argument to determine which difit command to run.
 
 **Interpretation rules:**
-- If empty → `difit --mode inline .` (all uncommitted changes)
-- If mentions "staged" → `difit --mode inline staged`
-- If mentions "working" or "unstaged" → `difit --mode inline working`
-- If mentions comparing to a branch (e.g., "main", "master") → `difit --mode inline @ <branch>`
-- If mentions a commit hash → `difit --mode inline <hash>`
+- If empty → `difit --clean --mode inline .` (all uncommitted changes)
+- If mentions "staged" → `difit --clean --mode inline staged`
+- If mentions "working" or "unstaged" → `difit --clean --mode inline working`
+- If mentions comparing to a branch (e.g., "main", "master") → `difit --clean --mode inline @ <branch>`
+- If mentions a commit hash → `difit --clean --mode inline <hash>`
 - Otherwise, use best judgment to interpret context and select appropriate command
 
 **Difit command reference:**
-- `difit --mode inline .` - All uncommitted changes
-- `difit --mode inline staged` - Staged changes only
-- `difit --mode inline working` - Unstaged changes only
-- `difit --mode inline @ <branch>` - Compare HEAD vs branch
-- `difit --mode inline <hash>` - Show specific commit
+- `difit --clean --mode inline .` - All uncommitted changes
+- `difit --clean --mode inline staged` - Staged changes only
+- `difit --clean --mode inline working` - Unstaged changes only
+- `difit --clean --mode inline @ <branch>` - Compare HEAD vs branch
+- `difit --clean --mode inline <hash>` - Show specific commit
+
+---
+
+### Difit CLI Reference
+
+**CLI Flags:**
+- `--clean` - Clear saved comments and file states on startup (used by default in this command)
+- `--mode <mode>` - Display mode: "inline" or "side-by-side" (we use "inline" by default)
+- `--port <number>` - Server port (default: 4966, auto-increments if occupied)
+- `--host <address>` - Binding address (default: 127.0.0.1)
+- `--pr <url>` - Review a GitHub PR directly
+
+**Target Patterns (first argument):**
+- `.` - All uncommitted changes (this command's default)
+- `staged` - Staged changes only
+- `working` - Unstaged changes only
+- `<hash>` - Show specific commit
+- `<branch>` - Latest commit on that branch
+- `HEAD~n` - Show commit n steps back
+- *(No argument to difit CLI = HEAD, but this command defaults to `.`)*
+
+**Comparison Patterns (two arguments):**
+- `@ <branch>` - Compare HEAD with branch
+- `<branch1> <branch2>` - Compare two branches
+- `. <remote>` - Compare uncommitted changes with remote
+
+**Stdin Input:**
+- `git diff | difit` - Pipe any diff directly
+- `git diff --merge-base main | difit` - Pipe merge-base diff
+
+**GitHub Pull Requests:**
+- `difit --pr <url>` - Review a remote PR directly
+
+---
 
 **Check for changes:**
 
@@ -68,7 +102,7 @@ Run difit with the determined command using `run_in_background: true`.
 
 **Example:**
 ```bash
-difit --mode inline .
+difit --clean --mode inline .
 ```
 
 **CRITICAL:** Use the Bash tool with `run_in_background: true` parameter. This:
@@ -96,11 +130,12 @@ After successfully starting difit, output a message to the user:
 ```
 Difit has been opened in your browser at http://localhost:4966
 
-Please review the changes and provide your feedback below.
+Please review the changes and provide your feedback.
 
-When you're done reviewing:
-- Paste your review comments as your next message
-- You can request changes, point out issues, or approve the changes
+Difit comments are stored in browser localStorage (per-commit). When you're done:
+1. Use the "Copy All Prompt" button to export all your comments
+2. Paste the exported text as your next message
+3. You can request changes, point out issues, or approve
 
 I'll process your feedback and close difit automatically.
 ```

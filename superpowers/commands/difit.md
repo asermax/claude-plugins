@@ -8,6 +8,8 @@ allowed-tools: Bash(difit:*), Bash(git:*), Read, Edit, Write, Glob, Grep, KillSh
 
 Open difit (a GitHub-style git diff viewer) for reviewing changes, collect user feedback, then process the review by creating todos and applying changes.
 
+**Note:** This command uses `--mode inline` by default, which displays diffs in a unified, single-column format (like traditional `git diff`). This is more compact and easier to scan than the default side-by-side view.
+
 ## Parameters
 
 - **$1 (context)**: Optional free-text context describing what to review
@@ -31,19 +33,19 @@ Open difit (a GitHub-style git diff viewer) for reviewing changes, collect user 
 Interpret the optional `$1` argument to determine which difit command to run.
 
 **Interpretation rules:**
-- If empty → `difit .` (all uncommitted changes)
-- If mentions "staged" → `difit staged`
-- If mentions "working" or "unstaged" → `difit working`
-- If mentions comparing to a branch (e.g., "main", "master") → `difit @ <branch>`
-- If mentions a commit hash → `difit <hash>`
+- If empty → `difit --mode inline .` (all uncommitted changes)
+- If mentions "staged" → `difit --mode inline staged`
+- If mentions "working" or "unstaged" → `difit --mode inline working`
+- If mentions comparing to a branch (e.g., "main", "master") → `difit --mode inline @ <branch>`
+- If mentions a commit hash → `difit --mode inline <hash>`
 - Otherwise, use best judgment to interpret context and select appropriate command
 
 **Difit command reference:**
-- `difit .` - All uncommitted changes
-- `difit staged` - Staged changes only
-- `difit working` - Unstaged changes only
-- `difit @ <branch>` - Compare HEAD vs branch
-- `difit <hash>` - Show specific commit
+- `difit --mode inline .` - All uncommitted changes
+- `difit --mode inline staged` - Staged changes only
+- `difit --mode inline working` - Unstaged changes only
+- `difit --mode inline @ <branch>` - Compare HEAD vs branch
+- `difit --mode inline <hash>` - Show specific commit
 
 **Check for changes:**
 
@@ -66,7 +68,7 @@ Run difit with the determined command using `run_in_background: true`.
 
 **Example:**
 ```bash
-difit .
+difit --mode inline .
 ```
 
 **CRITICAL:** Use the Bash tool with `run_in_background: true` parameter. This:
@@ -216,7 +218,7 @@ Files modified: 3
 ### Git Changes Context
 
 **Default behavior** (no argument):
-- Show all uncommitted changes with `difit .`
+- Show all uncommitted changes with `difit --mode inline .`
 - This includes both staged and unstaged changes
 - Most common use case for agent-initiated reviews
 
@@ -306,7 +308,7 @@ This is not critical - proceed with processing the feedback.
 
 **Command will:**
 1. Check for uncommitted changes with `git status --porcelain`
-2. Start `difit .` in background
+2. Start `difit --mode inline .` in background
 3. Prompt user to review and provide feedback
 4. Stop and wait for user input
 5. (Next turn) Close difit, parse feedback, create todos, apply changes
@@ -318,9 +320,9 @@ This is not critical - proceed with processing the feedback.
 ```
 
 **Command will:**
-1. Interpret "staged changes" → `difit staged`
+1. Interpret "staged changes" → `difit --mode inline staged`
 2. Check for staged changes
-3. Start `difit staged` in background
+3. Start `difit --mode inline staged` in background
 4. Prompt user for feedback
 5. Stop and wait
 6. (Next turn) Process feedback as in Example 1
@@ -332,8 +334,8 @@ This is not critical - proceed with processing the feedback.
 ```
 
 **Command will:**
-1. Interpret "compare with main branch" → `difit @ main`
-2. Start `difit @ main` in background
+1. Interpret "compare with main branch" → `difit --mode inline @ main`
+2. Start `difit --mode inline @ main` in background
 3. Prompt user for feedback
 4. Stop and wait
 5. (Next turn) Process feedback as in Example 1

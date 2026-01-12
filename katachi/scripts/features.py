@@ -333,7 +333,7 @@ class DependencyMatrix:
 
         # Find matrix section
         matrix_start = content.find('## Full Dependency Matrix')
-        matrix_end = content.find('\n**Legend:**')
+        matrix_end = content.find('\n---', matrix_start)
 
         if matrix_start == -1 or matrix_end == -1:
             raise ValueError("Could not find matrix section in file")
@@ -390,52 +390,22 @@ class DependencyMatrix:
 
     def _build_matrix_table(self) -> str:
         """Build the matrix table as markdown"""
-        # Build header row with abbreviations
-        abbrevs = []
-        for feature in self.features:
-            # Create abbreviation from feature ID
-            parts = feature.split('-')
-            if parts[0] == 'CORE':
-                abbrevs.append(f'C{parts[1]}')
-            elif parts[0] == 'CLI':
-                abbrevs.append('CLI1')
-            elif parts[0] == 'DICT':
-                abbrevs.append(f'D{parts[1]}')
-            elif parts[0] == 'CTX':
-                abbrevs.append('CTX1')
-            elif parts[0] == 'EDIT':
-                abbrevs.append(f'E{parts[1]}')
-            elif parts[0] == 'SETUP':
-                abbrevs.append(f'S{parts[1]}')
-            elif parts[0] == 'UI':
-                abbrevs.append(f'U{parts[1]}')
-            elif parts[0] == 'ERROR':
-                abbrevs.append(f'ER{parts[1]}')
-            elif parts[0] == 'LOG':
-                abbrevs.append('L001')
-            elif parts[0] == 'DEPLOY':
-                abbrevs.append(f'DP{parts[1]}')
-            elif parts[0] == 'DOCS':
-                abbrevs.append('DOC1')
-            else:
-                abbrevs.append(feature[:4])
-
-        # Build header
-        header = '|            | ' + ' | '.join(abbrevs) + ' |'
-        separator = '|------------|' + '------|' * len(abbrevs)
+        # Build header with full feature IDs
+        header = '|           | ' + ' | '.join(f'{feat:8}' for feat in self.features) + ' |'
+        separator = '|-----------|' + '----------|' * len(self.features)
 
         lines = [header, separator]
 
         # Build rows
         for row_feature in self.features:
-            cells = [f'| {row_feature:10} |']
+            cells = [f'| {row_feature:9} |']
             for col_feature in self.features:
                 if row_feature == col_feature:
-                    cells.append(' -    |')
+                    cells.append(' -        |')
                 elif col_feature in self.matrix.get(row_feature, set()):
-                    cells.append(' X    |')
+                    cells.append(' X        |')
                 else:
-                    cells.append('      |')
+                    cells.append('          |')
             lines.append(''.join(cells))
 
         return '\n'.join(lines)

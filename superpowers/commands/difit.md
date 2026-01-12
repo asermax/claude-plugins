@@ -127,6 +127,27 @@ Read and understand the user's review feedback. Look for:
 - **Questions**: "Why did you...", "What about...", "Should we..."
 - **Approvals**: "Looks good", "LGTM", "Ship it"
 
+**Difit's export format:**
+
+When users use difit's "Copy All Prompt" feature, feedback follows this structure:
+
+```
+path/to/file.ts:L25
+Comment or question about this line
+=====
+path/to/file.ts:L71-L72
+Comment about this line range
+=====
+another/file.ts:L10
+Another comment
+```
+
+- **File reference**: `file_path:L<line>` or `file_path:L<start>-L<end>` for ranges
+- **Comment**: Lines following the file reference until the next separator
+- **Separator**: `=====` between comments
+
+When parsing this format, extract each comment block and associate it with its file/line context for targeted changes.
+
 ### Step 4c: Create Todos
 
 For each actionable item in the feedback, create a todo using TodoWrite:

@@ -72,6 +72,9 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 
 Include the full group breakdown with file lists in the question text.
 
+- **IMPORTANT**: Do NOT use markdown formatting (code blocks, bold, italics, etc.) in the actual question text passed to AskUserQuestion - it doesn't support markdown rendering
+- Use plain text with clear visual structure (indentation, line breaks, simple characters like dashes and numbers)
+
 Present options:
 - **Option 1**: "Proceed with these N commit group(s)" - Accept the proposed distribution
 - **Option 2** (conditional): If there are 4+ groups, offer "Merge into fewer commits"
@@ -81,12 +84,12 @@ Example format:
 ```
 Question: "I've analyzed the changes and propose the following commit groups:
 
-1. [feat(CORE-002)] Add audio capture functionality
+feat(CORE-002): add audio capture functionality
    - src/audio/capture.py (new)
    - src/audio/__init__.py (modified)
    - tests/test_audio.py (new)
 
-2. [docs] Update CLAUDE.md with current focus
+docs: update CLAUDE.md with current focus
    - CLAUDE.md (modified)
 
 How would you like to proceed?"

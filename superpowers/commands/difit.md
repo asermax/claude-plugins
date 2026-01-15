@@ -60,20 +60,23 @@ The `--clean` flag controls whether to clear previous difit comments. Use these 
 Interpret the optional `$1` argument to determine which difit command to run.
 
 **Interpretation rules:**
-- If empty → `(untracked=$(git ls-files --others --exclude-standard); [ -n "$untracked" ] && git add -N $untracked; git diff | difit [--clean] --mode inline)` (all uncommitted changes)
+- If empty → `git add -N . && git diff | difit [--clean] --mode inline` (all uncommitted changes including untracked)
 - If mentions "staged" → `git diff --staged | difit [--clean] --mode inline`
-- If mentions "working" or "unstaged" → `(untracked=$(git ls-files --others --exclude-standard); [ -n "$untracked" ] && git add -N $untracked; git diff | difit [--clean] --mode inline)`
+- If mentions "working" or "unstaged" → `git add -N . && git diff | difit [--clean] --mode inline`
 - If mentions comparing to a branch (e.g., "main", "master") → `git diff <branch> | difit [--clean] --mode inline`
 - If mentions a commit hash → `git diff <hash> | difit [--clean] --mode inline`
 - Otherwise, use best judgment to interpret context and select appropriate command
 
 The `[--clean]` flag means: consult the "Smart --clean Flag Guidelines" above to decide whether to include it.
 
-**Git diff pipe patterns (with untracked files):**
-- `(git add -N $(git ls-files --others --exclude-standard) 2>/dev/null; git diff | difit [--clean] --mode inline)` - All uncommitted changes (includes untracked files)
+**Git diff pipe patterns:**
+- `git add -N . && git diff | difit [--clean] --mode inline` - All uncommitted changes (includes untracked files via `-N` intent-to-add)
+- `git diff | difit [--clean] --mode inline` - All uncommitted changes (excludes untracked files)
 - `git diff --staged | difit [--clean] --mode inline` - Staged changes only
 - `git diff <branch> | difit [--clean] --mode inline` - Compare with branch
 - `git diff <hash> | difit [--clean] --mode inline` - Show specific commit
+
+**Note:** `git add -N .` adds all untracked files as "intent to add" so they appear in the diff without actually staging them. This is much simpler than complex shell substitution patterns.
 
 ---
 
@@ -132,7 +135,7 @@ Run the git diff pipe command using `run_in_background: true`.
 
 **Example (uncommitted changes with untracked files):**
 ```bash
-(untracked=$(git ls-files --others --exclude-standard); [ -n "$untracked" ] && git add -N $untracked; git diff | difit --clean --mode inline)
+git add -N . && git diff | difit --clean --mode inline
 ```
 
 **CRITICAL:** Use the Bash tool with `run_in_background: true` parameter. This:
@@ -374,7 +377,7 @@ This is not critical - proceed with processing the feedback.
 **Command will:**
 1. Check for uncommitted changes with `git status --porcelain`
 2. Determine whether to use `--clean` flag based on guidelines
-3. Start `(untracked=$(git ls-files --others --exclude-standard); [ -n "$untracked" ] && git add -N $untracked; git diff | difit [--clean] --mode inline)` in background
+3. Start `git add -N . && git diff | difit [--clean] --mode inline` in background
 4. Prompt user to review and provide feedback
 5. Stop and wait for user input
 6. (Next turn) Close difit, parse feedback, create todos, apply changes

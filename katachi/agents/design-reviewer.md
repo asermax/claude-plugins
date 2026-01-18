@@ -55,7 +55,14 @@ Evaluate the design against these criteria:
 - Are there violations of existing patterns?
 - Should any new patterns be established?
 
-### 7. Completeness
+### 7. Implementation Structure (Components Section)
+- Are layers/components clearly identified with their responsibilities?
+- Are cross-layer contracts defined (API shapes, events, data formats)?
+- Is shared logic identified (what's common across layers)?
+- Are integration points specified (how components communicate)?
+- Is error handling strategy consistent across layers?
+
+### 8. Completeness
 - Are all spec requirements addressed?
 - Are edge cases from spec covered in design?
 - Are error scenarios from spec designed?

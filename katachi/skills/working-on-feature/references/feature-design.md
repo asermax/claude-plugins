@@ -15,6 +15,39 @@ This document explains the design rationale for this feature: the modeling choic
 
 [High-level description of the design approach. What are the main components/concepts?]
 
+## Components
+
+<!-- This is where implementation structure lives. Specs describe WHAT users can do; design decides HOW to implement it -->
+
+### Implementation Structure
+
+| Layer/Component | Responsibility | Key Decisions |
+|-----------------|----------------|---------------|
+| [e.g., API] | [What this layer does] | [Technology, patterns, constraints] |
+| [e.g., UI] | [What this layer does] | [Framework, state management] |
+| [e.g., Validation] | [Shared logic across layers] | [Where it runs, how it's shared] |
+
+### Cross-Layer Contracts
+
+**API Contract** (if applicable):
+```
+[Method] [Endpoint]
+Request: { ... }
+Response: { ... } | { error: ..., code: ... }
+```
+
+**Integration Points**:
+- [How layers communicate]
+- [Error handling strategy across layers]
+- [Loading states and optimistic updates]
+
+### Shared Logic
+
+What's shared between components and why:
+- [e.g., Validation rules]: [Rationale for sharing]
+- [e.g., Error codes]: [How consistency is maintained]
+- [e.g., Types/interfaces]: [Sharing mechanism - codegen, manual sync, etc.]
+
 ## Modeling
 
 [How is the domain modeled? What are the key entities/concepts? What relationships exist?]

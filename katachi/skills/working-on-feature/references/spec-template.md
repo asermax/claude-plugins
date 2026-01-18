@@ -53,12 +53,16 @@ Good: "As a developer, I want hot-reload so that I can see changes without resta
 ### Behavior
 
 Write in plain English, not technical jargon:
-- Describe observable behavior
-- Focus on what the user experiences
-- Avoid implementation details
+- Describe observable behavior from the user's perspective
+- Focus on what the user experiences end-to-end
+- **Stay layer-agnostic**: No mention of API, UI, database, or implementation choices
+- Describe the complete user flow, not individual technical components
 
 Bad: "Implements a WebSocket connection to stream updates"
 Good: "Shows real-time updates without requiring page refresh"
+
+Bad: "API endpoint validates credentials and returns JWT token"
+Good: "Users can log in with email and password to access their account"
 
 ### Acceptance Criteria
 
@@ -66,16 +70,21 @@ Each criterion should be:
 - **Testable**: Can verify pass/fail
 - **Specific**: Clear inputs and outputs
 - **Independent**: Not dependent on other criteria
+- **End-to-end**: Describes the complete user flow, not individual layer behaviors
 
 Use Given/When/Then format:
-- **Given**: Initial context or state
-- **When**: The action or trigger
-- **Then**: The expected result
+- **Given**: Initial context or state (from user's perspective)
+- **When**: The action or trigger (what the user does)
+- **Then**: The expected result (what the user sees/experiences)
 
 Include:
-- 2-3 success cases (main scenarios)
-- 2-3 error cases (what can go wrong)
+- 2-3 success cases (main user scenarios)
+- 2-3 error cases (what can go wrong from user's perspective)
 - Edge cases if applicable
+
+**Focus on observable user outcomes, not implementation:**
+- Bad: "API returns 200 status code"
+- Good: "User is redirected to their dashboard"
 
 ### Error Cases to Consider
 

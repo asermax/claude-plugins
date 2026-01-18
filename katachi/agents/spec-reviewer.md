@@ -43,7 +43,13 @@ Evaluate the spec against these criteria:
 - Are external system dependencies noted?
 - Are there implicit dependencies not listed?
 
-### 5. Gaps and Ambiguities
+### 5. Layer-Agnostic Focus
+- Does the spec describe user behavior, not implementation?
+- Is it free of layer-specific terms (API, UI, database, frontend, backend)?
+- Do acceptance criteria focus on observable user outcomes, not technical responses?
+- Could this spec be implemented with different technical approaches?
+
+### 6. Gaps and Ambiguities
 - What scenarios aren't addressed?
 - What could go wrong that isn't covered?
 - Are there ambiguous terms that need definition?

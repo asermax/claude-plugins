@@ -42,13 +42,13 @@ Categories follow the pattern: `CATEGORY-NNN`
 3. Confirm with user
 
 ```python
-# Example categories
-CORE - Core functionality
-CLI - Command-line interface
-API - API endpoints
-UI - User interface
-DATA - Data handling
-AUTH - Authentication
+# Example categories (domain-oriented, organized by user capability area)
+AUTH - Authentication flows (Login, Logout, Password Reset, Session Timeout)
+USER - User management (Registration, Profile, Settings, Account Deletion)
+ORDERS - Order management (Create Order, View Orders, Cancel Order)
+PAYMENTS - Payment flows (Checkout, Refund, Payment Methods)
+ADMIN - Admin capabilities (Manage Users, View Reports, System Settings)
+CORE - Core infrastructure (when truly cross-cutting and not user-facing)
 ```
 
 If new category needed, confirm with user before creating.

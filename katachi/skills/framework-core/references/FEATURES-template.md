@@ -60,30 +60,6 @@ python scripts/features.py status show FEATURE-ID         # Detailed view
 
 ---
 
-## Feature Count Summary
-
-- **[CAT1]**: N features (X easy, Y medium, Z hard)
-- **[CAT2]**: N features (X easy, Y medium, Z hard)
-
-**Total**: N features
-- Easy: X
-- Medium: Y
-- Hard: Z
-
----
-
-## Atomicity Check
-
-For each feature:
-- ✓ Can be implemented in a single focused session
-- ✓ Does ONE thing
-- ✓ Has clear acceptance criteria
-- ✓ Can be tested independently
-
-If any feature fails these checks, split it into smaller features.
-
----
-
 ## Notes
 
 - [Relevant note about feature relationships]

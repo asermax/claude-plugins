@@ -1,10 +1,10 @@
 ---
-description: Extract atomic features from the project vision
+description: Extract user capability features from the project vision
 ---
 
 # Feature Extraction Workflow
 
-Extract atomic features from VISION.md into FEATURES.md.
+Extract user capability features from VISION.md into FEATURES.md.
 
 ## Context
 
@@ -52,12 +52,14 @@ If no features exist: proceed with initial extraction
 Review the vision document thoroughly. Extract all features in a single pass:
 
 Consider all aspects:
-- Core workflows and discrete capabilities
-- Foundational capabilities
-- Infrastructure features
-- Platform integration
-- Cross-cutting concerns (security, logging, config, errors)
-- User feedback mechanisms
+- User-facing capabilities (what users can DO)
+- Core workflows and interactions
+- Foundational user needs
+- Cross-cutting user concerns (security, privacy, error handling from user perspective)
+
+**Focus on user capabilities, not technical layers:**
+- Good: "User Login", "View Dashboard", "Export Report"
+- Bad: "Login API", "Dashboard UI", "Report Service"
 
 For each feature, document source traceability (which vision section).
 
@@ -85,10 +87,10 @@ Review agent findings with user.
 ### 3. User Iteration on Raw Features
 
 Based on agent validation:
-- Split features that are too large
+- Split features that deliver multiple user capabilities
 - Merge or remove redundant features
 - Add missing features identified
-- Ensure each feature is atomic and traceable
+- Ensure each feature represents one user capability and is traceable to vision
 
 ### 4. Analyze and Categorize
 
@@ -129,9 +131,9 @@ If complete → finalize and write to `docs/planning/FEATURES.md`
 ## Workflow
 
 **This is a collaborative process:**
-- Extract features systematically
+- Extract features systematically (focus on user capabilities)
 - Challenge gaps and completeness
 - User confirms categories, complexity, IDs
-- Challenge non-atomic features
+- Challenge features that aren't single user capabilities
 - Never add features without user agreement
 - Iterate until complete

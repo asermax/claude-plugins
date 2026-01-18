@@ -55,10 +55,18 @@ Verify framework is initialized:
 If not provided in arguments, ask:
 ```
 "Describe the feature you want to add:
-- What does it do? (the behavior, not just the name)
+- What user capability does this provide? (what can users DO)
 - Who uses it? (user type or context)
-- Why is it needed? (the benefit or problem it solves)"
+- Why is it needed? (the benefit or problem it solves)
+
+Focus on the user-facing capability, not implementation layers.
+Good: 'User Login', 'Export Report', 'View Dashboard'
+Bad: 'Login API', 'Report Service', 'Dashboard UI'"
 ```
+
+**Guide users away from layer-specific features:**
+- If description mentions "API", "UI", "frontend", "backend" → ask what user capability this enables
+- If description is layer-focused → reformulate as user capability
 
 ### 2. Identify Related Backlog Items
 

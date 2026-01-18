@@ -19,16 +19,18 @@ Evaluate each feature against these criteria:
 
 ### 1. Atomicity Check
 - **Can be implemented in a single focused session** - Not too large (days/weeks of work)
-- **Does ONE thing** - Single clear purpose, not multiple unrelated capabilities
-- **Has clear acceptance criteria** - Behavior can be specified and tested
-- **Can be tested independently** - Doesn't require complex setup or other features to verify
+- **Delivers ONE user capability** - Single user-facing outcome, not multiple unrelated capabilities
+- **Has clear acceptance criteria** - End-to-end behavior can be specified and tested
+- **Can be tested independently** - User flow works without other incomplete features
 
 ### 2. Clarity Check
 - **Name clearly conveys the behavior** - Not generic (avoid "data handling", "user management", "system processing")
 - **Description explains WHAT** - The specific behavior, not just restating the name
 - **Description explains WHO** - User type, role, or context where this is used
 - **Description explains WHY** - The benefit, problem solved, or value provided
-- **Self-explanatory** - Can be understood without reading the spec
+- **Self-explanatory** - Understandable in isolation, without project context or reading the spec
+- **Concise but complete** - No wasted words, but covers what/who/why fully
+- **Layer-agnostic** - Describes user capability, not implementation (no "API endpoint", "UI form", etc.)
 
 ### 3. Naming Quality
 - **Action-oriented preferred** - "Parse config file" over "Config parser"
@@ -39,15 +41,17 @@ Evaluate each feature against these criteria:
 ## Common Issues
 
 ### Atomicity Problems
-- **Too broad**: "User authentication system" (split into: validate credentials, manage sessions, handle logout)
-- **Multiple concerns**: "Load and validate config" (split into: load config, validate config)
-- **Includes infrastructure**: "API endpoint for X" (just say what X does)
+- **Too broad**: "User authentication system" (split into: User Login, User Logout, Password Reset)
+- **Multiple user capabilities**: "User can login and view dashboard" (split into: User Login, View Dashboard)
+- **Layer-focused**: "Login API endpoint" (describe the capability: User Login)
+- **Technical concern**: "Session management" (what user capability does this enable?)
 
 ### Clarity Problems
 - **Vague names**: "Data processing" - what data? what processing?
 - **Missing context**: "Export report" - who exports? why? what format?
 - **Too terse**: "Handle errors" - which errors? how handled?
-- **Implementation-focused**: "Call API endpoint" - what does the API do?
+- **Layer-focused**: "Call API endpoint", "Render UI form" - describe the user capability instead
+- **Implementation details**: Mentions specific technologies, layers, or components in feature definition
 
 ### Naming Problems
 - **Noun phrases**: "Error handler" → "Handle validation errors"
@@ -134,12 +138,18 @@ A good feature description should answer:
 
 Example GOOD feature:
 ```
-CLI-001: Parse command-line arguments
-Description: Developers using the CLI need to pass configuration options like --verbose, --config-file, etc. This feature parses those arguments into a structured format that other components can use, validating that required args are present and types are correct.
+AUTH-001: User Login
+Description: Users need to access their account by providing credentials. This feature authenticates users via email and password, creates a session, and redirects to their dashboard on success or shows error messages on failure.
 ```
 
-Example BAD feature:
+Example BAD feature (layer-focused):
 ```
-CLI-001: Argument parser
-Description: Handles CLI arguments
+AUTH-001: Login API endpoint
+Description: POST /auth/login endpoint for authentication
+```
+
+Example BAD feature (too terse):
+```
+AUTH-001: Login
+Description: Handles login
 ```

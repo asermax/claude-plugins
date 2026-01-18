@@ -27,6 +27,9 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 **Existing spec (if present):**
 `@docs/feature-specs/$ARGUMENTS.md` - Current spec to update or create
 
+**Template:**
+`@${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/feature-spec.md` - Structure to follow
+
 ## Process
 
 ### 1. Check Existing State

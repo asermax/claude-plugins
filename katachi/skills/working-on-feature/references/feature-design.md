@@ -1,5 +1,7 @@
 # Design: [FEATURE-ID] - [Feature Name]
 
+<!-- Not all sections are required. Adapt this structure to the feature's complexity. Simple features may skip sections like "Cross-Layer Contracts" or "Shared Logic". -->
+
 **Feature Spec**: [../feature-specs/FEATURE-ID.md](../feature-specs/FEATURE-ID.md)
 **Status**: Draft | Approved | Superseded
 

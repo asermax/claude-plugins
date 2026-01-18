@@ -35,6 +35,9 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 **Existing plan (if present):**
 `@docs/feature-plans/$ARGUMENTS.md` - Current plan to update or create
 
+**Template:**
+`@${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/implementation-plan.md` - Structure to follow
+
 ## Pre-Check
 
 Verify spec and design exist:

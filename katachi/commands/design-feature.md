@@ -34,6 +34,9 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 **Existing design (if present):**
 `@docs/feature-designs/$ARGUMENTS.md` - Current design to update or create
 
+**Template:**
+`@${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/feature-design.md` - Structure to follow
+
 ## Pre-Check
 
 Verify spec exists:

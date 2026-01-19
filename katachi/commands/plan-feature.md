@@ -97,7 +97,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Plan
 - Explore codebase for implementation patterns
 - Build complete understanding without asking questions
 
-### 4. Draft Complete Plan Proposal
+### 4. Draft Complete Plan (Silent)
 
 Create full implementation plan following template:
 
@@ -131,21 +131,9 @@ Include section in plan:
 
 These items will be automatically resolved when implementation completes.
 
-### 5. Present Proposal for Review
+### 5. External Validation (Silent)
 
-Show complete plan document to user.
-Highlight any uncertainties.
-Invite feedback: "What needs adjustment in this plan?"
-
-### 6. Iterate Based on Feedback
-
-Apply user corrections, additions, or changes.
-Re-present updated sections if significant changes.
-Repeat until user approves the plan.
-
-### 7. External Validation
-
-Dispatch the plan-reviewer agent:
+Dispatch the plan-reviewer agent to validate the draft:
 
 ```python
 Task(
@@ -168,15 +156,32 @@ Review this implementation plan.
 )
 ```
 
-Review agent findings with user.
-Discuss which recommendations to accept.
+### 6. Apply Validation Feedback (Silent)
 
-### 8. Finalize with Iteration Check
+Review the plan-reviewer findings and apply improvements:
+- Address any coverage gaps (missing acceptance criteria)
+- Fix dependency ordering issues
+- Resolve ADR/DES conflicts
+- Incorporate suggested improvements
 
-Ask: "Should we iterate based on validation feedback, or is the plan complete?"
+If the reviewer identified critical issues that require clarification, note them for discussion with the user.
 
-If gaps to address → refine relevant sections (go back to step 6)
-If complete → finalize document to `docs/feature-plans/$ARGUMENTS.md`
+### 7. Present Validated Plan
+
+Show the complete, validated plan document to user.
+Include summary of validation findings that were applied.
+Highlight any unresolved issues that need user input.
+Invite feedback: "What needs adjustment in this plan?"
+
+### 8. Iterate Based on Feedback
+
+Apply user corrections, additions, or changes.
+Re-run validation if significant changes are made.
+Repeat until user approves the plan.
+
+### 9. Finalize
+
+Once user approves, save to `docs/feature-plans/$ARGUMENTS.md`
 
 Update status:
 ```bash
@@ -185,10 +190,11 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "✓ Plan
 
 ## Workflow
 
-**This is a collaborative process:**
+**This is a validate-first process:**
 - Research silently, then draft
-- Present complete proposal
+- Validate with plan-reviewer agent
+- Apply validation feedback
+- Present validated plan to user
 - User provides feedback
 - Iterate until approved
-- Validate with plan-reviewer agent
 - Finalize after user approval

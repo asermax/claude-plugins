@@ -13,15 +13,17 @@ Path to file or module: $ARGUMENTS
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:retrofit-existing` skill for retrofit workflow.
+**You must load the following skills and read the following files before proceeding.**
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - To add new feature entry
-`@docs/planning/DEPENDENCIES.md` - To update dependency matrix
+### Skills
+- `katachi:retrofit-existing` - Retrofit workflow
 
-**Vision (if present):**
-`@docs/planning/VISION.md` - Project context for inference
+### Feature inventory
+- `docs/planning/FEATURES.md` - To add new feature entry
+- `docs/planning/DEPENDENCIES.md` - To update dependency matrix
+
+### Vision (if present)
+- `docs/planning/VISION.md` - Project context for inference
 
 ## Pre-Check
 

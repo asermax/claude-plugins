@@ -16,16 +16,18 @@ $ARGUMENTS - Optional, can be:
 
 ## Context
 
-**Backlog file:**
-@docs/planning/BACKLOG.md
+**You must read the following files before proceeding.**
 
-**Feature documentation:**
-`@docs/planning/FEATURES.md` - Feature inventory for related features
-`@docs/architecture/README.md` - ADR index (for Q- items about decisions)
-`@docs/design/README.md` - DES index (for questions about patterns)
+### Backlog file
+- `docs/planning/BACKLOG.md`
 
-**Script reference:**
-`${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py` - CLI tool for backlog management
+### Feature documentation
+- `docs/planning/FEATURES.md` - Feature inventory for related features
+- `docs/architecture/README.md` - ADR index (for Q- items about decisions)
+- `docs/design/README.md` - DES index (for questions about patterns)
+
+### Script reference
+- `${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py` - CLI tool for backlog management
 
 ## Actions
 

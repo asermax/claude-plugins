@@ -13,29 +13,31 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 
 ## Context
 
-**Skills to load:**
+**You must load the following skills and read the following files before proceeding.**
+
+### Skills
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-feature` - Per-feature workflow
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - Feature definitions
-`@docs/planning/DEPENDENCIES.md` - Feature dependencies
+### Feature inventory
+- `docs/planning/FEATURES.md` - Feature definitions
+- `docs/planning/DEPENDENCIES.md` - Feature dependencies
 
-**Feature spec:**
-`@docs/feature-specs/$ARGUMENTS.md` - The specification we're designing for
+### Feature spec
+- `docs/feature-specs/$ARGUMENTS.md` - The specification we're designing for
 
-**Backlog:**
-`@docs/planning/BACKLOG.md` - Related bugs, ideas, improvements, questions
+### Backlog
+- `docs/planning/BACKLOG.md` - Related bugs, ideas, improvements, questions
 
-**Project decisions:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Project decisions
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
 
-**Existing design (if present):**
-`@docs/feature-designs/$ARGUMENTS.md` - Current design to update or create
+### Existing design (if present)
+- `docs/feature-designs/$ARGUMENTS.md` - Current design to update or create
 
-**Template:**
-`@${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/feature-design.md` - Structure to follow
+### Template
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/feature-design.md` - Structure to follow
 
 ## Pre-Check
 

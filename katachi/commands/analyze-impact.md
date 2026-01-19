@@ -13,16 +13,18 @@ Change description: $ARGUMENTS (optional - will prompt if not provided)
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:iterative-development` skill for impact analysis workflow.
+**You must load the following skills and read the following files before proceeding.**
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - Feature definitions and status
-`@docs/planning/DEPENDENCIES.md` - Feature dependencies and phases
+### Skills
+- `katachi:iterative-development` - Impact analysis workflow
 
-**Decision indexes:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Feature inventory
+- `docs/planning/FEATURES.md` - Feature definitions and status
+- `docs/planning/DEPENDENCIES.md` - Feature dependencies and phases
+
+### Decision indexes
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
 
 Read docs/feature-specs/ and docs/feature-designs/ as needed during analysis.
 

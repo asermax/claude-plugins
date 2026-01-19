@@ -26,12 +26,14 @@ If a backlog item ID is provided (e.g., `/review-code BUG-001`):
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:framework-core` skill for workflow principles.
+**You must load the following skills and read the following files before proceeding.**
 
-**Decision indexes:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Skills
+- `katachi:framework-core` - Workflow principles
+
+### Decision indexes
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
 
 Read relevant docs/feature-specs/ and docs/feature-designs/ based on code being reviewed.
 

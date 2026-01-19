@@ -13,22 +13,24 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 
 ## Context
 
-**Skills to load:**
+**You must load the following skills and read the following files before proceeding.**
+
+### Skills
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-feature` - Per-feature workflow
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - Feature definitions
-`@docs/planning/DEPENDENCIES.md` - Feature dependencies
+### Feature inventory
+- `docs/planning/FEATURES.md` - Feature definitions
+- `docs/planning/DEPENDENCIES.md` - Feature dependencies
 
-**Backlog:**
-`@docs/planning/BACKLOG.md` - Related bugs, ideas, improvements, questions
+### Backlog
+- `docs/planning/BACKLOG.md` - Related bugs, ideas, improvements, questions
 
-**Existing spec (if present):**
-`@docs/feature-specs/$ARGUMENTS.md` - Current spec to update or create
+### Existing spec (if present)
+- `docs/feature-specs/$ARGUMENTS.md` - Current spec to update or create
 
-**Template:**
-`@${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/feature-spec.md` - Structure to follow
+### Template
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/feature-spec.md` - Structure to follow
 
 ## Process
 

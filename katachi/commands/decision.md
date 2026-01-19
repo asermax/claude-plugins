@@ -26,18 +26,20 @@ If a backlog item ID is provided (e.g., `/decision Q-001`):
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:framework-core` skill for workflow principles and decision type guidance.
+**You must load the following skills and read the following files before proceeding.**
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - Feature definitions (to check for affected features)
+### Skills
+- `katachi:framework-core` - Workflow principles and decision type guidance
 
-**Backlog:**
-`@docs/planning/BACKLOG.md` - Questions and related items
+### Feature inventory
+- `docs/planning/FEATURES.md` - Feature definitions (to check for affected features)
 
-**Decision indexes:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Backlog
+- `docs/planning/BACKLOG.md` - Questions and related items
+
+### Decision indexes
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
 
 ## Process
 

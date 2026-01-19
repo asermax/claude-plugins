@@ -13,30 +13,32 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 
 ## Context
 
-**Skills to load:**
+**You must load the following skills and read the following files before proceeding.**
+
+### Skills
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-feature` - Per-feature workflow
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - Feature definitions
-`@docs/planning/DEPENDENCIES.md` - Feature dependencies
+### Feature inventory
+- `docs/planning/FEATURES.md` - Feature definitions
+- `docs/planning/DEPENDENCIES.md` - Feature dependencies
 
-**Feature documents:**
-`@docs/feature-specs/$ARGUMENTS.md` - What to build (requirements)
-`@docs/feature-designs/$ARGUMENTS.md` - Why/how (design rationale)
+### Feature documents
+- `docs/feature-specs/$ARGUMENTS.md` - What to build (requirements)
+- `docs/feature-designs/$ARGUMENTS.md` - Why/how (design rationale)
 
-**Backlog:**
-`@docs/planning/BACKLOG.md` - Related bugs, improvements, tech-debt
+### Backlog
+- `docs/planning/BACKLOG.md` - Related bugs, improvements, tech-debt
 
-**Project decisions:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Project decisions
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
 
-**Existing plan (if present):**
-`@docs/feature-plans/$ARGUMENTS.md` - Current plan to update or create
+### Existing plan (if present)
+- `docs/feature-plans/$ARGUMENTS.md` - Current plan to update or create
 
-**Template:**
-`@${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/implementation-plan.md` - Structure to follow
+### Template
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/implementation-plan.md` - Structure to follow
 
 ## Pre-Check
 

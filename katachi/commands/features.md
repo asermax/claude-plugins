@@ -8,12 +8,14 @@ Extract user capability features from VISION.md into FEATURES.md.
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:framework-core` skill for workflow principles.
+**You must load the following skills and read the following files before proceeding.**
 
-**Required files:**
-`@docs/planning/VISION.md` - Project vision to extract features from
-`@docs/planning/FEATURES.md` - Current feature inventory (if exists)
+### Skills
+- `katachi:framework-core` - Workflow principles
+
+### Required files
+- `docs/planning/VISION.md` - Project vision to extract features from
+- `docs/planning/FEATURES.md` - Current feature inventory (if exists)
 
 ## General Guidance
 

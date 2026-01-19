@@ -8,17 +8,19 @@ Analyze the project state, find documentation gaps, and assess completeness.
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:framework-core` skill for workflow principles.
+**You must load the following skills and read the following files before proceeding.**
 
-**Project state:**
-`@docs/planning/VISION.md` - Project vision
-`@docs/planning/FEATURES.md` - Feature inventory
-`@docs/planning/DEPENDENCIES.md` - Dependency matrix
+### Skills
+- `katachi:framework-core` - Workflow principles
 
-**Decision indexes:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Project state
+- `docs/planning/VISION.md` - Project vision
+- `docs/planning/FEATURES.md` - Feature inventory
+- `docs/planning/DEPENDENCIES.md` - Dependency matrix
+
+### Decision indexes
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
 
 Read docs/feature-specs/, docs/feature-designs/, docs/feature-plans/ directories as needed for gap analysis.
 

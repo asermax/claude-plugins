@@ -8,12 +8,14 @@ Build the dependency matrix in docs/planning/DEPENDENCIES.md.
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:framework-core` skill for workflow principles.
+**You must load the following skills and read the following files before proceeding.**
 
-**Required files:**
-`@docs/planning/FEATURES.md` - Feature inventory to analyze
-`@docs/planning/DEPENDENCIES.md` - Current matrix (if exists)
+### Skills
+- `katachi:framework-core` - Workflow principles
+
+### Required files
+- `docs/planning/FEATURES.md` - Feature inventory to analyze
+- `docs/planning/DEPENDENCIES.md` - Current matrix (if exists)
 
 ## General Guidance
 

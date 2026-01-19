@@ -13,25 +13,27 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 
 ## Context
 
-**Skills to load:**
+**You must load the following skills and read the following files before proceeding.**
+
+### Skills
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-feature` - Per-feature workflow
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - Feature definitions
-`@docs/planning/DEPENDENCIES.md` - Feature dependencies
+### Feature inventory
+- `docs/planning/FEATURES.md` - Feature definitions
+- `docs/planning/DEPENDENCIES.md` - Feature dependencies
 
-**Feature documents:**
-`@docs/feature-specs/$ARGUMENTS.md` - What to build (requirements)
-`@docs/feature-designs/$ARGUMENTS.md` - Why/how (design rationale)
-`@docs/feature-plans/$ARGUMENTS.md` - Implementation steps to follow
+### Feature documents
+- `docs/feature-specs/$ARGUMENTS.md` - What to build (requirements)
+- `docs/feature-designs/$ARGUMENTS.md` - Why/how (design rationale)
+- `docs/feature-plans/$ARGUMENTS.md` - Implementation steps to follow
 
-**Backlog:**
-`@docs/planning/BACKLOG.md` - Items to address during implementation
+### Backlog
+- `docs/planning/BACKLOG.md` - Items to address during implementation
 
-**Project decisions:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Project decisions
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
 
 Read dependency code as specified in plan's pre-implementation checklist.
 

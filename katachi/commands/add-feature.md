@@ -28,19 +28,21 @@ If a backlog item ID is provided (e.g., `/add-feature IDEA-001`):
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:iterative-development` skill for workflow guidance.
+**You must load the following skills and read the following files before proceeding.**
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - Existing feature definitions
-`@docs/planning/DEPENDENCIES.md` - Feature dependencies and phases
+### Skills
+- `katachi:iterative-development` - Workflow guidance
 
-**Backlog:**
-`@docs/planning/BACKLOG.md` - Related ideas, bugs, improvements
+### Feature inventory
+- `docs/planning/FEATURES.md` - Existing feature definitions
+- `docs/planning/DEPENDENCIES.md` - Feature dependencies and phases
 
-**Existing documentation patterns:**
-`@docs/feature-specs/` - Existing specs (for pattern reference)
-`@docs/feature-designs/` - Existing designs (for pattern reference)
+### Backlog
+- `docs/planning/BACKLOG.md` - Related ideas, bugs, improvements
+
+### Existing documentation patterns
+- `docs/feature-specs/` - Existing specs (for pattern reference)
+- `docs/feature-designs/` - Existing designs (for pattern reference)
 
 ## Pre-Check
 

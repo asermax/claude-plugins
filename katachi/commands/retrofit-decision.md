@@ -13,15 +13,17 @@ Topic or pattern: $ARGUMENTS
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:retrofit-existing` skill for retrofit workflow.
+**You must load the following skills and read the following files before proceeding.**
 
-**Decision indexes:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Skills
+- `katachi:retrofit-existing` - Retrofit workflow
 
-**Vision (if present):**
-`@docs/planning/VISION.md` - Project context for inference
+### Decision indexes
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
+
+### Vision (if present)
+- `docs/planning/VISION.md` - Project context for inference
 
 ## Pre-Check
 

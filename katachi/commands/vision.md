@@ -8,11 +8,13 @@ Guide the user through creating docs/planning/VISION.md.
 
 ## Context
 
-**Skill to load:**
-Load the `katachi:framework-core` skill for workflow principles.
+**You must load the following skills and read the following files before proceeding.**
 
-**Vision document:**
-`@docs/planning/VISION.md` - if it exists
+### Skills
+- `katachi:framework-core` - Workflow principles
+
+### Vision document
+- `docs/planning/VISION.md` - if it exists
 
 ## General Guidance
 

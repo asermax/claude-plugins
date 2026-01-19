@@ -13,25 +13,27 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 
 ## Context
 
-**Skills to load:**
+**You must load the following skills and read the following files before proceeding.**
+
+### Skills
 - `katachi:retrofit-existing` - Retrofit workflow
 
-**Feature inventory:**
-`@docs/planning/FEATURES.md` - Feature definitions
-`@docs/planning/DEPENDENCIES.md` - Feature dependencies
+### Feature inventory
+- `docs/planning/FEATURES.md` - Feature definitions
+- `docs/planning/DEPENDENCIES.md` - Feature dependencies
 
-**Retrofitted spec:**
-`@docs/feature-specs/$ARGUMENTS.md` - The specification (created by retrofit-spec)
+### Retrofitted spec
+- `docs/feature-specs/$ARGUMENTS.md` - The specification (created by retrofit-spec)
 
-**Project decisions:**
-`@docs/architecture/README.md` - Architecture decisions (ADRs)
-`@docs/design/README.md` - Design patterns (DES)
+### Project decisions
+- `docs/architecture/README.md` - Architecture decisions (ADRs)
+- `docs/design/README.md` - Design patterns (DES)
 
-**Existing design (if present):**
-`@docs/feature-designs/$ARGUMENTS.md` - Current design to update or create
+### Existing design (if present)
+- `docs/feature-designs/$ARGUMENTS.md` - Current design to update or create
 
-**Vision (if present):**
-`@docs/planning/VISION.md` - Project context for inference
+### Vision (if present)
+- `docs/planning/VISION.md` - Project context for inference
 
 ## Pre-Check
 

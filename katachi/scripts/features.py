@@ -24,11 +24,14 @@ Usage:
     python scripts/features.py status list --category CAT         # Filter by category
     python scripts/features.py status list --status "STATUS"      # Filter by status text
     python scripts/features.py status show FEATURE-ID             # Show detailed feature status
-    python scripts/features.py status set FEATURE-ID STATUS       # Update feature status
+    python scripts/features.py status set FEATURE-ID STATUS       # Update feature status (auto-removes from matrix when complete)
 
     # Query commands
     python scripts/features.py ready                              # List features ready to implement
     python scripts/features.py next                               # Suggest next feature to implement
+
+Note: When marking a feature as complete (✓ Implementation), it is automatically removed from the
+      dependency matrix since completed features no longer block other work.
 """
 
 import sys
@@ -299,18 +302,24 @@ class DependencyMatrix:
         print(f"✓ Added feature: {feature_id}")
         print(f"  Note: Update FEATURES.md manually and add the feature to a phase in DEPENDENCIES.md")
 
-    def delete_feature(self, feature_id: str):
-        """Delete a feature from the matrix"""
+    def delete_feature(self, feature_id: str, allow_completed: bool = False):
+        """Delete a feature from the matrix
+
+        Args:
+            feature_id: The feature to delete
+            allow_completed: If True, allow deletion of completed features even if they have dependents
+        """
         if feature_id not in self.features:
             raise ValueError(f"Feature not found: {feature_id}")
 
-        # Check if other features depend on this one
-        dependents = self.get_dependents(feature_id)
-        if dependents:
-            raise ValueError(
-                f"Cannot delete {feature_id}: other features depend on it:\n" +
-                "\n".join(f"  - {dep}" for dep in sorted(dependents))
-            )
+        # Check if other features depend on this one (skip if allowing completed removal)
+        if not allow_completed:
+            dependents = self.get_dependents(feature_id)
+            if dependents:
+                raise ValueError(
+                    f"Cannot delete {feature_id}: other features depend on it:\n" +
+                    "\n".join(f"  - {dep}" for dep in sorted(dependents))
+                )
 
         # Remove feature from list
         self.features.remove(feature_id)
@@ -454,8 +463,15 @@ class StatusManager:
         feature = self.features.get(feature_id)
         return feature['status'] if feature else None
 
-    def set_status(self, feature_id: str, status: str):
-        """Update status of a feature in FEATURES.md"""
+    def set_status(self, feature_id: str, status: str, dm: 'DependencyMatrix | None' = None):
+        """Update status of a feature in FEATURES.md
+
+        Args:
+            feature_id: The feature to update
+            status: The new status value
+            dm: Optional dependency matrix. If provided and status indicates completion,
+                automatically removes the feature from the matrix.
+        """
         if feature_id not in self.features:
             raise ValueError(f"Feature not found: {feature_id}")
 
@@ -483,6 +499,12 @@ class StatusManager:
         self.filepath.write_text(new_content)
         self.features[feature_id]['status'] = status
         print(f"✓ Updated {feature_id} status to: {status}")
+
+        # Auto-remove from dependency matrix on completion
+        if dm and self._is_complete_status(status):
+            if feature_id in dm.features:
+                dm.delete_feature(feature_id, allow_completed=True)
+                print(f"✓ Removed {feature_id} from dependency matrix")
 
     def list_features(
         self,
@@ -578,6 +600,11 @@ class StatusManager:
             return False
         status = feature['status'].lower()
         return '✓ implementation' in status or 'complete' in status
+
+    def _is_complete_status(self, status: str) -> bool:
+        """Check if a status string indicates completion"""
+        status_lower = status.lower()
+        return '✓ implementation' in status_lower or 'complete' in status_lower
 
     def get_ready_features(self, dm: DependencyMatrix) -> List[str]:
         """Get features that are ready to implement (all deps complete, not started yet)"""
@@ -826,7 +853,7 @@ def main():
             feature_id = sys.argv[3]
             status = ' '.join(sys.argv[4:])  # Allow multi-word status
             try:
-                sm.set_status(feature_id, status)
+                sm.set_status(feature_id, status, dm=dm)
             except ValueError as e:
                 print(f"Error: {e}")
                 sys.exit(1)

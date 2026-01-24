@@ -289,8 +289,9 @@ class DependencyMatrix:
                     "\n".join(f"  - {dep}" for dep in sorted(dependents))
                 )
 
-        # Remove delta from list
-        self.deltas.remove(delta_id)
+        # Remove delta from list (remove all occurrences in case of duplicates)
+        while delta_id in self.deltas:
+            self.deltas.remove(delta_id)
 
         # Remove from matrix
         del self.matrix[delta_id]
@@ -578,7 +579,17 @@ def main():
         # Dependency management commands
         if len(sys.argv) < 3:
             print("Usage: deltas.py deps <command> [args]")
-            print("\nAvailable commands: query, reverse, tree, validate, list, add-dep, remove-dep, add-delta, delete-delta")
+            print("\nAvailable commands:")
+            print("  query DELTA-ID           - Show what a delta depends on")
+            print("  reverse DELTA-ID         - Show what depends on a delta")
+            print("  tree DELTA-ID            - Show dependency tree")
+            print("  validate                 - Check for circular dependencies")
+            print("  list                     - List all deltas")
+            print("  add-dep FROM-ID TO-ID    - Add dependency (FROM depends on TO)")
+            print("  remove-dep FROM-ID TO-ID - Remove dependency")
+            print("  add-delta DELTA-ID       - Add a new delta to matrix")
+            print("  delete-delta DELTA-ID [--force] - Delete delta from matrix")
+            print("                             --force: Allow deletion even if other deltas depend on it")
             sys.exit(1)
 
         command = sys.argv[2]
@@ -662,11 +673,33 @@ def main():
 
         elif command == "delete-delta":
             if len(sys.argv) < 4:
-                print("Usage: deltas.py deps delete-delta DELTA-ID")
+                print("Usage: deltas.py deps delete-delta DELTA-ID [--force]")
+                print("       --force: Allow deletion even if other deltas depend on it")
                 sys.exit(1)
-            delta_id = sys.argv[3]
+
+            # Parse arguments (support --force before or after DELTA-ID)
+            args = sys.argv[3:]
+            force = "--force" in args
+            delta_args = [arg for arg in args if arg != "--force"]
+
+            if not delta_args:
+                print("Usage: deltas.py deps delete-delta DELTA-ID [--force]")
+                print("       --force: Allow deletion even if other deltas depend on it")
+                sys.exit(1)
+
+            delta_id = delta_args[0]
+
+            # Show warning if using force and delta has dependents
+            if force:
+                dependents = dm.get_dependents(delta_id)
+                if dependents:
+                    print(f"⚠ Warning: {delta_id} has {len(dependents)} dependent(s):")
+                    for dep in sorted(dependents):
+                        print(f"  - {dep}")
+                    print(f"  These dependencies will be automatically removed.")
+
             try:
-                dm.delete_delta(delta_id)
+                dm.delete_delta(delta_id, allow_completed=force)
             except ValueError as e:
                 print(f"Error: {e}")
                 sys.exit(1)

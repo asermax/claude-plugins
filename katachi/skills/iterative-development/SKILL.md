@@ -20,7 +20,6 @@ The framework should support "add as you go" not "define everything upfront":
 
 - Deltas can be added mid-project
 - Dependencies are analyzed dynamically
-- Phases recalculate automatically
 - Quick-start mode for MVPs
 
 ## Add Delta Workflow
@@ -100,18 +99,7 @@ python scripts/deltas.py deps add-delta CORE-004
 python scripts/deltas.py deps add-dep CORE-004 CORE-001  # If depends on CORE-001
 ```
 
-### 8. Recalculate Phases
-
-Phases recalculate based on dependencies:
-
-```bash
-python scripts/deltas.py deps recalculate-phases
-```
-
-Show user the new phase assignment:
-- "CORE-004 assigned to Phase 2 (depends on CORE-001)"
-
-### 9. Offer Next Step
+### 8. Offer Next Step
 
 After adding:
 - "CORE-004 added. Create spec now? [Y/N]"
@@ -190,7 +178,6 @@ For new projects, offer quick-start:
    - Aim for 5-10 deltas max
 
 3. **Simple Dependencies**
-   - Phase 1 = MVP
    - Linear dependencies where possible
    - Skip complex dependency analysis
 

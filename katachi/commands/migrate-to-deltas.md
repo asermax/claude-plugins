@@ -166,7 +166,6 @@ Read DEPENDENCIES.md:
 - Update matrix headers (use mapping)
 - Update row labels (use mapping)
 - Preserve X marks (dependencies)
-- Update phases to use delta IDs
 
 #### Task 6: Remove BACKLOG.md
 

@@ -292,7 +292,7 @@ Conventions for tracking delta progress through the development workflow.
 
 ### Status Progression
 
-Deltas progress through these phases:
+Deltas progress through these stages:
 
 ```
 ✗ Defined         (initial state - delta in DELTAS.md)
@@ -345,9 +345,6 @@ python scripts/deltas.py status set CORE-001 "⧗ Design"
 ```bash
 # List all deltas with status
 python scripts/deltas.py status list
-
-# Filter by phase
-python scripts/deltas.py status list --phase 1
 
 # Filter by category
 python scripts/deltas.py status list --category CORE

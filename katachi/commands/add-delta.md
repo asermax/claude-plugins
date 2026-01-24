@@ -20,7 +20,7 @@ Delta description: $ARGUMENTS (optional - will prompt if not provided)
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Existing delta definitions
-- `docs/planning/DEPENDENCIES.md` - Delta dependencies and phases
+- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ### Existing documentation patterns
 - `docs/delta-specs/` - Existing delta specs (for pattern reference)
@@ -142,23 +142,7 @@ If dependencies identified:
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps add-dep DLT-NNN DEP-ID
 ```
 
-### 8. Recalculate Phases
-
-Update phase assignments based on new dependencies:
-
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps recalculate-phases
-```
-
-Show user the phase assignment:
-```
-"DLT-NNN has been assigned to Phase N.
-
-Reason: [Depends on X which is in Phase M, so this goes in Phase M+1]
-         OR [No dependencies, added to Phase 1]"
-```
-
-### 9. Summary and Next Steps
+### 8. Summary and Next Steps
 
 Present summary:
 ```
@@ -168,7 +152,6 @@ ID: DLT-NNN
 Description: [description]
 Complexity: [complexity]
 Dependencies: [list or 'None']
-Phase: N
 
 Next steps:
 - Create spec: /katachi:spec-delta DLT-NNN

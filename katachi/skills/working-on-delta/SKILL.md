@@ -44,7 +44,7 @@ if not delta:
 # Check dependencies are complete (for design/plan/implement)
 if command in ["design", "plan", "implement"]:
     deps = get_dependencies(FEATURE_ID)
-    incomplete = [d for d in deps if not is_complete(d, required_phase)]
+    incomplete = [d for d in deps if not is_complete(d)]
     if incomplete:
         warn(f"Dependencies not complete: {incomplete}")
 ```

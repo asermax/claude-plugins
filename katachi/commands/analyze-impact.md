@@ -142,13 +142,11 @@ D) Cancel and reconsider"
 I recommend:
 1. Creating an ADR to document the decision and rationale
 2. Reviewing all affected specs and designs
-3. Considering a phased implementation approach
 
 Would you like to:
 A) Create an ADR for this change
 B) Review affected documents
-C) Plan a phased approach
-D) Cancel and reconsider"
+C) Cancel and reconsider"
 ```
 
 **Structural (architecture or cross-cutting):**
@@ -158,7 +156,6 @@ D) Cancel and reconsider"
 Before proceeding, I strongly recommend:
 1. Creating an ADR with thorough alternatives analysis
 2. Reviewing all affected areas in detail
-3. Considering if this should be a new phase
 
 This is a significant decision. Would you like to:
 A) Start a detailed architecture discussion
@@ -177,11 +174,6 @@ D) Cancel and reconsider"
 **Create ADR:**
 - Transition to `/katachi:decision`
 - Pre-fill context with impact analysis
-
-**Plan phased approach:**
-- Suggest breaking change into phases
-- Show which features could be in each phase
-- Offer to create implementation plan
 
 ## Integration with Other Commands
 

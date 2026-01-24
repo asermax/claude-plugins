@@ -97,7 +97,7 @@ your-project/
 1. `/katachi:init-framework` - Choose quick-start or full
 2. `/katachi:vision` - Define problem and scope
 3. `/katachi:deltas` - Extract deltas (work items)
-4. `/katachi:dependencies` - Build matrix, derive phases
+4. `/katachi:dependencies` - Build dependency matrix
 5. For each delta: spec → design → plan → implement → reconcile
 
 ### For Existing Projects

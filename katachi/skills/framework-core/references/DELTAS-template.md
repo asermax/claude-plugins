@@ -25,7 +25,6 @@ python scripts/deltas.py status set DELTA-ID "STATUS"
 Query status:
 ```bash
 python scripts/deltas.py status list                    # All deltas
-python scripts/deltas.py status list --phase 1          # Filter by phase
 python scripts/deltas.py status list --complexity Easy  # Filter by complexity
 python scripts/deltas.py status show DELTA-ID           # Detailed view
 ```

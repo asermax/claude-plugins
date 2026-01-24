@@ -27,7 +27,6 @@ Follow the collaborative workflow principles from the framework-core skill.
 - Current analysis phase
 - Proposed dependencies with reasoning
 - Validation findings
-- Phase derivation state
 
 **Propose complete matrix first** - Analyze all deltas and propose complete matrix in one pass. Do NOT ask about each pair individually.
 
@@ -99,32 +98,9 @@ Request critique on:
 
 Review findings with user. Iterate if needed.
 
-### 6. Derive Implementation Phases
+### 6. Finalization
 
-Use topological sort:
-- Phase 1: Deltas with no dependencies
-- Phase 2: Deltas depending only on Phase 1
-- Continue until all deltas are phased
-
-Present proposed phases to user.
-
-### 7. Agent Validation #2: Phase Ordering
-
-Dispatch a general-purpose subagent to review phases.
-
-Request critique on:
-- **Implementation feasibility**
-- **Testing order**
-- **Developer experience**
-- **Parallel opportunities**
-- **Phase balance**
-- **Priority alignment**
-
-Review findings with user.
-
-### 8. Phase Iteration and Finalization
-
-Ask: "Should we adjust phases based on validation, or are they ready?"
+Ask: "Should we adjust the matrix based on validation, or is it ready?"
 
 If adjustments needed → discuss and adjust
 If complete → finalize and write to `docs/planning/DEPENDENCIES.md`
@@ -145,5 +121,5 @@ Use during user iteration:
 - Propose complete matrix first, then iterate
 - Challenge gaps and hidden coupling
 - Work together to resolve cycles
-- User confirms phases before finalizing
+- User confirms before finalizing
 - Iterate until complete

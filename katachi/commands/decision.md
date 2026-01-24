@@ -62,14 +62,14 @@ For DES, also ask:
 - When should it be applied?
 - What are the exceptions?
 
-### 4. Research if Needed
+### 3. Research if Needed
 
 If user is uncertain about alternatives or consequences:
 - Use Task tool to research options
 - Synthesize findings
 - Present alternatives with trade-offs
 
-### 5. Draft Document
+### 4. Draft Document
 
 Create complete document following appropriate template.
 
@@ -85,10 +85,43 @@ For DES:
 - Examples (do this, don't do this)
 - Exceptions
 
+### 5. Validate Classification (Silent)
+
+Dispatch decision-reviewer to validate the classification:
+
+```python
+Task(
+    subagent_type="katachi:decision-reviewer",
+    prompt=f"""
+Validate this decision document classification.
+
+## Decision Type
+{adr_or_des}
+
+## Draft Document
+{draft_content}
+
+## User's Context
+{user_context}
+
+## Existing ADR Index
+{adr_index}
+
+## Existing DES Index
+{des_index}
+"""
+)
+```
+
+Apply feedback:
+- If classification is incorrect, adjust document type
+- If decision overlaps with existing, consider updating instead of creating new
+- If decision is too trivial, suggest keeping in feature-design only
+
 ### 6. Present for Review
 
 Show draft document to user.
-Highlight any uncertainties.
+Highlight any uncertainties or validation feedback.
 Ask: "What needs adjustment?"
 
 ### 7. Iterate Based on Feedback
@@ -116,13 +149,13 @@ For DES in `docs/design/README.md`:
 - Update quick reference if applicable
 - Note when to use
 
-### 9. Save Document
+### 10. Save Document
 
 Write to appropriate location:
 - ADR: `docs/architecture/ADR-NNN-title.md`
 - DES: `docs/design/DES-NNN-pattern-name.md`
 
-### 10. Identify Affected Features
+### 11. Identify Affected Features
 
 Ask:
 ```
@@ -142,6 +175,8 @@ List affected features and update their designs to include decision references:
 - Determine type (ADR vs DES)
 - Understand the decision
 - Research alternatives if needed
-- Draft and iterate
+- Draft document
+- Validate classification with decision-reviewer agent
+- Present and iterate with user
 - Save and update index
 - Identify affected features

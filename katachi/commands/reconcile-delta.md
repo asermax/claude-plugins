@@ -101,7 +101,74 @@ For domain READMEs:
 - Follow nested structure: feature-specs/[domain]/README.md + sub-capability docs
 - Mirror structure in feature-designs/
 
-### 5. Validate Updates (Silent)
+### 5. Analyze Decisions (Silent)
+
+Analyze delta-design's "Key Decisions" section and implementation patterns for ADR/DES candidates.
+
+**Extract decisions from delta-design:**
+- Read each decision in the "Key Decisions" section
+- Apply promotion criteria (see Decision Detection section)
+- Flag decisions that warrant ADR or DES
+
+**Detect implementation patterns:**
+- Compare implementation code against delta-design
+- Identify repeated code structures (same pattern 2+ times)
+- Note cross-cutting patterns (logging, error handling, config)
+
+**Check existing decisions:**
+- Read ADR index (docs/architecture/README.md)
+- Read DES index (docs/design/README.md)
+- Check if any delta decisions should update existing ADR/DES
+- Skip decisions already covered by existing ADR/DES
+
+**Prepare candidates:**
+- ADR candidates: Decisions that are hard-to-reverse and project-wide
+- DES candidates: Repeatable patterns used 2+ times
+- Updates: Existing ADR/DES that need modification based on this delta
+
+### 6. Validate Decisions (Silent)
+
+Dispatch the decision-reviewer agent to validate decision candidates:
+
+```python
+Task(
+    subagent_type="katachi:decision-reviewer",
+    prompt=f"""
+Review these decision candidates from delta reconciliation.
+
+## Delta Spec
+{delta_spec}
+
+## Delta Design (with Key Decisions)
+{delta_design}
+
+## Implementation Summary
+{implementation_summary}
+
+## ADR Candidates
+{adr_candidates}
+
+## DES Candidates
+{des_candidates}
+
+## Proposed Updates to Existing Decisions
+{decision_updates}
+
+## Existing ADR Index
+{adr_index}
+
+## Existing DES Index
+{des_index}
+"""
+)
+```
+
+Apply validation feedback:
+- Remove rejected candidates
+- Adjust classifications per recommendations
+- Add any missed decisions identified by reviewer
+
+### 7. Validate Updates (Silent)
 
 Dispatch reviewer agent to validate the proposed updates:
 
@@ -137,7 +204,7 @@ Verify that updates:
 
 Apply validation feedback to improve proposed updates.
 
-### 6. Present Proposal for Review
+### 8. Present Proposal for Review
 
 Show complete update proposal to user:
 
@@ -157,27 +224,75 @@ Show complete update proposal to user:
 - [domain/capability.md]: [description]
 - ...
 
+## Decision Candidates
+
+### ADR Candidates
+[For each candidate:]
+- **[Decision Name]**
+  - Summary: [What was decided]
+  - Justification: [Why this warrants an ADR - hard to reverse / project-wide]
+  - Proposed ID: ADR-NNN
+
+  [Context, choice, alternatives, consequences from delta-design]
+
+### DES Candidates
+[For each candidate:]
+- **[Pattern Name]**
+  - Found in: [file paths where pattern appears]
+  - Summary: [What pattern was used]
+  - Justification: [Why this warrants a DES - repeated / cross-cutting]
+  - Proposed ID: DES-NNN
+
+  [Pattern description with do/don't examples from implementation]
+
+### Updates to Existing Decisions
+[For each update:]
+- **[ADR/DES-NNN]: [Title]**
+  - What changes: [description]
+  - Why: [What this delta revealed]
+
 [Show detailed diffs or full updated content for each file]
 
-What needs adjustment in this reconciliation?"
+Which decision candidates should we create? Which updates should we apply?
+What else needs adjustment in this reconciliation?"
 ```
 
 Invite feedback and discuss any questions.
 
-### 7. Iterate Based on Feedback
+### 9. Iterate Based on Feedback
 
 Apply user corrections or changes to proposed updates.
 Re-present updated sections if significant changes.
 Repeat until user approves the reconciliation.
 
-### 8. Apply Updates
+### 10. Apply Updates
 
-Once approved, update all affected feature documentation files:
+Once approved, update all affected documentation:
+
+**Feature documentation:**
 - Write/update feature-specs/ files
 - Write/update feature-designs/ files
 - Update README.md indexes
 
-### 9. Mark Delta as Reconciled
+**Decision documents (if any approved):**
+
+For each approved ADR candidate:
+- Determine next ADR ID from docs/architecture/
+- Create docs/architecture/ADR-NNN-title.md using ADR template
+- Add entry to docs/architecture/README.md
+- Update affected feature-designs to reference ADR-NNN
+
+For each approved DES candidate:
+- Determine next DES ID from docs/design/
+- Create docs/design/DES-NNN-pattern.md using DES template
+- Add entry to docs/design/README.md
+- Update affected feature-designs to reference DES-NNN
+
+For each approved update to existing decision:
+- Update the ADR/DES document
+- Add note: "Updated by DLT-XXX: [change description]"
+
+### 11. Mark Delta as Reconciled
 
 Update delta status:
 ```bash
@@ -197,8 +312,49 @@ Updated feature designs:
 Created new feature docs:
 - [list of files]
 
+Created decision documents:
+- [list of ADRs/DES created]
+
+Updated decision documents:
+- [list of ADRs/DES updated]
+
 Feature documentation is now current with implementation."
 ```
+
+## Decision Detection
+
+### ADR Promotion Criteria
+
+A decision warrants ADR when ALL of these apply:
+1. **Hard to reverse**: Technology choices, architectural patterns, integration approaches
+2. **Project-wide impact**: Affects multiple features, establishes precedent
+3. **Not already documented**: No existing ADR covers it
+
+### DES Promotion Criteria
+
+A pattern warrants DES when ALL of these apply:
+1. **Repeatable**: Used 2+ times or solves cross-cutting concern
+2. **Prescriptive value**: Helps ensure consistency across codebase
+3. **Not already documented**: No existing DES covers it
+
+### Detection Signals
+
+| Signal | Suggests |
+|--------|----------|
+| Decision mentions technology/framework/library | ADR |
+| Decision has significant negative consequences | ADR |
+| Same code structure appears 2+ times | DES |
+| Decision solves logging, error handling, config | DES |
+
+### Lightweight Principle
+
+Not every decision needs promotion:
+- If only relevant to this feature → keep in feature-design only
+- If pattern used once → keep in delta-design only
+- If easily reversible and local → no documentation needed
+- When in doubt, ask the user
+
+Reference `decision-types.md` for the full decision tree.
 
 ## Workflow
 
@@ -206,9 +362,10 @@ Feature documentation is now current with implementation."
 - Gather all delta context silently
 - Read affected feature docs
 - Draft complete updates
-- Validate with reviewer agent
-- Apply validation feedback
-- Present to user for approval
+- Analyze decisions for promotion candidates
+- Validate decisions with decision-reviewer agent
+- Validate feature updates with spec-reviewer agent
+- Present to user for approval (including decision candidates)
 - Iterate based on feedback
-- Apply all updates when approved
+- Apply all updates when approved (features + decisions)
 - Mark delta as reconciled

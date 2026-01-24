@@ -146,6 +146,63 @@ go mod download
 
 > **Important**: Do NOT set `GOPATH` when downloading modules. Setting `GOPATH="${srcdir}/gopath"` before `go mod download` causes dependencies to be installed in a custom folder inside the build directory, leading to permission issues during cleanup (root-owned files). The `GOPATH` should only be set in `build()` where it controls intermediate build artifacts.
 
+## Rust Package Specific Instructions
+
+See [Rust package guidelines](https://wiki.archlinux.org/title/Rust_package_guidelines).
+
+**Package metadata:**
+- `arch=('x86_64')` - Rust compiles to native binaries
+- `depends=('gcc-libs' 'glibc')` - Standard runtime dependencies
+- `makedepends=('cargo')` - Cargo includes the Rust compiler
+
+**prepare() function (fetch dependencies):**
+```bash
+prepare() {
+  cd "$pkgname-$pkgver"
+  export RUSTUP_TOOLCHAIN=stable
+  cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
+}
+```
+
+**build() function:**
+```bash
+build() {
+  cd "$pkgname-$pkgver"
+  export RUSTUP_TOOLCHAIN=stable
+  export CARGO_TARGET_DIR=target
+  cargo build --frozen --release --all-features
+}
+```
+
+**check() function:**
+```bash
+check() {
+  cd "$pkgname-$pkgver"
+  export RUSTUP_TOOLCHAIN=stable
+  cargo test --frozen --all-features
+}
+```
+
+> **Important**: Do NOT use `--release` in check() - this preserves debug assertions and overflow checking.
+
+**package() function:**
+```bash
+package() {
+  cd "$pkgname-$pkgver"
+  install -Dm0755 "target/release/$pkgname" "$pkgdir/usr/bin/$pkgname"
+  install -Dm644 "LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+```
+
+**Key flags explained:**
+- `--frozen`: Prevents network access, uses only `Cargo.lock` versions (reproducible builds)
+- `--locked`: Ensures `Cargo.lock` is respected during fetch
+- `--release`: Creates optimized release binary
+- `--all-features`: Enables all package features (optional)
+
+**For -git packages, add to makedepends:**
+- `makedepends=('cargo' 'git')`
+
 ## VCS/Git Package Specific Instructions (-git)
 
 See [VCS package guidelines](https://wiki.archlinux.org/title/VCS_package_guidelines).

@@ -215,7 +215,7 @@ Future features should:
 
 Would you like to:
 - Retrofit another decision: /katachi:retrofit-decision <topic>
-- Update a feature design to reference this: /katachi:design-feature <ID>
+- Update a feature design to reference this decision
 - Retrofit a spec: /katachi:retrofit-spec <path>"
 ```
 

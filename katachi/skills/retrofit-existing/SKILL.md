@@ -49,7 +49,7 @@ spec
 ## Project Context
 {vision_content if exists else "No VISION.md found"}
 
-Infer requirements and create a draft spec document.
+Infer requirements and create a draft feature spec document.
 """
 )
 ```
@@ -69,48 +69,69 @@ User provides corrections:
 - Add missing scenarios
 - Correct misunderstandings
 
-### 5. Assign Feature ID
+### 5. Determine Feature Organization
 
-Once spec is approved:
-- Determine appropriate category
-- Assign next available ID
-- Ask user to confirm
+Once spec is approved, analyze existing feature structure:
+- Read `docs/feature-specs/README.md` to understand domains
+- Identify which domain this capability belongs to
+- Or determine if it's a new domain
 
-### 6. Integrate into Framework
+Ask user:
+```
+"This capability appears to be [domain-related].
 
-Add feature to FEATURES.md:
-
-```bash
-python scripts/features.py deps add-feature RETRO-001
+Should it be:
+A) New sub-capability in existing domain (e.g., auth/new-feature.md)
+B) New capability domain (create new folder with README.md)
+C) Standalone feature (top-level .md file)
 ```
 
-Mark as already implemented:
+### 6. Save Feature Spec
 
-```bash
-python scripts/features.py status set RETRO-001 "✓ Implementation"
-```
+Write spec to appropriate location in `docs/feature-specs/`:
+- If domain/sub-capability: `docs/feature-specs/[domain]/[feature].md`
+- If new domain: Create folder with README.md + feature.md
+- If standalone: `docs/feature-specs/[feature].md`
 
-### 7. Update Dependencies
-
-Ask about dependencies:
-- "Does this feature depend on others?"
-- "Do other features depend on this?"
-
-Update matrix accordingly:
-
-```bash
-python scripts/features.py deps add-dep RETRO-001 CORE-001
-```
-
-### 8. Save Spec
-
-Write spec to `docs/feature-specs/RETRO-001.md`
-
-Note the retrofit source:
+Include retrofit note:
 
 ```markdown
-## Status
-Retrofit from existing code: `/path/to/original/code`
+## Retrofit Note
+
+This spec was created from existing code at `[path]`.
+Original implementation date: [Unknown / from git history if available]
+
+---
+
+[Rest of spec content]
+
+## Related Deltas
+(To be added when deltas implement changes to this feature)
+```
+
+### 7. Update Domain READMEs
+
+If adding to existing domain:
+- Update `docs/feature-specs/[domain]/README.md`
+- Add entry to sub-capabilities table
+
+If creating new domain:
+- Create `docs/feature-specs/[domain]/README.md`
+- Add domain to top-level `docs/feature-specs/README.md`
+
+### 8. Summary
+
+Present summary:
+```
+"Feature spec created for existing code:
+
+File: docs/feature-specs/[path]
+Domain: [domain name]
+
+The feature documentation has been created. You can now:
+- Retrofit design rationale: /katachi:retrofit-design [path]
+- Retrofit another module: /katachi:retrofit-spec <path>
+- Document a specific decision: /katachi:retrofit-decision <topic>
 ```
 
 ## Retrofit Decision Workflow
@@ -193,8 +214,8 @@ Create design documentation from existing code with integrated decision discover
 
 ### 1. Verify Prerequisites
 
-- Feature must have a retrofitted spec (`docs/feature-specs/FEATURE-ID.md`)
-- Status should be "✓ Implementation" (code exists)
+- Feature must have a retrofitted spec (e.g., `docs/feature-specs/auth/login.md`)
+- Implementation code must exist for this feature
 
 ### 2. Dispatch Codebase Analyzer
 
@@ -268,11 +289,17 @@ Dispatch `katachi:design-reviewer`:
 
 ### 7. Save Design
 
-Write to `docs/feature-designs/FEATURE-ID.md`
+Write to appropriate location mirroring spec structure:
+- If spec is at `feature-specs/auth/login.md`
+- Design goes to `feature-designs/auth/login.md`
+
 Include retrofit note with:
 - Source code path (from spec)
 - Decisions created during retrofit
 - Assumptions made
+
+Update domain README if needed:
+- `docs/feature-designs/[domain]/README.md`
 
 ---
 
@@ -285,25 +312,26 @@ Detailed patterns for adopting the framework in existing projects.
 For projects with clear direction but undocumented:
 
 1. Create VISION.md from existing understanding
-2. Extract FEATURES.md from vision
-3. Map existing code to features
-4. Retrofit specs for implemented features
-5. Mark implemented features as complete
+2. Extract DELTAS.md from vision
+3. Map existing code to deltas
+4. Retrofit specs for implemented deltas
+5. Mark implemented deltas as complete
 
 ### Strategy 2: Code-First (Bottom-Up)
 
 For projects with existing code but unclear direction:
 
 1. Retrofit specs for key modules (`/katachi:retrofit-spec`)
+   - Creates feature documentation organized by capability domain
 2. Retrofit designs with integrated decision discovery (`/katachi:retrofit-design`)
    - ADR/DES patterns are discovered and documented automatically during this step
-3. Identify feature groupings
-4. Create FEATURES.md from retrofitted specs
-5. Synthesize VISION.md from features
+3. Group features into capability domains
+4. Synthesize VISION.md from documented features
 
-**Note:** Steps 1 and 2 are done per-module. The retrofit-design command
-chains naturally after retrofit-spec and handles decision discovery inline,
-eliminating the need for a separate retrofit-decision pass for most decisions.
+**Note:** Steps 1 and 2 create long-lived feature documentation, not work items.
+The retrofit-design command chains naturally after retrofit-spec and handles
+decision discovery inline, eliminating the need for a separate retrofit-decision
+pass for most decisions.
 
 ### Strategy 3: Hybrid
 
@@ -346,7 +374,7 @@ For projects with < 20 modules:
 
 ### Week 1: Foundation
 1. Create minimal VISION.md
-2. Create FEATURES.md with top-level modules as features
+2. Create DELTAS.md with top-level modules as deltas
 3. Mark all as "✓ Implementation" (already built)
 
 ### Week 2: Critical Decisions
@@ -372,7 +400,7 @@ For projects with 20+ modules:
 
 ### Phase 1: Skeleton (1-2 days)
 1. Create VISION.md with high-level scope
-2. Create FEATURES.md with module categories only
+2. Create DELTAS.md with module categories only
 3. Create empty DEPENDENCIES.md structure
 4. Create index files for docs/
 
@@ -383,7 +411,7 @@ For projects with 20+ modules:
 4. Map dependencies for critical path
 
 ### Phase 3: Expand (ongoing)
-1. Add features as modules are touched
+1. Add deltas as modules are touched
 2. Retrofit specs before making changes
 3. Document decisions when discovered
 4. Build dependency matrix incrementally
@@ -418,7 +446,7 @@ If project has decision records:
 
 Keep separate - different purpose:
 - OpenAPI/Swagger → API reference
-- Feature specs → Behavior requirements
+- Delta specs → Behavior requirements
 
 Cross-reference:
 ```markdown
@@ -433,7 +461,7 @@ Cross-reference:
 ### Spec Retrofit Header
 
 ```markdown
-# [Feature Name]
+# [Delta Name]
 
 ## Status
 Retrofit from existing code: `path/to/module`
@@ -460,10 +488,10 @@ Date: YYYY-MM-DD
 
 ## Common Challenges
 
-### Challenge: No Clear Feature Boundaries
+### Challenge: No Clear Delta Boundaries
 
 **Solution:**
-- Start with directory structure as features
+- Start with directory structure as deltas
 - Refine as understanding grows
 - Don't try to be perfect initially
 

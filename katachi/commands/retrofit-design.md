@@ -1,5 +1,5 @@
 ---
-argument-hint: <FEATURE-ID>
+argument-hint: <topic or ID>
 description: Create design documentation from existing implementation
 ---
 
@@ -9,7 +9,7 @@ Create design documentation from existing implementation code.
 
 ## Input
 
-Feature ID: $ARGUMENTS (e.g., "CORE-001")
+Feature path: $ARGUMENTS (e.g., "auth/login" for docs/feature-specs/auth/login.md)
 
 ## Context
 
@@ -18,12 +18,12 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 ### Skills
 - `katachi:retrofit-existing` - Retrofit workflow
 
-### Feature inventory
-- `docs/planning/FEATURES.md` - Feature definitions
-- `docs/planning/DEPENDENCIES.md` - Feature dependencies
+### Feature documentation
+- `docs/feature-designs/README.md` - Feature design index
+- Read feature-specs/$ARGUMENTS.md (feature path) for spec context
 
 ### Retrofitted spec
-- `docs/feature-specs/$ARGUMENTS.md` - The specification (created by retrofit-spec)
+- `docs/feature-specs/$ARGUMENTS.md` - The feature specification (created by retrofit-spec, e.g., auth/login.md)
 
 ### Project decisions
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
@@ -38,9 +38,8 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 ## Pre-Check
 
 Verify prerequisites:
-- Feature ID exists in FEATURES.md
-- Spec exists at `docs/feature-specs/$ARGUMENTS.md`
-- Status shows "✓ Implementation" (code exists)
+- Feature spec exists at `docs/feature-specs/$ARGUMENTS.md`
+- Implementation code exists for this feature
 - If spec doesn't exist, suggest running `/katachi:retrofit-spec` first
 
 ## Process
@@ -57,7 +56,7 @@ If no design exists: proceed with creation
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Design"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design"
 ```
 
 ### 1. Research Phase (Silent)
@@ -262,7 +261,7 @@ This document captures the design rationale inferred from the existing implement
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "✓ Design"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Design"
 ```
 
 ### 8. Summary and Next Steps

@@ -1,5 +1,5 @@
 ---
-description: Build the dependency matrix for features
+description: Build the dependency matrix for deltas
 ---
 
 # Dependency Matrix Workflow
@@ -14,7 +14,7 @@ Build the dependency matrix in docs/planning/DEPENDENCIES.md.
 - `katachi:framework-core` - Workflow principles
 
 ### Required files
-- `docs/planning/FEATURES.md` - Feature inventory to analyze
+- `docs/planning/DELTAS.md` - Delta inventory to analyze
 - `docs/planning/DEPENDENCIES.md` - Current matrix (if exists)
 
 ## General Guidance
@@ -29,9 +29,7 @@ Follow the collaborative workflow principles from the framework-core skill.
 - Validation findings
 - Phase derivation state
 
-**Propose complete matrix first** - Analyze all features and propose complete matrix in one pass. Do NOT ask about each pair individually.
-
-**Think in categories** - Present dependencies organized by category for manageable review.
+**Propose complete matrix first** - Analyze all deltas and propose complete matrix in one pass. Do NOT ask about each pair individually.
 
 ## Process
 
@@ -39,40 +37,37 @@ Follow the collaborative workflow principles from the framework-core skill.
 
 If `docs/planning/DEPENDENCIES.md` exists:
 - Read current dependency matrix
-- Read current features (check for new features)
-- Ask: "Should we update for new features, refine existing, or rebuild?"
+- Read current deltas (check for new deltas)
+- Ask: "Should we update for new deltas, refine existing, or rebuild?"
 - Enter iteration mode as appropriate
 
 If no dependencies exist: proceed with initial analysis
 
-### 1. Analyze Features and Propose Complete Matrix
+### 1. Analyze Deltas and Propose Complete Matrix
 
-For each feature, analyze:
+For each delta, analyze:
 - What data/capabilities does it consume?
-- What other features must exist for this to work?
-- What does it share with other features?
+- What other deltas must exist for this to work?
+- What does it share with other deltas?
 - What must be initialized before this can start?
 - What must work for this to be testable?
 
 **Apply dependency priority principles:**
 - Core capabilities before workflows
 - Core workflows before enhancements
-- Features before configuration
+- Foundation before configuration
 - Functionality before polish
-- Configuration features are enhancements, not prerequisites
+- Configuration deltas are enhancements, not prerequisites
 
 Build complete proposed dependency matrix with reasoning.
 
-### 2. Present Dependencies by Category
+### 2. Present Dependencies
 
-For each category:
-- Show **intra-category dependencies** first
-- Then show **cross-category dependencies**
-- Explain reasoning for each dependency
+Present all proposed dependencies with reasoning for each.
 
 ### 3. User Iteration on Dependencies
 
-User reviews proposed dependencies category by category.
+User reviews proposed dependencies.
 Discuss and adjust based on user knowledge.
 
 Surface hidden dependencies with gap detection questions:
@@ -107,9 +102,9 @@ Review findings with user. Iterate if needed.
 ### 6. Derive Implementation Phases
 
 Use topological sort:
-- Phase 1: Features with no dependencies
-- Phase 2: Features depending only on Phase 1
-- Continue until all features are phased
+- Phase 1: Deltas with no dependencies
+- Phase 2: Deltas depending only on Phase 1
+- Continue until all deltas are phased
 
 Present proposed phases to user.
 
@@ -148,7 +143,6 @@ Use during user iteration:
 
 **This is a collaborative process:**
 - Propose complete matrix first, then iterate
-- Present by category for manageable review
 - Challenge gaps and hidden coupling
 - Work together to resolve cycles
 - User confirms phases before finalizing

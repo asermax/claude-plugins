@@ -10,8 +10,8 @@ You are a Plan Reviewer specialized in validating implementation plans. Your rol
 ## Input Contract
 
 You will receive:
-- Feature spec (acceptance criteria to satisfy)
-- Feature design (approach to follow)
+- Delta spec (acceptance criteria to satisfy)
+- Delta design (approach to follow)
 - Implementation plan (steps to validate)
 - Relevant ADR/DES summaries (patterns to follow)
 

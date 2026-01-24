@@ -1,45 +1,45 @@
 ---
-name: working-on-feature
+name: working-on-delta
 description: |
-  Load when executing spec/design/plan/implement commands for a specific feature. Provides templates, agent dispatch patterns, and workflow orchestration for per-feature work.
+  Load when executing spec/design/plan/implement commands for a specific delta. Provides templates, agent dispatch patterns, and workflow orchestration for per-delta work.
 ---
 
-# Working on Feature Skill
+# Working on Delta Skill
 
-Orchestrates the per-feature workflow from spec through implementation.
+Orchestrates the per-delta workflow from spec through implementation.
 
 ## When to Load
 
 Load this skill when executing:
-- `/katachi:spec-feature <ID>`
-- `/katachi:design-feature <ID>`
-- `/katachi:plan-feature <ID>`
-- `/katachi:implement-feature <ID>`
+- `/katachi:spec-delta <ID>`
+- `/katachi:design-delta <ID>`
+- `/katachi:plan-delta <ID>`
+- `/katachi:implement-delta <ID>`
 - `/katachi:retrofit-design <ID>` (retrofit mode)
 
 ## Key References
 
 **Guidance documents** (how to write each document type):
-- `references/spec-template.md` - How to write feature specifications
+- `references/spec-template.md` - How to write delta specifications
 - `references/design-template.md` - How to write design rationale
 - `references/plan-template.md` - How to write implementation plans
 
 **Document templates** (actual templates to follow):
-- `references/feature-spec.md` - Feature specification template
-- `references/feature-design.md` - Design document template
+- `references/delta-spec.md` - Delta specification template
+- `references/delta-design.md` - Design document template
 - `references/implementation-plan.md` - Implementation plan template
 
 ## Workflow
 
 ### 1. Pre-Check
 
-Before starting any per-feature command:
+Before starting any per-delta command:
 
 ```python
-# Check feature exists in FEATURES.md
-feature = get_feature(FEATURE_ID)
-if not feature:
-    error("Feature not found in FEATURES.md")
+# Check delta exists in DELTAS.md
+delta = get_delta(FEATURE_ID)
+if not delta:
+    error("Delta not found in DELTAS.md")
 
 # Check dependencies are complete (for design/plan/implement)
 if command in ["design", "plan", "implement"]:
@@ -54,17 +54,17 @@ if command in ["design", "plan", "implement"]:
 Update status when starting:
 
 ```bash
-# spec-feature
-python scripts/features.py status set FEATURE-ID "⧗ Spec"
+# spec-delta
+python scripts/deltas.py status set FEATURE-ID "⧗ Spec"
 
-# design-feature
-python scripts/features.py status set FEATURE-ID "⧗ Design"
+# design-delta
+python scripts/deltas.py status set FEATURE-ID "⧗ Design"
 
-# plan-feature
-python scripts/features.py status set FEATURE-ID "⧗ Plan"
+# plan-delta
+python scripts/deltas.py status set FEATURE-ID "⧗ Plan"
 
-# implement-feature
-python scripts/features.py status set FEATURE-ID "⧗ Implementation"
+# implement-delta
+python scripts/deltas.py status set FEATURE-ID "⧗ Implementation"
 ```
 
 ### 3. Document Creation Workflow
@@ -72,7 +72,7 @@ python scripts/features.py status set FEATURE-ID "⧗ Implementation"
 For spec/design/plan commands:
 
 1. **Research Phase (Silent)**
-   - Read relevant context (FEATURES.md, DEPENDENCIES.md)
+   - Read relevant context (DELTAS.md, DEPENDENCIES.md)
    - Read previous documents (spec before design, design before plan)
    - Read relevant ADRs and DES patterns
    - Research any libraries/APIs involved
@@ -106,10 +106,10 @@ Each command dispatches its reviewer agent:
 
 | Command | Agent | Input |
 |---------|-------|-------|
-| spec-feature | `katachi:spec-reviewer` | Feature description, completed spec |
-| design-feature | `katachi:design-reviewer` | Spec, design, ADR/DES summaries |
-| plan-feature | `katachi:plan-reviewer` | Spec, design, plan, ADR/DES summaries |
-| implement-feature | `katachi:code-reviewer` | Spec, design, plan, code, ADR/DES |
+| spec-delta | `katachi:spec-reviewer` | Delta description, completed spec |
+| design-delta | `katachi:design-reviewer` | Spec, design, ADR/DES summaries |
+| plan-delta | `katachi:plan-reviewer` | Spec, design, plan, ADR/DES summaries |
+| implement-delta | `katachi:code-reviewer` | Spec, design, plan, code, ADR/DES |
 | retrofit-design | `katachi:codebase-analyzer`, `katachi:design-reviewer` | Spec, implementation code, ADR/DES indexes |
 
 Dispatch pattern:
@@ -118,10 +118,10 @@ Dispatch pattern:
 Task(
     subagent_type="katachi:spec-reviewer",
     prompt=f"""
-Review this feature specification:
+Review this delta specification:
 
-## Feature Description (from FEATURES.md)
-{feature_description}
+## Delta Description (from DELTAS.md)
+{delta_description}
 
 ## Completed Spec
 {spec_content}
@@ -137,15 +137,15 @@ Update status when completing:
 
 ```bash
 # After successful completion
-python scripts/features.py status set FEATURE-ID "✓ Spec"
-python scripts/features.py status set FEATURE-ID "✓ Design"
-python scripts/features.py status set FEATURE-ID "✓ Plan"
-python scripts/features.py status set FEATURE-ID "✓ Implementation"
+python scripts/deltas.py status set FEATURE-ID "✓ Spec"
+python scripts/deltas.py status set FEATURE-ID "✓ Design"
+python scripts/deltas.py status set FEATURE-ID "✓ Plan"
+python scripts/deltas.py status set FEATURE-ID "✓ Implementation"
 ```
 
 ## Implementation Specifics
 
-### For implement-feature
+### For implement-delta
 
 The implementation workflow is more autonomous:
 

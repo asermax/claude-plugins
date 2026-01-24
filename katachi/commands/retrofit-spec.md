@@ -18,9 +18,10 @@ Path to file or module: $ARGUMENTS
 ### Skills
 - `katachi:retrofit-existing` - Retrofit workflow
 
-### Feature inventory
-- `docs/planning/FEATURES.md` - To add new feature entry
-- `docs/planning/DEPENDENCIES.md` - To update dependency matrix
+### Feature documentation structure
+- `docs/feature-specs/` - Existing feature documentation to understand organization
+- `docs/feature-specs/README.md` - Top-level feature index (if exists)
+- Domain README files in feature-specs/ folders
 
 ### Vision (if present)
 - `docs/planning/VISION.md` - Project context for inference
@@ -91,73 +92,36 @@ User provides corrections:
 
 Continue iteration until user approves.
 
-### 5. Determine Category and ID
+### 5. Determine Feature Organization
 
-Present existing categories:
+Analyze existing feature-specs/ structure:
 ```
-"Which category should this feature belong to?
+"Looking at existing feature documentation, where should this belong?
 
-Existing categories:
-- CORE: [description]
-- API: [description]
+Existing capability domains:
+- auth/ - [description]
+- api/ - [description]
 - [etc.]
 
-Or suggest a new category."
+Should this be:
+A) New sub-capability in existing domain (e.g., auth/new-feature.md)
+B) New capability domain (create new folder)
+C) Standalone feature (top-level .md file)
+
+Which organization makes sense?"
 ```
 
-Assign next available ID in the chosen category.
+### 6. Save Feature Spec
 
-### 6. Update FEATURES.md
-
-Add feature entry:
-
-```markdown
-| CATEGORY-NNN | [Description from spec user story] | [Complexity] | ✓ Implementation |
-```
-
-Note: Status is "✓ Implementation" since code already exists.
-
-### 7. Update DEPENDENCIES.md
-
-Add to dependency matrix:
-
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py deps add-feature CATEGORY-NNN
-```
-
-Ask about dependencies:
-```
-"Looking at the code, I noticed it imports/uses:
-- [module X]
-- [module Y]
-
-Do any of these correspond to existing features?
-Or are there other features this depends on?"
-```
-
-Add identified dependencies:
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py deps add-dep CATEGORY-NNN DEP-ID
-```
-
-### 8. Ask About Reverse Dependencies
-
-```
-"Does any existing feature depend on this code?
-
-If so, we should update the dependency matrix to reflect that."
-```
-
-Add reverse dependencies if identified.
-
-### 9. Save Spec
-
-Write spec to `docs/feature-specs/CATEGORY-NNN.md`
+Write spec to appropriate location in `docs/feature-specs/`:
+- If domain/sub-capability: `docs/feature-specs/[domain]/[feature].md`
+- If new domain: Create folder with README.md + feature.md
+- If standalone: `docs/feature-specs/[feature].md`
 
 Include retrofit note:
 
 ```markdown
-# CATEGORY-NNN: [Feature Name]
+# [Feature Name]
 
 ## Retrofit Note
 
@@ -167,28 +131,35 @@ Original implementation date: [Unknown / from git history if available]
 ---
 
 [Rest of spec content]
+
+## Related Deltas
+(To be added when deltas implement changes to this feature)
 ```
 
-### 10. Update Status
+### 7. Update Domain README
 
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set CATEGORY-NNN "✓ Implementation"
+If adding to existing domain:
+- Update `docs/feature-specs/[domain]/README.md`
+- Add entry to sub-capabilities table
+
+If creating new domain:
+- Create `docs/feature-specs/[domain]/README.md`
+- Add domain to top-level `docs/feature-specs/README.md`
+
+### 8. Summary and Next Steps
+
 ```
+"Feature spec created for existing code:
 
-### 11. Summary and Next Steps
+File: docs/feature-specs/[path]
+Type: [Domain/Sub-capability/Standalone]
 
-```
-"Spec created for existing code:
-
-File: docs/feature-specs/CATEGORY-NNN.md
-Status: ✓ Implementation (code exists)
-
-The feature has been added to the framework. You can now:
-- Retrofit design rationale: /katachi:retrofit-design CATEGORY-NNN
+The feature documentation has been created. You can now:
+- Retrofit design rationale: /katachi:retrofit-design [path]
 - Retrofit another module: /katachi:retrofit-spec <path>
 - Document a specific decision: /katachi:retrofit-decision <topic>
 
-**Recommended next step:** Run `/katachi:retrofit-design CATEGORY-NNN` to:
+**Recommended next step:** Run `/katachi:retrofit-design [path]` to:
 - Capture the design rationale behind the implementation
 - Automatically discover and document undocumented ADR/DES patterns
 - Create a complete design document from the existing code"
@@ -200,7 +171,7 @@ This is a collaborative process:
 - Read and analyze code
 - Present draft spec from agent
 - Iterate with user corrections
-- Assign category and ID
-- Update framework files
-- Save spec with retrofit note
+- Determine feature organization (domain/sub-capability)
+- Save spec in appropriate location
+- Update domain READMEs
 - Offer next steps

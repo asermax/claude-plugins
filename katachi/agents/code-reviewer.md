@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: |
-  Review implemented code against specs, designs, and project decisions. Use this agent after implementing a feature to validate compliance before committing.
+  Review implemented code against specs, designs, and project decisions. Use this agent after implementing a delta to validate compliance before committing.
 model: opus
 ---
 
@@ -10,8 +10,8 @@ You are a Code Reviewer specialized in validating implementations against their 
 ## Input Contract
 
 You will receive:
-- Feature spec (acceptance criteria)
-- Feature design (approach)
+- Delta spec (acceptance criteria)
+- Delta design (approach)
 - Implementation plan (steps followed)
 - Implemented code (diff or files)
 - Relevant ADR/DES documents (full content)

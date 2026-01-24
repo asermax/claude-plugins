@@ -1,44 +1,44 @@
 ---
 name: iterative-development
 description: |
-  Load when adding features or analyzing impact on existing framework. Supports progressive development without requiring everything upfront. Used by /add-feature and /analyze-impact commands.
+  Load when adding deltas or analyzing impact on existing framework. Supports progressive development without requiring everything upfront. Used by /add-delta and /analyze-impact commands.
 ---
 
 # Iterative Development Skill
 
-Supports adding features and analyzing impact without full upfront planning.
+Supports adding deltas and analyzing impact without full upfront planning.
 
 ## When to Load
 
 Load this skill for:
-- `/katachi:add-feature` - Add new feature on-the-go
+- `/katachi:add-delta` - Add new delta on-the-go
 - `/katachi:analyze-impact` - Analyze change impact
 
 ## Philosophy
 
 The framework should support "add as you go" not "define everything upfront":
 
-- Features can be added mid-project
+- Deltas can be added mid-project
 - Dependencies are analyzed dynamically
 - Phases recalculate automatically
 - Quick-start mode for MVPs
 
-## Add Feature Workflow
+## Add Delta Workflow
 
-### 1. Capture Feature Description
+### 1. Capture Delta Description
 
-Ask user to describe the feature:
+Ask user to describe the delta:
 - What does it do?
 - Who uses it?
 - Any known dependencies?
 
-### 2. Determine Category
+### 2. Assign ID
 
-Categories follow the pattern: `CATEGORY-NNN`
+Deltas follow the pattern: `DLT-NNN`
 
 **Process:**
-1. Read existing categories from FEATURES.md
-2. Infer category from description
+1. Read existing deltas from DELTAS.md
+2. Assign next available sequential ID
 3. Confirm with user
 
 ```python
@@ -59,7 +59,7 @@ Find next available ID in category:
 
 ```bash
 # Check existing IDs
-python scripts/features.py status list --category CORE
+python scripts/deltas.py status list --category CORE
 
 # Result: CORE-001, CORE-002, CORE-003
 # New ID: CORE-004
@@ -75,20 +75,20 @@ Ask user for complexity estimate:
 ### 5. Analyze Dependencies
 
 **Option A: User knows dependencies**
-- Ask: "Does this depend on any existing features?"
+- Ask: "Does this depend on any existing deltas?"
 - Validate dependencies exist
 
 **Option B: Agent analysis**
-- Dispatch `katachi:impact-analyzer` with feature description
+- Dispatch `katachi:impact-analyzer` with delta description
 - Agent identifies likely dependencies based on description
 - Present to user for confirmation
 
-### 6. Update FEATURES.md
+### 6. Update DELTAS.md
 
-Add new feature entry:
+Add new delta entry:
 
 ```markdown
-| CORE-004 | New feature description | Medium | ✗ Defined |
+| CORE-004 | New delta description | Medium | ✗ Defined |
 ```
 
 ### 7. Update DEPENDENCIES.md
@@ -96,8 +96,8 @@ Add new feature entry:
 Add to dependency matrix:
 
 ```bash
-python scripts/features.py deps add-feature CORE-004
-python scripts/features.py deps add-dep CORE-004 CORE-001  # If depends on CORE-001
+python scripts/deltas.py deps add-delta CORE-004
+python scripts/deltas.py deps add-dep CORE-004 CORE-001  # If depends on CORE-001
 ```
 
 ### 8. Recalculate Phases
@@ -105,7 +105,7 @@ python scripts/features.py deps add-dep CORE-004 CORE-001  # If depends on CORE-
 Phases recalculate based on dependencies:
 
 ```bash
-python scripts/features.py deps recalculate-phases
+python scripts/deltas.py deps recalculate-phases
 ```
 
 Show user the new phase assignment:
@@ -115,7 +115,7 @@ Show user the new phase assignment:
 
 After adding:
 - "CORE-004 added. Create spec now? [Y/N]"
-- If yes, transition to `/katachi:spec-feature CORE-004`
+- If yes, transition to `/katachi:spec-delta CORE-004`
 
 ## Impact Analysis Workflow
 
@@ -137,8 +137,8 @@ Analyze the impact of this proposed change:
 ## Change Description
 {change_description}
 
-## FEATURES.md
-{features_content}
+## DELTAS.md
+{deltas_content}
 
 ## DEPENDENCIES.md
 {dependencies_content}
@@ -146,7 +146,7 @@ Analyze the impact of this proposed change:
 ## Existing Specs
 {list_of_spec_paths}
 
-Trace dependencies and report affected features.
+Trace dependencies and report affected deltas.
 """
 )
 ```
@@ -154,8 +154,8 @@ Trace dependencies and report affected features.
 ### 3. Present Findings
 
 Show user:
-- Directly affected features
-- Transitively affected features (dependency chain)
+- Directly affected deltas
+- Transitively affected deltas (dependency chain)
 - Documents needing updates
 - Risk assessment
 
@@ -167,7 +167,7 @@ Based on impact level:
 - "This change is isolated to X. Proceed with implementation?"
 
 **Moderate:**
-- "This affects N features. Review affected specs before proceeding?"
+- "This affects N deltas. Review affected specs before proceeding?"
 
 **Significant:**
 - "This is a significant change. Create an ADR to document this decision?"
@@ -184,17 +184,17 @@ For new projects, offer quick-start:
    - MVP scope (not full scope)
    - Key workflows (top 3)
 
-2. **MVP Features Only**
-   - Extract only features needed for MVP
+2. **MVP Deltas Only**
+   - Extract only deltas needed for MVP
    - Skip nice-to-haves
-   - Aim for 5-10 features max
+   - Aim for 5-10 deltas max
 
 3. **Simple Dependencies**
    - Phase 1 = MVP
    - Linear dependencies where possible
    - Skip complex dependency analysis
 
-4. **First Feature Guidance**
+4. **First Delta Guidance**
    - Guide through first spec
    - Establish patterns early
    - User learns workflow on real work

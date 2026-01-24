@@ -1,6 +1,6 @@
 ---
 description: Document an architecture or design decision
-argument-hint: [topic, existing ID, or backlog ID]
+argument-hint: [topic or existing ID]
 ---
 
 # Decision Documentation Workflow
@@ -9,20 +9,7 @@ Document an architecture decision (ADR) or design pattern (DES).
 
 ## Input
 
-$ARGUMENTS - Optional: topic to document, existing decision ID to update, or **backlog item ID** (Q-XXX)
-
-## Backlog Integration
-
-If a backlog item ID is provided (e.g., `/decision Q-001`):
-
-1. **Load item context**
-   - Run `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py show <ID>` to get item details
-   - Use title and notes as initial context for the decision
-   - If item has related features, consider how they're affected
-
-2. **After decision documented**
-   - Prompt: "Mark <ID> as resolved?"
-   - If yes: Run `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID>` (questions are resolved by documenting a decision)
+$ARGUMENTS - Optional: topic to document or existing decision ID to update
 
 ## Context
 
@@ -31,11 +18,10 @@ If a backlog item ID is provided (e.g., `/decision Q-001`):
 ### Skills
 - `katachi:framework-core` - Workflow principles and decision type guidance
 
-### Feature inventory
-- `docs/planning/FEATURES.md` - Feature definitions (to check for affected features)
-
-### Backlog
-- `docs/planning/BACKLOG.md` - Questions and related items
+### Feature documentation
+- `docs/feature-specs/README.md` - Feature capability index
+- `docs/feature-designs/README.md` - Feature design index
+- Read specific feature-specs/ and feature-designs/ docs to understand affected features
 
 ### Decision indexes
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
@@ -63,25 +49,7 @@ B) Design Pattern (DES)
 Which type fits your decision?"
 ```
 
-### 2. Identify Related Backlog Items
-
-1. Search BACKLOG.md for related items:
-   - Q- items that might be answered by this decision
-   - Other items whose resolution depends on this decision
-
-2. If related items found (beyond the Q-XXX being documented if any), present them:
-   ```
-   "Found N backlog items that might be resolved by this decision:
-
-   [ ] Q-003: Should we use library X or Y?
-   [ ] Q-007: What's our caching strategy?
-
-   Which items will this decision resolve? (select numbers, 'all', or 'none')"
-   ```
-
-3. Track selected items for automatic resolution at the end
-
-### 3. Understand the Decision
+### 2. Understand the Decision
 
 Ask about the decision:
 - What problem led to this decision?
@@ -148,29 +116,25 @@ For DES in `docs/design/README.md`:
 - Update quick reference if applicable
 - Note when to use
 
-### 9. Save Document and Resolve Backlog
+### 9. Save Document
 
 Write to appropriate location:
 - ADR: `docs/architecture/ADR-NNN-title.md`
 - DES: `docs/design/DES-NNN-pattern-name.md`
 
-**Automatically resolve selected backlog items:**
-
-For each Q- item the user selected to include (from step 2):
-- `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID>` (answered by decision)
-
-Report: "Resolved N backlog items: Q-003, Q-007"
-
 ### 10. Identify Affected Features
 
 Ask:
 ```
-"Which features should reference this decision?
+"Which features are affected by this decision?
 
-I'll update their designs to reference this [ADR/DES]."
+I'll update their design documents to reference this [ADR/DES]."
 ```
 
-Note features to update.
+List affected features and update their designs to include decision references:
+- Add reference in "Key Decisions" section
+- Update "Related Decisions" if present
+- Ensure design rationale reflects the decision
 
 ## Workflow
 

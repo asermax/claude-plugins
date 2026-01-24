@@ -18,15 +18,14 @@ Change description: $ARGUMENTS (optional - will prompt if not provided)
 ### Skills
 - `katachi:iterative-development` - Impact analysis workflow
 
-### Feature inventory
-- `docs/planning/FEATURES.md` - Feature definitions and status
-- `docs/planning/DEPENDENCIES.md` - Feature dependencies and phases
+### Feature documentation
+- `docs/feature-specs/README.md` - Feature capability index
+- `docs/feature-designs/README.md` - Feature design index
+- Read specific feature-specs/ and feature-designs/ docs as needed
 
 ### Decision indexes
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
 - `docs/design/README.md` - Design patterns (DES)
-
-Read docs/feature-specs/ and docs/feature-designs/ as needed during analysis.
 
 ## Pre-Check
 
@@ -57,17 +56,23 @@ Analyze the impact of this proposed change.
 ## Change Description
 {change_description}
 
-## FEATURES.md
-{features_content}
+## Feature Specs Index
+{feature_specs_readme}
 
-## DEPENDENCIES.md
-{dependencies_content}
+## Feature Designs Index
+{feature_designs_readme}
 
-## Existing Specs
-{list_of_spec_paths}
+## Feature Spec Paths
+{list_of_feature_spec_paths}
 
-## Existing Designs
-{list_of_design_paths}
+## Feature Design Paths
+{list_of_feature_design_paths}
+
+## ADR Index
+{adr_readme}
+
+## DES Index
+{des_readme}
 """
 )
 ```
@@ -181,9 +186,9 @@ D) Cancel and reconsider"
 ## Integration with Other Commands
 
 This command integrates with:
-- `/katachi:decision` - For documenting significant changes
-- `/katachi:spec-feature` - For updating affected specs
-- `/katachi:add-feature` - When change requires new features
+- `/katachi:decision` - For documenting significant changes as ADR or DES
+- `/katachi:add-delta` - When change requires new work (delta) to implement
+- Direct feature spec/design updates - When updating existing feature documentation
 
 ## Workflow
 

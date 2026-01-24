@@ -1,15 +1,15 @@
 ---
-argument-hint: [FEATURE-ID]
-description: Write design rationale for a feature
+argument-hint: [DELTA-ID]
+description: Write design rationale for a delta
 ---
 
-# Feature Design Workflow
+# Delta Design Workflow
 
-Write design rationale for a specific feature.
+Write design rationale for a specific delta.
 
 ## Input
 
-Feature ID: $ARGUMENTS (e.g., "CORE-001")
+Delta ID: $ARGUMENTS (e.g., "DLT-001")
 
 ## Context
 
@@ -17,39 +17,43 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 
 ### Skills
 - `katachi:framework-core` - Workflow principles
-- `katachi:working-on-feature` - Per-feature workflow
+- `katachi:working-on-delta` - Per-feature workflow
 
-### Feature inventory
-- `docs/planning/FEATURES.md` - Feature definitions
-- `docs/planning/DEPENDENCIES.md` - Feature dependencies
+### Delta inventory
+- `docs/planning/DELTAS.md` - Delta definitions
+- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
-### Feature spec
-- `docs/feature-specs/$ARGUMENTS.md` - The specification we're designing for
-
-### Backlog
-- `docs/planning/BACKLOG.md` - Related bugs, ideas, improvements, questions
+### Delta spec
+- `docs/delta-specs/$ARGUMENTS.md` - The specification we're designing for
 
 ### Project decisions
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
 - `docs/design/README.md` - Design patterns (DES)
 
 ### Existing design (if present)
-- `docs/feature-designs/$ARGUMENTS.md` - Current design to update or create
+- `docs/delta-designs/$ARGUMENTS.md` - Current design to update or create
+
+### Feature documentation (for context and impact discovery)
+- `docs/feature-designs/README.md` - Feature design index
+- `docs/feature-designs/` - Existing feature designs (read specific docs as needed)
+- `docs/feature-specs/README.md` - Feature capability index (for understanding features)
+- Reference existing feature designs to understand current architecture
+- Use existing design patterns and decisions from feature docs
 
 ### Template
-- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/feature-design.md` - Structure to follow
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-design.md` - Structure to follow
 
 ## Pre-Check
 
 Verify spec exists:
-- If `docs/feature-specs/$ARGUMENTS.md` doesn't exist, suggest running `/katachi:spec-feature $ARGUMENTS` first
+- If `docs/delta-specs/$ARGUMENTS.md` doesn't exist, suggest running `/katachi:spec-delta $ARGUMENTS` first
 - Design requires a spec to design against
 
 ## Process
 
 ### 1. Check Existing State
 
-If `docs/feature-designs/$ARGUMENTS.md` exists:
+If `docs/delta-designs/$ARGUMENTS.md` exists:
 - Read current design
 - Check for drift: Has spec changed?
 - Summarize: design approach, key decisions, modeling choices
@@ -60,33 +64,12 @@ If no design exists: proceed with initial creation
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Design"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design"
 ```
 
-### 2. Identify Related Backlog Items
+### 2. Research Phase (Silent)
 
-1. Read BACKLOG.md and identify items related to this feature:
-   - Items with `--related $ARGUMENTS`
-   - Q- items that might be answered by design decisions
-   - DEBT- items that might be addressed by the design approach
-   - IMP- items that could be incorporated
-
-2. If related items found, present them:
-   ```
-   "Found N backlog items related to this feature's design:
-
-   [ ] Q-002: What caching strategy should we use?
-   [ ] DEBT-001: Refactor data access layer
-   [ ] IMP-004: Support batch operations
-
-   Which items should be addressed in this design? (select numbers, 'all', or 'none')"
-   ```
-
-3. Track selected items for automatic resolution at the end
-
-### 3. Research Phase (Silent)
-
-- Read feature spec (`docs/feature-specs/$ARGUMENTS.md`)
+- Read delta spec (`docs/delta-specs/$ARGUMENTS.md`)
 - Read dependencies from `docs/planning/DEPENDENCIES.md`
 - Read dependency specs if they exist
 - Read relevant ADRs from index
@@ -94,6 +77,22 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Desi
 - Explore related codebase areas if needed
 - Research libraries/frameworks/APIs involved
 - Build complete understanding without asking questions
+
+### 3. Impact Discovery (Silent)
+
+**Auto-discover affected feature designs by:**
+
+1. **Read delta spec** - identify affected features from "Detected Impacts" section
+2. **Search feature-designs/** - find related design documentation:
+   - For each feature path identified in spec
+   - Grep for overlapping design concepts or components
+
+3. **Determine design impact type**:
+   - **Adds**: Creates new components or patterns within domain
+   - **Modifies**: Changes existing design approach documented in feature
+   - **Removes**: Deprecates or removes documented patterns
+
+4. **Note impacts** for later inclusion in "Detected Impacts" section
 
 ### 4. Draft Complete Design Proposal
 
@@ -105,11 +104,24 @@ Create full design document following template:
 - Key decisions (choice, why, alternatives, consequences)
 - System behavior (scenarios, edge cases)
 
+**Add Detected Impacts section:**
+```markdown
+## Detected Impacts
+
+### Affected Feature Designs
+- **[path/to/feature-design.md]** - [Adds/Modifies/Removes]: [description]
+
+### Notes for Reconciliation
+- [What needs to change in feature design docs]
+- [New design sections that need to be created]
+- [Design decisions that need to be documented]
+```
+
 Note any uncertainties or assumptions.
 
 ### 5. Present Proposal for Review
 
-Show complete design document to user.
+Show complete design document to user, including detected impacts.
 Highlight uncertainties and ask about them.
 Invite feedback: "What needs adjustment in this design?"
 
@@ -127,9 +139,9 @@ Dispatch the design-reviewer agent:
 Task(
     subagent_type="katachi:design-reviewer",
     prompt=f"""
-Review this feature design.
+Review this delta design.
 
-## Feature Spec
+## Delta Spec
 {spec_content}
 
 ## Completed Design
@@ -161,23 +173,24 @@ Ask: "Should we iterate based on validation feedback, or is the design complete?
 If gaps to address → refine relevant sections (go back to step 6)
 If complete → proceed to finalization (step 10)
 
-### 10. Finalize and Resolve Backlog
+### 10. Finalize
 
-Finalize document to `docs/feature-designs/$ARGUMENTS.md`
+Finalize document to `docs/delta-designs/$ARGUMENTS.md`
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "✓ Design"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Design"
 ```
 
-**Automatically resolve selected backlog items:**
+Present summary:
+```
+"Delta design complete:
 
-For each item the user selected to include (from step 2):
-- Q- items: `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID>` (answered by design)
-- DEBT- items: `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID>` (addressed in design)
-- IMP- items: Note in item that it's incorporated in feature design
+ID: $ARGUMENTS
+Detected impacts: [list of affected feature design docs]
 
-Report: "Resolved N backlog items: Q-002, DEBT-001"
+Next step: /katachi:plan-delta $ARGUMENTS
+```
 
 ## Decision Detection
 
@@ -190,7 +203,8 @@ When design reveals hard-to-change choices:
 
 **This is a collaborative process:**
 - Research silently, then draft
-- Present complete proposal
+- Auto-discover affected feature designs
+- Present complete proposal with detected impacts
 - User provides feedback
 - Iterate until approved
 - Validate with design-reviewer agent

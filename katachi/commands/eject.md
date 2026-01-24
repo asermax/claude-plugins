@@ -10,7 +10,7 @@ Copy all katachi plugin components (commands, agents, scripts, docs) into the cu
 
 - **Commands** → `.claude/commands/`
 - **Agents** → `.claude/agents/`
-- **Scripts** → `scripts/` (features.py, backlog.py)
+- **Scripts** → `scripts/` (deltas.py)
 - **Framework docs** → `docs/` (framework.md, command-guidance.md)
 - **Templates** → `docs/templates/`
 - **Index files** → `docs/architecture/README.md`, `docs/design/README.md`
@@ -52,7 +52,7 @@ If it exists, note that framework docs structure already exists (no action neede
 Create all necessary directories:
 
 ```bash
-mkdir -p .claude/commands .claude/agents scripts docs/templates docs/planning docs/feature-specs docs/feature-designs docs/feature-plans docs/architecture docs/design
+mkdir -p .claude/commands .claude/agents scripts docs/templates docs/planning docs/delta-specs docs/delta-designs docs/delta-plans docs/feature-specs docs/feature-designs docs/architecture docs/design
 ```
 
 ### 3. Copy and Transform Commands
@@ -74,10 +74,10 @@ For each command in `${CLAUDE_PLUGIN_ROOT}/commands/*.md` (except eject.md itsel
 Script paths:
 ```markdown
 # Before:
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py deps tree
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps tree
 
 # After:
-python scripts/features.py deps tree
+python scripts/deltas.py deps tree
 ```
 
 Skill loading sections (REMOVE):
@@ -108,23 +108,23 @@ Task(subagent_type="spec-reviewer", ...)
 ```
 
 Commands to copy:
-- add-feature.md
+- add-delta.md
 - analyze-impact.md
-- backlog.md
 - commit.md
 - decision.md
 - dependencies.md
-- design-feature.md
-- features.md
-- implement-feature.md
+- design-delta.md
+- deltas.md
+- implement-delta.md
 - init-framework.md
-- plan-feature.md
-- record-learnings.md
+- migrate-to-deltas.md
+- plan-delta.md
+- reconcile-delta.md
 - retrofit-decision.md
 - retrofit-design.md
 - retrofit-spec.md
 - review-code.md
-- spec-feature.md
+- spec-delta.md
 - vision.md
 
 ### 4. Copy and Transform Agents
@@ -150,9 +150,9 @@ Agents to copy:
 Copy scripts directly without transformations:
 
 ```bash
-cp ${CLAUDE_PLUGIN_ROOT}/scripts/features.py scripts/features.py
-cp ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py scripts/backlog.py
-chmod +x scripts/features.py scripts/backlog.py
+cp ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py scripts/deltas.py
+cp ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py scripts/deltas.py
+chmod +x scripts/deltas.py scripts/deltas.py
 ```
 
 ### 6. Generate Framework Documentation
@@ -163,7 +163,7 @@ Combine content from skill files to create comprehensive framework documentation
 
 1. Read `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/SKILL.md`
 2. Read `${CLAUDE_PLUGIN_ROOT}/skills/iterative-development/SKILL.md`
-3. Read `${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/SKILL.md`
+3. Read `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/SKILL.md`
 4. Read `${CLAUDE_PLUGIN_ROOT}/skills/retrofit-existing/SKILL.md`
 5. Synthesize into a single framework document covering:
    - Overview of the katachi framework
@@ -197,12 +197,12 @@ From `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/`:
 - VISION-template.md
 - FEATURES-template.md
 - DEPENDENCIES-template.md
-- BACKLOG-template.md
+- 
 - ADR-template.md
 - DES-template.md
 - decision-types.md
 
-From `${CLAUDE_PLUGIN_ROOT}/skills/working-on-feature/references/`:
+From `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/`:
 - spec-template.md
 - feature-spec.md
 - design-template.md
@@ -300,8 +300,8 @@ The katachi plugin has been ejected into your project. Here's what was created:
 - code-reviewer, impact-analyzer, codebase-analyzer
 
 ### Scripts (scripts/)
-- features.py - Feature dependency and status management
-- backlog.py - Backlog tracking
+- deltas.py - Feature dependency and status management
+- deltas.py - Delta tracking
 
 ### Framework Docs (docs/)
 - framework.md - Core workflow principles
@@ -328,7 +328,7 @@ The katachi plugin has been ejected into your project. Here's what was created:
 
 3. **Verify scripts work**:
    ```
-   python scripts/features.py --help
+   python scripts/deltas.py --help
    ```
 
 Your project is now self-contained and doesn't need the katachi plugin!
@@ -351,13 +351,13 @@ After ejection, verify:
 
 1. `.claude/commands/` has all command files
 2. `.claude/agents/` has all agent files
-3. `scripts/` has features.py and backlog.py
+3. `scripts/` has deltas.py and deltas.py
 4. `docs/` has framework.md and command-guidance.md
 5. `docs/templates/` has all template files
 6. No `${CLAUDE_PLUGIN_ROOT}` references in copied files
 7. No `katachi:` agent namespace references in commands
 8. Test `/vision` command runs successfully
-9. Test `python scripts/features.py --help` runs successfully
+9. Test `python scripts/deltas.py --help` runs successfully
 
 ## Workflow
 

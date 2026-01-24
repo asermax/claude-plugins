@@ -1,15 +1,15 @@
 ---
-argument-hint: [FEATURE-ID]
-description: Implement a feature following its plan
+argument-hint: [DELTA-ID]
+description: Implement a delta following its plan
 ---
 
 # Implementation Workflow
 
-Implement a feature following its plan.
+Implement a delta following its plan.
 
 ## Input
 
-Feature ID: $ARGUMENTS (e.g., "CORE-001")
+Delta ID: $ARGUMENTS (e.g., "DLT-001")
 
 ## Context
 
@@ -17,23 +17,26 @@ Feature ID: $ARGUMENTS (e.g., "CORE-001")
 
 ### Skills
 - `katachi:framework-core` - Workflow principles
-- `katachi:working-on-feature` - Per-feature workflow
+- `katachi:working-on-delta` - Per-feature workflow
 
-### Feature inventory
-- `docs/planning/FEATURES.md` - Feature definitions
-- `docs/planning/DEPENDENCIES.md` - Feature dependencies
+### Delta inventory
+- `docs/planning/DELTAS.md` - Delta definitions
+- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
-### Feature documents
-- `docs/feature-specs/$ARGUMENTS.md` - What to build (requirements)
-- `docs/feature-designs/$ARGUMENTS.md` - Why/how (design rationale)
-- `docs/feature-plans/$ARGUMENTS.md` - Implementation steps to follow
-
-### Backlog
-- `docs/planning/BACKLOG.md` - Items to address during implementation
+### Delta documents
+- `docs/delta-specs/$ARGUMENTS.md` - What to build (requirements)
+- `docs/delta-designs/$ARGUMENTS.md` - Why/how (design rationale)
+- `docs/delta-plans/$ARGUMENTS.md` - Implementation steps to follow
 
 ### Project decisions
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
 - `docs/design/README.md` - Design patterns (DES)
+
+### Feature documentation (for acceptance criteria and architecture)
+- Read affected feature specs from delta-spec (use as acceptance criteria source)
+- Read affected feature designs from delta-design (use as architecture guidance)
+- Feature specs define what behavior to implement
+- Feature designs define architectural patterns to follow
 
 Read dependency code as specified in plan's pre-implementation checklist.
 
@@ -45,17 +48,14 @@ Verify all documentation exists:
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "⧗ Implementation"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Implementation"
 ```
 
 ## Process
 
 ### 1. Review Plan and Decisions (Silent)
 
-- Read implementation plan (`docs/feature-plans/$ARGUMENTS.md`)
-- Check implementation plan for "Related Backlog Items" section
-- These items were already approved during planning - no need to ask again
-- Note which items should be automatically resolved after implementation
+- Read implementation plan (`docs/delta-plans/$ARGUMENTS.md`)
 - Read spec and design
 - **Read full ADR/DES documents:**
   - Identify ADRs/DES listed in pre-implementation checklist
@@ -104,10 +104,10 @@ Task(
     prompt=f"""
 Review this implementation.
 
-## Feature Spec
+## Delta Spec
 {spec_content}
 
-## Feature Design
+## Delta Design
 {design_content}
 
 ## Implementation Plan
@@ -156,7 +156,7 @@ Repeat until user approves.
 Present discovered patterns to user for selection.
 
 **Suggest new DES if:**
-- Same approach used 2+ times in this feature
+- Same approach used 2+ times in this delta
 - Solves common problem that will recur
 - Pattern should be consistent across codebase
 
@@ -167,21 +167,21 @@ Present discovered patterns to user for selection.
 User selects which patterns to document.
 Create/update DES documents as approved.
 
-### 9. Finalize and Resolve Backlog
+### 9. Finalize
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/features.py status set $ARGUMENTS "✓ Implementation"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Implementation"
 ```
 
-**Automatically resolve backlog items from plan:**
+Present summary:
+```
+"Delta implementation complete:
 
-For each item listed in the plan's "Related Backlog Items" section:
-- `python ${CLAUDE_PLUGIN_ROOT}/scripts/backlog.py fix <ID> --commit <HASH>`
+ID: $ARGUMENTS
 
-Report: "Implementation complete. Resolved N backlog items: BUG-002, DEBT-003, IMP-001"
-
-**Note:** No user confirmation needed - items were already approved during `/plan-feature`.
+Next step: /katachi:reconcile-delta $ARGUMENTS (to update feature documentation)
+```
 
 Offer to commit: "Ready to commit this implementation?"
 

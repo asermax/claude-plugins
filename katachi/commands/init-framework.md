@@ -45,7 +45,7 @@ If CLAUDE.md doesn't exist, create it with this template:
 ## Key Files
 
 - `docs/planning/VISION.md` - Project vision
-- `docs/planning/FEATURES.md` - Feature inventory
+- `docs/planning/DELTAS.md` - Feature inventory
 - `docs/planning/DEPENDENCIES.md` - Implementation phases
 
 ## Available Commands
@@ -75,6 +75,6 @@ For existing projects:
 3. `/katachi:features` - Organize retrofitted features
 4. `/katachi:vision` - Synthesize vision from features
 
-The features.py script is available at:
-${CLAUDE_PLUGIN_ROOT}/scripts/features.py
+The deltas.py script is available at:
+${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py
 ```

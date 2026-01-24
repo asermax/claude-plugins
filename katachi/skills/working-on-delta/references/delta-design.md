@@ -1,17 +1,23 @@
-# Design: [FEATURE-ID] - [Feature Name]
+# Design: [DLT-ID] - [Title]
 
-<!-- Not all sections are required. Adapt this structure to the feature's complexity. Simple features may skip sections like "Cross-Layer Contracts" or "Shared Logic". -->
+<!--
+NOTE: This is a DELTA design template (working document for implementing changes).
+For FEATURE design templates (long-lived documentation), see feature-design.md.
+For detailed design guidelines, see design-template.md.
+-->
 
-**Feature Spec**: [../feature-specs/FEATURE-ID.md](../feature-specs/FEATURE-ID.md)
+**Delta Spec**: [../delta-specs/DLT-ID.md](../delta-specs/DLT-ID.md)
 **Status**: Draft | Approved | Superseded
 
 ## Purpose
 
-This document explains the design rationale for this feature: the modeling choices, data flow, system behavior, and architectural approach.
+This document explains the design rationale for this delta: the modeling choices, data flow, system behavior, and architectural approach.
+
+After implementation, the "Detected Impacts" section will guide reconciliation into feature design docs.
 
 ## Problem Context
 
-[What specific problem does this feature solve? What constraints exist?]
+[What specific problem does this delta solve? What constraints exist?]
 
 ## Design Overview
 
@@ -54,28 +60,9 @@ What's shared between components and why:
 
 [How is the domain modeled? What are the key entities/concepts? What relationships exist?]
 
-Example:
-```
-User
-├─ has many Sessions
-└─ has many Snippets
-
-Session
-└─ belongs to User
-```
-
 ## Data Flow
 
 [How does data move through the system? What are the key paths?]
-
-Example:
-```
-1. User triggers action
-2. System reads from storage
-3. UI displays result
-4. User makes selection
-5. System updates state
-```
 
 ## Key Decisions
 
@@ -106,17 +93,20 @@ Example:
 
 - [ ] [Question that needs resolution]
 
+---
+
+## Detected Impacts
+
+<!-- This section is populated automatically during design phase -->
+
+### Affected Feature Designs
+- **[path/to/feature-design.md]** - [Modifies/Adds/Removes]: [description]
+
+### Notes for Reconciliation
+- [What needs to change in feature design docs]
+- [New design sections that need to be created]
+- [Design decisions that need to be documented]
+
 ## Notes
 
 [Any additional context, links to research, related decisions]
-
----
-
-## When This Design Should Be Promoted
-
-If the approach proves reusable across multiple features, extract the pattern into a DES document.
-
-Signs to promote:
-- Similar modeling needed in 2+ features
-- Data flow pattern could apply broadly
-- Decision establishes convention worth following

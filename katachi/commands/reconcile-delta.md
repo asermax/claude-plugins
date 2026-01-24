@@ -47,6 +47,11 @@ Read all delta working documents:
 Extract **Detected Impacts** sections from spec and design.
 Build complete picture of what was implemented and what features are affected.
 
+**Extract UI documentation (if present):**
+- User Flow section from delta spec (breadboards and flow descriptions)
+- UI Layout section from delta design (wireframes and layout explanations)
+- Note: These may not be present for technical/non-UI deltas
+
 ### 2. Analyze Implementation (Silent)
 
 Review actual implementation:
@@ -96,10 +101,29 @@ For domain READMEs:
 - Add new capabilities to index
 - Update status indicators
 
+**Handle UI documentation (if present in delta):**
+
+For feature specs with breadboards:
+- Merge new flows into existing User Flows section (or create section if missing)
+- Update existing flows if modified
+- Preserve flow descriptions (entry points, decision points, exit points)
+- If feature spec doesn't have User Flows section and delta has breadboard, ADD the section
+
+For feature designs with wireframes:
+- Merge new wireframes into existing UI Structure section (or create section if missing)
+- Update existing wireframes if layouts changed
+- Preserve layout explanations and state variations
+- If feature design doesn't have UI Structure section and delta has wireframes, ADD the section
+
+If delta has NO UI documentation (technical delta):
+- Do NOT add empty UI Flow or UI Structure sections to feature docs
+- Leave existing UI sections in feature docs unchanged
+
 **Create new feature docs if needed:**
 - When delta creates an entirely new capability domain
 - Follow nested structure: feature-specs/[domain]/README.md + sub-capability docs
 - Mirror structure in feature-designs/
+- Include UI Flow/Structure sections if delta has them
 
 ### 5. Analyze Decisions (Silent)
 

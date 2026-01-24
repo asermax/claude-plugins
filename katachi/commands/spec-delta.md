@@ -32,8 +32,9 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 - `docs/feature-designs/README.md` - Feature design index (optional, for design context)
 - Use existing feature specs to understand current behavior that delta extends/modifies
 
-### Template
+### Templates and Guides
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-spec.md` - Structure to follow
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/breadboarding.md` - UI flow guide (if needed)
 
 ## Process
 
@@ -61,6 +62,12 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Spec"
 - For deltas involving libraries/frameworks/APIs:
   - Research typical usage patterns
   - Understand standard behaviors and edge cases
+- **Identify if this is a UI delta:**
+  - Does it introduce new screens or views?
+  - Does it modify user navigation or workflow?
+  - Does it add interactive components (forms, dialogs, buttons)?
+  - If YES to any: note key interaction flows that will need breadboarding
+  - If NO to all (technical delta, bug fix, API-only): will skip UI Flow section
 - Build complete understanding without asking questions
 
 ### 3. Impact Discovery (Silent)
@@ -87,6 +94,18 @@ Create full spec document following template:
 - Behavior description (inputs, outputs, what can go wrong)
 - Acceptance criteria (Given/When/Then format, include error cases)
 - Dependencies (deltas that must exist first)
+
+**Add User Flow section (conditionally):**
+
+If this is a UI delta (identified in research phase):
+1. **Read breadboarding guide**: `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/breadboarding.md`
+2. **Create breadboard diagram(s)** showing places, affordances, and navigation connections
+3. **Write flow description** with entry point, happy path, decision points, exit points
+4. **Ensure alignment with acceptance criteria** - each flow path should match criteria
+
+If NOT a UI delta (technical, bug fix, API-only):
+- **Delete the entire User Flow section from the template**
+- Do not include empty breadboards
 
 **Decision Points:** If you encounter choices requiring user input, use AskUserQuestion:
 - Ambiguous requirements with multiple interpretations
@@ -123,6 +142,13 @@ Review this delta specification.
 
 ## Completed Spec
 {spec_content}
+
+## Additional Review Criteria (if spec includes User Flow section)
+- Does breadboard accurately represent the described flows?
+- Do affordances match acceptance criteria?
+- Are all paths from breadboard covered by acceptance criteria?
+- Are decision points in the flow documented?
+- Is the flow description complete (entry, happy path, decisions, exit)?
 """
 )
 ```

@@ -56,6 +56,44 @@ What's shared between components and why:
 - [e.g., Error codes]: [How consistency is maintained]
 - [e.g., Types/interfaces]: [Sharing mechanism - codegen, manual sync, etc.]
 
+## UI Layout
+
+<!--
+CONDITIONAL SECTION - Include ONLY if this delta involves visual interface changes.
+DELETE this entire section for: technical deltas, backend-only changes, non-UI features.
+
+For complete wireframing guide, see:
+${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md
+-->
+
+### [Screen/Component Name]
+
+```
+[ASCII wireframe using box drawing characters]
+```
+
+### Layout Explanation
+
+<!-- REQUIRED: The wireframe alone is not enough - explain the layout decisions -->
+
+**Purpose**: [What is this screen/component for? Which breadboard place does it represent?]
+
+**Key elements**: [Explain the main UI elements shown and their purpose]
+
+**Layout rationale**: [Why are elements positioned this way? What hierarchy is being communicated?]
+
+**Interactions**: [What happens when user interacts with key elements?]
+
+### State Variations (if applicable)
+
+<!-- Include ONLY if this screen has meaningful state changes -->
+
+**[State name]** (e.g., Loading, Empty, Error):
+```
+[Wireframe for this state]
+```
+[Brief explanation of when this state occurs and how it differs]
+
 ## Modeling
 
 [How is the domain modeled? What are the key entities/concepts? What relationships exist?]

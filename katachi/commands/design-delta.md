@@ -41,8 +41,9 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 - Reference existing feature designs to understand current architecture
 - Use existing design patterns and decisions from feature docs
 
-### Template
+### Templates and Guides
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-design.md` - Structure to follow
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md` - UI layout guide (if needed)
 
 ## Pre-Check
 
@@ -77,6 +78,10 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design
 - Read relevant ADRs from index
 - Read relevant DES patterns from index
 - Explore related codebase areas if needed
+- **Check if spec has User Flow section:**
+  - If YES: Identify which places (screens) need wireframes
+  - If NO: Check if UI component layer exists in design
+  - Note which UI elements need wireframe documentation
 
 **External Research (Mandatory):**
 
@@ -134,6 +139,20 @@ Create full design document following template:
 - Data flow (inputs → processing → outputs)
 - Key decisions (choice, why, alternatives, consequences) - see research requirements below
 - System behavior (scenarios, edge cases)
+
+**Add UI Layout section (conditionally):**
+
+If spec has User Flow section OR design involves UI components:
+1. **Read wireframing guide**: `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md`
+2. **Create ASCII wireframe(s)** for each place/screen, showing only delta-relevant UI
+3. **Write layout explanation (REQUIRED)** with purpose, key elements, rationale, interactions
+4. **Add state variations** if relevant to design decisions (loading, error, empty)
+
+**Scope**: Show only delta-relevant portions (modal = just modal, form = just form section)
+
+If NOT a UI delta (no User Flow section, no UI components):
+- **Delete the entire UI Layout section from the template**
+- Do not include empty wireframes
 
 **Key decisions research requirements:**
 - **Must include research sources**: Cite documentation version, search results, or official recommendations
@@ -198,6 +217,14 @@ Review this delta design.
 - Check that options were researched broadly (not just validating a pre-assumed choice)
 - Confirm research discovered current solutions, not just validated known libraries
 - Validate design decisions are supported by up-to-date research, not training data
+
+## UI Layout Review (if design includes UI Layout section)
+- Do wireframes correspond to places in the spec's breadboard?
+- Are wireframes at appropriate detail level (not too detailed, not too sparse)?
+- Are state variations covered where relevant to design decisions?
+- Do layout decisions align with documented design rationale?
+- Is wireframe scope appropriate (showing only delta-relevant UI)?
+- Are layout explanations complete (purpose, key elements, rationale, interactions)?
 """
 )
 ```

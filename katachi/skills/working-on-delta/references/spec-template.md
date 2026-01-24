@@ -164,3 +164,28 @@ Examples:
 - Infrastructure: "CI pipeline completes in under 10 minutes"
 
 Layer-specific terms ARE appropriate for technical deltas (since the delta is about technical concerns).
+
+---
+
+## User Flow Documentation (Breadboarding)
+
+For deltas and features with user-facing interfaces, document interaction flows using ASCII breadboarding.
+
+**See full guide**: `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/breadboarding.md`
+
+### Quick Reference
+
+**When to include:**
+- New screens/views, dialogs/modals, navigation changes
+- New user workflows, multi-step processes
+
+**When to skip:**
+- Technical deltas, backend-only changes, bug fixes with no flow changes
+
+**Elements:**
+- **Places** (underlined): Screens, dialogs, menus
+- **Affordances** (listed below): Buttons, fields, links
+- **Connections** (arrows): Navigation paths
+
+**Always include Flow Description** with:
+- Entry point, happy path, decision points, exit points

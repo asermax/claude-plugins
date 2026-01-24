@@ -68,6 +68,42 @@ Evaluate the design against these criteria:
 - Are error scenarios from spec designed?
 - Are there implementation details missing?
 
+### 9. UI Layout (ONLY if UI Layout section is present)
+
+<!-- Skip this entire review section if design has no UI Layout section -->
+
+#### Wireframe Quality
+- Are wireframes at appropriate resolution (structure/hierarchy, not pixel-perfect)?
+- Do they use consistent box drawing conventions (┌─┐ or ╔═╗ or ╭─╮)?
+- Do they use standard element notation ([___] fields, [ Button ], etc.)?
+- Are state variations shown where relevant to design decisions?
+- Is the ASCII art readable and well-formatted?
+
+#### Layout Explanation Quality
+- **Purpose**: Is it clear what this screen is for? Is breadboard place referenced?
+- **Key elements**: Are main UI elements explained with their purpose?
+- **Layout rationale**: Is it explained WHY elements are positioned this way?
+- **Interactions**: Are key user interactions explained?
+- Is the explanation sufficient to understand the wireframe?
+
+#### Spec Alignment
+- Do wireframes correspond to places in the spec's breadboard?
+- Are affordances from the breadboard represented in the wireframes?
+- Do layout decisions support the user flows described in spec?
+- Are acceptance criteria reflected in the UI design?
+
+#### Scope Appropriateness
+- Do wireframes show only delta-relevant UI portions?
+- Is context provided without recreating entire layouts?
+- Are new vs modified elements clear?
+- Should this design even have a UI Layout section?
+- Is this a technical delta where UI Layout should be deleted?
+
+#### State Variations (if present)
+- Are state variations necessary for this design?
+- Are they documented with wireframes AND explanations?
+- Do they represent meaningful design decisions (not just exhaustive enumeration)?
+
 ## Output Format
 
 Provide a structured review:
@@ -99,6 +135,15 @@ Provide a structured review:
 - ADR violations: [List or "None"]
 - DES violations: [List or "None"]
 - Missing patterns: [Patterns that should be referenced/created]
+
+## UI Layout Compliance (if UI Layout section present)
+<!-- Omit this section entirely if design has no UI Layout section -->
+- Wireframe quality issues: [List or "None"]
+- Layout explanation issues: [Missing purpose/elements/rationale/interactions or "None"]
+- Spec alignment issues: [Mismatches between breadboard and wireframes or "None"]
+- Scope issues: [Showing too much/too little, not focused on delta or "None"]
+- State variation issues: [Unnecessary states, missing explanations or "None" or "N/A"]
+- Inappropriateness: [Should UI Layout section be deleted? Explain why/why not]
 
 ## Strengths
 - [What's done well]

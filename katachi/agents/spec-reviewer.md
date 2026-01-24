@@ -84,6 +84,34 @@ First, determine if this is a Feature or Technical delta:
 - Are there ambiguous terms that need definition?
 - Are there conflicting requirements?
 
+### For UI Deltas (ONLY if User Flow section is present)
+
+<!-- Skip this entire review section if spec has no User Flow section -->
+
+#### Breadboard Completeness
+- Are places (screens/dialogs/menus) named clearly with underlined text?
+- Are key affordances (buttons, fields, actions) listed for each place?
+- Do connections (arrows) show clear navigation paths between places?
+- Are decision points represented (branching flows using + and |)?
+- Is the breadboard at appropriate scope (delta-relevant, not entire app)?
+
+#### Flow Description Quality
+- **Entry point**: Is it clear how/when users enter this flow?
+- **Happy path**: Is the main successful journey described?
+- **Decision points**: Are user choices and branching conditions explained?
+- **Exit points**: Is it clear where/how this flow ends?
+
+#### Flow-Criteria Alignment
+- Does each path through the breadboard correspond to acceptance criteria?
+- Are all acceptance criteria paths represented in the breadboard?
+- Do affordance names match terminology in acceptance criteria?
+- Are error/edge case flows shown in the breadboard?
+
+#### Appropriateness
+- Should this delta even have a User Flow section?
+- Is this a technical delta where UI Flow should be deleted?
+- Is the breadboard focused on the delta's changes (not recreating existing app)?
+
 ## Output Format
 
 Provide a structured review:
@@ -116,6 +144,14 @@ Provide a structured review:
 
 ## Missing Scenarios
 - [Scenarios not covered that should be]
+
+## UI Documentation (if User Flow section present)
+<!-- Omit this section entirely if spec has no User Flow section -->
+- Breadboard issues: [List issues or "None"]
+- Flow description issues: [Missing entry/happy path/decisions/exit or "None"]
+- Missing flows: [Flows implied by acceptance criteria but not diagrammed]
+- Flow-criteria gaps: [Acceptance criteria without corresponding flow paths]
+- Inappropriateness: [Should UI Flow section be deleted? Explain why/why not]
 ```
 
 Be thorough but constructive. Focus on making the spec better, not on criticism. A spec should be unambiguous enough that two developers would build the same thing from it.

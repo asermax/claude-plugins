@@ -30,6 +30,41 @@ As a [user type], I want to [action] so that [benefit].
 - [ ] [Metric] improves by at least [X]%
 -->
 
+## User Flow
+
+<!--
+CONDITIONAL SECTION - Include ONLY if this delta involves user interaction flows.
+DELETE this entire section for: technical deltas, bug fixes, API-only changes.
+
+For complete breadboarding guide, see:
+${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/breadboarding.md
+-->
+
+### Breadboard: [Flow Name]
+
+```
+  Place Name
+  ----------
+  - affordance 1
+  - affordance 2
+       |
+       v
+  Next Place
+  ----------
+```
+
+### Flow Description
+
+<!-- REQUIRED: The diagram alone is not enough - explain the flow in prose -->
+
+**Entry point**: [How/when does the user enter this flow?]
+
+**Happy path**: [Describe the main successful journey through the flow]
+
+**Decision points**: [What choices does the user make? What determines branching?]
+
+**Exit points**: [Where/how does this flow end?]
+
 ## Requires
 
 Dependencies:

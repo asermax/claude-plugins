@@ -157,3 +157,32 @@ If a pattern emerges that could apply to other features:
 - Decision that establishes a convention
 
 Suggest promoting to a DES pattern document.
+
+---
+
+## UI Layout Documentation (ASCII Wireframes)
+
+For deltas and features with visual interfaces, document layout using low-resolution ASCII wireframes.
+
+**See full guide**: `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md`
+
+### Quick Reference
+
+**When to include:**
+- New UI components/screens, significant layout changes
+- Complex form/data layouts, modal additions
+
+**When to skip:**
+- Technical deltas, backend-only, copy/text-only, style-only changes
+
+**Box drawing:**
+- Simple: `┌─┐│└┘` (default)
+- Emphasis: `╔═╗║╚╝` (primary containers)
+- Rounded: `╭─╮│╰╯` (cards, modern UI)
+
+**Elements:**
+- Fields: `[___]`, Buttons: `[ OK ]`, Primary: `[[ OK ]]`
+- Checkboxes: `[x]`, Radio: `(•)`, Dropdown: `[Select ▼]`
+
+**Always include Layout Explanation** with:
+- Purpose, key elements, layout rationale, interactions

@@ -17,6 +17,31 @@ This document explains the design rationale for this capability: the modeling ch
 
 [High-level description of the design approach. What are the main components/concepts?]
 
+## UI Structure
+
+<!--
+CONDITIONAL SECTION - Visual representation of this capability's interface components.
+DELETE this section for features with no UI components.
+Updated through delta reconciliation.
+
+For wireframing guide, see:
+${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md
+-->
+
+### [Screen/View Name]
+
+```
+[ASCII wireframe]
+```
+
+**Purpose**: [What this screen does]
+
+**Key elements**: [Main UI elements and their purpose]
+
+**Key interactions**: [Primary user actions available]
+
+**State variations**: [Loading, empty, error states if relevant]
+
 ## Components
 
 ### Implementation Structure

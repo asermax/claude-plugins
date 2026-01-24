@@ -94,7 +94,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design
 
 4. **Note impacts** for later inclusion in "Detected Impacts" section
 
-### 4. Draft Complete Design Proposal
+### 4. Draft Complete Design (with Decision Points)
 
 Create full design document following template:
 - Problem context (what problem, constraints, interactions)
@@ -103,6 +103,12 @@ Create full design document following template:
 - Data flow (inputs → processing → outputs)
 - Key decisions (choice, why, alternatives, consequences)
 - System behavior (scenarios, edge cases)
+
+**Decision Points:** If you encounter choices requiring user input, use AskUserQuestion:
+- Multiple valid architectural approaches
+- Trade-offs between competing concerns (performance vs simplicity, etc.)
+- Technology or library choices
+- Missing context that affects design choices
 
 **Add Detected Impacts section:**
 ```markdown
@@ -119,19 +125,7 @@ Create full design document following template:
 
 Note any uncertainties or assumptions.
 
-### 5. Present Proposal for Review
-
-Show complete design document to user, including detected impacts.
-Highlight uncertainties and ask about them.
-Invite feedback: "What needs adjustment in this design?"
-
-### 6. Iterate Based on Feedback
-
-Apply user corrections, additions, or changes.
-Re-present updated sections if significant changes.
-Repeat until user approves the design.
-
-### 7. External Validation
+### 5. External Validation (Silent)
 
 Dispatch the design-reviewer agent:
 
@@ -156,22 +150,43 @@ Review this delta design.
 )
 ```
 
-Review agent findings with user.
-Discuss which recommendations to accept.
+### 6. Apply Validation Feedback (Silent)
 
-### 8. Detect Patterns for DES
+Apply ALL recommendations from design-reviewer automatically:
+- Fix coherence issues
+- Address pattern violations
+- Add missing decision documentation
+- Improve component clarity
+
+**Decision Points:** If applying a recommendation requires a choice (multiple valid ways to fix, conflicts with earlier decisions), use AskUserQuestion.
+
+Track changes made for presentation in next step.
+
+**Auto-apply (no user input):**
+- Clear fixes (formatting, missing sections with obvious content)
+- Adding referenced patterns or decisions
+- Clarifying component responsibilities
+- Standard compliance fixes
+
+### 7. Present Validated Design
+
+Show complete validated design to user.
+Include summary of validation findings that were applied.
+Highlight any unresolved issues requiring input.
+Invite feedback: "What needs adjustment in this design?"
+
+### 8. Iterate Based on User Feedback
+
+Apply user corrections, additions, or changes.
+Re-run validation (steps 5-6) if significant changes.
+Repeat until user approves.
+
+### 9. Detect Patterns for DES
 
 If agent or user identifies repeatable patterns:
 - Ask if pattern should become a DES
 - Offer to create DES document
 - Update design to reference new DES
-
-### 9. Finalize with Iteration Check
-
-Ask: "Should we iterate based on validation feedback, or is the design complete?"
-
-If gaps to address → refine relevant sections (go back to step 6)
-If complete → proceed to finalization (step 10)
 
 ### 10. Finalize
 
@@ -201,12 +216,13 @@ When design reveals hard-to-change choices:
 
 ## Workflow
 
-**This is a collaborative process:**
-- Research silently, then draft
+**This is a validate-first process:**
+- Research silently, then draft (ask decisions when needed)
 - Auto-discover affected feature designs
-- Present complete proposal with detected impacts
+- Validate with design-reviewer agent (silent)
+- Apply all validation fixes automatically (ask decisions when needed)
+- Present validated design with applied changes summary
 - User provides feedback
 - Iterate until approved
-- Validate with design-reviewer agent
 - Surface patterns for DES
 - Finalize after user approval

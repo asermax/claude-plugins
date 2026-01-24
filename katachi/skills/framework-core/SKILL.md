@@ -212,26 +212,37 @@ Use Task tool (general-purpose agent) to research, then synthesize findings to i
    - Research official documentation for libraries/frameworks/APIs
    - Build understanding without asking upfront questions
 
-2. **Draft proposal**
+2. **Draft proposal (with decision points)**
    - Create complete document following template
    - Base all choices on research findings
    - Note any uncertainties/assumptions clearly
+   - **If choices require user input:** Use AskUserQuestion (ambiguous requirements, multiple valid approaches, trade-offs)
 
-3. **Present for review**
-   - Show complete proposal to user
-   - Highlight uncertainties and ask about them
+3. **External validation (silent)**
+   - Dispatch appropriate reviewer agent
+   - Agent provides structured feedback
+
+4. **Apply validation feedback (silent, with decision points)**
+   - Apply ALL recommendations automatically
+   - **If applying requires a choice:** Use AskUserQuestion (multiple valid fixes, conflicts with earlier decisions)
+   - Track changes for presentation
+
+5. **Present validated document**
+   - Show complete document to user
+   - Include summary of applied validation fixes
+   - Highlight unresolved issues
    - Invite user feedback: "What needs adjustment?"
 
-4. **Iterate**
+6. **Iterate based on user feedback**
    - Apply user corrections/additions
-   - Re-present updated sections if significant changes
+   - Re-run validation if significant changes
    - Repeat until user approves
 
-5. **Finalize**
-   - Apply any validation step (if command includes it)
+7. **Finalize**
    - Write document to file
+   - Update status
 
-**Key principle:** Always draft first, no upfront questions. Questions happen during review phase.
+**Key principle:** Validate before presenting, auto-apply fixes. Only use AskUserQuestion for genuine decisions (multiple valid options), not for fixes.
 
 ### Validation Best Practices
 

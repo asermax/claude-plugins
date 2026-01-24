@@ -80,13 +80,19 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Spec"
 
 4. **Note impacts** for later inclusion in "Detected Impacts" section
 
-### 4. Draft Complete Spec Proposal
+### 4. Draft Complete Spec (with Decision Points)
 
 Create full spec document following template:
 - User story (who/what/why - specific and clear)
 - Behavior description (inputs, outputs, what can go wrong)
 - Acceptance criteria (Given/When/Then format, include error cases)
 - Dependencies (deltas that must exist first)
+
+**Decision Points:** If you encounter choices requiring user input, use AskUserQuestion:
+- Ambiguous requirements with multiple interpretations
+- Multiple valid technical approaches
+- Missing context that affects design choices
+- Trade-offs between competing concerns
 
 **Add Detected Impacts section:**
 ```markdown
@@ -102,19 +108,7 @@ Create full spec document following template:
 
 Note any uncertainties or assumptions clearly.
 
-### 5. Present Proposal for Review
-
-Show complete spec document to user, including detected impacts.
-Highlight any uncertainties and ask about them.
-Invite feedback: "What needs adjustment in this spec?"
-
-### 6. Iterate Based on Feedback
-
-Apply user corrections, additions, or changes.
-Re-present updated sections if significant changes.
-Repeat until user approves the spec.
-
-### 7. External Validation
+### 5. External Validation (Silent)
 
 Dispatch the spec-reviewer agent:
 
@@ -133,15 +127,36 @@ Review this delta specification.
 )
 ```
 
-Review agent findings with user.
-Discuss which recommendations to accept.
+### 6. Apply Validation Feedback (Silent)
 
-### 8. Finalize with Iteration Check
+Apply ALL recommendations from spec-reviewer automatically:
+- Fix coverage gaps
+- Add missing edge cases
+- Clarify ambiguous criteria
+- Improve testability
 
-Ask: "Should we iterate based on validation feedback, or is the spec complete?"
+**Decision Points:** If applying a recommendation requires a choice (multiple valid ways to fix, conflicts with earlier decisions), use AskUserQuestion.
 
-If gaps to address → refine relevant sections (go back to step 6)
-If complete → proceed to finalization (step 9)
+Track changes made for presentation in next step.
+
+**Auto-apply (no user input):**
+- Clear fixes (typos, formatting, obvious gaps)
+- Adding missing sections with clear content
+- Reordering for clarity
+- Standard compliance fixes
+
+### 7. Present Validated Spec
+
+Show complete validated spec to user.
+Include summary of validation findings that were applied.
+Highlight any unresolved issues requiring input.
+Invite feedback: "What needs adjustment in this spec?"
+
+### 8. Iterate Based on User Feedback
+
+Apply user corrections, additions, or changes.
+Re-run validation (steps 5-6) if significant changes.
+Repeat until user approves.
 
 ### 9. Finalize
 
@@ -164,11 +179,12 @@ Next step: /katachi:design-delta $ARGUMENTS
 
 ## Workflow
 
-**This is a collaborative process:**
-- Research silently, then draft
+**This is a validate-first process:**
+- Research silently, then draft (ask decisions when needed)
 - Auto-discover affected features
-- Present complete proposal with detected impacts
+- Validate with spec-reviewer agent (silent)
+- Apply all validation fixes automatically (ask decisions when needed)
+- Present validated spec with applied changes summary
 - User provides feedback
 - Iterate until approved
-- Validate with spec-reviewer agent
 - Finalize after user approval

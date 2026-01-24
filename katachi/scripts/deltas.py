@@ -65,8 +65,8 @@ class DependencyMatrix:
         if legend_section:
             self.abbrev_map = self._parse_legend(legend_section.group(1))
 
-        # Parse matrix rows
-        matrix_lines = re.findall(r'\| (DLT-\d+) +\|([^\n]+)', content)
+        # Parse matrix rows (anchor to line start to avoid matching header)
+        matrix_lines = re.findall(r'^\| (DLT-\d+) +\|([^\n]+)', content, re.MULTILINE)
         for delta_id, row in matrix_lines:
             self.deltas.append(delta_id)
             deps = set()
@@ -270,12 +270,13 @@ class DependencyMatrix:
         print(f"✓ Added delta: {delta_id}")
         print(f"  Note: Update DELTAS.md manually")
 
-    def delete_delta(self, delta_id: str, allow_completed: bool = False):
+    def delete_delta(self, delta_id: str, allow_completed: bool = False, silent: bool = False):
         """Delete a delta from the matrix
 
         Args:
             delta_id: The delta to delete
             allow_completed: If True, allow deletion of completed deltas even if they have dependents
+            silent: If True, suppress the note about updating DELTAS.md manually
         """
         if delta_id not in self.deltas:
             raise ValueError(f"Delta not found: {delta_id}")
@@ -303,7 +304,9 @@ class DependencyMatrix:
         # Write updated matrix
         self._write_matrix()
         print(f"✓ Deleted delta: {delta_id}")
-        print(f"  Note: Update DELTAS.md manually")
+
+        if not silent:
+            print(f"  Note: Update DELTAS.md manually")
 
     def _write_matrix(self):
         """Write the matrix back to the file"""
@@ -436,10 +439,11 @@ class StatusManager:
         # Auto-remove from both files on reconciliation
         if self._is_reconciled_status(status):
             if dm and delta_id in dm.deltas:
-                dm.delete_delta(delta_id, allow_completed=True)
+                dm.delete_delta(delta_id, allow_completed=True, silent=True)
                 print(f"✓ Removed {delta_id} from dependency matrix")
 
             self.delete_delta(delta_id)
+            self._delete_work_files(delta_id)
 
     def list_deltas(
         self,
@@ -518,6 +522,19 @@ class StatusManager:
         self.filepath.write_text(new_content)
         del self.deltas[delta_id]
         print(f"✓ Removed {delta_id} from deltas inventory")
+
+    def _delete_work_files(self, delta_id: str):
+        """Delete work files for a delta (specs, designs, plans)"""
+        base_dir = self.filepath.parent.parent  # docs/planning -> docs
+
+        work_dirs = ['delta-specs', 'delta-designs', 'delta-plans']
+
+        for dir_name in work_dirs:
+            work_file = base_dir / dir_name / f"{delta_id}.md"
+
+            if work_file.exists():
+                work_file.unlink()
+                print(f"✓ Removed {work_file.relative_to(base_dir.parent)}")
 
     def get_ready_deltas(self, dm: DependencyMatrix) -> List[str]:
         """Get deltas that are ready to implement (all deps complete, not started yet)"""

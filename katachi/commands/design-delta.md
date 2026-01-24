@@ -18,6 +18,7 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 ### Skills
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-delta` - Per-feature workflow
+- `superpowers:using-live-documentation` - Mandatory workflow for fetching current documentation
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta definitions
@@ -69,14 +70,44 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design
 
 ### 2. Research Phase (Silent)
 
+**Internal Research:**
 - Read delta spec (`docs/delta-specs/$ARGUMENTS.md`)
 - Read dependencies from `docs/planning/DEPENDENCIES.md`
 - Read dependency specs if they exist
 - Read relevant ADRs from index
 - Read relevant DES patterns from index
 - Explore related codebase areas if needed
-- Research libraries/frameworks/APIs involved
-- Build complete understanding without asking questions
+
+**External Research (Mandatory):**
+
+Your training data is outdated. Current documentation is always more accurate.
+
+For each library, framework, or technical approach identified in the spec:
+
+1. **Dispatch documentation-searcher agents** for all libraries/frameworks involved:
+   - Provide library name, specific topic/feature, and what patterns you need
+   - Get current API signatures, recommended patterns, version-specific guidance
+   - Check for deprecation notices or migration guides
+
+2. **Research alternative approaches** using WebSearch:
+   - Query: "[problem domain] best practices [current year]"
+   - Query: "[library name] vs alternatives [current year]"
+   - Look for recent blog posts, conference talks, or official recommendations
+
+3. **Research available up-to-date options**:
+   - Search for current solutions to the problem domain (not just the library you know)
+   - Query: "[problem we're solving] modern solution [current year]"
+   - Discover options you might not have considered from training data
+   - Compare approaches: performance, maintenance status, community adoption, compatibility
+
+**Research must answer:**
+- What are the current best solutions for this problem? (not just the ones we already know)
+- Which options are actively maintained and recommended?
+- What are the recommended patterns for our use case per current documentation?
+- What alternatives exist and why should we prefer one over another?
+- Are there newer, better approaches than what training data suggests?
+
+Build complete understanding without asking questions, but do not proceed to design until external research is complete.
 
 ### 3. Impact Discovery (Silent)
 
@@ -101,8 +132,23 @@ Create full design document following template:
 - Design overview (high-level approach, main components)
 - Modeling (entities, relationships, domain model)
 - Data flow (inputs → processing → outputs)
-- Key decisions (choice, why, alternatives, consequences)
+- Key decisions (choice, why, alternatives, consequences) - see research requirements below
 - System behavior (scenarios, edge cases)
+
+**Key decisions research requirements:**
+- **Must include research sources**: Cite documentation version, search results, or official recommendations
+- **Must address alternatives**: Document why alternatives were rejected based on research
+- **Must confirm currency**: Note that proposed libraries/patterns are current per documentation
+
+**For each technology choice, document:**
+| Field | Content |
+|-------|---------|
+| Choice | The selected approach |
+| Why | Reasoning based on research findings |
+| Sources | Documentation version, WebSearch results, official docs |
+| Options Researched | All solutions found for the problem, including ones not previously known |
+| Why This Over Alternatives | Comparison based on current research, not training data assumptions |
+| Consequences | Trade-offs, maintenance implications |
 
 **Decision Points:** If you encounter choices requiring user input, use AskUserQuestion:
 - Multiple valid architectural approaches
@@ -146,6 +192,12 @@ Review this delta design.
 
 ## DES Index Summary
 {des_summary}
+
+## Additional Review Criteria
+- Verify all technology choices cite current documentation sources
+- Check that options were researched broadly (not just validating a pre-assumed choice)
+- Confirm research discovered current solutions, not just validated known libraries
+- Validate design decisions are supported by up-to-date research, not training data
 """
 )
 ```

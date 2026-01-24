@@ -14,42 +14,71 @@ You will receive:
 - Completed spec document
 - Optionally: VISION.md for project context
 
+## Type Detection
+
+First, determine if this is a Feature or Technical delta:
+
+**Technical Delta indicators:**
+- Targets tests, coverage, or quality metrics
+- Describes refactoring, cleanup, or restructuring
+- Focuses on build, CI, or deployment changes
+- Developer/system-focused rather than end-user-focused
+
+**Feature Delta (default):**
+- Describes user action or experience
+- Has observable user outcome
+
 ## Review Criteria
 
-Evaluate the spec against these criteria:
+### For Feature Deltas
 
-### 1. User Story Completeness
+#### 1. User Story Completeness
 - Is the WHO clearly identified (which user or system)?
 - Is the WHAT specific and concrete (not vague)?
 - Is the WHY explained (business value or user benefit)?
 - Are there any assumptions that should be made explicit?
 
-### 2. Acceptance Criteria Quality
+#### 2. Layer-Agnostic Focus
+- Does the spec describe user behavior, not implementation?
+- Is it free of layer-specific terms (API, UI, database, frontend, backend)?
+- Do acceptance criteria focus on observable user outcomes, not technical responses?
+- Could this spec be implemented with different technical approaches?
+
+### For Technical Deltas
+
+#### 1. Purpose Completeness
+- Is the WHO clearly identified (developer, CI system, codebase)?
+- Is the WHAT specific (which module, what change)?
+- Is the WHY explained (quality benefit, maintainability improvement)?
+- Are success metrics defined (coverage target, performance threshold)?
+
+#### 2. Scope and Boundaries
+- Is the scope clearly bounded (which files, which modules)?
+- Are layer-specific details appropriate (since the delta IS about a specific layer)?
+- Is the technical approach justified?
+
+### For All Deltas
+
+#### Acceptance Criteria Quality
 - Is each criterion written in Given/When/Then format?
 - Is each criterion independently testable?
 - Are success conditions clearly defined?
 - Are boundary conditions covered?
-- Do criteria avoid implementation details (focus on behavior)?
+- Do criteria match the delta type (user outcomes for features, technical metrics for technical)?
 
-### 3. Edge Cases and Error Scenarios
+#### Edge Cases and Error Scenarios
 - Are invalid inputs addressed?
 - Are boundary conditions (min/max, empty, null) covered?
 - Are failure modes identified?
 - Is error behavior specified (what happens when things go wrong)?
 - Are concurrent access scenarios considered if relevant?
 
-### 4. Dependencies
+#### Dependencies
 - Are required deltas correctly identified?
 - Are external system dependencies noted?
 - Are there implicit dependencies not listed?
 
-### 5. Layer-Agnostic Focus
-- Does the spec describe user behavior, not implementation?
-- Is it free of layer-specific terms (API, UI, database, frontend, backend)?
-- Do acceptance criteria focus on observable user outcomes, not technical responses?
-- Could this spec be implemented with different technical approaches?
-
-### 6. Gaps and Ambiguities
+#### Gaps and Ambiguities
 - What scenarios aren't addressed?
 - What could go wrong that isn't covered?
 - Are there ambiguous terms that need definition?

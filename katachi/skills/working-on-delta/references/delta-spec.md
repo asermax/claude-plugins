@@ -1,21 +1,34 @@
 # Delta Spec: [DLT-ID] - [Title]
 
 <!-- This spec describes WHAT the delta does, not HOW it's implemented. -->
+<!-- Choose the appropriate story format based on delta type -->
 
-## User Story
+## Story
 
+<!-- For Feature Deltas (user-facing changes): -->
 As a [user type], I want to [action] so that [benefit].
+
+<!-- For Technical Deltas (tests, refactoring, infrastructure): -->
+<!-- As a [developer/system/codebase], I need [technical change] so that [quality benefit]. -->
 
 ## What It Does
 
-[2-3 sentences describing the behavior change]
+[2-3 sentences describing the change]
 
 ## Acceptance Criteria
 
-<!-- Describe end-to-end user flows, not implementation details -->
+<!-- For Feature Deltas: Describe end-to-end user flows -->
+<!-- For Technical Deltas: Describe measurable completion criteria -->
+
 - [ ] Given [context], when [action], then [result]
 - [ ] Given [context], when [action], then [result]
-- [ ] [Error case]: Given [bad input], then [error behavior]
+- [ ] [Error/Edge case]: Given [condition], then [behavior]
+
+<!-- Technical Delta examples:
+- [ ] Test coverage for [module] reaches [X]%
+- [ ] All existing tests continue to pass after refactoring
+- [ ] [Metric] improves by at least [X]%
+-->
 
 ## Requires
 

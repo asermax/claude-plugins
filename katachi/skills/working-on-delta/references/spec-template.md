@@ -1,6 +1,6 @@
-# Feature Specification Template
+# Delta Specification Template
 
-Use this template when creating feature specifications.
+Use this template when creating delta specifications. Choose the appropriate format based on delta type.
 
 ## Template
 
@@ -100,3 +100,67 @@ List features that must be complete before this one:
 - Only list direct dependencies
 - Explain why each is needed
 - Framework will validate these exist
+
+---
+
+## Technical Delta Specifications
+
+For technical deltas (tests, refactoring, infrastructure), use this alternative format:
+
+### Template
+
+```markdown
+# [DELTA-ID]: [Technical Change Name]
+
+## Technical Story
+
+As a [developer/system/codebase], I need [technical change] so that [quality benefit].
+
+## What It Does
+
+[2-3 sentences describing the technical change and its impact]
+
+## Acceptance Criteria
+
+### Completion Criteria
+- [ ] [Measurable outcome - e.g., "Test coverage for auth module reaches 80%"]
+- [ ] [Verification step - e.g., "All existing tests continue to pass"]
+- [ ] [Quality gate - e.g., "No new linting errors introduced"]
+
+### Scope Boundaries
+- [ ] [What IS included]
+- [ ] [What is NOT included]
+
+## Requires
+
+Dependencies:
+- [DELTA-ID]: [Why needed]
+- Or "None" if no dependencies
+```
+
+### Guidelines for Technical Deltas
+
+#### Technical Story
+
+The story should answer:
+- **Who** benefits? (developer, CI system, codebase quality)
+- **What** is the technical change? (specific and bounded)
+- **Why** is it needed? (quality, maintainability, reliability benefit)
+
+Bad: "As a developer, I want better tests"
+Good: "As a developer, I need unit tests for the auth module so that I can confidently refactor authentication logic"
+
+#### Acceptance Criteria
+
+For technical deltas, criteria should be:
+- **Measurable**: Specific numbers or pass/fail conditions
+- **Verifiable**: Can be checked automatically or manually
+- **Scoped**: Clear boundaries on what's affected
+
+Examples:
+- Test coverage: "Coverage for `src/auth/` reaches 80%"
+- Refactoring: "All public APIs remain unchanged" + "All tests pass"
+- Performance: "Response time for /api/users improves by at least 20%"
+- Infrastructure: "CI pipeline completes in under 10 minutes"
+
+Layer-specific terms ARE appropriate for technical deltas (since the delta is about technical concerns).

@@ -6,6 +6,13 @@ description: Initialize the katachi framework directory structure
 
 Initialize the katachi development framework directory structure in a project.
 
+## Context
+
+**You must load the following skills before proceeding.**
+
+### Skills
+- `katachi:framework-core` - Workflow principles and task management
+
 ## Process
 
 ### 1. Check Current State

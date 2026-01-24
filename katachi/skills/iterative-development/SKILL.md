@@ -14,6 +14,13 @@ Load this skill for:
 - `/katachi:add-delta` - Add new delta on-the-go
 - `/katachi:analyze-impact` - Analyze change impact
 
+## Dependencies
+
+This skill requires `katachi:framework-core` to be loaded first for:
+- Workflow principles
+- Task management protocol
+- Status tracking conventions
+
 ## Philosophy
 
 The framework should support "add as you go" not "define everything upfront":

@@ -15,6 +15,13 @@ Load this skill for:
 - `/katachi:retrofit-design <ID>` - Create design from existing code (with integrated decision discovery)
 - `/katachi:retrofit-decision <topic>` - Document existing decisions
 
+## Dependencies
+
+This skill requires `katachi:framework-core` to be loaded first for:
+- Workflow principles
+- Task management protocol
+- Status tracking conventions
+
 ## Philosophy
 
 Most projects don't start with perfect planning. The framework should:

@@ -6,6 +6,13 @@ description: Migrate existing katachi project to delta-based workflow
 
 Migrate an existing katachi project from feature-centric to delta-centric development.
 
+## Context
+
+**You must load the following skills before proceeding.**
+
+### Skills
+- `katachi:framework-core` - Workflow principles and task management
+
 ## What This Does
 
 Transforms your project structure:

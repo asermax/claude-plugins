@@ -39,6 +39,12 @@ These templates are used when creating project structure:
 **Delta working documents:**
 - `../working-on-delta/references/delta-spec.md` - Delta specification (working doc)
 - `../working-on-delta/references/delta-design.md` - Delta design (working doc)
+- `../working-on-delta/references/implementation-plan.md` - Implementation plan (working doc)
+
+**Guidance documents** (how to write each document type):
+- `../working-on-delta/references/spec-template.md` - How to write delta specifications
+- `../working-on-delta/references/design-template.md` - How to write design rationale
+- `../working-on-delta/references/plan-template.md` - How to write implementation plans
 
 ## Decision Types Reference
 
@@ -388,3 +394,56 @@ Use this command to check:
 ```bash
 python scripts/deltas.py ready
 ```
+
+---
+
+## Task Management Protocol
+
+Use Claude Code's task tools to track workflow progress within each command.
+
+### Purpose
+
+Tasks provide:
+- Visibility into what the command will do (upfront planning)
+- Progress tracking via spinner with activeForm text
+- Clear completion state for each phase
+
+### When to Create Tasks
+
+Create tasks at command start, after loading skills and reading initial context. Create all tasks upfront with dependencies before beginning work.
+
+### Task Guidelines
+
+**Identify workflow phases:** Review the command's process steps and identify distinct phases (research, draft, validate, iterate, finalize, etc.)
+
+**Create one task per phase:** Each phase becomes a task with:
+- `subject`: Imperative action (e.g., "Research context for {ID}")
+- `description`: Brief explanation of what happens in this phase
+- `activeForm`: Present participle shown in spinner (e.g., "Researching context")
+
+**Set dependencies:** Use `TaskUpdate` with `addBlockedBy` to create a chain. Phases that must complete before others are blocked.
+
+**Include identifiers:** When working with a delta or using a scratchpad ID, include it in task subjects for clarity.
+
+**Progress through tasks:**
+1. Mark task as `in_progress` when starting the phase
+2. Do the work
+3. Mark task as `completed` when done
+4. Move to next task
+
+### Integration with Status Tracking
+
+Task management complements delta status tracking:
+
+| System | Purpose | Scope |
+|--------|---------|-------|
+| `deltas.py` + DELTAS.md | Delta lifecycle status | Cross-session |
+| Claude Code Tasks | Workflow phase progress | Within command |
+
+Update both at appropriate points:
+- `deltas.py status set` at command start/completion (delta lifecycle)
+- `TaskUpdate` as each workflow phase starts/completes (session visibility)
+
+### Commands Without Tasks
+
+Some simple commands may not need task tracking (single-step operations, simple extractions). Use judgment - if there are distinct phases worth tracking, create tasks.

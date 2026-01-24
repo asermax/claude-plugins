@@ -268,15 +268,13 @@ class DependencyMatrix:
         # Write updated matrix
         self._write_matrix()
         print(f"✓ Added delta: {delta_id}")
-        print(f"  Note: Update DELTAS.md manually")
 
-    def delete_delta(self, delta_id: str, allow_completed: bool = False, silent: bool = False):
+    def delete_delta(self, delta_id: str, allow_completed: bool = False):
         """Delete a delta from the matrix
 
         Args:
             delta_id: The delta to delete
             allow_completed: If True, allow deletion of completed deltas even if they have dependents
-            silent: If True, suppress the note about updating DELTAS.md manually
         """
         if delta_id not in self.deltas:
             raise ValueError(f"Delta not found: {delta_id}")
@@ -304,9 +302,6 @@ class DependencyMatrix:
         # Write updated matrix
         self._write_matrix()
         print(f"✓ Deleted delta: {delta_id}")
-
-        if not silent:
-            print(f"  Note: Update DELTAS.md manually")
 
     def _write_matrix(self):
         """Write the matrix back to the file"""
@@ -439,7 +434,7 @@ class StatusManager:
         # Auto-remove from both files on reconciliation
         if self._is_reconciled_status(status):
             if dm and delta_id in dm.deltas:
-                dm.delete_delta(delta_id, allow_completed=True, silent=True)
+                dm.delete_delta(delta_id, allow_completed=True)
                 print(f"✓ Removed {delta_id} from dependency matrix")
 
             self.delete_delta(delta_id)

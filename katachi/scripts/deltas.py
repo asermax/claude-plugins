@@ -24,14 +24,14 @@ Usage:
     python scripts/deltas.py status list --complexity LEVEL         # Filter by complexity
     python scripts/deltas.py status list --status "STATUS"      # Filter by status text
     python scripts/deltas.py status show DELTA-ID             # Show detailed delta status
-    python scripts/deltas.py status set DELTA-ID STATUS       # Update delta status (auto-removes from matrix when complete)
+    python scripts/deltas.py status set DELTA-ID STATUS       # Update delta status (auto-removes from both files when reconciled)
 
     # Query commands
     python scripts/deltas.py ready                              # List deltas ready to implement
     python scripts/deltas.py next                               # Suggest next delta to implement
 
-Note: When marking a delta as complete (✓ Implementation), it is automatically removed from the
-      dependency matrix since completed deltas no longer block other work.
+Note: When marking a delta as reconciled (✓ Reconciled), it is automatically removed from both
+      DELTAS.md and DEPENDENCIES.md since the delta is fully processed and documented.
 """
 
 import sys
@@ -469,8 +469,8 @@ class StatusManager:
         Args:
             delta_id: The delta to update
             status: The new status value
-            dm: Optional dependency matrix. If provided and status indicates completion,
-                automatically removes the delta from the matrix.
+            dm: Optional dependency matrix. If provided and status indicates reconciliation,
+                automatically removes the delta from both the matrix and DELTAS.md.
         """
         if delta_id not in self.deltas:
             raise ValueError(f"Delta not found: {delta_id}")
@@ -500,11 +500,13 @@ class StatusManager:
         self.deltas[delta_id]['status'] = status
         print(f"✓ Updated {delta_id} status to: {status}")
 
-        # Auto-remove from dependency matrix on completion
-        if dm and self._is_complete_status(status):
-            if delta_id in dm.deltas:
+        # Auto-remove from both files on reconciliation
+        if self._is_reconciled_status(status):
+            if dm and delta_id in dm.deltas:
                 dm.delete_delta(delta_id, allow_completed=True)
                 print(f"✓ Removed {delta_id} from dependency matrix")
+
+            self.delete_delta(delta_id)
 
     def list_deltas(
         self,
@@ -601,10 +603,31 @@ class StatusManager:
         status = delta['status'].lower()
         return '✓ implementation' in status or 'complete' in status
 
-    def _is_complete_status(self, status: str) -> bool:
-        """Check if a status string indicates completion"""
+    def _is_reconciled_status(self, status: str) -> bool:
+        """Check if a status string indicates reconciliation complete"""
         status_lower = status.lower()
-        return '✓ implementation' in status_lower or 'complete' in status_lower
+        return '✓ reconciled' in status_lower
+
+    def delete_delta(self, delta_id: str):
+        """Delete a delta entry from DELTAS.md"""
+        if delta_id not in self.deltas:
+            raise ValueError(f"Delta not found: {delta_id}")
+
+        content = self.filepath.read_text()
+
+        # Remove the delta section (### DLT-XXX through next ### or EOF)
+        pattern = re.compile(
+            rf'^### {re.escape(delta_id)}: .+?(?=^### DLT-|\Z)',
+            re.MULTILINE | re.DOTALL
+        )
+        new_content = pattern.sub('', content)
+
+        # Clean up any resulting double blank lines
+        new_content = re.sub(r'\n{3,}', '\n\n', new_content)
+
+        self.filepath.write_text(new_content)
+        del self.deltas[delta_id]
+        print(f"✓ Removed {delta_id} from deltas inventory")
 
     def get_ready_deltas(self, dm: DependencyMatrix) -> List[str]:
         """Get deltas that are ready to implement (all deps complete, not started yet)"""

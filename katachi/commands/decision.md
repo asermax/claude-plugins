@@ -27,6 +27,10 @@ $ARGUMENTS - Optional: topic to document or existing decision ID to update
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
 - `docs/design/README.md` - Design patterns (DES)
 
+### Reference Guides
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md` - Code snippet guidance (especially for DES)
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - Technical diagram guidance (if diagrams help)
+
 ## Process
 
 ### 1. Determine Decision Type

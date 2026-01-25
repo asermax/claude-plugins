@@ -25,6 +25,10 @@ Topic or pattern: $ARGUMENTS
 ### Vision (if present)
 - `docs/planning/VISION.md` - Project context for inference
 
+### Reference Guides
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md` - Code snippet guidance (especially for DES)
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - Technical diagram guidance
+
 ## Pre-Check
 
 Verify:

@@ -44,6 +44,8 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 ### Templates and Guides
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-design.md` - Structure to follow
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md` - UI layout guide (if needed)
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - Technical diagram guidance
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md` - Code snippet guidance
 
 ## Pre-Check
 

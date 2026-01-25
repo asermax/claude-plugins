@@ -35,6 +35,10 @@ Feature path: $ARGUMENTS (e.g., "auth/login" for docs/feature-specs/auth/login.m
 ### Vision (if present)
 - `docs/planning/VISION.md` - Project context for inference
 
+### Reference Guides
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - Technical diagram guidance
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md` - Code snippet guidance
+
 ## Pre-Check
 
 Verify prerequisites:

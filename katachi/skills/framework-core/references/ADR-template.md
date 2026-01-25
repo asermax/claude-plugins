@@ -42,4 +42,15 @@
 
 ## Notes
 
+<!--
+Visual Documentation (rarely needed for ADRs):
+
+If code examples or technical diagrams would help clarify the decision, embed them inline.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+
+Most ADRs should not need code examples or diagrams - they document technology/architecture choices,
+not implementation patterns.
+-->
+
 [Optional: Links to research, related decisions, future reconsideration conditions]

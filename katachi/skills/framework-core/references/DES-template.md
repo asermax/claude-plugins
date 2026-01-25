@@ -14,6 +14,14 @@
 
 ## Examples
 
+<!--
+DES patterns require do/don't code examples. Keep them minimal, generic, and focused on the pattern essence.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md
+
+For patterns that benefit from visual representation, consider adding inline diagrams.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+-->
+
 ### Do This
 
 ```code
@@ -49,4 +57,4 @@ Initial pattern established.
 ## Related
 
 - See also: [DES-XXX] - [Related pattern]
-- Promoted from: [../feature-designs/FEATURE-ID.md](../feature-designs/FEATURE-ID.md) - [If originated from feature design]
+- Related feature: [../feature-designs/domain/capability.md](../feature-designs/domain/capability.md) - [If this pattern is primarily used in a specific feature]

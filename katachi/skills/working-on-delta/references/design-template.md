@@ -118,10 +118,11 @@ Provide a mental model:
 ### Modeling
 
 Show domain structure:
-- Use ASCII diagrams for clarity
-- Show entities and relationships
-- Include state machines if applicable
+- Use ASCII diagrams for clarity (see: `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md`)
+- Show entities and relationships (ERD diagrams)
+- Include state machines if applicable (state diagrams)
 - Match the spec's domain language
+- Embed diagrams inline where they clarify concepts
 
 ### Data Flow
 
@@ -130,6 +131,7 @@ Trace data through the system:
 - Processing steps
 - Output (UI updates, side effects, storage)
 - Error paths
+- Use sequence diagrams for component interactions, flow diagrams for complex processes (see: `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md`)
 
 ### Key Decisions
 
@@ -148,6 +150,14 @@ Cover scenarios from the spec's acceptance criteria:
 - How does each scenario work?
 - What's the rationale for the behavior?
 - Include edge cases
+- Use state diagrams for lifecycle/state transitions (see: `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md`)
+
+### Code Examples
+
+Rarely needed in feature designs. Only include when genuinely necessary (API contracts, shared validation):
+- Keep minimal and generic
+- Show pattern essence, not implementation details
+- See: `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md`
 
 ### When to Promote to DES
 

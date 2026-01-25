@@ -37,7 +37,16 @@ After implementation, the "Detected Impacts" section will guide reconciliation i
 
 ### Cross-Layer Contracts
 
+<!--
+For integration flows between components, consider using sequence diagrams.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+-->
+
 **API Contract** (if applicable):
+<!--
+Keep API contracts minimal and generic. Show request/response structure, not implementation.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md
+-->
 ```
 [Method] [Endpoint]
 Request: { ... }
@@ -96,9 +105,19 @@ ${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md
 
 ## Modeling
 
+<!--
+Consider using ERD diagrams for entity relationships, state diagrams for lifecycle transitions.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+-->
+
 [How is the domain modeled? What are the key entities/concepts? What relationships exist?]
 
 ## Data Flow
+
+<!--
+Consider using sequence diagrams for component interactions, flow diagrams for complex processes.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+-->
 
 [How does data move through the system? What are the key paths?]
 
@@ -117,6 +136,11 @@ ${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md
 - Con: [tradeoff]
 
 ## System Behavior
+
+<!--
+Consider using state diagrams for lifecycle/state transitions in system behavior.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+-->
 
 [How does the system behave in important scenarios? Edge cases?]
 

@@ -153,8 +153,17 @@ Retrofit from existing code: [file path]
 [Description of the repeatable pattern]
 
 ## Implementation
+
+<!--
+Include minimal, generic code example showing the pattern essence (not codebase-specific implementation).
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md
+
+If diagrams help explain the pattern, embed them inline here.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+-->
+
 ```language
-[Code example from existing implementation]
+[Generic pattern example - show essence, not specific implementation details]
 ```
 
 ## Rationale
@@ -222,6 +231,11 @@ Inferred from existing code at: [file path]
 
 ## Modeling
 
+<!--
+Use technical diagrams (ERD, state diagrams) to clarify entity relationships and lifecycles.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+-->
+
 [Entities and relationships inferred from code structure]
 
 ```
@@ -231,6 +245,11 @@ Entity
 ```
 
 ## Data Flow
+
+<!--
+Use sequence diagrams for component interactions, flow diagrams for complex processes.
+See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+-->
 
 [Traced from code execution]
 

@@ -19,6 +19,10 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-delta` - Per-feature workflow
 
+### Reference Guides
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - ASCII diagram guidance
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md` - Code snippet guidance
+
 ### Delta documents
 - `docs/delta-specs/$ARGUMENTS.md` - Delta specification with detected impacts
 - `docs/delta-designs/$ARGUMENTS.md` - Delta design with detected impacts
@@ -111,12 +115,14 @@ For domain READMEs:
 **Handle UI documentation (if present in delta):**
 
 For feature specs with breadboards:
+- Validate breadboards per `breadboarding.md` reference guide
 - Merge new flows into existing User Flows section (or create section if missing)
 - Update existing flows if modified
 - Preserve flow descriptions (entry points, decision points, exit points)
 - If feature spec doesn't have User Flows section and delta has breadboard, ADD the section
 
 For feature designs with wireframes:
+- Validate wireframes per `wireframing.md` reference guide
 - Merge new wireframes into existing UI Structure section (or create section if missing)
 - Update existing wireframes if layouts changed
 - Preserve layout explanations and state variations
@@ -125,6 +131,25 @@ For feature designs with wireframes:
 If delta has NO UI documentation (technical delta):
 - Do NOT add empty UI Flow or UI Structure sections to feature docs
 - Leave existing UI sections in feature docs unchanged
+
+**Handle technical diagrams (if present in delta):**
+
+For feature designs with technical diagrams (state, flow, sequence, ERD):
+- Validate and adjust diagrams per `technical-diagrams.md` reference guide
+- Extract from delta-design sections: Modeling, Data Flow, System Behavior, Components
+- Merge into feature-designs where they aid understanding
+- Preserve diagram explanations and context
+- Skip for deltas that don't have technical diagrams
+- Do NOT create standalone diagram sections; diagrams should be embedded inline
+
+**Handle code examples (if present in delta):**
+
+For feature designs with code snippets:
+- Validate and adjust per `code-examples.md` reference guide
+- Ensure examples are minimal and generic (not codebase-specific)
+- Extract API contracts and validation examples
+- Merge into feature-designs only where genuinely helpful
+- Skip if prose and diagrams are sufficient
 
 **Create new feature docs if needed:**
 - When delta creates an entirely new capability domain
@@ -320,8 +345,8 @@ For each approved DES candidate:
 - Update affected feature-designs to reference DES-NNN
 
 For each approved update to existing decision:
-- Update the ADR/DES document
-- Add note: "Updated by DLT-XXX: [change description]"
+- Update the ADR/DES document with the new information
+- Do NOT reference the delta ID (deltas are working documents that will be deleted)
 
 ### 11. Mark Delta as Reconciled
 

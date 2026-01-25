@@ -54,10 +54,3 @@ Updated through delta reconciliation as flows evolve.
 **Decision points**: [Key user decisions that affect the flow]
 
 **Exit points**: [How/where this flow ends]
-
----
-
-## Related Deltas
-
-<!-- Deltas that created or modified this capability -->
-- DLT-001: [Initial implementation | Added X | Modified Y]

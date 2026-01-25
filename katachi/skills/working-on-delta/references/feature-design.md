@@ -91,11 +91,18 @@ What's shared between components and why:
 
 ---
 
-## Related Deltas
-
-<!-- Deltas that created or modified this design -->
-- DLT-001: [Initial implementation | Added X | Modified Y]
-
 ## Notes
+
+<!--
+Visual Documentation Guidelines:
+
+Technical Diagrams: Embed ASCII diagrams inline within relevant sections (Modeling, Data Flow, System Behavior)
+where they aid understanding. See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md
+
+Code Examples: Include code snippets inline only when they genuinely clarify the design (API contracts,
+shared validation). Keep minimal and generic. See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md
+
+Do NOT create standalone "Diagrams" or "Code Examples" sections. Embed visual aids where they help.
+-->
 
 [Any additional context, links to research, related decisions]

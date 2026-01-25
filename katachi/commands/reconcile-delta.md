@@ -76,6 +76,15 @@ For each affected feature:
 - **Modifies**: Update existing behavior descriptions, acceptance criteria, design approach
 - **Removes**: Mark capabilities as deprecated or remove sections
 
+**Surgical change principle:**
+- Focus changes on what the delta actually implemented or discovered issues with
+- For Adds: Insert new content without touching existing sections
+- For Modifies: Update the specific sub-sections that changed; reorganize if relevant to the changes
+- For Removes: Remove the deprecated items
+- AVOID rewording or adjusting content "just because" - only change what's necessary
+- Preserve existing narrative voice and structure for unchanged areas
+- DO update any outdated information discovered during reconciliation (even if not explicitly part of the delta)
+
 **Handle missing feature documentation:**
 - If detected impacts reference a feature that doesn't exist, CREATE it
 - If feature domain doesn't exist, create domain folder with README.md
@@ -88,13 +97,11 @@ For feature specs:
 - Update user stories if needed
 - Add/modify behaviors and acceptance criteria
 - Update overview sections
-- Add delta reference in "Related Deltas" section
 
 For feature designs:
 - Update design overview, components, data flow as needed
 - Add/modify key decisions
 - Update system behavior scenarios
-- Add delta reference in related changes
 
 For domain READMEs:
 - Update sub-capability tables

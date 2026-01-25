@@ -35,6 +35,17 @@ Example:
 python scripts/display.py README.md
 ```
 
+### Display Markdown with Custom Title
+
+```bash
+python scripts/display.py <path-to-markdown-file> --title "My Title"
+```
+
+Example:
+```bash
+python scripts/display.py README.md --title "Project Documentation"
+```
+
 ### Display Markdown Content Directly
 
 ```bash
@@ -55,9 +66,14 @@ python ${CLAUDE_PLUGIN_ROOT}/skills/show-markdown/scripts/display.py /path/to/fi
 
 1. Identify the markdown source (file path or content)
 2. Run the display script with appropriate arguments
-3. Script generates HTML with embedded markdown
-4. HTML opens in default browser via `xdg-open`
-5. Temp file is created in system temp directory
+3. Script determines the page title:
+   - Explicit `--title` argument (highest priority)
+   - First `# heading` from markdown content
+   - Filename (without extension)
+   - "Markdown Preview" (default)
+4. Script generates HTML with embedded markdown
+5. HTML opens in default browser via `xdg-open`
+6. Temp file is created in system temp directory
 
 ## Features
 
@@ -67,6 +83,7 @@ python ${CLAUDE_PLUGIN_ROOT}/skills/show-markdown/scripts/display.py /path/to/fi
 - Code syntax highlighting
 - Dark mode support (system preference)
 - Temporary file generation (no cleanup needed)
+- Smart title detection (explicit → heading → filename → default)
 
 ## Technical Details
 
@@ -83,6 +100,12 @@ python ${CLAUDE_PLUGIN_ROOT}/skills/show-markdown/scripts/display.py /path/to/fi
 python scripts/display.py README.md
 ```
 
+### Show a README file with custom title
+
+```bash
+python scripts/display.py README.md --title "My Project Documentation"
+```
+
 ### Show documentation
 
 ```bash
@@ -93,6 +116,12 @@ python scripts/display.py docs/api.md
 
 ```bash
 python scripts/display.py --content "# Title\\n\\n- Item 1\\n- Item 2\\n\\nCode: `example`"
+```
+
+### Render inline markdown with custom title
+
+```bash
+python scripts/display.py --content "# Title\\n\\nContent" --title "My Custom Title"
 ```
 
 ## Notes

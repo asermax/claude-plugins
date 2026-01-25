@@ -8,6 +8,7 @@ Usage:
 """
 
 import argparse
+import html
 import json
 import os
 import subprocess
@@ -45,24 +46,49 @@ def read_markdown_file(file_path: str) -> str:
 
 def escape_for_js(markdown: str) -> str:
     """Escape markdown content for safe embedding in JavaScript."""
-    # First, escape backslashes
-    escaped = markdown.replace("\\", "\\\\")
+    # First, escape </script> tags to prevent premature script tag closure
+    # This must be done BEFORE JSON escaping because we're modifying the content
+    escaped = markdown.replace("</script>", "<\\/script>")
 
-    # Then escape newlines for JavaScript strings
-    escaped = escaped.replace("\n", "\\n")
-
-    # Escape quotes
-    escaped = escaped.replace('"', '\\"')
-
-    # Return as a JSON string for even safer escaping
-    return json.dumps(markdown, ensure_ascii=False)
+    # Return as a JSON string for proper escaping (quotes, newlines, etc.)
+    return json.dumps(escaped, ensure_ascii=False)
 
 
-def generate_html(markdown: str) -> str:
+def extract_title_from_markdown(markdown: str) -> str | None:
+    """Extract the first heading from markdown content."""
+    for line in markdown.split('\n'):
+        line = line.strip()
+        if line.startswith('# '):
+            return line[2:].strip()
+        elif line.startswith('## ') or line.startswith('### '):
+            return line.split(' ', 1)[1].strip()
+    return None
+
+
+def get_title(markdown: str, file_path: str | None, explicit_title: str | None) -> str:
+    """Get title with fallback chain: explicit > heading > filename > default."""
+    if explicit_title:
+        return explicit_title
+
+    # Try to extract from markdown content
+    extracted = extract_title_from_markdown(markdown)
+    if extracted:
+        return extracted
+
+    # Fall back to filename (without extension)
+    if file_path:
+        return Path(file_path).stem
+
+    return "Markdown Preview"
+
+
+def generate_html(markdown: str, title: str) -> str:
     """Generate HTML from markdown content using the template."""
     template = read_template()
     escaped_markdown = escape_for_js(markdown)
-    return template.replace("{{MARKDOWN_CONTENT}}", escaped_markdown)
+    escaped_title = html.escape(title)
+    return template.replace("{{MARKDOWN_CONTENT}}", escaped_markdown)\
+                   .replace("{{TITLE}}", escaped_title)
 
 
 def open_in_browser(html_path: Path) -> None:
@@ -85,12 +111,15 @@ def main() -> None:
 Examples:
   %(prog)s README.md
   %(prog)s --content "# Title\\n\\nContent"
+  %(prog)s README.md --title "My Custom Title"
         """
     )
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("file", nargs="?", help="Path to markdown file")
     group.add_argument("--content", "-c", help="Raw markdown content")
+
+    parser.add_argument("--title", "-t", help="Custom title for the page", default=None)
 
     args = parser.parse_args()
 
@@ -102,8 +131,11 @@ Examples:
         markdown = args.content
         source_desc = "inline content"
 
+    # Get title with fallback chain
+    title = get_title(markdown, args.file, args.title)
+
     # Generate HTML
-    html = generate_html(markdown)
+    html = generate_html(markdown, title)
 
     # Write to temp file
     with tempfile.NamedTemporaryFile(

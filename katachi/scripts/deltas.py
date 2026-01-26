@@ -23,6 +23,9 @@ Usage:
     python scripts/deltas.py status show DELTA-ID             # Show detailed delta status
     python scripts/deltas.py status set DELTA-ID STATUS       # Update delta status (auto-removes from both files when reconciled)
 
+    # Summary commands
+    python scripts/deltas.py summary [STATUS]                  # Show summary table of deltas (optional status filter)
+
     # Query commands
     python scripts/deltas.py ready                              # List deltas ready to implement
     python scripts/deltas.py next                               # Suggest next delta to implement
@@ -568,6 +571,61 @@ class StatusManager:
 
         return ready[0] if ready else None
 
+    def print_summary_table(
+        self,
+        status_filter: Optional[str] = None,
+        dm: Optional[DependencyMatrix] = None
+    ):
+        """Print a summary table of deltas
+
+        Args:
+            status_filter: Optional partial phase name to filter by (case-insensitive)
+            dm: Optional dependency matrix for showing dependency counts
+        """
+        # Filter deltas based on status
+        filtered_deltas = []
+        for delta_id in sorted(self.deltas.keys()):
+            delta = self.deltas[delta_id]
+
+            # Apply status filter (partial match on phase name, case-insensitive)
+            if status_filter and status_filter.lower() not in delta['status'].lower():
+                continue
+
+            filtered_deltas.append((delta_id, delta))
+
+        if not filtered_deltas:
+            if status_filter:
+                print(f"\nNo deltas found matching status: {status_filter}")
+            else:
+                print("\nNo deltas found.")
+            return
+
+        # Build the table header
+        header = "| ID          | Name                    | Status               | Complexity | Dependencies |"
+        separator = "|-------------|-------------------------|----------------------|------------|--------------|"
+
+        print("\n" + header)
+        print(separator)
+
+        # Build table rows
+        for delta_id, delta in filtered_deltas:
+            name = delta['name'][:24] + '...' if len(delta['name']) > 24 else delta['name'].ljust(24)
+            status = delta['status'][:22].ljust(22)
+            complexity = delta['complexity'].ljust(11)
+
+            # Get dependency count if matrix provided
+            dep_count = "0"
+            if dm:
+                deps = dm.get_dependencies(delta_id)
+                dep_count = str(len(deps))
+
+            row = f"| {delta_id:11} | {name} | {status} | {complexity} | {dep_count:^13} |"
+            print(row)
+
+        # Print summary
+        total_count = len(filtered_deltas)
+        print(f"\nTotal: {total_count} delta(s)")
+
 
 def main():
     if len(sys.argv) < 2:
@@ -789,6 +847,21 @@ def main():
         else:
             print(f"Unknown status command: {command}")
             sys.exit(1)
+
+    elif subcommand == "summary":
+        # Summary table command
+        deltas_path = project_root / "docs" / "planning" / "DELTAS.md"
+        matrix_path = project_root / "docs" / "planning" / "DEPENDENCIES.md"
+
+        sm = StatusManager(str(deltas_path))
+        dm = DependencyMatrix(str(matrix_path))
+
+        # Parse optional status filter (positional argument)
+        status_filter = None
+        if len(sys.argv) >= 3 and not sys.argv[2].startswith("--"):
+            status_filter = sys.argv[2]
+
+        sm.print_summary_table(status_filter=status_filter, dm=dm)
 
     elif subcommand == "ready":
         # List deltas ready to implement

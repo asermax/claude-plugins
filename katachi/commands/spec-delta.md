@@ -70,7 +70,53 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Spec"
   - If NO to all (technical delta, bug fix, API-only): will skip UI Flow section
 - Build complete understanding without asking questions
 
-### 3. Impact Discovery (Silent)
+### 3. User Interview
+
+Now that I've researched the delta, I'll present my understanding and ask about important decisions.
+
+**Present your understanding:**
+
+Briefly summarize:
+- What the delta is trying to achieve (the core change)
+- The main user story or use case
+- Any assumptions about scope, constraints, or priorities
+- Key areas where you see multiple valid approaches
+
+**Identify and ask about important decisions:**
+
+Use AskUserQuestion to ask focused questions about:
+
+- **Assumptions that need confirmation:**
+  - "I'm assuming [X] - is this correct?"
+  - "Should this handle [edge case Y] or is that out of scope?"
+
+- **Approach choices where multiple options exist:**
+  - "For [problem area], should we [approach A] or [approach B]?"
+  - Each option should have a clear description of what it means
+
+- **Scope and priority decisions:**
+  - "Should we include [feature X] in this delta or defer it?"
+  - "What's more important: [quality A] or [quality B]?"
+
+- **Behavior clarifications:**
+  - "When [situation], should the system [option A] or [option B]?"
+  - Present options with clear behavioral descriptions
+
+**Guidelines for effective questions:**
+- Keep questions high-level and targeted toward important decisions
+- Base questions on your research findings and assumptions
+- Ask only about decisions that meaningfully affect the spec
+- Each question should have 2-4 specific, actionable options
+- Include "Other" option automatically for user-provided alternatives
+- Avoid asking about obvious details or things already clear from DELTAS.md
+- Don't overwhelm - focus on the decisions that truly need user input
+
+**After the interview:**
+- Incorporate user's answers into your understanding
+- Note any areas where user deferred decisions or said "it's up to you"
+- Proceed to impact discovery with clarified understanding
+
+### 4. Impact Discovery (Silent)
 
 **Auto-discover affected features by:**
 
@@ -87,7 +133,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Spec"
 
 4. **Note impacts** for later inclusion in "Detected Impacts" section
 
-### 4. Draft Complete Spec (with Decision Points)
+### 5. Draft Complete Spec (with Decision Points)
 
 Create full spec document following template:
 - User story (who/what/why - specific and clear)
@@ -127,7 +173,7 @@ If NOT a UI delta (technical, bug fix, API-only):
 
 Note any uncertainties or assumptions clearly.
 
-### 5. External Validation (Silent)
+### 6. External Validation (Silent)
 
 Dispatch the spec-reviewer agent:
 
@@ -153,7 +199,7 @@ Review this delta specification.
 )
 ```
 
-### 6. Apply Validation Feedback (Silent)
+### 7. Apply Validation Feedback (Silent)
 
 Apply ALL recommendations from spec-reviewer automatically:
 - Fix coverage gaps
@@ -171,19 +217,19 @@ Track changes made for presentation in next step.
 - Reordering for clarity
 - Standard compliance fixes
 
-### 7. Present Validated Spec
+### 8. Present Validated Spec
 
 Present the complete validated spec to the user in its entirety.
 Highlight any unresolved issues requiring input.
 Invite feedback: "What needs adjustment in this spec?"
 
-### 8. Iterate Based on User Feedback
+### 9. Iterate Based on User Feedback
 
 Apply user corrections, additions, or changes.
 Re-run validation (steps 5-6) if significant changes.
 Repeat until user approves.
 
-### 9. Finalize
+### 10. Finalize
 
 Finalize document to `docs/delta-specs/$ARGUMENTS.md`
 
@@ -205,7 +251,8 @@ Next step: /katachi:design-delta $ARGUMENTS
 ## Workflow
 
 **This is a validate-first process:**
-- Research silently, then draft (ask decisions when needed)
+- Research silently, then interview user on key decisions
+- Draft incorporating user's input (ask additional decisions when needed)
 - Auto-discover affected features
 - Validate with spec-reviewer agent (silent)
 - Apply all validation fixes automatically (ask decisions when needed)

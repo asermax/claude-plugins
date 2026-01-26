@@ -116,7 +116,59 @@ For each library, framework, or technical approach identified in the spec:
 
 Build complete understanding without asking questions, but do not proceed to design until external research is complete.
 
-### 3. Impact Discovery (Silent)
+### 3. User Interview
+
+Now that I've researched the spec, existing patterns, and current documentation, I'll present my design thinking and ask about important decisions.
+
+**Present your design understanding:**
+
+Briefly summarize:
+- Your initial design approach based on research
+- Key architectural decisions you're leaning toward
+- Technology/library options you've discovered and your initial assessment
+- Areas where multiple valid approaches exist
+- Any uncertainties or assumptions from the spec
+
+**Identify and ask about important decisions:**
+
+Use AskUserQuestion to ask focused questions about:
+
+- **Architectural approach choices:**
+  - "Based on current research, should we use [approach A] or [approach B]?"
+  - Each option should describe the trade-offs clearly (complexity vs flexibility, etc.)
+
+- **Technology/library selections:**
+  - "For [problem area], current research shows [option A] and [option B] - which should we prefer?"
+  - Include key differences from your research (maintenance status, community adoption, etc.)
+
+- **Design trade-offs:**
+  - "Should we prioritize [quality A] or [quality B]?"
+  - Present options with clear implications (e.g., "performance" vs "simplicity of implementation")
+
+- **Uncertainties from spec:**
+  - "The spec mentions [ambiguous requirement] - how should this be handled?"
+  - Present design options that address different interpretations
+
+- **Integration with existing patterns:**
+  - "This could follow [existing pattern X] or use [new pattern Y] - which is better?"
+  - Reference specific ADRs or DES from your research
+
+**Guidelines for effective questions:**
+- Keep questions high-level and targeted toward important decisions
+- Base questions on your external research findings (documentation, search results)
+- Ask only about decisions that significantly affect the design direction
+- Each question should present 2-4 specific options with clear trade-offs
+- Include "Other" option automatically for user-provided alternatives
+- Avoid asking about trivial implementation details - focus on architectural and strategic decisions
+- Don't re-validate spec decisions unless they impact design approach
+- Don't overwhelm - focus on the decisions that truly need user input
+
+**After the interview:**
+- Incorporate user's preferences into your design approach
+- Note any areas where user deferred decisions
+- Proceed to impact discovery with clarified design direction
+
+### 4. Impact Discovery (Silent)
 
 **Auto-discover affected feature designs by:**
 
@@ -132,7 +184,7 @@ Build complete understanding without asking questions, but do not proceed to des
 
 4. **Note impacts** for later inclusion in "Detected Impacts" section
 
-### 4. Draft Complete Design (with Decision Points)
+### 5. Draft Complete Design (with Decision Points)
 
 Create full design document following template:
 - Problem context (what problem, constraints, interactions)
@@ -192,7 +244,7 @@ If NOT a UI delta (no User Flow section, no UI components):
 
 Note any uncertainties or assumptions.
 
-### 5. External Validation (Silent)
+### 6. External Validation (Silent)
 
 Dispatch the design-reviewer agent:
 
@@ -231,7 +283,7 @@ Review this delta design.
 )
 ```
 
-### 6. Apply Validation Feedback (Silent)
+### 7. Apply Validation Feedback (Silent)
 
 Apply ALL recommendations from design-reviewer automatically:
 - Fix coherence issues
@@ -249,26 +301,26 @@ Track changes made for presentation in next step.
 - Clarifying component responsibilities
 - Standard compliance fixes
 
-### 7. Present Validated Design
+### 8. Present Validated Design
 
 Present the complete validated design to the user in its entirety.
 Highlight any unresolved issues requiring input.
 Invite feedback: "What needs adjustment in this design?"
 
-### 8. Iterate Based on User Feedback
+### 9. Iterate Based on User Feedback
 
 Apply user corrections, additions, or changes.
 Re-run validation (steps 5-6) if significant changes.
 Repeat until user approves.
 
-### 9. Detect Patterns for DES
+### 10. Detect Patterns for DES
 
 If agent or user identifies repeatable patterns:
 - Ask if pattern should become a DES
 - Offer to create DES document
 - Update design to reference new DES
 
-### 10. Finalize
+### 11. Finalize
 
 Finalize document to `docs/delta-designs/$ARGUMENTS.md`
 
@@ -297,7 +349,8 @@ When design reveals hard-to-change choices:
 ## Workflow
 
 **This is a validate-first process:**
-- Research silently, then draft (ask decisions when needed)
+- Research silently (internal + external), then interview user on design decisions
+- Draft incorporating user's input (ask additional decisions when needed)
 - Auto-discover affected feature designs
 - Validate with design-reviewer agent (silent)
 - Apply all validation fixes automatically (ask decisions when needed)

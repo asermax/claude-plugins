@@ -173,8 +173,7 @@ Track changes made for presentation in next step.
 
 ### 7. Present Validated Spec
 
-Show complete validated spec to user.
-Include summary of validation findings that were applied.
+Present the complete validated spec to the user in its entirety.
 Highlight any unresolved issues requiring input.
 Invite feedback: "What needs adjustment in this spec?"
 

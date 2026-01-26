@@ -139,8 +139,7 @@ If the reviewer identified critical issues that require clarification, note them
 
 ### 6. Present Validated Plan
 
-Show the complete, validated plan document to user.
-Include summary of validation findings that were applied.
+Present the complete validated plan to the user in its entirety.
 Highlight any unresolved issues that need user input.
 Invite feedback: "What needs adjustment in this plan?"
 

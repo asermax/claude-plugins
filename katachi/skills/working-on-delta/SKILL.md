@@ -55,16 +55,16 @@ Update status when starting:
 
 ```bash
 # spec-delta
-python scripts/deltas.py status set FEATURE-ID "⧗ Spec"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "⧗ Spec"
 
 # design-delta
-python scripts/deltas.py status set FEATURE-ID "⧗ Design"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "⧗ Design"
 
 # plan-delta
-python scripts/deltas.py status set FEATURE-ID "⧗ Plan"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "⧗ Plan"
 
 # implement-delta
-python scripts/deltas.py status set FEATURE-ID "⧗ Implementation"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "⧗ Implementation"
 ```
 
 ### 3. Document Creation Workflow
@@ -137,10 +137,10 @@ Update status when completing:
 
 ```bash
 # After successful completion
-python scripts/deltas.py status set FEATURE-ID "✓ Spec"
-python scripts/deltas.py status set FEATURE-ID "✓ Design"
-python scripts/deltas.py status set FEATURE-ID "✓ Plan"
-python scripts/deltas.py status set FEATURE-ID "✓ Implementation"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "✓ Spec"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "✓ Design"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "✓ Plan"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "✓ Implementation"
 ```
 
 ## Implementation Specifics

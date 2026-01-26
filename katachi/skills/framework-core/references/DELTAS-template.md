@@ -19,14 +19,14 @@ Deltas track their progress through the development workflow using a status fiel
 
 Commands automatically update status as they progress. To manually update:
 ```bash
-python scripts/deltas.py status set DELTA-ID "STATUS"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set DELTA-ID "STATUS"
 ```
 
 Query status:
 ```bash
-python scripts/deltas.py status list                    # All deltas
-python scripts/deltas.py status list --complexity Easy  # Filter by complexity
-python scripts/deltas.py status show DELTA-ID           # Detailed view
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list                    # All deltas
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list --complexity Easy  # Filter by complexity
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status show DELTA-ID           # Detailed view
 ```
 
 ---

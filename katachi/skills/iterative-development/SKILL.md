@@ -65,7 +65,7 @@ Find next available ID in category:
 
 ```bash
 # Check existing IDs
-python scripts/deltas.py status list --category CORE
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list --category CORE
 
 # Result: CORE-001, CORE-002, CORE-003
 # New ID: CORE-004
@@ -102,8 +102,8 @@ Add new delta entry:
 Add to dependency matrix:
 
 ```bash
-python scripts/deltas.py deps add-delta CORE-004
-python scripts/deltas.py deps add-dep CORE-004 CORE-001  # If depends on CORE-001
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps add-delta CORE-004
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps add-dep CORE-004 CORE-001  # If depends on CORE-001
 ```
 
 ### 8. Offer Next Step

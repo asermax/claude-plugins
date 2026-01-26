@@ -1,6 +1,6 @@
 {
   "name": "katachi",
-  "version": "2.10.0",
+  "version": "2.10.1",
   "description": "Spec-driven development framework with iterative growth, progressive adoption, and retrofit support",
   "author": {
     "name": "Agustin Carrasco"

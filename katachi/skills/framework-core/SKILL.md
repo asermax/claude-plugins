@@ -349,28 +349,28 @@ Use the deltas.py script:
 
 ```bash
 # Set status
-python scripts/deltas.py status set FEATURE-ID "STATUS"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "STATUS"
 
 # Examples
-python scripts/deltas.py status set CORE-001 "⧗ Spec"
-python scripts/deltas.py status set CORE-001 "✓ Spec"
-python scripts/deltas.py status set CORE-001 "⧗ Design"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set CORE-001 "⧗ Spec"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set CORE-001 "✓ Spec"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set CORE-001 "⧗ Design"
 ```
 
 ### Querying Status
 
 ```bash
 # List all deltas with status
-python scripts/deltas.py status list
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list
 
 # Filter by category
-python scripts/deltas.py status list --category CORE
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list --category CORE
 
 # Filter by status
-python scripts/deltas.py status list --status "✓ Spec"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list --status "✓ Spec"
 
 # Show detailed delta status
-python scripts/deltas.py status show CORE-001
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status show CORE-001
 ```
 
 ### Status in DELTAS.md
@@ -392,7 +392,7 @@ A delta is ready to implement when:
 
 Use this command to check:
 ```bash
-python scripts/deltas.py ready
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py ready
 ```
 
 ---

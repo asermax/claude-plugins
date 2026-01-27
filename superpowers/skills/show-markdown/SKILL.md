@@ -1,6 +1,6 @@
 ---
 name: show-markdown
-description: Use when the user asks to display markdown in a browser, preview markdown files, or render markdown with styling. Trigger on requests like "show this markdown", "preview markdown", "display markdown in browser", "open markdown in browser", or any task requiring visual markdown rendering.
+description: Use when you need to display a considerable amount of markdown content, or the user asks to display markdown in a browser, preview markdown files, or render markdown with styling. Trigger on requests like "show this markdown", "preview markdown", "display markdown in browser", "open markdown in browser", or any task requiring visual markdown rendering.
 ---
 
 # Show Markdown in Browser

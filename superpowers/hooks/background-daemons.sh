@@ -1,6 +1,6 @@
 #!/bin/bash
 # Auto-background hook for daemon processes
-# Ensures agent.py and browser-daemon always run in background
+# Ensures agent.py always runs in background
 
 hook_input=$(cat)
 tool_name=$(echo "$hook_input" | jq -r '.tool_name')
@@ -9,8 +9,8 @@ if [[ "$tool_name" == "Bash" ]]; then
     command=$(echo "$hook_input" | jq -r '.tool_input.command // empty')
     run_in_background=$(echo "$hook_input" | jq -r '.tool_input.run_in_background // "null"')
 
-    # Check if command is calling agent.py or browser-daemon
-    if [[ "$command" == *"/agent.py"* || "$command" == *"/browser-daemon"* ]]; then
+    # Check if command is calling agent.py
+    if [[ "$command" == *"/agent.py"* ]]; then
         # Check if run_in_background is not already set to true
         if [[ "$run_in_background" != "true" ]]; then
             # Build updated input by merging run_in_background with existing tool_input

@@ -1,5 +1,5 @@
 ---
-description: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve)
+description: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve, agent-browser)
 ---
 
 # Sync Upstream
@@ -9,6 +9,7 @@ This command synchronizes plugins with their upstream repositories:
 - **claudekit-skills**: `~/workspace/random/claudekit-skills` - Browser automation and other utilities
 - **quint**: `~/workspace/random/quint-code` - FPF reasoning methodology
 - **agentic-evolve**: `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
+- **agent-browser**: `~/workspace/random/agent-browser` - Browser automation CLI
 
 ## Process Overview
 
@@ -17,7 +18,8 @@ This command synchronizes plugins with their upstream repositories:
 3. **Sync Claudekit**: Copy skills directly from upstream
 4. **Sync Quint**: Copy commands and build MCP binary
 5. **Sync Agentic-Evolve**: Copy evolve command directly from upstream
-6. **Report Summary**: Display successful updates
+6. **Sync Agent-Browser**: Copy skill directly from upstream
+7. **Report Summary**: Display successful updates
 
 ## Implementation Steps
 
@@ -49,6 +51,12 @@ cd ~/workspace/random/agentic-evolve
 git pull origin main
 ```
 
+**Agent-browser repository:**
+```bash
+cd ~/workspace/random/agent-browser
+git pull origin main
+```
+
 If any git pull fails, inform the user about the error and ask them to resolve it manually.
 
 ### Step 2: Identify Skills to Update
@@ -68,6 +76,9 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 - evolve-perf.md (runtime speed optimization)
 - evolve-size.md (code size/bytes optimization)
 - evolve-ml.md (ML accuracy optimization)
+
+**From agent-browser repository (`~/workspace/random/agent-browser/skills/`):**
+- agent-browser (SKILL.md with supporting references/ and templates/ directories)
 
 **Plugin-specific skills (not synced from upstream):**
 - using-live-documentation
@@ -133,6 +144,11 @@ git show e3d881b:agents/code-reviewer.md  # For new files
 - `.claude/commands/evolve-perf.md` (synced to `superpowers/commands/evolve-perf.md`)
 - `.claude/commands/evolve-size.md` (synced to `superpowers/commands/evolve-size.md`)
 - `.claude/commands/evolve-ml.md` (synced to `superpowers/commands/evolve-ml.md`)
+
+**Files we track from agent-browser:**
+- `skills/agent-browser/SKILL.md`
+- `skills/agent-browser/references/`
+- `skills/agent-browser/templates/`
 
 **Important**: Only analyze files that:
 1. Are in the changed files list from git pull output
@@ -252,6 +268,14 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - The evolve.md is a master dispatcher that routes to specialized subskills based on optimization goal
 
+**Type 7: Agent-browser skill (direct copy)**
+- Copy entire skill directory from upstream (no customization):
+  ```bash
+  cp -r ~/workspace/random/agent-browser/skills/agent-browser \
+        ~/workspace/asermax/claude-plugins/superpowers/skills/
+  ```
+- No customizations needed - use exactly as provided by upstream
+
 **Process for manual merge:**
 1. Read the upstream version completely
 2. Read the plugin version completely
@@ -275,6 +299,9 @@ Quint:
 
 Agentic-Evolve:
 - evolve commands synced (4 files: master dispatcher + perf/size/ml subskills)
+
+Agent-Browser:
+- agent-browser skill synced (SKILL.md + supporting directories)
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references

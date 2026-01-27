@@ -54,7 +54,7 @@ AUR (Arch User Repository) package management automation.
 Development workflow skills for systematic debugging, code review, planning, and more.
 
 **Commands:**
-- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve), compare differences, and intelligently merge updates while preserving plugin customizations
+- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve, agent-browser), compare differences, and intelligently merge updates while preserving plugin customizations
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
 - `/superpowers:evolve <problem>`: Master dispatcher for evolutionary algorithm discovery - routes to specialized modes:
   - `/superpowers:evolve-perf`: Optimize runtime speed (ops/sec, latency)
@@ -76,6 +76,9 @@ The plugin provides a collection of proven workflow skills organized by category
 *Documentation and Research:*
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
+
+*Browser Automation:*
+- **agent-browser**: Browser automation CLI for web testing, form filling, screenshots, and data extraction (synced from `~/workspace/random/agent-browser`)
 
 *Multi-Agent Collaboration:*
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories using file-based chat system (agent daemon, chat CLI)
@@ -254,6 +257,7 @@ Agentic memory framework for long-term memory across sessions.
 - Upstream repositories:
   - `~/workspace/random/superpowers` - Core workflow skills
   - `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
+  - `~/workspace/random/agent-browser` - Browser automation CLI
 - Pull latest changes from all repositories' `main` branch
 - Tracked skills from superpowers: requesting-code-review, systematic-debugging
 - Tracked commands from agentic-evolve (copied directly to superpowers/commands/):

@@ -51,16 +51,28 @@ If not provided in arguments, ask:
 This can be a new capability, modification to existing functionality, bug fix, or improvement."
 ```
 
-### 2. Research Existing Deltas
+### 2. Research Context
+
+#### Existing deltas
 
 Read DELTAS.md to understand:
 - Existing delta patterns
 - Next available ID number
 - Complexity patterns for similar deltas
 
+#### Codebase and documentation
+
+Use the Explore agent to research the codebase and existing documentation relevant to the delta description. The goal is to understand the current state of the system in the areas the delta would affect:
+
+- **Code**: Find existing implementations, patterns, and architecture related to the delta's scope
+- **Documentation**: Check feature specs, delta specs, and designs for related functionality
+- **Gaps**: Identify what doesn't exist yet that the delta would need to introduce
+
+This research informs the complexity assessment, dependency identification, and delta description quality.
+
 ### 3. Propose Delta Details
 
-Based on the description and existing patterns, draft a complete proposal:
+Based on the description, codebase research, and existing patterns, draft a complete proposal:
 
 ```
 "Based on your description, I propose:

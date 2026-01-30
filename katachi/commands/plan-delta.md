@@ -93,6 +93,32 @@ For each step:
 - What to do: specific instructions
 - Test: how to verify this step
 
+**Code Snippets in Plans:**
+- Use snippets to indicate implementation points (e.g., where to add code)
+- Include brief comments explaining what should happen at each point
+- Do NOT include complete implementation logic
+- The implementation agent has access to spec, design, ADRs, and DES patterns—the plan should provide structural guidance, not code
+
+Example of appropriate snippet usage:
+```python
+# In src/services/auth.py, after the existing validate_token function:
+
+# Add new function here to handle token refresh
+# - Should follow DES-002 error handling pattern
+# - Must validate refresh token expiry per spec AC-3
+```
+
+Example of over-specified snippet (avoid):
+```python
+def refresh_token(refresh_token: str) -> TokenResponse:
+    if not refresh_token:
+        raise AuthError("Missing refresh token")
+    decoded = jwt.decode(refresh_token, SECRET_KEY, algorithms=["HS256"])
+    if decoded["exp"] < time.time():
+        raise AuthError("Token expired")
+    # ... full implementation
+```
+
 Ensure:
 - Every acceptance criterion has implementing steps
 - Steps are in dependency order

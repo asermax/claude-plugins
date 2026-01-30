@@ -31,6 +31,10 @@
 - [ ] Run tests for each acceptance criterion
 - [ ] Manual verification: [what to check]
 
+> **Note on code snippets**: Use snippets to show *where* code goes and *what* it should do (via comments),
+> not the complete implementation. The implementation agent has full access to spec, design, and decision
+> documents—plans provide structural guidance, not code.
+
 ## Files Changed
 
 - [ ] `src/...` - [purpose of changes]

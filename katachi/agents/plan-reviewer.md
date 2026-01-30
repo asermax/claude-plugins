@@ -60,6 +60,12 @@ Evaluate the plan against these criteria:
 - Do steps follow referenced DES patterns?
 - Are there steps that should reference patterns but don't?
 
+### 8. Code Snippet Appropriateness
+- Are code snippets used to indicate implementation points rather than full logic?
+- Do snippets include contextual comments explaining what should happen?
+- Are there snippets that contain complete implementation (should be removed)?
+- Does the plan rely on spec/design/ADR/DES for implementation details?
+
 ## Output Format
 
 Provide a structured review:
@@ -105,3 +111,5 @@ Provide a structured review:
 ```
 
 A good plan is a recipe that anyone can follow to produce the same result. Focus on completeness and clarity.
+
+Watch for plans that over-specify implementation. A plan should answer "where" and "what" but leave "how" to the implementation phase where spec, design, and decisions provide full context.

@@ -189,7 +189,38 @@ Or provide specific items to address."
 
 Apply changes incrementally with user approval for each action or category.
 
-### 7. Post-Optimization Summary
+Track all changes made:
+- Modified file paths
+- New file paths (from splits)
+- Deleted file paths
+
+### 7. Validate All Optimizations
+
+After all optimizations are complete, dispatch the optimization-validator agent to verify no data was lost:
+
+```
+Validate the following document optimizations preserve all relevant information.
+
+## Modified Files
+[list of modified file paths]
+
+## New Files (from splits)
+[list of new file paths and their source files]
+
+## Deleted Files
+[list of deleted file paths]
+
+Use git to retrieve original versions and compare with current state.
+Apply corrections automatically if content was lost.
+Ask only if uncertain how to fix.
+```
+
+**If validation returns NEEDS_WORK:**
+- Agent applies corrections automatically (restores missing content)
+- Agent asks user only when uncertain about how to fix
+- Proceed to summary after corrections are applied
+
+### 8. Post-Optimization Summary
 
 After completing optimizations:
 
@@ -220,3 +251,4 @@ This is an optimization command:
 - Aggregate and present findings
 - Guide user through applying optimizations with confirmation
 - Apply changes incrementally
+- Validate no data was lost (auto-correct if needed)

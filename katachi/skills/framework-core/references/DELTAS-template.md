@@ -29,17 +29,42 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list --complexity Easy  # 
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status show DELTA-ID           # Detailed view
 ```
 
+## Priority Tracking
+
+Deltas have a priority level (1-5) that determines their urgency:
+
+| Level | Label | Description |
+|-------|-------|-------------|
+| 1 | Critical | Blocks release, must do now |
+| 2 | High | Important, needed soon |
+| 3 | Medium | Standard priority (default) |
+| 4 | Low | Nice to have |
+| 5 | Backlog | Someday/maybe |
+
+Set priority:
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py priority set DELTA-ID LEVEL
+```
+
+List by priority:
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py priority list                  # Grouped by priority
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py priority list --level 1        # Filter by level
+```
+
 ---
 
 ## Deltas
 
 ### DLT-001: [Delta name]
 **Status**: ✗ Defined
+**Priority**: 3 (Medium)
 **Complexity**: [Easy/Medium/Hard]
 **Description**: [Comprehensive description that explains what the delta does and why it's needed. Should be self-explanatory without reading the spec.]
 
 ### DLT-002: [Delta name]
 **Status**: ✗ Defined
+**Priority**: 3 (Medium)
 **Complexity**: [Easy/Medium/Hard]
 **Description**: [Comprehensive description that explains what the delta does and why it's needed. Should be self-explanatory without reading the spec.]
 

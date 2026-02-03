@@ -397,6 +397,72 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py ready
 
 ---
 
+## Priority Tracking
+
+Priority helps determine which delta to work on next when multiple are ready.
+
+### Priority Levels
+
+| Level | Label | Description |
+|-------|-------|-------------|
+| 1 | Critical | Blocks release, must do now |
+| 2 | High | Important, needed soon |
+| 3 | Medium | Standard priority (default) |
+| 4 | Low | Nice to have |
+| 5 | Backlog | Someday/maybe |
+
+This scale aligns with MoSCoW (Critical=Must, High=Should, Medium/Low=Could, Backlog=Won't) while providing numerical scoring.
+
+### Priority in DELTAS.md
+
+Priority is stored after Status in each delta entry:
+
+```markdown
+### DLT-001: Delta name
+**Status**: ✗ Defined
+**Priority**: 2 (High)
+**Complexity**: Medium
+**Description**: [description]
+```
+
+If not specified, deltas default to priority 3 (Medium).
+
+### How Priority Affects Suggestions
+
+The `next` command uses a scoring algorithm:
+- **Priority weight**: Higher priority = higher score
+- **Impact bonus**: More dependents = higher score (completing this unblocks more work)
+- **Complexity bonus**: Easier deltas get slight preference (quick wins)
+
+### How to Update Priority
+
+Use the deltas.py script:
+
+```bash
+# Set priority
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py priority set DLT-001 2
+
+# List deltas grouped by priority
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py priority list
+
+# Filter by priority level
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py priority list --level 1
+```
+
+### When to Set Priority
+
+**At delta creation:** The `/add-delta` command proposes a priority based on:
+- Delta description and scope
+- Impact on other deltas (dependency count)
+- User's expressed goals
+
+**During priority review:** Use `/review-priorities` for a conversational session to:
+- Assess current priorities holistically
+- Align priorities with current goals/constraints
+- Identify priority inconsistencies (e.g., critical delta blocked by low-priority dependency)
+
+---
+
 ## Task Management Protocol
 
 Use Claude Code's task tools to track workflow progress within each command.

@@ -79,11 +79,29 @@ Based on the description, codebase research, and existing patterns, draft a comp
 
 **ID**: DLT-NNN (next available)
 **Name**: [concise delta name]
+**Priority**: [1-5] ([Critical/High/Medium/Low/Backlog]) - [rationale]
 **Complexity**: [Easy/Medium/Hard] - [reason based on scope]
 **Dependencies**: [proposed deps or 'None'] - [reason based on analysis]
 
 Does this look right? What needs adjustment?"
 ```
+
+#### Priority Rationale
+
+The agent proposes a priority based on:
+- **Delta scope**: Broader impact suggests higher priority
+- **Impact on other deltas**: If this delta blocks many others, it should be higher priority
+- **User's expressed goals**: If the user mentioned urgency or importance, reflect that
+- **Default**: Use priority 3 (Medium) when there's no clear signal
+
+Priority levels:
+| Level | Label | When to use |
+|-------|-------|-------------|
+| 1 | Critical | Blocks release, urgent deadline |
+| 2 | High | Important for near-term goals |
+| 3 | Medium | Standard work (default) |
+| 4 | Low | Nice to have, no urgency |
+| 5 | Backlog | Future consideration |
 
 ### 4. Validate Delta Quality
 
@@ -126,7 +144,7 @@ Suggest which existing deltas this likely depends on, with rationale.
 
 ### 5. Iterate Based on Feedback
 
-- Apply user corrections to complexity or dependencies
+- Apply user corrections to priority, complexity, or dependencies
 - Re-present if significant changes
 - Repeat until user approves
 
@@ -137,6 +155,7 @@ Add new delta entry:
 ```markdown
 ### DLT-NNN: Delta name
 **Status**: ✗ Defined
+**Priority**: [priority] ([label])
 **Complexity**: [complexity]
 **Description**: [Comprehensive description explaining what the delta does and why it's needed]
 ```
@@ -162,6 +181,7 @@ Present summary:
 
 ID: DLT-NNN
 Description: [description]
+Priority: [priority] ([label])
 Complexity: [complexity]
 Dependencies: [list or 'None']
 
@@ -195,7 +215,7 @@ If user says yes, transition to `/katachi:spec-delta DLT-NNN`.
 This is a collaborative process:
 - Capture description
 - Research existing patterns
-- Propose complete delta details (ID, complexity, dependencies)
+- Propose complete delta details (ID, priority, complexity, dependencies)
 - Iterate based on user feedback
 - Update framework files
 - Offer next steps

@@ -30,10 +30,16 @@ Usage:
 
     # Summary commands
     python scripts/deltas.py summary [STATUS]                  # Show summary table of deltas (optional status filter)
+    python scripts/deltas.py summary --priority 1              # Filter by priority level (1-5)
+    python scripts/deltas.py summary --ready                   # Only show deltas ready to implement
+    python scripts/deltas.py summary "Not Started" --priority 2 # Combine status and priority filters
 
     # Query commands
     python scripts/deltas.py ready                              # List deltas ready to implement
     python scripts/deltas.py next                               # Suggest next delta to implement
+    python scripts/deltas.py next --top 5                       # Show top 5 recommended deltas
+    python scripts/deltas.py next --group                       # Group recommendations by priority tier
+    python scripts/deltas.py next --top 10 --group              # Combine both flags
 
 Priority levels:
     1 = Critical (must do now, blocks release)
@@ -665,35 +671,65 @@ class StatusManager:
     def print_summary_table(
         self,
         status_filter: Optional[str] = None,
+        priority_filter: Optional[int] = None,
+        ready_only: bool = False,
         dm: Optional[DependencyMatrix] = None
     ):
         """Print a summary table of deltas
 
         Args:
             status_filter: Optional partial phase name to filter by (case-insensitive)
-            dm: Optional dependency matrix for showing dependency counts
+            priority_filter: Optional priority level to filter by (1-5)
+            ready_only: Only show deltas ready to implement (all deps complete)
+            dm: Optional dependency matrix for showing dependency counts and impact
         """
-        # Filter deltas based on status
+        # Filter deltas based on status, priority, and ready status
         filtered_deltas = []
-        for delta_id in sorted(self.deltas.keys()):
+        for delta_id in self.deltas.keys():
             delta = self.deltas[delta_id]
 
             # Apply status filter (partial match on phase name, case-insensitive)
             if status_filter and status_filter.lower() not in delta['status'].lower():
                 continue
 
+            # Apply priority filter
+            if priority_filter is not None:
+                delta_priority = delta.get('priority', DEFAULT_PRIORITY)
+                if delta_priority != priority_filter:
+                    continue
+
+            # Apply ready filter
+            if ready_only and dm:
+                # Skip if already in progress or complete
+                if '⧗' in delta['status'] or self.is_complete(delta_id):
+                    continue
+                # Check if all dependencies are complete
+                deps = dm.get_dependencies(delta_id)
+                if not all(self.is_complete(dep) for dep in deps):
+                    continue
+
             filtered_deltas.append((delta_id, delta))
 
         if not filtered_deltas:
+            filters = []
             if status_filter:
-                print(f"\nNo deltas found matching status: {status_filter}")
+                filters.append(f"status: {status_filter}")
+            if priority_filter is not None:
+                filters.append(f"priority: {priority_filter} ({PRIORITY_LABELS[priority_filter]})")
+            if ready_only:
+                filters.append("ready to implement")
+            if filters:
+                print(f"\nNo deltas found matching {' + '.join(filters)}")
             else:
                 print("\nNo deltas found.")
             return
 
-        # Build the table header
-        header = "| ID          | Name                    | Status               | Priority | Complexity | Deps |"
-        separator = "|-------------|-------------------------|----------------------|----------|------------|------|"
+        # Sort by priority (ascending, so Critical=1 first), then by ID
+        filtered_deltas.sort(key=lambda x: (x[1].get('priority', DEFAULT_PRIORITY), x[0]))
+
+        # Build the table header with Impact column
+        header = "| ID          | Name                    | Status               | Priority | Complexity | Impact |"
+        separator = "|-------------|-------------------------|----------------------|----------|------------|--------|"
 
         print("\n" + header)
         print(separator)
@@ -703,21 +739,37 @@ class StatusManager:
             name = delta['name'][:24] + '...' if len(delta['name']) > 24 else delta['name'].ljust(24)
             status = delta['status'][:22].ljust(22)
             priority = delta.get('priority', DEFAULT_PRIORITY)
-            priority_str = f"{priority}".ljust(8)
+            priority_label = PRIORITY_LABELS.get(priority, "Unknown")
+            priority_str = f"{priority}-{priority_label[:4]}".ljust(8)
             complexity = delta['complexity'][:10].ljust(10)
 
-            # Get dependency count if matrix provided
-            dep_count = "0"
+            # Get impact (how many deltas are blocked by this one)
+            impact_str = "-"
             if dm:
-                deps = dm.get_dependencies(delta_id)
-                dep_count = str(len(deps))
+                blocked_count = len(dm.get_dependents(delta_id))
+                if blocked_count > 0:
+                    impact_str = f"blocks {blocked_count}"
+                else:
+                    impact_str = "-"
 
-            row = f"| {delta_id:11} | {name} | {status} | {priority_str} | {complexity} | {dep_count:^4} |"
+            row = f"| {delta_id:11} | {name} | {status} | {priority_str} | {complexity} | {impact_str:6} |"
             print(row)
 
         # Print summary
         total_count = len(filtered_deltas)
         print(f"\nTotal: {total_count} delta(s)")
+
+        # Print priority distribution
+        from collections import Counter
+        priority_counts = Counter(delta.get('priority', DEFAULT_PRIORITY) for _, delta in filtered_deltas)
+
+        if len(priority_counts) > 1:
+            print("\nBy Priority:")
+            for level in range(1, 6):
+                if level in priority_counts:
+                    label = PRIORITY_LABELS[level]
+                    emoji = {1: "🔴", 2: "🟠", 3: "🟡", 4: "⚪", 5: "⚫"}.get(level, "")
+                    print(f"  {emoji} {label}: {priority_counts[level]}")
 
     def print_priority_list(
         self,
@@ -1059,12 +1111,34 @@ def main():
         sm = StatusManager(str(deltas_path))
         dm = DependencyMatrix(str(matrix_path))
 
-        # Parse optional status filter (positional argument)
+        # Parse optional filters
         status_filter = None
-        if len(sys.argv) >= 3 and not sys.argv[2].startswith("--"):
-            status_filter = sys.argv[2]
+        priority_filter = None
+        ready_only = False
 
-        sm.print_summary_table(status_filter=status_filter, dm=dm)
+        i = 2
+        while i < len(sys.argv):
+            if sys.argv[i] == "--priority" and i + 1 < len(sys.argv):
+                try:
+                    priority_filter = int(sys.argv[i + 1])
+                    if priority_filter < 1 or priority_filter > 5:
+                        print(f"Error: Priority must be 1-5, got: {priority_filter}")
+                        sys.exit(1)
+                except ValueError:
+                    print(f"Error: Priority must be a number, got: {sys.argv[i + 1]}")
+                    sys.exit(1)
+                i += 2
+            elif sys.argv[i] == "--ready":
+                ready_only = True
+                i += 1
+            elif not sys.argv[i].startswith("--"):
+                # Positional argument = status filter
+                status_filter = sys.argv[i]
+                i += 1
+            else:
+                i += 1
+
+        sm.print_summary_table(status_filter=status_filter, priority_filter=priority_filter, ready_only=ready_only, dm=dm)
 
     elif subcommand == "ready":
         # List deltas ready to implement
@@ -1088,42 +1162,134 @@ def main():
             print("Either all deltas are in progress/complete, or dependencies are blocking.")
 
     elif subcommand == "next":
-        # Suggest next delta to implement
+        # Suggest next delta(s) to implement
         deltas_path = project_root / "docs" / "planning" / "DELTAS.md"
         matrix_path = project_root / "docs" / "planning" / "DEPENDENCIES.md"
 
         sm = StatusManager(str(deltas_path))
         dm = DependencyMatrix(str(matrix_path))
 
-        suggestion = sm.suggest_next(dm)
+        # Parse flags
+        top_n = 1
+        group_by_priority = False
 
-        if suggestion:
-            delta = sm.deltas[suggestion]
-            dependents = dm.get_dependents(suggestion)
-            priority = delta.get('priority', DEFAULT_PRIORITY)
-            priority_label = PRIORITY_LABELS.get(priority, "Unknown")
-
-            print(f"\nSuggested next delta: {suggestion}")
-            print(f"  Name: {delta['name']}")
-            print(f"  Status: {delta['status']}")
-            print(f"  Priority: {priority} ({priority_label})")
-            print(f"  Complexity: {delta.get('complexity', 'Unknown')}")
-
-            if dependents:
-                print(f"  Unlocks {len(dependents)} delta(s):")
-                for dep in sorted(dependents):
-                    print(f"    - {dep}")
+        i = 2
+        while i < len(sys.argv):
+            if sys.argv[i] == "--top" and i + 1 < len(sys.argv):
+                try:
+                    top_n = int(sys.argv[i + 1])
+                    if top_n < 1:
+                        print("Error: --top must be at least 1")
+                        sys.exit(1)
+                except ValueError:
+                    print(f"Error: --top requires a number, got: {sys.argv[i + 1]}")
+                    sys.exit(1)
+                i += 2
+            elif sys.argv[i] == "--group":
+                group_by_priority = True
+                i += 1
             else:
-                print("  Unlocks: No other deltas directly depend on this")
+                i += 1
 
-            deps = dm.get_dependencies(suggestion)
-            if deps:
-                print(f"  Depends on ({len(deps)} complete):")
-                for dep in sorted(deps):
-                    print(f"    - {dep} ✓")
-        else:
+        ready = sm.get_ready_deltas(dm)
+
+        if not ready:
             print("\nNo deltas available to implement.")
             print("Either all deltas are complete, or dependencies are blocking progress.")
+            sys.exit(0)
+
+        # Score and sort ready deltas
+        def compute_score(fid: str) -> int:
+            delta = sm.deltas[fid]
+            priority = delta.get('priority', DEFAULT_PRIORITY)
+            dependents = len(dm.get_dependents(fid))
+            complexity_map = {'Easy': 0, 'Medium': 1, 'Hard': 2}
+            complexity_penalty = complexity_map.get(delta.get('complexity', 'Medium'), 1)
+            return (6 - priority) * 10 + (dependents * 2) - complexity_penalty
+
+        # Sort by score (descending), then by ID for stability
+        ready.sort(key=lambda f: (-compute_score(f), f))
+
+        if group_by_priority:
+            # Group by priority tier
+            from collections import defaultdict
+            by_priority = defaultdict(list)
+
+            for fid in ready[:top_n] if top_n > 0 else ready:
+                priority = sm.deltas[fid].get('priority', DEFAULT_PRIORITY)
+                by_priority[priority].append(fid)
+
+            print(f"\n🎯 Top {min(top_n, len(ready))} Recommended Deltas (by Priority):\n")
+
+            for level in range(1, 6):
+                if level not in by_priority:
+                    continue
+
+                label = PRIORITY_LABELS[level]
+                emoji = {1: "🔴", 2: "🟠", 3: "🟡", 4: "⚪", 5: "⚫"}.get(level, "")
+                print(f"\n{emoji} {label} ({len(by_priority[level])})\n")
+
+                for fid in by_priority[level]:
+                    delta = sm.deltas[fid]
+                    dependents = dm.get_dependents(fid)
+                    deps = dm.get_dependencies(fid)
+                    complexity = delta.get('complexity', 'Unknown')
+                    score = compute_score(fid)
+
+                    impact_str = f" | blocks {len(dependents)}" if dependents else ""
+                    print(f"  {fid}: {delta['name']}")
+                    print(f"    Complexity: {complexity}{impact_str} | Score: {score}")
+
+                    if deps:
+                        print(f"    Depends on: {', '.join(sorted(deps))}")
+        else:
+            # List format (top N)
+            if top_n == 1:
+                # Original single-suggestion format for backward compatibility
+                suggestion = ready[0]
+                delta = sm.deltas[suggestion]
+                dependents = dm.get_dependents(suggestion)
+                priority = delta.get('priority', DEFAULT_PRIORITY)
+                priority_label = PRIORITY_LABELS.get(priority, "Unknown")
+
+                print(f"\nSuggested next delta: {suggestion}")
+                print(f"  Name: {delta['name']}")
+                print(f"  Status: {delta['status']}")
+                print(f"  Priority: {priority} ({priority_label})")
+                print(f"  Complexity: {delta.get('complexity', 'Unknown')}")
+
+                if dependents:
+                    print(f"  Unlocks {len(dependents)} delta(s):")
+                    for dep in sorted(dependents):
+                        print(f"    - {dep}")
+                else:
+                    print("  Unlocks: No other deltas directly depend on this")
+
+                deps = dm.get_dependencies(suggestion)
+                if deps:
+                    print(f"  Depends on ({len(deps)} complete):")
+                    for dep in sorted(deps):
+                        print(f"    - {dep} ✓")
+            else:
+                print(f"\n🎯 Top {min(top_n, len(ready))} Recommended Deltas:\n")
+
+                for i, fid in enumerate(ready[:top_n], 1):
+                    delta = sm.deltas[fid]
+                    dependents = dm.get_dependents(fid)
+                    deps = dm.get_dependencies(fid)
+                    priority = delta.get('priority', DEFAULT_PRIORITY)
+                    priority_label = PRIORITY_LABELS.get(priority, "Unknown")
+                    complexity = delta.get('complexity', 'Unknown')
+                    score = compute_score(fid)
+
+                    impact_str = f" | blocks {len(dependents)}" if dependents else ""
+                    print(f"{i}. {fid}: {delta['name']}")
+                    print(f"   Priority: {priority} ({priority_label}) | Complexity: {complexity}{impact_str}")
+                    print(f"   Score: {score} | Status: {delta['status']}")
+
+                    if deps:
+                        print(f"   Depends on ({len(deps)}): {', '.join(sorted(deps))}")
+                    print()
 
     else:
         print(f"Unknown subcommand: {subcommand}")

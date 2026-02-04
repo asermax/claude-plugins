@@ -1,15 +1,19 @@
 ---
-description: Display a summary table of available deltas
-argument-hint: "[status]"
+description: Display a summary table of available deltas or show recommended next deltas
+argument-hint: "[filter|next work|critical|high|medium|low|backlog]"
 ---
 
 # Delta Summary
 
-Display a summary table of all deltas with optional filtering by status.
+Display a summary table of all deltas with optional filtering by status, priority, or show recommended next deltas to work on.
 
 ## Input
 
-Status filter: $ARGUMENTS (optional - if provided, filters deltas by partial phase name match)
+Filter: $ARGUMENTS (optional)
+- **No filter**: Show all deltas sorted by priority
+- **Status filter**: Partial match on status (e.g., "Spec", "Implementation", "Not Started")
+- **Priority keywords**: "critical", "high", "medium", "low", "backlog" → filter by priority level
+- **"next work"**: Show top 5 recommended deltas using the `next` command
 
 ## Context
 
@@ -38,24 +42,57 @@ Check for required files:
 
 If missing, suggest `/katachi:init-framework` first.
 
-### 2. Execute Summary Command
+### 2. Parse Input and Determine Mode
 
-Call the deltas.py script with the summary subcommand:
+Analyze $ARGUMENTS to determine which command to run:
+
+| Input Pattern | Command | Behavior |
+|--------------|---------|----------|
+| (empty) | `summary` | Show all deltas, sorted by priority |
+| "next work" or "next" or "recommended" | `next --top 5` | Show top 5 recommended deltas |
+| "critical" | `summary --priority 1` | Show only Critical priority |
+| "high" | `summary --priority 2` | Show only High priority |
+| "medium" | `summary --priority 3` | Show only Medium priority |
+| "low" | `summary --priority 4` | Show only Low priority |
+| "backlog" | `summary --priority 5` | Show only Backlog priority |
+| Anything else | `summary <filter>` | Treat as status filter |
+
+### 3. Execute Appropriate Command
+
+#### Mode: Next Work (Recommended Deltas)
+
+When user asks for "next work", "next", or "recommended":
+
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py next --top 5
+```
+
+This shows the top 5 deltas recommended to work on next, ranked by:
+- Priority level (Critical/High first)
+- Impact (how many other deltas are blocked)
+- Complexity (prefer easier wins)
+
+#### Mode: Priority Filter
+
+When user specifies a priority keyword:
+
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py summary --priority <level>
+```
+
+#### Mode: Status Filter (Default)
+
+For any other filter:
 
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py summary $ARGUMENTS
 ```
 
-This will:
-- Display a formatted markdown table with ID, Name, Status, Complexity, and Dependencies
-- If no status filter provided: show all deltas
-- If status filter provided: filter by partial phase name match (case-insensitive)
-  - Example: `Spec` matches both `⧗ Spec` and `✓ Spec`
-  - Example: `Implementation` matches `⧗ Implementation` and `✓ Implementation`
+### 4. Display Results
 
-### 3. Display Results
-
-The command outputs a formatted table directly to the console.
+The command outputs directly to the console:
+- **Summary mode**: Formatted table with ID, Name, Status, Priority, Complexity, and Impact
+- **Next mode**: Numbered list of top recommended deltas with rationale
 
 ## Error Handling
 
@@ -64,27 +101,36 @@ The command outputs a formatted table directly to the console.
 - Don't attempt to create files manually
 
 **No matching deltas:**
-- The command will display "No deltas found matching status: {filter}"
-- This is expected behavior when filter doesn't match any delta status
+- The command will display "No deltas found matching..."
+- This is expected behavior when filter doesn't match any deltas
 
-**Invalid status filter:**
-- The command accepts any text as filter and performs partial match
-- If filter matches nothing, it will show "No deltas found" message
+**Invalid input:**
+- If the user types an unrecognized filter, treat it as a status filter
+- The underlying command will handle unknown filters gracefully
 
 ## Examples
 
 ```bash
-# Show all deltas
+# Show all deltas (sorted by priority)
 /katachi:delta-summary
 
-# Show only Spec-related deltas (both in-progress and complete)
+# Show recommended next deltas (top 5)
+/katachi:delta-summary next work
+
+# Show only Critical priority deltas
+/katachi:delta-summary critical
+
+# Show only High priority deltas
+/katachi:delta-summary high
+
+# Show only Spec-related deltas (status filter)
 /katachi:delta-summary Spec
 
 # Show only Implementation-related deltas
 /katachi:delta-summary Implementation
 
-# Exact match also works
-/katachi:delta-summary "⧗ Spec"
+# Show only "Not Started" deltas
+/katachi:delta-summary "Not Started"
 ```
 
 ## Workflow
@@ -93,3 +139,4 @@ This is a read-only command for viewing delta status:
 - No modifications to framework files
 - No user iteration required
 - Displays current state and exits
+- Smart parsing: detects priority keywords and "next work" automatically

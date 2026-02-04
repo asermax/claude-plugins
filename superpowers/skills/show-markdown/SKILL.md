@@ -84,10 +84,14 @@ python ${CLAUDE_PLUGIN_ROOT}/skills/show-markdown/scripts/display.py /path/to/fi
 - Dark mode support (system preference)
 - Temporary file generation (no cleanup needed)
 - Smart title detection (explicit → heading → filename → default)
+- **Mermaid diagram rendering** (flowcharts, sequence diagrams, Gantt charts, class diagrams, etc.)
+- **Click-to-zoom** for mermaid diagrams (opens in modal)
 
 ## Technical Details
 
 - **Markdown Parser**: marked.js (https://cdn.jsdelivr.net/npm/marked/marked.min.js)
+- **Diagram Rendering**: mermaid.js (https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js)
+- **Syntax Highlighting**: highlight.js (https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js)
 - **Browser**: Opens via `xdg-open` (respects system default)
 - **Temp Files**: Created using Python's `tempfile.mkstemp`
 - **Character Encoding**: UTF-8
@@ -124,9 +128,37 @@ python scripts/display.py --content "# Title\\n\\n- Item 1\\n- Item 2\\n\\nCode:
 python scripts/display.py --content "# Title\\n\\nContent" --title "My Custom Title"
 ```
 
+## Mermaid Diagrams
+
+The skill supports rendering mermaid diagrams inline. Use fenced code blocks with the `mermaid` language identifier:
+
+````markdown
+```mermaid
+graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Do something]
+    B -->|No| D[Do something else]
+    C --> E[End]
+    D --> E
+```
+````
+
+Supported diagram types:
+- Flowcharts (`graph TD`, `graph LR`, etc.)
+- Sequence diagrams (`sequenceDiagram`)
+- Class diagrams (`classDiagram`)
+- State diagrams (`stateDiagram-v2`)
+- Entity relationship diagrams (`erDiagram`)
+- Gantt charts (`gantt`)
+- Pie charts (`pie`)
+- And more (see [Mermaid documentation](https://mermaid.js.org/))
+
+**Click-to-zoom**: Click on any rendered diagram to open it in a larger modal view. Press Escape or click the backdrop to close.
+
 ## Notes
 
 - The browser opens the rendered HTML immediately
 - The temp file remains for the browser session
 - No manual cleanup required - temp files are managed by the system
 - Works best on Linux systems with `xdg-open` installed
+- Mermaid diagrams automatically adapt to light/dark mode based on system preference

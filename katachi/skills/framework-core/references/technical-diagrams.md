@@ -1,10 +1,10 @@
-# Technical ASCII Diagrams Guide
+# Technical Mermaid Diagrams Guide
 
-A guide for documenting software architecture and design using ASCII diagrams in feature designs, delta designs, and decision documents.
+A guide for documenting software architecture and design using Mermaid diagrams in feature designs, delta designs, and decision documents.
 
 ## What are Technical Diagrams?
 
-Technical diagrams are ASCII-based visual representations of software concepts like state machines, process flows, component interactions, and data models. They show **structure and relationships** at a conceptual level, not implementation details.
+Technical diagrams are visual representations of software concepts like state machines, process flows, component interactions, and data models. They show **structure and relationships** at a conceptual level, not implementation details.
 
 Purpose: Clarify complex concepts that are hard to express in prose alone. Good diagrams complement writing—they should not replace clear explanations.
 
@@ -25,13 +25,14 @@ Purpose: Clarify complex concepts that are hard to express in prose alone. Good 
 
 ### Decision Tree
 
-```
-Is the concept hard to express in prose? → Consider a diagram
-Does it have states/transitions? → State diagram
-Does it have decision points/branches? → Flow diagram
-Does it show component interactions? → Sequence diagram
-Does it show entity relationships? → ERD diagram
-Could prose be just as clear? → Skip the diagram
+```mermaid
+flowchart TD
+    A[Is the concept hard to express in prose?] -->|Yes| B{What does it show?}
+    A -->|No| Skip[Skip the diagram]
+    B -->|States/transitions| State[State diagram]
+    B -->|Decision points/branches| Flow[Flow diagram]
+    B -->|Component interactions| Seq[Sequence diagram]
+    B -->|Entity relationships| ERD[ERD diagram]
 ```
 
 ## General Principles
@@ -52,27 +53,34 @@ Could prose be just as clear? → Skip the diagram
 - Status tracking systems
 - Workflow states
 
-### Notation
+### Syntax Reference
 
 ```
-States:      [State Name]
-Transitions: --[event/action]-->
+stateDiagram-v2
+    [*] --> State1           // Initial state
+    State1 --> State2: event // Transition with label
+    State2 --> [*]           // Final state
 ```
 
 ### Basic Example
 
-```
-[Pending] --[approve]--> [Active] --[expire]--> [Expired]
-    |                       |
-    +-[reject]---> [Rejected]
+```mermaid
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Active: approve
+    Pending --> Rejected: reject
+    Active --> Expired: expire
 ```
 
 ### With Description Template
 
-```
-[State A] --[event1]--> [State B] --[event2]--> [State C]
-    |
-    +-[event3]---> [State D]
+```mermaid
+stateDiagram-v2
+    [*] --> StateA
+    StateA --> StateB: event1
+    StateA --> StateD: event3
+    StateB --> StateC: event2
+    StateC --> [*]
 ```
 
 **States**:
@@ -89,14 +97,20 @@ Transitions: --[event/action]-->
 ### Do's and Don'ts
 
 **Do**:
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Published: publish
+    Published --> Archived: archive
 ```
-[Draft] --[publish]--> [Published] --[archive]--> [Archived]
-```
-Clear, simple state names and transition labels
+Clear, descriptive state names and transition labels
 
 **Don't**:
-```
-[S1: d] --[p/v/s]--> [S2: pub/act] --[a]--> [S3: arc/del]
+```mermaid
+stateDiagram-v2
+    [*] --> S1
+    S1 --> S2: p
+    S2 --> S3: a
 ```
 Cryptic abbreviations make diagrams harder to understand than prose
 
@@ -110,42 +124,43 @@ Cryptic abbreviations make diagrams harder to understand than prose
 - Conditional workflows
 - Decision trees
 
-### Notation
+### Syntax Reference
 
 ```
-Steps:       [Step Name]
-Decisions:   <Question?>
-Arrows:      -->  (or →)
+flowchart TD              // TD = top-down, LR = left-right
+    A[Step]               // Rectangle for steps
+    B{Decision?}          // Diamond for decisions
+    A --> B               // Arrow
+    B -->|Yes| C          // Labeled arrow
 ```
 
 ### Basic Example
 
-```
-[Start] --> [Validate Input] --> <Valid?> --Yes--> [Process] --> [End]
-                                    |
-                                    No
-                                    ↓
-                              [Show Error] --> [End]
+```mermaid
+flowchart TD
+    Start[Start] --> Validate[Validate Input]
+    Validate --> Valid{Valid?}
+    Valid -->|Yes| Process[Process]
+    Valid -->|No| Error[Show Error]
+    Process --> End[End]
+    Error --> End
 ```
 
 ### Complex Process Example
 
-```
-[User Request] --> <Authenticated?> --No--> [Login Flow] --+
-                         |                                  |
-                         Yes                                |
-                         ↓                                  |
-                  <Has Permission?> <-----------------------+
-                         |
-                         +--No--> [403 Error]
-                         |
-                         Yes
-                         ↓
-                  [Fetch Data] --> <Cache Hit?> --Yes--> [Return Cached]
-                         |              |
-                         |              No
-                         |              ↓
-                         +--------> [Query DB] --> [Update Cache] --> [Return Data]
+```mermaid
+flowchart TD
+    Request[User Request] --> Auth{Authenticated?}
+    Auth -->|No| Login[Login Flow]
+    Auth -->|Yes| Perm{Has Permission?}
+    Login --> Perm
+    Perm -->|No| Forbidden[403 Error]
+    Perm -->|Yes| Fetch[Fetch Data]
+    Fetch --> Cache{Cache Hit?}
+    Cache -->|Yes| ReturnCached[Return Cached]
+    Cache -->|No| Query[Query DB]
+    Query --> Update[Update Cache]
+    Update --> Return[Return Data]
 ```
 
 **Process Description**:
@@ -156,22 +171,22 @@ Arrows:      -->  (or →)
 ### Do's and Don'ts
 
 **Do**:
+```mermaid
+flowchart TD
+    Request[Request] --> Valid{Valid?}
+    Valid -->|Yes| Process[Process]
+    Valid -->|No| Reject[Reject]
 ```
-[Request] --> <Valid?> --Yes--> [Process]
-                  |
-                  No
-                  ↓
-            [Reject]
-```
-Clear question in diamonds/brackets, obvious flow direction
+Clear labels, obvious flow direction
 
 **Don't**:
+```mermaid
+flowchart LR
+    r --> c --> o?
+    o? --> p
+    o? --> rej
 ```
-req→chk→ok?→yes→proc
-       ↓no
-      rej
-```
-Too terse; direction unclear; hard to scan
+Too terse; unclear what nodes represent
 
 ---
 
@@ -184,41 +199,69 @@ Too terse; direction unclear; hard to scan
 - Integration between systems
 - Multi-layer communication
 
-### Notation
+### Syntax Reference
 
 ```
-Participants:  Listed as column headers
-Messages:      Participant1 --[message]--> Participant2
-Time:          Flows downward
-Returns:       <--[response]--
+sequenceDiagram
+    actor U as User          // Stick figure for human users
+    participant A as Client  // Box for systems/components
+    participant B as Server
+    A->>B: request           // Solid arrow (sync)
+    B-->>A: response         // Dashed arrow (response)
+    A-)+B: async request     // Async message
+    B--)-A: async response
+
+    rect rgba(0, 128, 255, 0.1)  // Highlight regions with low-alpha colors
+        A->>B: grouped action
+    end
 ```
+
+**Conventions**:
+- Use `actor` for human users (renders as stick figure)
+- Use `participant` for systems, services, and components (renders as box)
+- When using colors (e.g., `rect` for grouping), always use `rgba()` with low alpha (0.1-0.2) to maintain contrast with text and other elements
 
 ### Basic Example
 
-```
-Client          Server          Database
-  |                |                |
-  |--[request]---->|                |
-  |                |--[query]------>|
-  |                |<--[result]-----|
-  |<--[response]---|                |
-  |                |                |
+```mermaid
+sequenceDiagram
+    actor User
+    participant Server
+    participant Database
+
+    User->>Server: request
+    Server->>Database: query
+    Database-->>Server: result
+    Server-->>User: response
 ```
 
 ### With Async Operations
 
-```
-Frontend        Backend         Queue           Worker
-   |                |              |               |
-   |--[submit]----->|              |               |
-   |<--[202 Accepted]              |               |
-   |                |--[enqueue]-->|               |
-   |                |<--[ack]------|               |
-   |                |              |--[job]------->|
-   |                |              |               |--[process]
-   |                |              |<--[complete]--|
-   |                |<--[notify]---|               |
-   |<--[webhook]----|              |               |
+```mermaid
+sequenceDiagram
+    actor User
+    participant Frontend
+    participant Backend
+    participant Queue
+    participant Worker
+
+    User->>Frontend: submit
+    Frontend->>Backend: POST /jobs
+    Backend-->>Frontend: 202 Accepted
+    Frontend-->>User: "Processing..."
+
+    rect rgba(0, 128, 255, 0.1)
+        Note over Backend,Worker: Background processing
+        Backend->>Queue: enqueue
+        Queue-->>Backend: ack
+        Queue->>Worker: job
+        Worker->>Worker: process
+        Worker-->>Queue: complete
+    end
+
+    Queue-->>Backend: notify
+    Backend-->>Frontend: webhook
+    Frontend-->>User: "Complete!"
 ```
 
 **Participants**: [Explain role of each participant]
@@ -231,22 +274,28 @@ Frontend        Backend         Queue           Worker
 ### Do's and Don'ts
 
 **Do**:
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant DB
+
+    Client->>API: GET /users
+    API->>DB: query
+    DB-->>API: rows
+    API-->>Client: 200 OK
 ```
-Client      API         DB
-  |          |          |
-  |--GET---->|          |
-  |          |--query-->|
-  |<--200----|          |
-```
-Vertical alignment, clear message labels, left-to-right flow
+Clear participant names, descriptive messages
 
 **Don't**:
+```mermaid
+sequenceDiagram
+    C->>A: x
+    A->>D: y
+    D-->>A: z
+    A-->>C: w
 ```
-C->A->D
-D->A
-A->C
-```
-Impossible to understand sequence; no visual structure
+Single-letter names; unclear what messages represent
 
 ---
 
@@ -258,40 +307,53 @@ Impossible to understand sequence; no visual structure
 - Database schema documentation
 - Domain modeling
 
-### Notation
+### Syntax Reference
 
 ```
-Entities:       Entity
-Relationships:  1---* (one-to-many)
-                1---1 (one-to-one)
-                *---* (many-to-many)
-Hierarchy:      Parent
-                ├─ Child1
-                └─ Child2
+erDiagram
+    ENTITY1 ||--o{ ENTITY2 : "relationship"
+
+    Cardinality:
+    ||  exactly one
+    o|  zero or one
+    }|  one or more
+    }o  zero or more
 ```
 
 ### Basic Example
 
-```
-User 1---* Session
-  |
-  1
-  |
-  *
-Order 1---* OrderItem *---1 Product
+```mermaid
+erDiagram
+    User ||--o{ Session : has
+    User ||--o{ Order : places
+    Order ||--|{ OrderItem : contains
+    Product ||--o{ OrderItem : "included in"
 ```
 
-### With Hierarchy
+### With Attributes
 
-```
-Organization
-├─ Department 1---* Employee
-└─ Project
-       |
-       1
-       |
-       *
-     Task 1---1 Employee (assignee)
+```mermaid
+erDiagram
+    Organization ||--|{ Department : contains
+    Department ||--o{ Employee : employs
+    Organization ||--o{ Project : owns
+    Project ||--|{ Task : includes
+    Employee ||--o{ Task : "assigned to"
+
+    Organization {
+        string name
+        string domain
+    }
+    Employee {
+        string name
+        string email
+        string role
+    }
+    Task {
+        string title
+        string status
+        date dueDate
+    }
 ```
 
 **Entities**: [Explain each entity and its purpose]
@@ -301,38 +363,38 @@ Organization
 - Order-OrderItem: An order contains multiple items
 - [Explain key relationships and cardinality]
 
-### Nested Structure Example
+### Nested Structure (Alternative View)
 
-```
-Project
-├─ has many Issues
-│  ├─ has many Comments
-│  └─ belongs to User (creator)
-├─ has many Milestones
-└─ belongs to Organization
+For simple hierarchies, a flowchart can be clearer:
+
+```mermaid
+flowchart TD
+    Project --> Issues
+    Issues --> Comments
+    Issues --> User[User - creator]
+    Project --> Milestones
+    Project --> Organization
 ```
 
 ### Do's and Don'ts
 
 **Do**:
+```mermaid
+erDiagram
+    Author ||--o{ Book : writes
+    Book }o--o{ Category : "belongs to"
+    Author ||--|| Profile : has
 ```
-Author 1---* Book *---* Category
-   |
-   1
-   |
-   1
-Profile
-```
-Clear cardinality notation, obvious relationships
+Clear cardinality notation, descriptive relationship labels
 
 **Don't**:
+```mermaid
+erDiagram
+    A ||--|| B : x
+    B ||--|| C : y
+    A ||--|| D : z
 ```
-A─B
-B─C
-A─D
-C─D
-```
-Unclear relationships; no cardinality; ambiguous direction
+Single-letter entities; meaningless relationship labels
 
 ---
 
@@ -343,32 +405,37 @@ Sometimes multiple diagram types work together:
 ### Example: Order Fulfillment
 
 **State Diagram**:
-```
-[New] --[pay]--> [Paid] --[ship]--> [Shipped] --[deliver]--> [Delivered]
-  |                |
-  +-[cancel]------>|
-                   +-[cancel]--> [Refunded]
+```mermaid
+stateDiagram-v2
+    [*] --> New
+    New --> Paid: pay
+    New --> Cancelled: cancel
+    Paid --> Shipped: ship
+    Paid --> Refunded: cancel
+    Shipped --> Delivered: deliver
 ```
 
 **Data Model**:
-```
-Order 1---* OrderItem *---1 Product
-  |
-  1
-  |
-  *
-ShipmentTracking
+```mermaid
+erDiagram
+    Order ||--|{ OrderItem : contains
+    OrderItem }o--|| Product : references
+    Order ||--o{ ShipmentTracking : tracks
 ```
 
 **Sequence** (payment flow):
-```
-Customer    Checkout    Payment    Warehouse
-   |            |          |          |
-   |--[pay]---->|          |          |
-   |            |--[charge]>|         |
-   |            |<--[ok]--- |         |
-   |            |--[fulfill]--------->|
-   |<--[confirm]|          |          |
+```mermaid
+sequenceDiagram
+    actor Customer
+    participant Checkout
+    participant Payment
+    participant Warehouse
+
+    Customer->>Checkout: pay
+    Checkout->>Payment: charge
+    Payment-->>Checkout: ok
+    Checkout->>Warehouse: fulfill
+    Checkout-->>Customer: confirm
 ```
 
 Each diagram shows a different aspect of the same feature.
@@ -393,7 +460,7 @@ Each diagram shows a different aspect of the same feature.
 
 ### Use Consistent Notation
 - Stick to the patterns in this guide
-- Don't invent new notation without explanation
+- Don't mix diagram types unnecessarily
 - Match the style of existing diagrams in the project
 
 ### Embed Diagrams Inline
@@ -422,13 +489,12 @@ Orders transition from New to Paid when payment succeeds...
 
 ## Quick Reference
 
-| Need to Show | Use | Example |
-|--------------|-----|---------|
-| Lifecycle stages | State diagram | `[Draft] --[publish]--> [Published]` |
-| Decision points | Flow diagram | `<Valid?> --Yes--> [Process]` |
-| Component interactions | Sequence diagram | `Client --[request]--> Server` |
-| Entity relationships | ERD | `User 1---* Order` |
-| Nested hierarchy | Tree structure | `Parent├─Child1└─Child2` |
+| Need to Show | Use | Syntax Start |
+|--------------|-----|--------------|
+| Lifecycle stages | State diagram | `stateDiagram-v2` |
+| Decision points | Flow diagram | `flowchart TD` |
+| Component interactions | Sequence diagram | `sequenceDiagram` |
+| Entity relationships | ERD | `erDiagram` |
 
 ---
 

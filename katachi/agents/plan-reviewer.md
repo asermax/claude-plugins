@@ -66,6 +66,22 @@ Evaluate the plan against these criteria:
 - Are there snippets that contain complete implementation (should be removed)?
 - Does the plan rely on spec/design/ADR/DES for implementation details?
 
+### 9. Team Structure (only evaluate if Team Structure section is present)
+
+When the plan includes a `## Team Structure` section, validate the agent separation:
+
+- **File isolation** (CRITICAL): Do any two agents modify the same file? Cross-reference the Files Changed section and each agent's steps to verify complete file isolation. Any overlap is a critical issue.
+- **Agent count**: Are there too many agents? More than 4 is suspicious. More than 2 should have clear justification (e.g., genuinely independent work areas).
+- **Minimum step count**: Does each agent have at least 3 steps? Fewer suggests the agent should be merged with another.
+- **Step assignment correctness**: Are steps assigned to the correct agent based on their declared scope? (e.g., a backend step assigned to a frontend agent)
+- **Cross-agent dependencies**: Are synchronization points identified? Look for hidden dependencies such as:
+  - Shared database migrations that one agent creates and another depends on
+  - Shared type definitions or schemas (e.g., strict Zod schemas that reject unknown fields)
+  - Shared configuration files
+  - API contracts where one agent builds the endpoint and another consumes it
+- **Parallel viability**: Could this plan actually benefit from parallel agents, or are the steps fundamentally sequential? If most steps depend on the previous agent's output, a team adds overhead without benefit.
+- **Unnecessary splitting**: Is the split justified by genuine parallelism? A plan with 8 steps where 6 are sequential and 2 can run in parallel is better as a single-agent plan.
+
 ## Output Format
 
 Provide a structured review:
@@ -105,6 +121,13 @@ Provide a structured review:
 
 ## Step Order Issues
 - [Dependencies that are out of order]
+
+## Team Structure Issues (if Team Structure present)
+- [File conflicts between agents — list specific files touched by multiple agents]
+- [Missing synchronization points — hidden cross-agent dependencies]
+- [Agent count concerns — too many or too few agents]
+- [Steps that should be reassigned to a different agent]
+- [Parallel viability assessment — is the team split actually beneficial?]
 
 ## Strengths
 - [What's done well]

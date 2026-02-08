@@ -139,6 +139,51 @@ List all files that will be modified:
 - Test: Integration test for end-to-end flow
 ```
 
+### Team Structure (Optional)
+
+When a plan is created with team mode enabled, include a Team Structure section between the Pre-Implementation Checklist and Implementation Steps.
+
+**When to include team structure:**
+- Delta spans multiple stacks (backend + frontend)
+- Steps can be genuinely parallelized across independent file sets
+- Each potential agent has 3+ steps
+
+**When NOT to include team structure (even if team mode was requested):**
+- All steps modify shared files
+- Steps are fundamentally sequential
+- Total steps < 6 (overhead not worth it)
+
+**Structure:**
+
+```markdown
+## Team Structure
+
+| Agent | Scope | Steps |
+|-------|-------|-------|
+| **Backend** | Python: models, services, routers, tests | Steps 1–5 |
+| **Frontend** | TypeScript: schemas, components, hooks, tests | Steps 6–10 |
+
+**Synchronization**: [describe cross-agent dependencies, shared schemas, ordering constraints]
+```
+
+When team structure is present, group implementation steps under agent headers:
+
+```markdown
+### Backend Agent
+
+#### Step 1: ...
+#### Step 2: ...
+
+---
+
+### Frontend Agent
+
+#### Step 3: ...
+#### Step 4: ...
+```
+
+**Key constraint**: No two agents may modify the same file. If a file needs changes from multiple perspectives, assign all its changes to one agent.
+
 ### Notes Section
 
 Use during implementation to record:

@@ -51,7 +51,18 @@ Update status:
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Implementation"
 ```
 
-## Process
+## Mode Detection
+
+Read the implementation plan (`docs/delta-plans/$ARGUMENTS.md`) and check for a `## Team Structure` section.
+
+- **If Team Structure is present** → enter **Team Orchestration Mode** (skip to that section below)
+- **If no Team Structure** → continue with the **Standard Implementation Process** (steps 1-9 below)
+
+---
+
+## Standard Implementation Process
+
+Used when the plan has no Team Structure section. The lead agent implements everything directly.
 
 ### 1. Review Plan and Decisions (Silent)
 
@@ -185,6 +196,96 @@ Next step: /katachi:reconcile-delta $ARGUMENTS (to update feature documentation)
 
 Offer to commit: "Ready to commit this implementation?"
 
+---
+
+## Team Orchestration Mode
+
+Used when the plan includes a Team Structure section. The lead agent orchestrates rather than implements directly.
+
+### 1. Read Plan Structure Only
+
+Read the spec, design, and plan to understand:
+- How many agents are needed and their scopes
+- The step assignments per agent
+- Synchronization points between agents
+- Pre-implementation checklist items per agent
+
+Do NOT read the full ADRs, DES, or dependency code yourself — delegate that reading to each agent.
+
+### 2. Set Up Team and Tasks
+
+1. Create team with `TeamCreate` (name: `dlt-<delta-id>-implementation`)
+2. Create **one task per implementation step** using the step descriptions from the plan
+3. Set up task dependencies:
+   - **Within each agent**: sequential — each step blocked by the previous step from the same agent
+   - **Cross-agent**: add dependencies noted in the plan's Synchronization section (if any)
+4. Assign each task to its respective agent name (matching the plan's Team Structure table)
+
+### 3. Spawn Agents
+
+Spawn all agents **in parallel** (single message, multiple Task tool calls) with:
+- `subagent_type`: `"general-purpose"`
+- `model`: `"sonnet"` (unless user specifies otherwise)
+- `mode`: `"bypassPermissions"`
+- `team_name`: the team name from step 2
+- `run_in_background`: `true`
+
+Each agent's prompt must include:
+- Their role and delta context (e.g., "You are the backend agent for DLT-054")
+- Their task list (task IDs and step descriptions)
+- Instructions to:
+  - Read the plan (`docs/delta-plans/$ARGUMENTS.md`) — specifically their agent section
+  - Read the spec and design documents
+  - Read the pre-requisite files listed in the plan's pre-implementation checklist for their scope
+  - Read the relevant ADRs and DES patterns from the plan's checklist
+  - Follow their steps autonomously, marking each task `in_progress` then `completed`
+  - Message `team-lead` for any decisions not covered by the documentation
+  - Run verification commands when done (test, typecheck, lint for their area)
+- The project's coding style guidelines (copy relevant sections from CLAUDE.md)
+
+### 4. Monitor and Coordinate
+
+After spawning agents, send each agent a message listing their task IDs and instructions to track progress per task.
+
+The lead agent then:
+- Responds to agent questions about decisions not covered by documentation
+- Monitors task progress via `TaskList`
+- Resolves cross-agent coordination issues if they arise
+- Does NOT implement code directly
+
+### 5. Verify and Review
+
+Once all agents have completed their tasks:
+- Run full test suites for all affected areas
+- Run linting and type checking across the whole project
+- Fix any integration issues between agent outputs
+
+Dispatch the code-reviewer agent with the full diff (same as Standard Process step 4).
+
+Fix all issues found, then present to user for review (same as Standard Process steps 6-9).
+
+### 6. Finalize
+
+Same as Standard Process step 9:
+
+Update status:
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Implementation"
+```
+
+Present summary:
+```
+"Delta implementation complete:
+
+ID: $ARGUMENTS
+
+Next step: /katachi:reconcile-delta $ARGUMENTS (to update feature documentation)
+```
+
+Offer to commit: "Ready to commit this implementation?"
+
+---
+
 ## Working with Decisions
 
 **Using ADRs and DES:**
@@ -204,13 +305,23 @@ Offer to commit: "Ready to commit this implementation?"
 
 ## Workflow
 
-**This is an autonomous implementation process:**
+**Standard mode — autonomous implementation:**
 - Read documentation silently
 - Implement all steps without asking questions
 - Apply ADR and DES decisions
 - Verify each step works
 - Run code-reviewer validation
 - Fix ALL issues automatically
+- Present to user for final review
+- Iterate based on feedback
+- Surface patterns for DES
+- Commit when approved
+
+**Team mode — orchestrated implementation:**
+- Read plan structure only
+- Create team, tasks, and spawn agents
+- Monitor and coordinate (delegate mode)
+- Verify and review after agents complete
 - Present to user for final review
 - Iterate based on feedback
 - Surface patterns for DES

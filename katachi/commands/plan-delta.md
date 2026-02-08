@@ -1,5 +1,5 @@
 ---
-argument-hint: [DELTA-ID]
+argument-hint: [DELTA-ID] [team]
 description: Create step-by-step implementation plan for a delta
 ---
 
@@ -9,7 +9,13 @@ Create an implementation plan for a specific delta.
 
 ## Input
 
-Delta ID: $ARGUMENTS (e.g., "DLT-001")
+Delta ID and optional team mode from: $ARGUMENTS
+
+Parse arguments:
+- First word: Delta ID (e.g., "DLT-001")
+- Second word (optional): `team` to enable agent team planning. If absent, team mode is off.
+
+Use the delta ID wherever file paths and status commands reference the delta (e.g., `docs/delta-specs/$ARGUMENTS[0].md`).
 
 ## Context
 
@@ -24,8 +30,8 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 - `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ### Delta documents
-- `docs/delta-specs/$ARGUMENTS.md` - What to build (requirements)
-- `docs/delta-designs/$ARGUMENTS.md` - Why/how (design rationale)
+- `docs/delta-specs/$ARGUMENTS[0].md` - What to build (requirements)
+- `docs/delta-designs/$ARGUMENTS[0].md` - Why/how (design rationale)
 
 ### Project decisions
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
@@ -37,7 +43,7 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 - Plan should note which feature docs will need reconciliation after implementation
 
 ### Existing plan (if present)
-- `docs/delta-plans/$ARGUMENTS.md` - Current plan to update or create
+- `docs/delta-plans/$ARGUMENTS[0].md` - Current plan to update or create
 
 ### Template
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/implementation-plan.md` - Structure to follow
@@ -45,15 +51,15 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 ## Pre-Check
 
 Verify spec and design exist:
-- If `docs/delta-specs/$ARGUMENTS.md` doesn't exist, suggest `/katachi:spec-delta $ARGUMENTS` first
-- If `docs/delta-designs/$ARGUMENTS.md` doesn't exist, suggest `/katachi:design-delta $ARGUMENTS` first
+- If `docs/delta-specs/$ARGUMENTS[0].md` doesn't exist, suggest `/katachi:spec-delta $ARGUMENTS[0]` first
+- If `docs/delta-designs/$ARGUMENTS[0].md` doesn't exist, suggest `/katachi:design-delta $ARGUMENTS[0]` first
 - Plan requires both spec and design
 
 ## Process
 
 ### 1. Check Existing State
 
-If `docs/delta-plans/$ARGUMENTS.md` exists:
+If `docs/delta-plans/$ARGUMENTS[0].md` exists:
 - Read current plan
 - Check for drift: Have spec or design changed?
 - Summarize: steps, pre-implementation items, files to change
@@ -64,13 +70,13 @@ If no plan exists: proceed with initial creation
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Plan"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS[0] "⧗ Plan"
 ```
 
 ### 2. Research Phase (Silent)
 
-- Read delta spec (`docs/delta-specs/$ARGUMENTS.md`)
-- Read delta design (`docs/delta-designs/$ARGUMENTS.md`)
+- Read delta spec (`docs/delta-specs/$ARGUMENTS[0].md`)
+- Read delta design (`docs/delta-designs/$ARGUMENTS[0].md`)
 - Read relevant ADRs and DES patterns (not just indexes)
 - Read dependency code as needed
 - Explore codebase for implementation patterns
@@ -128,6 +134,50 @@ Ensure:
 - List all files to be modified
 - Include test files
 
+### 3b. Plan Team Structure (Only when team mode is on)
+
+Skip this step entirely if team mode is off.
+
+After drafting the implementation steps, analyze them for agent separation:
+
+**Separation criteria** (in priority order):
+1. **Stack separation**: Backend vs frontend steps that touch entirely different file sets
+2. **Independent backend paths**: Different endpoints, services, or modules with no shared state changes
+3. **Independent frontend paths**: Different pages, features, or component trees with no shared components being modified
+
+**Rules for agent separation**:
+- Each agent must work on a completely independent set of files — no two agents may modify the same file
+- Prefer fewer agents over more — only split when there is genuine parallelism
+- Maximum 4 agents (diminishing returns beyond this; coordination overhead grows)
+- If all steps are sequential with shared file dependencies, do NOT create a team (even if team mode is on) — note this in the plan and explain why
+- Each agent should have at least 3 steps to justify the overhead
+
+**What to include in the Team Structure section**:
+- Agent table: name, scope (language/area), assigned steps
+- Per-agent pre-implementation checklist items (which files each agent needs to read)
+- Synchronization notes: cross-agent dependencies, ordering constraints, shared types or schemas
+- Steps grouped under agent headers (e.g., `### Backend Agent`, `### Frontend Agent`)
+
+**Step grouping**: When team structure is present, group steps under agent headers:
+
+```markdown
+### Backend Agent
+
+#### Step 1: ...
+#### Step 2: ...
+
+---
+
+### Frontend Agent
+
+#### Step 3: ...
+#### Step 4: ...
+```
+
+Each agent's steps should be independently sequential (ordered within the agent), but agents run in parallel with each other.
+
+**If team structure is NOT viable** (all steps share files, fundamentally sequential, or < 6 total steps), omit the Team Structure section from the plan and add a note explaining why a single-agent approach is better.
+
 ### 4. External Validation (Silent)
 
 Dispatch the plan-reviewer agent to validate the draft:
@@ -160,6 +210,7 @@ Review the plan-reviewer findings and apply improvements:
 - Fix dependency ordering issues
 - Resolve ADR/DES conflicts
 - Incorporate suggested improvements
+- If team structure is present, address any team structure issues (file conflicts, missing sync points, agent count concerns)
 
 If the reviewer identified critical issues that require clarification, note them for discussion with the user.
 
@@ -167,6 +218,10 @@ If the reviewer identified critical issues that require clarification, note them
 
 Present the complete validated plan to the user in its entirety.
 Highlight any unresolved issues that need user input.
+
+If team mode is on and a team structure was included, highlight the agent assignments and synchronization points for the user to review.
+If team mode was on but team structure was deemed not viable, explain why.
+
 Invite feedback: "What needs adjustment in this plan?"
 
 ### 7. Iterate Based on Feedback
@@ -177,26 +232,27 @@ Repeat until user approves the plan.
 
 ### 8. Finalize
 
-Once user approves, save to `docs/delta-plans/$ARGUMENTS.md`
+Once user approves, save to `docs/delta-plans/$ARGUMENTS[0].md`
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Plan"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS[0] "✓ Plan"
 ```
 
 Present summary:
 ```
 "Delta plan complete:
 
-ID: $ARGUMENTS
+ID: $ARGUMENTS[0]
 
-Next step: /katachi:implement-delta $ARGUMENTS
+Next step: /katachi:implement-delta $ARGUMENTS[0]
 ```
 
 ## Workflow
 
 **This is a validate-first process:**
 - Research silently, then draft
+- Analyze for team structure (if team mode is on)
 - Validate with plan-reviewer agent
 - Apply validation feedback
 - Present validated plan to user

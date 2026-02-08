@@ -12,6 +12,18 @@
 - [ ] Review relevant ADRs: [list ADR-NNN]
 - [ ] Review relevant design patterns: [list DES-NNN]
 
+## Team Structure
+
+> Include this section only when the plan was created with team mode enabled and team separation is viable.
+
+| Agent | Scope | Steps |
+|-------|-------|-------|
+| **[Agent Name]** | [Language/area]: [specific concerns] | Steps N–M |
+
+**Synchronization**: [cross-agent dependencies and ordering constraints]
+
+---
+
 ## Implementation Steps
 
 ### Step 1: [Description]

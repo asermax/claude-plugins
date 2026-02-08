@@ -2,6 +2,7 @@
 name: iterative-development
 description: |
   Load when adding deltas or analyzing impact on existing framework. Supports progressive development without requiring everything upfront. Used by /add-delta and /analyze-impact commands.
+user-invocable: false
 ---
 
 # Iterative Development Skill

@@ -2,6 +2,7 @@
 name: framework-core
 description: |
   Load when working with any katachi framework command. Provides workflow principles, status tracking conventions, and decision guidance. This skill establishes the collaborative context for all framework operations.
+user-invocable: false
 ---
 
 # Framework Core Skill

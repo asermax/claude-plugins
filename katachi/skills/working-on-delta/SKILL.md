@@ -2,6 +2,7 @@
 name: working-on-delta
 description: |
   Load when executing spec/design/plan/implement commands for a specific delta. Provides templates, agent dispatch patterns, and workflow orchestration for per-delta work.
+user-invocable: false
 ---
 
 # Working on Delta Skill

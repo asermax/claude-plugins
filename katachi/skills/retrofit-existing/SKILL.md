@@ -2,6 +2,7 @@
 name: retrofit-existing
 description: |
   Load when retrofitting framework documentation to existing code. Supports creating specs and decisions from implementations, enabling gradual framework adoption for existing projects.
+user-invocable: false
 ---
 
 # Retrofit Existing Skill

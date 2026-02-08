@@ -22,7 +22,9 @@ The framework will detect your project state and offer appropriate options:
 - **Existing project**: Retrofit options to document existing code
 - **Partial setup**: Complete missing pieces
 
-## Commands
+## Skills
+
+All functionality is exposed as skills in the `skills/` directory. User-facing skills are invoked via `/katachi:<name>`, while supporting skills are loaded automatically by other skills.
 
 ### Initialization
 - `/katachi:init-framework` - Initialize framework in a project
@@ -46,16 +48,26 @@ The framework will detect your project state and offer appropriate options:
 
 ### Retrofit
 - `/katachi:retrofit-spec <path>` - Create spec from existing code
+- `/katachi:retrofit-design <ID>` - Create design from existing code
 - `/katachi:retrofit-decision <topic>` - Document existing decisions
 
-### Documentation
+### Documentation & Analysis
 - `/katachi:decision` - Document architecture/design decision
 - `/katachi:analyze` - Gap analysis
-- `/katachi:record-learnings` - Extract session learnings
+- `/katachi:analyze-impact [change]` - Analyze change impact
+- `/katachi:delta-summary [filter]` - View delta status summary
+- `/katachi:optimize-docs [scope]` - Optimize documentation
+- `/katachi:review-priorities` - Review and assign delta priorities
 
 ### Development
 - `/katachi:review-code` - Review code with decision compliance
 - `/katachi:commit` - Create conventional commits
+
+### Supporting Skills (not user-invocable)
+- `katachi:framework-core` - Workflow principles and conventions
+- `katachi:working-on-delta` - Per-delta workflow orchestration
+- `katachi:iterative-development` - Progressive development support
+- `katachi:retrofit-existing` - Retrofit workflow patterns
 
 ## Agents
 
@@ -122,11 +134,11 @@ If you want to make your project self-contained and independent of the katachi p
 ```
 
 This will:
-- Copy all commands to `.claude/commands/`
+- Copy all skills to `.claude/skills/`
 - Copy reviewer agents to `.claude/agents/`
 - Copy deltas.py script to `scripts/`
 - Generate framework documentation in `docs/`
 - Copy all templates to `docs/templates/`
 - Transform all plugin references to local paths
 
-After ejecting, you can uninstall the plugin and continue using all katachi commands as local commands.
+After ejecting, you can uninstall the plugin and continue using all katachi skills locally.

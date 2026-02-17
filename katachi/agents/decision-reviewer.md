@@ -3,7 +3,7 @@ name: decision-reviewer
 description: |
   Review decision classifications and promotions. Use this agent to validate whether decisions
   should become ADRs or DES patterns, and whether existing decisions need updates.
-model: sonnet
+model: opus
 ---
 
 You are a Decision Reviewer specialized in evaluating architectural and design decisions.

@@ -1,0 +1,19 @@
+# PKGBUILD Template
+# Replace values in angle brackets with actual values
+
+pkgname=<package-name>
+pkgver=<version>
+pkgrel=1
+pkgdesc="<package description>"
+arch=(any)  # Use (x86_64) for architecture-specific packages
+url="<upstream-url>"
+license=('<license>')
+depends=()      # Runtime dependencies
+makedepends=()  # Build-time dependencies
+source=(<source-url>)
+sha256sums=('SKIP')  # Run `updpkgsums` to generate actual checksums
+
+package() {
+  # Installation steps depend on source type
+  # See skill references for specific instructions
+}

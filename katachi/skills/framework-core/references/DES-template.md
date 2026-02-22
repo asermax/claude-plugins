@@ -46,14 +46,6 @@ See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.m
 
 ---
 
-## Evolution
-
-### Version 1 (YYYY-MM-DD)
-
-Initial pattern established.
-
----
-
 ## Related
 
 - See also: [DES-XXX] - [Related pattern]

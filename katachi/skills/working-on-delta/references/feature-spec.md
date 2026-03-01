@@ -10,6 +10,20 @@
 
 - As a [user], I want to [action] so that [benefit]
 
+## Requirements
+
+<!--
+Compact summary of what this capability delivers.
+R0 is always the core goal — the central problem this capability solves.
+Updated through delta reconciliation as the capability evolves.
+-->
+
+| ID | Requirement |
+|----|-------------|
+| R0 | [core problem this capability solves] |
+| R1 | [requirement] |
+| R2 | [requirement] |
+
 ## Behaviors
 
 ### [Behavior Name]

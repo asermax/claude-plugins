@@ -46,6 +46,7 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 ### Templates and Guides
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-design.md` - Structure to follow
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md` - UI layout guide (if needed)
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/spike-template.md` - Spike investigation template (for flagged unknowns)
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - Technical diagram guidance
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md` - Code snippet guidance
 
@@ -61,10 +62,8 @@ Verify spec exists:
 
 If `docs/delta-designs/$ARGUMENTS.md` exists:
 - Read current design
-- Check for drift: Has spec changed?
-- Summarize: design approach, key decisions, modeling choices
-- Ask: "What aspects need refinement? Or should we review the whole design?"
-- Enter iteration mode as appropriate
+- **Check if this is a shape-only seed from spec phase:** If the design doc contains only a `## Shape` section with initial shape parts and the rest of the template sections are empty, treat it as a starting point — not an existing design to iterate on. Summarize the initial shape to the user, note any flagged unknowns (⚠️), and proceed with full design creation.
+- **Otherwise (existing design with content):** Check for drift against spec, summarize design approach, key decisions, modeling choices. Ask: "What aspects need refinement? Or should we review the whole design?" Enter iteration mode as appropriate.
 
 If no design exists: proceed with initial creation
 
@@ -188,9 +187,30 @@ Use AskUserQuestion to ask focused questions about:
 
 ### 5. Draft Complete Design (with Decision Points)
 
-Create full design document following template:
+**Evolve the shape:**
+
+If a design doc with initial shape parts exists (seeded by spec-delta):
+- Read the initial shape parts table
+- For any flagged unknowns (⚠️): dispatch `katachi:spike-runner` subagent(s) to investigate, then validate findings with the user
+- Spikes may surface new requirements — if so, update the spec's R table and AC in `docs/delta-specs/$ARGUMENTS.md` before continuing
+- Resolve flags: remove ⚠️ and update mechanism descriptions based on findings
+- Evolve shape parts into more detailed mechanisms informed by research
+
+If no initial shape exists: draft shape parts from scratch based on spec requirements.
+
+The shape parts table stays in the design as a permanent section — it is not removed after evolution.
+
+**Run requirements coverage check (internal, not saved):**
+
+Verify coverage between the spec's R table and the evolved shape:
+- Every requirement should have at least one shape part addressing it
+- Every shape part should trace to at least one requirement
+- Surface gaps to the user if found
+
+**Create full design document following template:**
 - Problem context (what problem, constraints, interactions)
 - Design overview (high-level approach, main components)
+- Shape (evolved shape parts table)
 - Modeling (entities, relationships, domain model)
 - Data flow (inputs → processing → outputs)
 - Key decisions (choice, why, alternatives, consequences) - see research requirements below
@@ -273,6 +293,7 @@ Review this delta design.
 - Check that options were researched broadly (not just validating a pre-assumed choice)
 - Confirm research discovered current solutions, not just validated known libraries
 - Validate design decisions are supported by up-to-date research, not training data
+- Shape coverage: Does each spec requirement have at least one shape part? Are all flagged unknowns resolved? Are parts mechanisms (not constraints)?
 
 ## UI Layout Review (if design includes UI Layout section)
 - Do wireframes correspond to places in the spec's breadboard?

@@ -35,8 +35,10 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 - Use existing feature specs to understand current behavior that delta extends/modifies
 
 ### Templates and Guides
-- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-spec.md` - Structure to follow
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-spec.md` - Spec structure to follow
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-design.md` - Design structure (for seeding design doc)
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/breadboarding.md` - UI flow guide (if needed)
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/spike-template.md` - Spike investigation template (if needed)
 
 ## Process
 
@@ -74,7 +76,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Spec"
 
 ### 3. User Interview
 
-Now that I've researched the delta, I'll present my understanding and ask about important decisions.
+Now that I've researched the delta, I'll present my understanding and collaborate on requirements.
 
 **Present your understanding:**
 
@@ -86,7 +88,14 @@ Briefly summarize:
 
 **Identify and ask about important decisions:**
 
+Based on your research, propose an initial Requirements table (R table) and use it as the backbone for the interview. R0 should be the core goal; include requirements from the delta description, dependencies, and research with initial status values (Core goal, Must-have, Nice-to-have). Present it as a starting point for collaborative refinement.
+
 Use AskUserQuestion to ask focused questions about:
+
+- **Requirements refinement:**
+  - Confirm, adjust, or remove proposed requirements
+  - Surface missing requirements you didn't identify
+  - Negotiate priority status (Must-have vs Nice-to-have vs Out)
 
 - **Assumptions that need confirmation:**
   - "I'm assuming [X] - is this correct?"
@@ -114,6 +123,7 @@ Use AskUserQuestion to ask focused questions about:
 - Don't overwhelm - focus on the decisions that truly need user input
 
 **After the interview:**
+- Finalize the R table incorporating user's input
 - Incorporate user's answers into your understanding
 - Note any areas where user deferred decisions or said "it's up to you"
 - Proceed to impact discovery with clarified understanding
@@ -140,7 +150,8 @@ Use AskUserQuestion to ask focused questions about:
 Create full spec document following template:
 - User story (who/what/why - specific and clear)
 - Behavior description (inputs, outputs, what can go wrong)
-- Acceptance criteria (Given/When/Then format, include error cases)
+- **Requirements table** (finalized R table from interview)
+- **Acceptance criteria** (Given/When/Then format, grouped by requirement area — each R should map to one or more AC groups)
 - Dependencies (deltas that must exist first)
 
 **Add User Flow section (conditionally):**
@@ -154,6 +165,21 @@ If this is a UI delta (identified in research phase):
 If NOT a UI delta (technical, bug fix, API-only):
 - **Delete the entire User Flow section from the template**
 - Do not include empty breadboards
+
+**Draft initial shape (not included in spec):**
+
+After drafting the spec, draft an initial shape parts table:
+- Identify the high-level mechanisms needed to satisfy the requirements
+- Each part should describe what to build or change — a mechanism, not a constraint
+- Flag unknowns with ⚠️ where you can describe WHAT but not yet HOW
+- This shape will seed the design document (see step after finalization)
+
+**Run requirements coverage check (internal, not saved):**
+
+Verify coverage between R table and initial shape:
+- Every requirement (R) should have at least one shape part addressing it — missing parts indicate gaps in the solution
+- Every shape part should trace back to at least one requirement — orphan parts indicate scope creep
+- Surface any gaps to the user before proceeding
 
 **Decision Points:** If you encounter choices requiring user input, use AskUserQuestion:
 - Ambiguous requirements with multiple interpretations
@@ -191,7 +217,10 @@ Review this delta specification.
 ## Completed Spec
 {spec_content}
 
-## Additional Review Criteria (if spec includes User Flow section)
+## Initial Shape Parts (from design doc being seeded)
+{shape_parts_table}
+
+## Review Criteria (if spec includes User Flow section)
 - Does breadboard accurately represent the described flows?
 - Do affordances match acceptance criteria?
 - Are all paths from breadboard covered by acceptance criteria?
@@ -240,12 +269,25 @@ Update status:
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Spec"
 ```
 
+### 11. Seed Design Document
+
+If `docs/delta-designs/$ARGUMENTS.md` does not already exist:
+
+1. Read the delta-design template: `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-design.md`
+2. Create `docs/delta-designs/$ARGUMENTS.md` following the template structure:
+   - Header linking to the spec, Status: Draft
+   - `## Shape` section populated with the initial shape parts table from step 5
+   - All remaining template sections included but left empty for the design phase to fill
+
+This bridges spec and design — the design phase starts with the shape already drafted.
+
 Present summary:
 ```
 "Delta spec complete:
 
 ID: $ARGUMENTS
 Detected impacts: [list of affected feature docs]
+Design doc seeded with initial shape: docs/delta-designs/$ARGUMENTS.md
 
 Next step: /katachi:design-delta $ARGUMENTS
 ```
@@ -253,12 +295,13 @@ Next step: /katachi:design-delta $ARGUMENTS
 ## Workflow
 
 **This is a validate-first process:**
-- Research silently, then interview user on key decisions
-- Draft incorporating user's input (ask additional decisions when needed)
+- Research silently, then interview user on key decisions — build R table collaboratively
+- Draft spec with R table and grouped AC, draft initial shape (not in spec)
+- Run requirements coverage check internally to surface gaps
 - Auto-discover affected features
-- Validate with spec-reviewer agent (silent)
+- Validate with spec-reviewer agent (silent) — pass spec and initial shape
 - Apply all validation fixes automatically (ask decisions when needed)
 - Present validated spec with applied changes summary
 - User provides feedback
 - Iterate until approved
-- Finalize after user approval
+- Finalize spec, then seed design doc with initial shape

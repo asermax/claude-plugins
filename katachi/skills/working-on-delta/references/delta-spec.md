@@ -15,8 +15,24 @@ As a [user type], I want to [action] so that [benefit].
 
 [2-3 sentences describing the change]
 
+## Requirements
+
+<!--
+Built collaboratively during the user interview. States WHAT is needed, not HOW.
+Status values: Core goal | Must-have | Nice-to-have | Out
+Up to 30 top-level requirements. Use sub-IDs (R3.1, R3.2) for grouping sub-requirements.
+Requirements define the problem space; Acceptance Criteria below define how to verify each one.
+-->
+
+| ID | Requirement | Status |
+|----|-------------|--------|
+| R0 | [core problem statement] | Core goal |
+| R1 | [requirement] | Must-have |
+| R2 | [requirement] | Nice-to-have |
+
 ## Acceptance Criteria
 
+<!-- Grouped by requirement area. Each R should map to one or more AC groups. -->
 <!-- For Feature Deltas: Describe end-to-end user flows -->
 <!-- For Technical Deltas: Describe measurable completion criteria -->
 

@@ -617,6 +617,13 @@ class StatusManager:
                 work_file.unlink()
                 print(f"✓ Removed {work_file.relative_to(base_dir.parent)}")
 
+        spikes_dir = base_dir / 'spikes'
+
+        if spikes_dir.exists():
+            for spike_file in spikes_dir.glob(f"SPIKE-{delta_id}-*.md"):
+                spike_file.unlink()
+                print(f"✓ Removed {spike_file.relative_to(base_dir.parent)}")
+
     def get_ready_deltas(self, dm: DependencyMatrix) -> List[str]:
         """Get deltas that are ready to implement (all deps complete, not started yet)"""
         ready = []

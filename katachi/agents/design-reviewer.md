@@ -31,44 +31,52 @@ Evaluate the design against these criteria:
 - Are interfaces between components specified?
 - Is the design at the right level of abstraction?
 
-### 3. Modeling
+### 3. Shape Coverage
+- Are all shape parts mechanisms (what to build/change), not constraints (those belong in spec's Requirements)?
+- Are all flagged unknowns (⚠️) resolved or have associated spikes with findings?
+- Does each spec requirement have at least one shape part addressing it?
+- Are parts vertical slices (co-locate related concerns) rather than horizontal layers (grouping by type)?
+- Are shared mechanisms extracted into standalone parts that others reference?
+
+### 4. Modeling
 - Are entities and relationships clear?
 - Is the domain model complete for this delta?
 - Are state transitions documented if applicable?
 - Are data structures appropriate for the use case?
 
-### 4. Data Flow
+### 5. Data Flow
 - Is data movement documented (inputs → processing → outputs)?
 - Are trigger-to-result flows clear?
 - Are async/concurrent flows handled?
 - Are error flows documented?
 
-### 5. Key Decisions
+### 6. Key Decisions
 - Are alternatives documented with pros/cons?
 - Is the rationale for the chosen approach clear?
 - Are consequences noted (trade-offs, limitations)?
 - Are decisions testable/reversible where possible?
 
-### 6. Pattern Alignment
+### 7. Pattern Alignment
 - Does design follow relevant ADRs?
 - Does design use/establish DES patterns correctly?
 - Are there violations of existing patterns?
 - Should any new patterns be established?
 
-### 7. Implementation Structure (Components Section)
+### 8. Implementation Structure (Components Section)
 - Are layers/components clearly identified with their responsibilities?
 - Are cross-layer contracts defined (API shapes, events, data formats)?
 - Is shared logic identified (what's common across layers)?
 - Are integration points specified (how components communicate)?
 - Is error handling strategy consistent across layers?
 
-### 8. Completeness
+### 9. Completeness
 - Are all spec requirements addressed?
+- Do shape parts collectively cover all spec requirements?
 - Are edge cases from spec covered in design?
 - Are error scenarios from spec designed?
 - Are there implementation details missing?
 
-### 9. UI Layout (ONLY if UI Layout section is present)
+### 10. UI Layout (ONLY if UI Layout section is present)
 
 <!-- Skip this entire review section if design has no UI Layout section -->
 
@@ -130,6 +138,11 @@ Provide a structured review:
 
 ### Minor (Suggestions)
 - [Suggestion description]
+
+## Shape Coverage
+- Shape→R mapping: [For each R, which shape part(s) address it? Flag any R without shape coverage]
+- Unresolved flags: [List any ⚠️ parts still unresolved or "None"]
+- Mechanism quality: [Are parts concrete mechanisms or vague descriptions?]
 
 ## Pattern Compliance
 - ADR violations: [List or "None"]

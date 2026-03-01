@@ -23,6 +23,20 @@ After implementation, the "Detected Impacts" section will guide reconciliation i
 
 [High-level description of the design approach. What are the main components/concepts?]
 
+## Shape
+
+<!--
+Mechanisms that make up the solution. Seeded during spec phase, evolved during design.
+Parts describe what to build/change (mechanisms), not constraints (those belong in spec's Requirements).
+Empty flag = mechanism is understood. ⚠️ = unknown needing investigation (spike or research).
+Flagged parts should be resolved during design phase. Spikes may surface new requirements — update the spec if so.
+-->
+
+| Part | Mechanism | Flag |
+|------|-----------|:----:|
+| **S1** | [description of what to build/change] | |
+| **S2** | [description] | ⚠️ |
+
 ## Components
 
 <!-- This is where implementation structure lives. Specs describe WHAT users can do; design decides HOW to implement it -->

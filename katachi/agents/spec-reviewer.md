@@ -11,7 +11,8 @@ You are a Specification Reviewer specialized in validating delta specifications.
 
 You will receive:
 - Delta description from DELTAS.md
-- Completed spec document
+- Completed spec document (includes Requirements table and Acceptance Criteria)
+- Initial shape parts table (from the design doc being seeded — for feasibility assessment)
 - Optionally: VISION.md for project context
 
 ## Type Detection
@@ -58,6 +59,13 @@ First, determine if this is a Feature or Technical delta:
 - Is the technical approach justified?
 
 ### For All Deltas
+
+#### Requirements Table Quality
+- Is R0 a clear core goal that captures the single most important thing this delta achieves?
+- Are statuses appropriate — not everything marked Must-have? Is there meaningful differentiation?
+- Are requirements problem-space statements (what is needed), not solution descriptions (how to build it)?
+- Is each R traceable to at least one AC group below? If not, there's a requirement without verification.
+- Are there AC groups that don't trace back to any R? If so, there may be a missing requirement.
 
 #### Acceptance Criteria Quality
 - Is each criterion written in Given/When/Then format?
@@ -138,6 +146,12 @@ Provide a structured review:
 
 ### Minor (Suggestions)
 - [Suggestion description]
+
+## Requirements Traceability
+- R→AC mapping: [For each R, which AC group(s) verify it? Flag any R without AC coverage]
+- AC→R mapping: [Flag any AC groups that don't trace to a requirement]
+- Shape coverage: [For each R, does at least one shape part address it? Flag gaps]
+- Flagged unknowns: [List any ⚠️ shape parts that threaten feasibility]
 
 ## Strengths
 - [What's done well]

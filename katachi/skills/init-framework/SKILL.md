@@ -28,7 +28,7 @@ Framework directory structure already exists.
 
 You can use these commands to create planning documents:
 - `/katachi:vision` - Create project vision
-- `/katachi:features` - Extract and organize features
+- `/katachi:deltas` - Create the delta inventory
 ```
 
 ### 2. Create Directory Structure
@@ -73,14 +73,12 @@ Framework initialized! Here are the typical next steps:
 
 For new projects:
 1. `/katachi:vision` - Define what you're building
-2. `/katachi:features` - Break down into features
-3. `/katachi:deltas` - Extract deltas from features
+2. `/katachi:deltas` - Create the delta inventory
 
 For existing projects:
 1. `/katachi:retrofit-spec <path>` - Document existing code
 2. `/katachi:retrofit-design <ID>` - Create designs from specs
-3. `/katachi:features` - Organize retrofitted features
-4. `/katachi:vision` - Synthesize vision from features
+3. `/katachi:vision` - Synthesize vision from features
 
 The deltas.py script is available at:
 ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py

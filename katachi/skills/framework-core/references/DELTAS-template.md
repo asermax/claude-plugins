@@ -61,14 +61,14 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py priority list --level 1        # 
 **Depends on**: None
 **Priority**: 3 (Medium)
 **Complexity**: [Easy/Medium/Hard]
-**Description**: [Comprehensive description that explains what the delta does and why it's needed. Should be self-explanatory without reading the spec.]
+**Description**: [2-3 sentences, self-explanatory without reading the spec. Feature deltas: cover WHAT behavior it provides, WHO benefits, and WHY it's needed (stay layer-agnostic). Technical deltas: cover WHAT specific change is being made, WHAT quality/maintainability benefit it provides, and WHAT the scope/completion criteria is.]
 
 ### DLT-002: [Delta name]
 **Status**: ✗ Defined
 **Depends on**: None
 **Priority**: 3 (Medium)
 **Complexity**: [Easy/Medium/Hard]
-**Description**: [Comprehensive description that explains what the delta does and why it's needed. Should be self-explanatory without reading the spec.]
+**Description**: [2-3 sentences, self-explanatory without reading the spec. Feature deltas: cover WHAT behavior it provides, WHO benefits, and WHY it's needed (stay layer-agnostic). Technical deltas: cover WHAT specific change is being made, WHAT quality/maintainability benefit it provides, and WHAT the scope/completion criteria is.]
 
 ---
 

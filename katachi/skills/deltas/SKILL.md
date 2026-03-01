@@ -64,6 +64,7 @@ Consider all aspects:
 - Can be a new capability, modification, or improvement
 - Should be implementable in a reasonable timeframe
 - May affect one or more areas of the system
+- Description must follow the format in the DELTAS template (`references/DELTAS-template.md` from framework-core)
 
 For each delta, document source traceability (which vision section).
 

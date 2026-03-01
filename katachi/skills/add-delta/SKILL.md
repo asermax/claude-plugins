@@ -80,6 +80,7 @@ Based on the description, codebase research, and existing patterns, draft a comp
 
 **ID**: DLT-NNN (next available)
 **Name**: [concise delta name]
+**Description**: [follow the format in the DELTAS template from framework-core]
 **Priority**: [1-5] ([Critical/High/Medium/Low/Backlog]) - [rationale]
 **Complexity**: [Easy/Medium/Hard] - [reason based on scope]
 **Dependencies**: [proposed deps or 'None'] - [reason based on analysis]
@@ -159,7 +160,7 @@ Add new delta entry:
 **Depends on**: [DLT-XXX, DLT-YYY or None]
 **Priority**: [priority] ([label])
 **Complexity**: [complexity]
-**Description**: [Comprehensive description explaining what the delta does and why it's needed]
+**Description**: [follow the format in the DELTAS template from framework-core]
 ```
 
 If dependencies were identified during the process, include them inline. For adding dependencies to *existing* deltas, use:

@@ -29,7 +29,6 @@ Framework directory structure already exists.
 You can use these commands to create planning documents:
 - `/katachi:vision` - Create project vision
 - `/katachi:features` - Extract and organize features
-- `/katachi:dependencies` - Create dependency matrix
 ```
 
 ### 2. Create Directory Structure
@@ -55,7 +54,6 @@ If CLAUDE.md doesn't exist, create it with this template:
 
 - `docs/planning/VISION.md` - Project vision
 - `docs/planning/DELTAS.md` - Feature inventory
-- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ## Available Commands
 
@@ -76,7 +74,7 @@ Framework initialized! Here are the typical next steps:
 For new projects:
 1. `/katachi:vision` - Define what you're building
 2. `/katachi:features` - Break down into features
-3. `/katachi:dependencies` - Build dependency matrix
+3. `/katachi:deltas` - Extract deltas from features
 
 For existing projects:
 1. `/katachi:retrofit-spec <path>` - Document existing code

@@ -58,12 +58,14 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py priority list --level 1        # 
 
 ### DLT-001: [Delta name]
 **Status**: ✗ Defined
+**Depends on**: None
 **Priority**: 3 (Medium)
 **Complexity**: [Easy/Medium/Hard]
 **Description**: [Comprehensive description that explains what the delta does and why it's needed. Should be self-explanatory without reading the spec.]
 
 ### DLT-002: [Delta name]
 **Status**: ✗ Defined
+**Depends on**: None
 **Priority**: 3 (Medium)
 **Complexity**: [Easy/Medium/Hard]
 **Description**: [Comprehensive description that explains what the delta does and why it's needed. Should be self-explanatory without reading the spec.]

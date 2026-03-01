@@ -72,7 +72,7 @@ Evaluate the implementation against these criteria:
 - **Interface contracts**: Are public APIs still compatible? (return types, error formats)
 - **Shared state**: Are globals, singletons, or caches affected unexpectedly?
 - **Side effects**: Does this code affect unrelated features? (DB schemas, config formats, event handlers)
-- **Dependency impact**: Check DEPENDENCIES.md — are downstream deltas affected?
+- **Dependency impact**: Check delta dependencies in DELTAS.md — are downstream deltas affected?
 - **Silent failures**: Could this cause subtle bugs elsewhere? (race conditions, timing changes, resource leaks)
 
 ## Output Format

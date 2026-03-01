@@ -73,7 +73,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "⧗ Implem
 For spec/design/plan commands:
 
 1. **Research Phase (Silent)**
-   - Read relevant context (DELTAS.md, DEPENDENCIES.md)
+   - Read relevant context (DELTAS.md)
    - Read previous documents (spec before design, design before plan)
    - Read relevant ADRs and DES patterns
    - Research any libraries/APIs involved

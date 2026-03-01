@@ -70,7 +70,6 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design
 - Read retrofitted spec (`docs/feature-specs/$ARGUMENTS.md`)
 - Extract the source code path from spec's "Retrofit Note"
 - Read the implementation code
-- Read dependencies from `docs/planning/DEPENDENCIES.md`
 - Read ADR index (`docs/architecture/README.md`)
 - Read DES index (`docs/design/README.md`)
 - Read VISION.md if exists

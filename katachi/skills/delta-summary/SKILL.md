@@ -26,13 +26,12 @@ Filter: $ARGUMENTS (optional)
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta inventory
-- `docs/planning/DEPENDENCIES.md` - Dependency matrix
 
 ## Pre-Check
 
 Verify framework is initialized:
 - If `docs/planning/` doesn't exist, suggest `/katachi:init-framework` first
-- If DELTAS.md or DEPENDENCIES.md missing, explain what's needed
+- If DELTAS.md missing, explain what's needed
 
 ## Process
 
@@ -40,7 +39,6 @@ Verify framework is initialized:
 
 Check for required files:
 - `docs/planning/DELTAS.md`
-- `docs/planning/DEPENDENCIES.md`
 
 If missing, suggest `/katachi:init-framework` first.
 

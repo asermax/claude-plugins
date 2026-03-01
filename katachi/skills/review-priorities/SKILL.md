@@ -26,13 +26,12 @@ When you have multiple deltas and need to determine what to work on, this comman
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - All deltas with current status and priority
-- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ## Pre-Check
 
 Verify framework is initialized:
 - If `docs/planning/` doesn't exist, suggest `/katachi:init-framework` first
-- If DELTAS.md or DEPENDENCIES.md missing, explain what's needed
+- If DELTAS.md missing, explain what's needed
 
 ## Process
 

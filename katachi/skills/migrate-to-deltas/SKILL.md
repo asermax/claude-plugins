@@ -22,15 +22,15 @@ Transforms your project structure:
 - feature-specs/*.md → delta-specs/*.md (working documents)
 - feature-designs/*.md → delta-designs/*.md (working documents)
 - Generates new nested feature documentation from deltas
-- Updates DEPENDENCIES.md to use delta IDs
+- Inlines dependencies into DELTAS.md entries as `**Depends on**` fields
 - Removes BACKLOG.md (items optionally converted to deltas)
 
 ## Pre-Check
 
 Verify this is a katachi project:
 - Check for `docs/planning/FEATURES.md`
-- Check for `docs/planning/DEPENDENCIES.md`
-- If not found, this is not a katachi project or already migrated
+- Check for `docs/planning/DEPENDENCIES.md` (if exists, migrate dependencies inline into DELTAS.md entries)
+- If FEATURES.md not found, this is not a katachi project or already migrated
 
 Warn user:
 ```
@@ -42,7 +42,7 @@ Changes:
 - Moves: feature-specs/ → delta-specs/
 - Moves: feature-designs/ → delta-designs/
 - Generates: New nested feature-specs/ and feature-designs/
-- Updates: DEPENDENCIES.md (delta IDs)
+- Inlines: Dependencies into DELTAS.md entries
 - Removes: BACKLOG.md
 
 Continue with migration? [Y/N]"
@@ -83,10 +83,10 @@ TaskCreate(
     description="Rename and move feature-designs/*.md → delta-designs/*.md"
 )
 
-# Task 5: Update DEPENDENCIES.md (depends on 2)
+# Task 5: Inline dependencies into DELTAS.md (depends on 2)
 TaskCreate(
-    subject="Update dependency matrix",
-    description="Update DEPENDENCIES.md to use delta IDs (DLT-XXX)"
+    subject="Inline dependencies into DELTAS.md entries",
+    description="Add **Depends on** fields to each delta entry in DELTAS.md"
 )
 
 # Task 6: Remove BACKLOG.md (depends on 2)
@@ -169,12 +169,9 @@ For each file in `docs/feature-designs/`:
 - Add "Detected Impacts" section template at end
 - Write to `docs/delta-designs/DLT-NNN.md`
 
-#### Task 5: Update DEPENDENCIES.md
+#### Task 5: Inline Dependencies into DELTAS.md
 
-Read DEPENDENCIES.md:
-- Update matrix headers (use mapping)
-- Update row labels (use mapping)
-- Preserve X marks (dependencies)
+Add `**Depends on**: DLT-XXX, DLT-YYY` (or `None`) to each delta entry in DELTAS.md, deriving from the old DEPENDENCIES.md matrix or FEATURES.md dependency info.
 
 #### Task 6: Remove BACKLOG.md
 
@@ -254,7 +251,7 @@ After all tasks complete:
    - Check delta-designs/ has all files
    - Check feature-specs/ has nested structure
    - Check feature-designs/ has nested structure
-   - Check DEPENDENCIES.md updated
+   - Check dependencies inlined in DELTAS.md
 
 3. **Present summary**:
    ```

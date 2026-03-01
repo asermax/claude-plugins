@@ -25,7 +25,6 @@ These templates are used when creating project structure:
 **Planning documents:**
 - `references/VISION-template.md` - Vision document structure
 - `references/DELTAS-template.md` - Delta inventory structure (work tracking)
-- `references/DEPENDENCIES-template.md` - Dependency matrix structure (delta dependencies)
 
 **Decision documents:**
 - `references/ADR-template.md` - Architecture Decision Record format
@@ -69,7 +68,7 @@ Before executing any command, detect project state:
 - If code exists → Explain retrofit options
 
 ### 2. Partially Initialized
-**Condition:** `docs/planning/` exists but missing VISION.md, DELTAS.md, or DEPENDENCIES.md
+**Condition:** `docs/planning/` exists but missing VISION.md or DELTAS.md
 
 **Action:**
 - List what's missing

@@ -91,8 +91,7 @@ your-project/
 └── docs/
     ├── planning/
     │   ├── VISION.md        # Project vision and scope
-    │   ├── DELTAS.md        # Delta inventory (work items)
-    │   └── DEPENDENCIES.md  # Dependency matrix
+    │   └── DELTAS.md        # Delta inventory (work items)
     ├── delta-specs/         # Working delta specifications
     ├── delta-designs/       # Working delta designs
     ├── delta-plans/         # Implementation plans

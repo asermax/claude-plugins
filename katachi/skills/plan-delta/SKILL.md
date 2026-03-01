@@ -29,7 +29,6 @@ Use the delta ID wherever file paths and status commands reference the delta (e.
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta definitions
-- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ### Delta documents
 - `docs/delta-specs/$ARGUMENTS[0].md` - What to build (requirements)

@@ -23,7 +23,6 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta definitions
-- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ### Delta documents
 - `docs/delta-specs/$ARGUMENTS.md` - What to build (requirements)

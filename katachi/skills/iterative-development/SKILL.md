@@ -98,16 +98,7 @@ Add new delta entry:
 | CORE-004 | New delta description | Medium | ✗ Defined |
 ```
 
-### 7. Update DEPENDENCIES.md
-
-Add to dependency matrix:
-
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps add-delta CORE-004
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps add-dep CORE-004 CORE-001  # If depends on CORE-001
-```
-
-### 8. Offer Next Step
+### 7. Offer Next Step
 
 After adding:
 - "CORE-004 added. Create spec now? [Y/N]"
@@ -135,9 +126,6 @@ Analyze the impact of this proposed change:
 
 ## DELTAS.md
 {deltas_content}
-
-## DEPENDENCIES.md
-{dependencies_content}
 
 ## Existing Specs
 {list_of_spec_paths}

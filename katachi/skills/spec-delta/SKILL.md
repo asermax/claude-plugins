@@ -23,7 +23,6 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta definitions
-- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ### Existing spec (if present)
 - `docs/delta-specs/$ARGUMENTS.md` - Current spec to update or create
@@ -61,7 +60,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Spec"
 ### 2. Research Phase (Silent)
 
 - Read delta description from `docs/planning/DELTAS.md`
-- Read dependencies from `docs/planning/DEPENDENCIES.md`
+- Read dependencies from delta's `**Depends on**` field in `docs/planning/DELTAS.md`
 - Explore related codebase areas if needed
 - For deltas involving libraries/frameworks/APIs:
   - Research typical usage patterns

@@ -24,7 +24,6 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta definitions
-- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ### Delta spec
 - `docs/delta-specs/$ARGUMENTS.md` - The specification we're designing for
@@ -76,7 +75,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design
 
 **Internal Research:**
 - Read delta spec (`docs/delta-specs/$ARGUMENTS.md`)
-- Read dependencies from `docs/planning/DEPENDENCIES.md`
+- Read dependencies from delta's `**Depends on**` field in `docs/planning/DELTAS.md`
 - Read dependency specs if they exist
 - Read relevant ADRs from index
 - Read relevant DES patterns from index

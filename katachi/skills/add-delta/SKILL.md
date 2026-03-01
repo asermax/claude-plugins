@@ -22,7 +22,6 @@ Delta description: $ARGUMENTS (optional - will prompt if not provided)
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Existing delta definitions
-- `docs/planning/DEPENDENCIES.md` - Delta dependencies
 
 ### Existing documentation patterns
 - `docs/delta-specs/` - Existing delta specs (for pattern reference)
@@ -37,7 +36,7 @@ Delta description: $ARGUMENTS (optional - will prompt if not provided)
 
 Verify framework is initialized:
 - If `docs/planning/` doesn't exist, suggest `/katachi:init-framework` first
-- If DELTAS.md or DEPENDENCIES.md missing, explain what's needed
+- If DELTAS.md missing, explain what's needed
 
 ## Process
 
@@ -157,25 +156,18 @@ Add new delta entry:
 ```markdown
 ### DLT-NNN: Delta name
 **Status**: ✗ Defined
+**Depends on**: [DLT-XXX, DLT-YYY or None]
 **Priority**: [priority] ([label])
 **Complexity**: [complexity]
 **Description**: [Comprehensive description explaining what the delta does and why it's needed]
 ```
 
-### 7. Update DEPENDENCIES.md
-
-Add to dependency matrix:
-
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps add-delta DLT-NNN
-```
-
-If dependencies identified:
+If dependencies were identified during the process, include them inline. For adding dependencies to *existing* deltas, use:
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py deps add-dep DLT-NNN DEP-ID
 ```
 
-### 8. Summary and Next Steps
+### 7. Summary and Next Steps
 
 Present summary:
 ```

@@ -130,6 +130,64 @@ Ask: "Should we iterate based on this feedback, or is the inventory complete?"
 If gaps to address → refine deltas
 If complete → finalize and write to `docs/planning/DELTAS.md`
 
+### 7. Dependency Analysis
+
+After the delta inventory is finalized, analyze all deltas for dependencies.
+
+#### Analyze each delta
+
+For each delta, analyze:
+- What data/capabilities does it consume from other deltas?
+- What other deltas must exist for this to work?
+- What does it share with other deltas (state, configuration)?
+- What must be initialized before this can start?
+- What must work for this to be testable?
+
+**Apply dependency priority principles:**
+- Core capabilities before workflows
+- Core workflows before enhancements
+- Foundation before configuration
+- Functionality before polish
+- Configuration deltas are enhancements, not prerequisites
+
+#### Present proposed dependencies
+
+Present all proposed `**Depends on**:` values with reasoning for each delta.
+
+#### User iteration on dependencies
+
+User reviews proposed dependencies. Discuss and adjust based on user knowledge.
+
+Surface hidden dependencies with gap detection questions:
+- "Does X need data that Y produces?"
+- "What must be initialized before X can start?"
+- "Do X and Y access the same configuration?"
+- "What must work for X to be testable?"
+- "If Y fails, does X need to know?"
+
+#### Agent validation
+
+Dispatch a general-purpose subagent to validate the dependency graph.
+
+Include user's explicit decisions made during analysis.
+
+Request critique on:
+- **Missing implicit dependencies**
+- **Hidden coupling** (shared config, state, resources)
+- **Over-specification** (unnecessary dependencies)
+- **Circular dependencies** (cycles)
+
+If cycles found, work with user to resolve:
+- Re-examine if dependency is really needed
+- Revise delta scope
+- Split deltas
+
+Review findings with user. Iterate if needed.
+
+#### Write dependencies inline
+
+Write dependencies as `**Depends on**: DLT-XXX, DLT-YYY` (or `None`) in each delta's entry in `docs/planning/DELTAS.md`.
+
 ## Workflow
 
 **This is a collaborative process:**
@@ -138,4 +196,5 @@ If complete → finalize and write to `docs/planning/DELTAS.md`
 - User confirms complexity, IDs
 - Challenge deltas that are too large or too small
 - Never add deltas without user agreement
+- Analyze and propose dependencies after inventory is finalized
 - Iterate until complete

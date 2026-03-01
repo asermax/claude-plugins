@@ -1,7 +1,7 @@
 ---
 name: plan-delta
 description: Create step-by-step implementation plan for a delta
-argument-hint: "[DELTA-ID] [team]"
+argument-hint: "[DELTA-ID]"
 disable-model-invocation: true
 ---
 
@@ -11,13 +11,7 @@ Create an implementation plan for a specific delta.
 
 ## Input
 
-Delta ID and optional team mode from: $ARGUMENTS
-
-Parse arguments:
-- First word: Delta ID (e.g., "DLT-001")
-- Second word (optional): `team` to enable agent team planning. If absent, team mode is off.
-
-Use the delta ID wherever file paths and status commands reference the delta (e.g., `docs/delta-specs/$ARGUMENTS[0].md`).
+Delta ID from: $ARGUMENTS (e.g., "DLT-001")
 
 ## Context
 
@@ -31,8 +25,8 @@ Use the delta ID wherever file paths and status commands reference the delta (e.
 - `docs/planning/DELTAS.md` - Delta definitions
 
 ### Delta documents
-- `docs/delta-specs/$ARGUMENTS[0].md` - What to build (requirements)
-- `docs/delta-designs/$ARGUMENTS[0].md` - Why/how (design rationale)
+- `docs/delta-specs/$ARGUMENTS.md` - What to build (requirements)
+- `docs/delta-designs/$ARGUMENTS.md` - Why/how (design rationale)
 
 ### Project decisions
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
@@ -44,7 +38,7 @@ Use the delta ID wherever file paths and status commands reference the delta (e.
 - Plan should note which feature docs will need reconciliation after implementation
 
 ### Existing plan (if present)
-- `docs/delta-plans/$ARGUMENTS[0].md` - Current plan to update or create
+- `docs/delta-plans/$ARGUMENTS.md` - Current plan to update or create
 
 ### Template
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/implementation-plan.md` - Structure to follow
@@ -52,18 +46,18 @@ Use the delta ID wherever file paths and status commands reference the delta (e.
 ## Pre-Check
 
 Verify spec and design exist:
-- If `docs/delta-specs/$ARGUMENTS[0].md` doesn't exist, suggest `/katachi:spec-delta $ARGUMENTS[0]` first
-- If `docs/delta-designs/$ARGUMENTS[0].md` doesn't exist, suggest `/katachi:design-delta $ARGUMENTS[0]` first
+- If `docs/delta-specs/$ARGUMENTS.md` doesn't exist, suggest `/katachi:spec-delta $ARGUMENTS` first
+- If `docs/delta-designs/$ARGUMENTS.md` doesn't exist, suggest `/katachi:design-delta $ARGUMENTS` first
 - Plan requires both spec and design
 
 ## Process
 
 ### 1. Check Existing State
 
-If `docs/delta-plans/$ARGUMENTS[0].md` exists:
+If `docs/delta-plans/$ARGUMENTS.md` exists:
 - Read current plan
 - Check for drift: Have spec or design changed?
-- Summarize: steps, pre-implementation items, files to change
+- Summarize: batches, steps, context entries
 - Ask: "What aspects need refinement? Or should we review the whole plan?"
 - Enter iteration mode as appropriate
 
@@ -71,40 +65,54 @@ If no plan exists: proceed with initial creation
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS[0] "⧗ Plan"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Plan"
 ```
 
 ### 2. Research Phase (Silent)
 
-- Read delta spec (`docs/delta-specs/$ARGUMENTS[0].md`)
-- Read delta design (`docs/delta-designs/$ARGUMENTS[0].md`)
+- Read delta spec (`docs/delta-specs/$ARGUMENTS.md`)
+- Read delta design (`docs/delta-designs/$ARGUMENTS.md`)
 - Read relevant ADRs and DES patterns (not just indexes)
 - Read dependency code as needed
 - Explore codebase for implementation patterns
 - Build complete understanding without asking questions
 
-### 3. Draft Complete Plan (Silent)
+### 3. Scope Batches (Present All at Once)
 
-Create full implementation plan following template:
+Identify natural implementation boundaries and define all batches. Present them together to the user for validation before expanding any steps.
 
-**Pre-Implementation Checklist:**
-- Spec read
-- Design read
-- Dependency code to read (specific files)
-- Relevant ADRs (specific documents)
-- Relevant DES patterns (specific documents)
+For each batch, define:
+- **Scope name**: What part of the feature it covers (model layer, service logic, API endpoint, frontend, etc.)
+- **Context & Research list**: Specific entries with reasoning — project docs (spec sections, design sections, ADRs, DES), code files to read, and external research pointers (library docs, existing patterns to investigate). Each entry must explain *why* it's needed for this batch.
+- **Out of scope**: What this batch explicitly does not cover
+- **Dependencies**: Which batches must complete before this one starts (`Depends on:` field)
 
-**Implementation Steps:**
-For each step:
-- Create/modify: specific file paths
-- What to do: specific instructions
-- Test: how to verify this step
+Present the batch definitions to the user. The user validates:
+- Batch boundaries make sense (logical grouping, clear scope)
+- Context is appropriately scoped (not too broad, not missing obvious things)
+- Dependencies and ordering are correct
+- Research pointers are concrete and relevant
 
-**Code Snippets in Plans:**
-- Use snippets to indicate implementation points (e.g., where to add code)
+Iterate on batch definitions until the user approves them.
+
+### 4. Expand Steps and Research (One Batch at a Time)
+
+For each batch individually, draft the implementation details:
+
+**Steps:**
+- Draft implementation steps following the same granularity rules as before (atomic, verifiable, in dependency order)
+- Each step specifies: files to create/modify, what to do, how to verify
+
+**Research pointers:**
+- Identify where the implementing agent should look things up (library docs, patterns to extend, design questions to investigate)
+- Add these as entries in the batch's Context & Research list
+- Re-check: does this batch's context actually match its steps? Add missing entries, remove entries that don't apply
+
+**Code snippets:**
+- Use snippets to indicate implementation points (where to add code)
 - Include brief comments explaining what should happen at each point
 - Do NOT include complete implementation logic
-- The implementation agent has access to spec, design, ADRs, and DES patterns—the plan should provide structural guidance, not code
+- The implementation agent has access to spec, design, ADRs, and DES patterns — the plan provides structural guidance, not code
 
 Example of appropriate snippet usage:
 ```python
@@ -115,73 +123,11 @@ Example of appropriate snippet usage:
 # - Must validate refresh token expiry per spec AC-3
 ```
 
-Example of over-specified snippet (avoid):
-```python
-def refresh_token(refresh_token: str) -> TokenResponse:
-    if not refresh_token:
-        raise AuthError("Missing refresh token")
-    decoded = jwt.decode(refresh_token, SECRET_KEY, algorithms=["HS256"])
-    if decoded["exp"] < time.time():
-        raise AuthError("Token expired")
-    # ... full implementation
-```
+Present each batch's expanded steps to the user before moving to the next batch. This allows focused review and prevents context overload.
 
-Ensure:
-- Every acceptance criterion has implementing steps
-- Steps are in dependency order
-- Steps are atomic and verifiable
+### 5. External Validation (Silent)
 
-**Files Changed:**
-- List all files to be modified
-- Include test files
-
-### 3b. Plan Team Structure (Only when team mode is on)
-
-Skip this step entirely if team mode is off.
-
-After drafting the implementation steps, analyze them for agent separation:
-
-**Separation criteria** (in priority order):
-1. **Stack separation**: Backend vs frontend steps that touch entirely different file sets
-2. **Independent backend paths**: Different endpoints, services, or modules with no shared state changes
-3. **Independent frontend paths**: Different pages, features, or component trees with no shared components being modified
-
-**Rules for agent separation**:
-- Each agent must work on a completely independent set of files — no two agents may modify the same file
-- Prefer fewer agents over more — only split when there is genuine parallelism
-- Maximum 4 agents (diminishing returns beyond this; coordination overhead grows)
-- If all steps are sequential with shared file dependencies, do NOT create a team (even if team mode is on) — note this in the plan and explain why
-- Each agent should have at least 3 steps to justify the overhead
-
-**What to include in the Team Structure section**:
-- Agent table: name, scope (language/area), assigned steps
-- Per-agent pre-implementation checklist items (which files each agent needs to read)
-- Synchronization notes: cross-agent dependencies, ordering constraints, shared types or schemas
-- Steps grouped under agent headers (e.g., `### Backend Agent`, `### Frontend Agent`)
-
-**Step grouping**: When team structure is present, group steps under agent headers:
-
-```markdown
-### Backend Agent
-
-#### Step 1: ...
-#### Step 2: ...
-
----
-
-### Frontend Agent
-
-#### Step 3: ...
-#### Step 4: ...
-```
-
-Each agent's steps should be independently sequential (ordered within the agent), but agents run in parallel with each other.
-
-**If team structure is NOT viable** (all steps share files, fundamentally sequential, or < 6 total steps), omit the Team Structure section from the plan and add a note explaining why a single-agent approach is better.
-
-### 4. External Validation (Silent)
-
-Dispatch the plan-reviewer agent to validate the draft:
+Dispatch the plan-reviewer agent to validate the complete plan:
 
 ```python
 Task(
@@ -204,57 +150,55 @@ Review this implementation plan.
 )
 ```
 
-### 5. Apply Validation Feedback (Silent)
+### 6. Apply Validation Feedback (Silent)
 
 Review the plan-reviewer findings and apply improvements:
-- Address any coverage gaps (missing acceptance criteria)
-- Fix dependency ordering issues
+- Address coverage gaps (missing acceptance criteria)
+- Fix dependency ordering issues between steps and between batches
+- Fix batch context scoping issues (over-scoped or under-scoped entries)
 - Resolve ADR/DES conflicts
 - Incorporate suggested improvements
-- If team structure is present, address any team structure issues (file conflicts, missing sync points, agent count concerns)
 
 If the reviewer identified critical issues that require clarification, note them for discussion with the user.
 
-### 6. Present Validated Plan
+### 7. Present Validated Plan
 
 Present the complete validated plan to the user in its entirety.
 Highlight any unresolved issues that need user input.
 
-If team mode is on and a team structure was included, highlight the agent assignments and synchronization points for the user to review.
-If team mode was on but team structure was deemed not viable, explain why.
-
 Invite feedback: "What needs adjustment in this plan?"
 
-### 7. Iterate Based on Feedback
+### 8. Iterate Based on Feedback
 
 Apply user corrections, additions, or changes.
 Re-run validation if significant changes are made.
 Repeat until user approves the plan.
 
-### 8. Finalize
+### 9. Finalize
 
-Once user approves, save to `docs/delta-plans/$ARGUMENTS[0].md`
+Once user approves, save to `docs/delta-plans/$ARGUMENTS.md`
 
 Update status:
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS[0] "✓ Plan"
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Plan"
 ```
 
 Present summary:
 ```
 "Delta plan complete:
 
-ID: $ARGUMENTS[0]
+ID: $ARGUMENTS
 
-Next step: /katachi:implement-delta $ARGUMENTS[0]
+Next step: /katachi:implement-delta $ARGUMENTS
 ```
 
 ## Workflow
 
-**This is a validate-first process:**
-- Research silently, then draft
-- Analyze for team structure (if team mode is on)
-- Validate with plan-reviewer agent
+**This is a validate-first process with progressive disclosure:**
+- Research silently, then scope batches
+- Present all batches for user validation
+- Expand steps one batch at a time, presenting each
+- Validate complete plan with plan-reviewer agent
 - Apply validation feedback
 - Present validated plan to user
 - User provides feedback

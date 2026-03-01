@@ -27,7 +27,7 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 ### Delta documents
 - `docs/delta-specs/$ARGUMENTS.md` - What to build (requirements)
 - `docs/delta-designs/$ARGUMENTS.md` - Why/how (design rationale)
-- `docs/delta-plans/$ARGUMENTS.md` - Implementation steps to follow
+- `docs/delta-plans/$ARGUMENTS.md` - Implementation plan with batches
 
 ### Project decisions
 - `docs/architecture/README.md` - Architecture decisions (ADRs)
@@ -38,8 +38,6 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 - Read affected feature designs from delta-design (use as architecture guidance)
 - Feature specs define what behavior to implement
 - Feature designs define architectural patterns to follow
-
-Read dependency code as specified in plan's pre-implementation checklist.
 
 ## Pre-Check
 
@@ -52,61 +50,75 @@ Update status:
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Implementation"
 ```
 
-## Mode Detection
+## Working with Batches
 
-Read the implementation plan (`docs/delta-plans/$ARGUMENTS.md`) and check for a `## Team Structure` section.
+The implementation plan is organized into batches — scoped groups of steps with their own context and dependencies. Before implementing, understand how to work with them:
 
-- **If Team Structure is present** → enter **Team Orchestration Mode** (skip to that section below)
-- **If no Team Structure** → continue with the **Standard Implementation Process** (steps 1-9 below)
+### Context & Research entries
+
+Each batch lists the documents, code files, and research pointers it needs. These are a **starting point, not a contract**:
+- **Read** the listed entries before starting the batch
+- **Adapt as you go**: remove entries that turn out to be irrelevant, add files you discover during implementation, update references if earlier batches produced different output than planned
+- **Follow research pointers**: when a context entry points to library docs or an existing pattern, look it up. This is how you learn what you need to implement correctly
+- **Write findings back**: when research reveals important information (API behavior, library patterns, design constraints), write those findings to the design doc (`docs/delta-designs/$ARGUMENTS.md`) for later reconciliation. This is critical — implementation knowledge must flow back to documentation
+
+### Batch status tracking
+
+Update each batch's status marker in the plan file (`docs/delta-plans/$ARGUMENTS.md`) as you progress:
+- `⧗ Pending` — not yet started
+- `⧗ Implementing` — currently in progress
+- `✓ Done` — all steps completed and verified
+
+### Living documents
+
+If a different approach is needed for valid reasons during implementation:
+- Update the relevant document (spec/design/plan) immediately
+- Then proceed with the new approach
+- This applies to batch context entries too — update them to reflect reality
+
+## Execution Mode
+
+Read the implementation plan and analyze batch dependencies (`Depends on:` fields).
+
+- **If all batches are sequential** (each depends on the previous) → execute batches one at a time as the single agent
+- **If independent batches exist** (batches with no cross-dependencies) → spawn parallel agents, one per independent batch
 
 ---
 
-## Standard Implementation Process
+## Sequential Execution
 
-Used when the plan has no Team Structure section. The lead agent implements everything directly.
+Used when batches form a dependency chain. The lead agent implements everything directly.
 
-### 1. Review Plan and Decisions (Silent)
+### 1. Process Each Batch
 
-- Read implementation plan (`docs/delta-plans/$ARGUMENTS.md`)
-- Read spec and design
-- **Read full ADR/DES documents:**
-  - Identify ADRs/DES listed in pre-implementation checklist
-  - Read the full documents, not just indexes
-- Read dependency code from checklist
-- Understand constraints and patterns to follow
+For each batch in dependency order:
 
-### 2. Implement All Steps Autonomously
+1. **Mark batch** as `⧗ Implementing` in the plan file
+2. **Load context**: Read the batch's Context & Research entries. For ADRs/DES, read the full documents, not just indexes
+3. **Research**: Follow research pointers — look things up, investigate patterns, read library docs. Write important findings to the design doc
+4. **Implement steps**: Work through the batch's steps autonomously
+   - Follow relevant decisions (ADRs/DES)
+   - Add code comments referencing decisions when the choice would be unclear without context (`// See ADR-003 for why we use X instead of Y`)
+   - Verify each step works before proceeding
+5. **Mark batch** as `✓ Done` in the plan file
+6. **Adapt next batches**: If this batch's output differs from what was planned, update context entries in subsequent batches before starting them
 
-Work through all steps in the plan without asking questions.
-Documentation is the source of truth.
-
-For each step:
-- Implement the code following relevant decisions
-- **Add code comments** referencing decisions when:
-  - Implementation choice might seem arbitrary without context
-  - Decision significantly impacts the approach
-  - Format: `// See ADR-003 for why we use X instead of Y`
-- **If a different approach is needed for valid reasons:**
-  - Update the relevant document (spec/design/plan) immediately
-  - Then proceed with implementation
-- Verify the step works before proceeding
-- Track issues in scratchpad
-
-Use scratchpad `/tmp/implement-$ARGUMENTS-state.md`:
-- Current step
-- Steps completed
+Use scratchpad `/tmp/implement-$ARGUMENTS-state.md` to track:
+- Current batch and step
 - Issues encountered
 - Patterns detected
 - Deviations from plan
+- Research findings
 
-### 3. Verify Acceptance Criteria
+### 2. Verify Acceptance Criteria
 
+After all batches are done:
 - Run all tests
 - Run linting and type checking (fix any issues)
 - Perform manual checks against spec
 - Ensure all acceptance criteria are met
 
-### 4. External Validation
+### 3. External Validation
 
 Dispatch the code-reviewer agent:
 
@@ -134,7 +146,7 @@ Review this implementation.
 )
 ```
 
-### 5. Fix All Issues Found by Agent
+### 4. Fix All Issues Found by Agent
 
 Automatically address ALL issues identified in validation:
 - Missing acceptance criteria coverage
@@ -145,25 +157,26 @@ Automatically address ALL issues identified in validation:
 - Missing documentation updates
 
 Re-run tests after fixes.
-Do NOT ask user - fix everything autonomously.
+Do NOT ask user — fix everything autonomously.
 
-### 6. Present for User Review
+### 5. Present for User Review
 
 Show complete implementation to user:
 - Summarize what was implemented
 - Highlight any deviations from plan (with rationale)
 - Note any emergent patterns detected
+- Note any research findings written back to design doc
 
 Invite feedback: "What needs adjustment in this implementation?"
 
-### 7. Iterate Based on User Feedback
+### 6. Iterate Based on User Feedback
 
 Apply user corrections or changes.
 Re-test after changes.
 **When user rejects code changes:** Update documents consistently.
 Repeat until user approves.
 
-### 8. Surface Patterns for DES Consideration
+### 7. Surface Patterns for DES Consideration
 
 Present discovered patterns to user for selection.
 
@@ -179,7 +192,7 @@ Present discovered patterns to user for selection.
 User selects which patterns to document.
 Create/update DES documents as approved.
 
-### 9. Finalize
+### 8. Finalize
 
 Update status:
 ```bash
@@ -199,32 +212,31 @@ Offer to commit: "Ready to commit this implementation?"
 
 ---
 
-## Team Orchestration Mode
+## Parallel Execution
 
-Used when the plan includes a Team Structure section. The lead agent orchestrates rather than implements directly.
+Used when the plan contains independent batches (batches without cross-dependencies). The lead agent orchestrates agents rather than implementing directly.
 
-### 1. Read Plan Structure Only
+### 1. Analyze Batch Dependencies
 
-Read the spec, design, and plan to understand:
-- How many agents are needed and their scopes
-- The step assignments per agent
-- Synchronization points between agents
-- Pre-implementation checklist items per agent
+Read all batches and their `Depends on:` fields. Identify:
+- **Independent batches**: No dependencies on each other — can run in parallel
+- **Dependent batches**: Must wait for their dependencies to complete
 
-Do NOT read the full ADRs, DES, or dependency code yourself — delegate that reading to each agent.
+Group into execution waves:
+- Wave 1: All batches with no dependencies
+- Wave 2: Batches that depend only on Wave 1 batches
+- Continue until all batches are scheduled
 
 ### 2. Set Up Team and Tasks
 
 1. Create team with `TeamCreate` (name: `dlt-<delta-id>-implementation`)
-2. Create **one task per implementation step** using the step descriptions from the plan
-3. Set up task dependencies:
-   - **Within each agent**: sequential — each step blocked by the previous step from the same agent
-   - **Cross-agent**: add dependencies noted in the plan's Synchronization section (if any)
-4. Assign each task to its respective agent name (matching the plan's Team Structure table)
+2. Create **one task per batch** using the batch scope as the task description
+3. Set up task dependencies matching the batch `Depends on:` fields
+4. Assign independent batches to separate agents
 
-### 3. Spawn Agents
+### 3. Spawn Agents for Independent Batches
 
-Spawn all agents **in parallel** (single message, multiple Task tool calls) with:
+Spawn agents **in parallel** (single message, multiple Agent tool calls) with:
 - `subagent_type`: `"general-purpose"`
 - `model`: `"sonnet"` (unless user specifies otherwise)
 - `mode`: `"bypassPermissions"`
@@ -232,65 +244,41 @@ Spawn all agents **in parallel** (single message, multiple Task tool calls) with
 - `run_in_background`: `true`
 
 Each agent's prompt must include:
-- Their role and delta context (e.g., "You are the backend agent for DLT-054")
-- Their task list (task IDs and step descriptions)
+- Their batch assignment (e.g., "You are implementing Batch 2: Search Endpoint for DLT-054")
 - Instructions to:
-  - Read the plan (`docs/delta-plans/$ARGUMENTS.md`) — specifically their agent section
+  - Read the plan (`docs/delta-plans/$ARGUMENTS.md`) — specifically their batch section
   - Read the spec and design documents
-  - Read the pre-requisite files listed in the plan's pre-implementation checklist for their scope
-  - Read the relevant ADRs and DES patterns from the plan's checklist
-  - Follow their steps autonomously, marking each task `in_progress` then `completed`
+  - Load their batch's Context & Research entries (read full ADR/DES documents, not just indexes)
+  - Follow research pointers and write findings to the design doc
+  - Implement their batch's steps autonomously
+  - Mark batch as `✓ Done` in the plan file when complete
   - Message `team-lead` for any decisions not covered by the documentation
-  - Run verification commands when done (test, typecheck, lint for their area)
+  - Run verification for their area (test, typecheck, lint)
 - The project's coding style guidelines (copy relevant sections from CLAUDE.md)
 
-### 4. Monitor and Coordinate
+### 4. Monitor, Coordinate, and Execute Dependent Batches
 
-After spawning agents, send each agent a message listing their task IDs and instructions to track progress per task.
-
-The lead agent then:
-- Responds to agent questions about decisions not covered by documentation
-- Monitors task progress via `TaskList`
-- Resolves cross-agent coordination issues if they arise
-- Does NOT implement code directly
+After spawning agents:
+- Respond to agent questions about decisions not covered by documentation
+- Monitor task progress via `TaskList`
+- When independent batches complete, spawn agents for newly unblocked dependent batches
+- Does NOT implement code directly — delegate mode
 
 ### 5. Verify and Review
 
-Once all agents have completed their tasks:
+Once all batches are complete:
 - Run full test suites for all affected areas
 - Run linting and type checking across the whole project
 - Fix any integration issues between agent outputs
 
-Dispatch the code-reviewer agent with the full diff (same as Standard Process step 4).
-
-Fix all issues found, then present to user for review (same as Standard Process steps 6-9).
-
-### 6. Finalize
-
-Same as Standard Process step 9:
-
-Update status:
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Implementation"
-```
-
-Present summary:
-```
-"Delta implementation complete:
-
-ID: $ARGUMENTS
-
-Next step: /katachi:reconcile-delta $ARGUMENTS (to update feature documentation)
-```
-
-Offer to commit: "Ready to commit this implementation?"
+Then follow steps 3-8 from Sequential Execution (external validation, fix issues, present to user, iterate, surface patterns, finalize).
 
 ---
 
 ## Working with Decisions
 
 **Using ADRs and DES:**
-- Read all decisions listed in plan's checklist
+- Read all decisions referenced in the current batch's context
 - Follow constraints unless there's good reason to deviate
 - If deviation needed: discuss with user, consider updating decision
 
@@ -306,23 +294,13 @@ Offer to commit: "Ready to commit this implementation?"
 
 ## Workflow
 
-**Standard mode — autonomous implementation:**
-- Read documentation silently
-- Implement all steps without asking questions
-- Apply ADR and DES decisions
-- Verify each step works
+**Batch-by-batch implementation:**
+- Read plan and analyze batch dependencies
+- For each batch: load context, research, implement steps, mark done
+- If independent batches exist: spawn parallel agents per batch
+- After all batches: verify acceptance criteria
 - Run code-reviewer validation
 - Fix ALL issues automatically
-- Present to user for final review
-- Iterate based on feedback
-- Surface patterns for DES
-- Commit when approved
-
-**Team mode — orchestrated implementation:**
-- Read plan structure only
-- Create team, tasks, and spawn agents
-- Monitor and coordinate (delegate mode)
-- Verify and review after agents complete
 - Present to user for final review
 - Iterate based on feedback
 - Surface patterns for DES

@@ -409,8 +409,7 @@ For projects with 20+ modules:
 ### Phase 1: Skeleton (1-2 days)
 1. Create VISION.md with high-level scope
 2. Create DELTAS.md with module categories only
-3. Add **Depends on**: None to delta entries in DELTAS.md
-4. Create index files for docs/
+3. Create index files for docs/
 
 ### Phase 2: Critical Path (1 week)
 1. Identify 5 most critical modules

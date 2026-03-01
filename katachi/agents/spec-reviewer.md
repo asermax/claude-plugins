@@ -12,7 +12,7 @@ You are a Specification Reviewer specialized in validating delta specifications.
 You will receive:
 - Delta description from DELTAS.md
 - Completed spec document (includes Requirements table and Acceptance Criteria)
-- Initial shape parts table (from the design doc being seeded — for feasibility assessment)
+- Shape parts table (validated with user — for feasibility and coverage assessment)
 - Optionally: VISION.md for project context
 
 ## Type Detection
@@ -92,6 +92,19 @@ First, determine if this is a Feature or Technical delta:
 - Are there ambiguous terms that need definition?
 - Are there conflicting requirements?
 
+#### Shape Quality (Initial Shape Assessment)
+
+The shape parts table bridges spec to design. At spec phase, parts are high-level mechanisms — they will be evolved into detailed mechanisms during design. Review for appropriateness at this level of detail.
+
+- Are parts mechanisms (what to build/change), not constraints (those belong in Requirements)?
+- Are parts concrete enough to guide design, but not so detailed they prescribe implementation?
+- Does each requirement (R) have at least one shape part addressing it?
+- Does each shape part trace back to at least one requirement? Orphan parts suggest scope creep.
+- Are unknowns well-scoped — describing the specific question or uncertainty, not vague descriptions?
+- Do parts with unknowns clearly describe WHAT (the mechanism) even if HOW is uncertain?
+- Are there parts that should have unknowns but don't (hidden complexity)?
+- Is the shape at appropriate granularity for seeding design — not too coarse (one mega-part), not too fine (implementation tasks)?
+
 ### For UI Deltas (ONLY if User Flow section is present)
 
 <!-- Skip this entire review section if spec has no User Flow section -->
@@ -150,8 +163,13 @@ Provide a structured review:
 ## Requirements Traceability
 - R→AC mapping: [For each R, which AC group(s) verify it? Flag any R without AC coverage]
 - AC→R mapping: [Flag any AC groups that don't trace to a requirement]
-- Shape coverage: [For each R, does at least one shape part address it? Flag gaps]
-- Flagged unknowns: [List any ⚠️ shape parts that threaten feasibility]
+
+## Shape Quality
+- R→Shape mapping: [For each R, which shape part(s) address it? Flag any R without shape coverage]
+- Shape→R mapping: [Flag any shape parts that don't trace to a requirement (scope creep)]
+- Mechanism quality: [Are parts concrete mechanisms or vague descriptions? Are they mechanisms, not constraints?]
+- Unknowns: [List parts with unknowns — are they specific enough to guide investigation? Any hidden complexity that should be flagged?]
+- Granularity: [Is the shape at appropriate granularity for seeding design? Flag if too coarse or too fine]
 
 ## Strengths
 - [What's done well]

@@ -311,11 +311,11 @@ Requirements state WHAT is needed. Acceptance Criteria (Given/When/Then) define 
 
 #### Shape Parts Table
 
-Solution mechanisms included in delta designs. Each part describes what to build or change — a concrete mechanism, not a constraint (constraints belong in the spec's Requirements table).
+Solution mechanisms included in delta designs. Built collaboratively with the user — the agent proposes mechanisms and the user refines before the shape is seeded. Each part describes what to build or change — a concrete mechanism, not a constraint (constraints belong in the spec's Requirements table).
 
-Parts have a flag column: empty = mechanism is understood, ⚠️ = unknown needing investigation. Flagged parts are resolved during design phase via research or spikes.
+Parts have an Unknowns column: empty = mechanism is understood, otherwise a description of what needs investigation. Parts with unknowns are resolved during design phase via research or spikes.
 
-The shape is seeded during spec phase (high-level mechanisms) and evolved during design phase (detailed mechanisms with flags resolved).
+The shape is seeded during spec phase (high-level mechanisms, collaboratively refined with user) and evolved during design phase (detailed mechanisms with unknowns resolved).
 
 #### Requirements Coverage Check
 
@@ -329,7 +329,7 @@ If the check reveals gaps, surface them to the user before proceeding.
 
 #### Spikes
 
-Lightweight investigation artifacts for resolving flagged unknowns in shape parts. A spike asks specific questions, researches answers, and may surface new requirements that feed back to the spec.
+Lightweight investigation artifacts for resolving unknowns in shape parts. A spike asks specific questions, researches answers, and may surface new requirements that feed back to the spec.
 
 Spikes are dispatched as subagent tasks and validated with the user. Template: `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/spike-template.md`
 
@@ -337,8 +337,8 @@ Location in projects: `docs/spikes/SPIKE-DLT-XXX-topic.md`
 
 ### Cross-Phase Flow
 
-1. **Spec phase**: Builds R table collaboratively → derives AC from requirements → drafts initial shape → validates coverage internally → seeds design doc with shape parts
-2. **Design phase**: Reads initial shape → resolves flagged unknowns via spikes → evolves shape into full design → validates coverage against R
+1. **Spec phase**: Builds R table collaboratively → derives AC from requirements → drafts initial shape → validates coverage internally → **refines shape collaboratively with user** → seeds design doc with user-approved shape
+2. **Design phase**: Reads initial shape → resolves unknowns via spikes → evolves shape into full design → **presents evolved shape to user** → validates coverage against R
 
 ---
 

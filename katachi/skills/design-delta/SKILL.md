@@ -45,7 +45,7 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 ### Templates and Guides
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-design.md` - Structure to follow
 - `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/wireframing.md` - UI layout guide (if needed)
-- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/spike-template.md` - Spike investigation template (for flagged unknowns)
+- `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/spike-template.md` - Spike investigation template (for shape unknowns)
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - Technical diagram guidance
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md` - Code snippet guidance
 
@@ -61,7 +61,7 @@ Verify spec exists:
 
 If `docs/delta-designs/$ARGUMENTS.md` exists:
 - Read current design
-- **Check if this is a shape-only seed from spec phase:** If the design doc contains only a `## Shape` section with initial shape parts and the rest of the template sections are empty, treat it as a starting point — not an existing design to iterate on. Summarize the initial shape to the user, note any flagged unknowns (⚠️), and proceed with full design creation.
+- **Check if this is a shape-only seed from spec phase:** If the design doc contains only a `## Shape` section with initial shape parts and the rest of the template sections are empty, treat it as a starting point — not an existing design to iterate on. Summarize the initial shape to the user, note any parts with unknowns, and proceed with full design creation.
 - **Otherwise (existing design with content):** Check for drift against spec, summarize design approach, key decisions, modeling choices. Ask: "What aspects need refinement? Or should we review the whole design?" Enter iteration mode as appropriate.
 
 If no design exists: proceed with initial creation
@@ -75,7 +75,6 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design
 
 **Internal Research:**
 - Read delta spec (`docs/delta-specs/$ARGUMENTS.md`)
-- Read dependencies from delta's `**Depends on**` field in `docs/planning/DELTAS.md`
 - Read dependency specs if they exist
 - Read relevant ADRs from index
 - Read relevant DES patterns from index
@@ -190,9 +189,9 @@ Use AskUserQuestion to ask focused questions about:
 
 If a design doc with initial shape parts exists (seeded by spec-delta):
 - Read the initial shape parts table
-- For any flagged unknowns (⚠️): dispatch `katachi:spike-runner` subagent(s) to investigate, then validate findings with the user
+- For any parts with unknowns: dispatch `katachi:spike-runner` subagent(s) to investigate, then validate findings with the user
 - Spikes may surface new requirements — if so, update the spec's R table and AC in `docs/delta-specs/$ARGUMENTS.md` before continuing
-- Resolve flags: remove ⚠️ and update mechanism descriptions based on findings
+- Resolve unknowns: clear the Unknowns column and update mechanism descriptions based on findings
 - Evolve shape parts into more detailed mechanisms informed by research
 
 If no initial shape exists: draft shape parts from scratch based on spec requirements.
@@ -205,6 +204,16 @@ Verify coverage between the spec's R table and the evolved shape:
 - Every requirement should have at least one shape part addressing it
 - Every shape part should trace to at least one requirement
 - Surface gaps to the user if found
+
+**Present evolved shape to user for validation:**
+
+After evolving the shape and resolving unknowns, present the complete evolved shape to the user before investing effort in the full design:
+- Show the full updated shape parts table
+- Highlight what changed from the initial shape (seeded by spec phase): new parts added, parts refined or split, unknowns resolved, coverage gaps addressed
+- Show the updated R→Shape coverage mapping
+- Invite feedback: "Here's the evolved shape after research and spike resolution. Does this still capture the right approach? Any mechanisms to adjust before I build the full design around it?"
+
+Iterate until the user approves the evolved shape. The approved shape is what gets documented in the final design.
 
 **Create full design document following template:**
 - Problem context (what problem, constraints, interactions)
@@ -292,7 +301,7 @@ Review this delta design.
 - Check that options were researched broadly (not just validating a pre-assumed choice)
 - Confirm research discovered current solutions, not just validated known libraries
 - Validate design decisions are supported by up-to-date research, not training data
-- Shape coverage: Does each spec requirement have at least one shape part? Are all flagged unknowns resolved? Are parts mechanisms (not constraints)?
+- Shape coverage: Does each spec requirement have at least one shape part? Are all unknowns resolved? Are parts mechanisms (not constraints)?
 
 ## UI Layout Review (if design includes UI Layout section)
 - Do wireframes correspond to places in the spec's breadboard?
@@ -372,7 +381,9 @@ When design reveals hard-to-change choices:
 
 **This is a validate-first process:**
 - Research silently (internal + external), then interview user on design decisions
-- Draft incorporating user's input (ask additional decisions when needed)
+- Evolve shape from spec-phase seed, resolve unknowns via spikes
+- **Present evolved shape to user for validation before proceeding to full design**
+- Draft full design incorporating user's input (ask additional decisions when needed)
 - Auto-discover affected feature designs
 - Validate with design-reviewer agent (silent)
 - Apply all validation fixes automatically (ask decisions when needed)

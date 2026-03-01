@@ -33,7 +33,7 @@ Evaluate the design against these criteria:
 
 ### 3. Shape Coverage
 - Are all shape parts mechanisms (what to build/change), not constraints (those belong in spec's Requirements)?
-- Are all flagged unknowns (⚠️) resolved or have associated spikes with findings?
+- Are all unknowns resolved or have associated spikes with findings?
 - Does each spec requirement have at least one shape part addressing it?
 - Are parts vertical slices (co-locate related concerns) rather than horizontal layers (grouping by type)?
 - Are shared mechanisms extracted into standalone parts that others reference?
@@ -141,7 +141,7 @@ Provide a structured review:
 
 ## Shape Coverage
 - Shape→R mapping: [For each R, which shape part(s) address it? Flag any R without shape coverage]
-- Unresolved flags: [List any ⚠️ parts still unresolved or "None"]
+- Unresolved unknowns: [List any parts with unknowns still unresolved or "None"]
 - Mechanism quality: [Are parts concrete mechanisms or vague descriptions?]
 
 ## Pattern Compliance

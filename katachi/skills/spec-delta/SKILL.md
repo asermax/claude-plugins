@@ -60,7 +60,6 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Spec"
 ### 2. Research Phase (Silent)
 
 - Read delta description from `docs/planning/DELTAS.md`
-- Read dependencies from delta's `**Depends on**` field in `docs/planning/DELTAS.md`
 - Explore related codebase areas if needed
 - For deltas involving libraries/frameworks/APIs:
   - Research typical usage patterns
@@ -170,15 +169,15 @@ If NOT a UI delta (technical, bug fix, API-only):
 After drafting the spec, draft an initial shape parts table:
 - Identify the high-level mechanisms needed to satisfy the requirements
 - Each part should describe what to build or change — a mechanism, not a constraint
-- Flag unknowns with ⚠️ where you can describe WHAT but not yet HOW
-- This shape will seed the design document (see step after finalization)
+- For unknowns, describe what needs investigation in the Unknowns column — the specific question or uncertainty about HOW
+- This is a proposal — the user will refine it in the next step
 
 **Run requirements coverage check (internal, not saved):**
 
 Verify coverage between R table and initial shape:
 - Every requirement (R) should have at least one shape part addressing it — missing parts indicate gaps in the solution
 - Every shape part should trace back to at least one requirement — orphan parts indicate scope creep
-- Surface any gaps to the user before proceeding
+- Note any gaps for presentation in the next step
 
 **Decision Points:** If you encounter choices requiring user input, use AskUserQuestion:
 - Ambiguous requirements with multiple interpretations
@@ -200,7 +199,27 @@ Verify coverage between R table and initial shape:
 
 Note any uncertainties or assumptions clearly.
 
-### 6. External Validation (Silent)
+### 6. Shape Collaboration
+
+Present the initial shape parts table to the user for collaborative refinement. The shape bridges spec to design — the user must validate it before it gets seeded.
+
+**Present:**
+- The shape parts table with mechanism descriptions and unknowns
+- A brief R→Shape mapping showing which parts address which requirements
+- Any coverage gaps identified in the internal check
+
+**Collaborate:**
+
+Use AskUserQuestion or open discussion to refine the shape with the user:
+- Confirm or adjust mechanism descriptions
+- Add missing parts or remove unnecessary ones
+- Discuss unknowns — does the user have insight that resolves them, or should they remain for design-phase spikes?
+- Refine unknown descriptions: are they specific enough to guide investigation?
+- Negotiate scope: are any shape parts over-engineering the solution?
+
+Iterate until the user approves the shape. The approved shape is what gets passed to the reviewer and eventually seeded into the design doc.
+
+### 7. External Validation (Silent)
 
 Dispatch the spec-reviewer agent:
 
@@ -216,7 +235,7 @@ Review this delta specification.
 ## Completed Spec
 {spec_content}
 
-## Initial Shape Parts (from design doc being seeded)
+## Shape Parts (validated with user)
 {shape_parts_table}
 
 ## Review Criteria (if spec includes User Flow section)
@@ -229,7 +248,7 @@ Review this delta specification.
 )
 ```
 
-### 7. Apply Validation Feedback (Silent)
+### 8. Apply Validation Feedback (Silent)
 
 Apply ALL recommendations from spec-reviewer automatically:
 - Fix coverage gaps
@@ -247,19 +266,22 @@ Track changes made for presentation in next step.
 - Reordering for clarity
 - Standard compliance fixes
 
-### 8. Present Validated Spec
+### 9. Present Validated Spec
 
 Present the complete validated spec to the user in its entirety.
+
+**Also present the final shape table** alongside the spec — show the shape parts table with any adjustments from reviewer feedback in step 8. Highlight changes from the version the user approved in step 6 if any were made. The user should see the complete output of the spec phase before finalizing.
+
 Highlight any unresolved issues requiring input.
-Invite feedback: "What needs adjustment in this spec?"
+Invite feedback: "What needs adjustment in this spec or the shape?"
 
-### 9. Iterate Based on User Feedback
+### 10. Iterate Based on User Feedback
 
-Apply user corrections, additions, or changes.
-Re-run validation (steps 5-6) if significant changes.
-Repeat until user approves.
+Apply user corrections, additions, or changes to the spec and/or shape.
+Re-run validation (steps 5-7) if significant changes.
+Repeat until user approves both the spec and the shape.
 
-### 10. Finalize
+### 11. Finalize
 
 Finalize document to `docs/delta-specs/$ARGUMENTS.md`
 
@@ -268,14 +290,14 @@ Update status:
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Spec"
 ```
 
-### 11. Seed Design Document
+### 12. Seed Design Document
 
 If `docs/delta-designs/$ARGUMENTS.md` does not already exist:
 
 1. Read the delta-design template: `${CLAUDE_PLUGIN_ROOT}/skills/working-on-delta/references/delta-design.md`
 2. Create `docs/delta-designs/$ARGUMENTS.md` following the template structure:
    - Header linking to the spec, Status: Draft
-   - `## Shape` section populated with the initial shape parts table from step 5
+   - `## Shape` section populated with the user-approved shape parts table from steps 5-10
    - All remaining template sections included but left empty for the design phase to fill
 
 This bridges spec and design — the design phase starts with the shape already drafted.
@@ -296,11 +318,11 @@ Next step: /katachi:design-delta $ARGUMENTS
 **This is a validate-first process:**
 - Research silently, then interview user on key decisions — build R table collaboratively
 - Draft spec with R table and grouped AC, draft initial shape (not in spec)
-- Run requirements coverage check internally to surface gaps
+- Run requirements coverage check internally, then **present shape to user for collaborative refinement**
 - Auto-discover affected features
-- Validate with spec-reviewer agent (silent) — pass spec and initial shape
+- Validate spec and user-approved shape with spec-reviewer agent (silent)
 - Apply all validation fixes automatically (ask decisions when needed)
-- Present validated spec with applied changes summary
-- User provides feedback
+- Present validated spec **and final shape** with applied changes summary
+- User provides feedback on both spec and shape
 - Iterate until approved
-- Finalize spec, then seed design doc with initial shape
+- Finalize spec, then seed design doc with user-approved shape

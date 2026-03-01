@@ -313,7 +313,7 @@ Requirements state WHAT is needed. Acceptance Criteria (Given/When/Then) define 
 
 Solution mechanisms included in delta designs. Built collaboratively with the user — the agent proposes mechanisms and the user refines before the shape is seeded. Each part describes what to build or change — a concrete mechanism, not a constraint (constraints belong in the spec's Requirements table).
 
-Parts have an Unknowns column: empty = mechanism is understood, otherwise a description of what needs investigation. Parts with unknowns are resolved during design phase via research or spikes.
+Parts have a flag column: empty = mechanism is understood, ⚠️ = unknown that needs investigation. Flagged parts must include a description below the table explaining what the unknown is. Flagged parts are resolved during design phase via research or spikes.
 
 The shape is seeded during spec phase (high-level mechanisms, collaboratively refined with user) and evolved during design phase (detailed mechanisms with unknowns resolved).
 

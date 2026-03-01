@@ -169,7 +169,7 @@ If NOT a UI delta (technical, bug fix, API-only):
 After drafting the spec, draft an initial shape parts table:
 - Identify the high-level mechanisms needed to satisfy the requirements
 - Each part should describe what to build or change — a mechanism, not a constraint
-- For unknowns, describe what needs investigation in the Unknowns column — the specific question or uncertainty about HOW
+- Flag parts with unknowns using ⚠️ in the Flag column, and include a description below the table for each flagged part explaining what needs investigation — the specific question or uncertainty about HOW
 - This is a proposal — the user will refine it in the next step
 
 **Run requirements coverage check (internal, not saved):**

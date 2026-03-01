@@ -28,14 +28,20 @@ After implementation, the "Detected Impacts" section will guide reconciliation i
 <!--
 Mechanisms that make up the solution. Seeded during spec phase, evolved during design.
 Parts describe what to build/change (mechanisms), not constraints (those belong in spec's Requirements).
-Unknowns column: empty = mechanism is understood, otherwise describe what needs investigation (spike or research).
-Parts with unknowns should be resolved during design phase. Spikes may surface new requirements — update the spec if so.
+Flag column: empty = mechanism is understood, ⚠️ = unknown that needs investigation (spike or research).
+Flagged parts must have a description in the "Flagged Unknowns" section below the table.
+Flagged parts should be resolved during design phase. Spikes may surface new requirements — update the spec if so.
 -->
 
-| Part | Mechanism | Unknowns |
-|------|-----------|----------|
+| Part | Mechanism | Flag |
+|------|-----------|:----:|
 | **S1** | [description of what to build/change] | |
-| **S2** | [description] | [what needs investigation — the specific question or uncertainty] |
+| **S2** | [description] | ⚠️ |
+
+### Flagged Unknowns
+
+#### S2 — [short label]
+[Detailed description of what needs investigation — the specific question or uncertainty, with as much context as needed]
 
 ## Components
 

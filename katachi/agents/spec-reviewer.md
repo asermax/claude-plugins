@@ -100,8 +100,8 @@ The shape parts table bridges spec to design. At spec phase, parts are high-leve
 - Are parts concrete enough to guide design, but not so detailed they prescribe implementation?
 - Does each requirement (R) have at least one shape part addressing it?
 - Does each shape part trace back to at least one requirement? Orphan parts suggest scope creep.
-- Are unknowns well-scoped — describing the specific question or uncertainty, not vague descriptions?
-- Do parts with unknowns clearly describe WHAT (the mechanism) even if HOW is uncertain?
+- Do all flagged parts (⚠️) have a description below the table explaining the specific unknown?
+- Do flagged parts (⚠️) clearly describe WHAT (the mechanism) even if HOW is uncertain?
 - Are there parts that should have unknowns but don't (hidden complexity)?
 - Is the shape at appropriate granularity for seeding design — not too coarse (one mega-part), not too fine (implementation tasks)?
 
@@ -168,7 +168,7 @@ Provide a structured review:
 - R→Shape mapping: [For each R, which shape part(s) address it? Flag any R without shape coverage]
 - Shape→R mapping: [Flag any shape parts that don't trace to a requirement (scope creep)]
 - Mechanism quality: [Are parts concrete mechanisms or vague descriptions? Are they mechanisms, not constraints?]
-- Unknowns: [List parts with unknowns — are they specific enough to guide investigation? Any hidden complexity that should be flagged?]
+- Flagged unknowns: [List flagged parts (⚠️) — do they have descriptions below the table? Are descriptions specific enough to guide investigation? Any hidden complexity that should be flagged?]
 - Granularity: [Is the shape at appropriate granularity for seeding design? Flag if too coarse or too fine]
 
 ## Strengths

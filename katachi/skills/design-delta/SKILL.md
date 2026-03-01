@@ -61,7 +61,7 @@ Verify spec exists:
 
 If `docs/delta-designs/$ARGUMENTS.md` exists:
 - Read current design
-- **Check if this is a shape-only seed from spec phase:** If the design doc contains only a `## Shape` section with initial shape parts and the rest of the template sections are empty, treat it as a starting point — not an existing design to iterate on. Summarize the initial shape to the user, note any parts with unknowns, and proceed with full design creation.
+- **Check if this is a shape-only seed from spec phase:** If the design doc contains only a `## Shape` section with initial shape parts and the rest of the template sections are empty, treat it as a starting point — not an existing design to iterate on. Summarize the initial shape to the user, note any flagged unknowns (⚠️), and proceed with full design creation.
 - **Otherwise (existing design with content):** Check for drift against spec, summarize design approach, key decisions, modeling choices. Ask: "What aspects need refinement? Or should we review the whole design?" Enter iteration mode as appropriate.
 
 If no design exists: proceed with initial creation
@@ -189,9 +189,9 @@ Use AskUserQuestion to ask focused questions about:
 
 If a design doc with initial shape parts exists (seeded by spec-delta):
 - Read the initial shape parts table
-- For any parts with unknowns: dispatch `katachi:spike-runner` subagent(s) to investigate, then validate findings with the user
+- For any flagged parts (⚠️): dispatch `katachi:spike-runner` subagent(s) to investigate, then validate findings with the user
 - Spikes may surface new requirements — if so, update the spec's R table and AC in `docs/delta-specs/$ARGUMENTS.md` before continuing
-- Resolve unknowns: clear the Unknowns column and update mechanism descriptions based on findings
+- Resolve unknowns: remove ⚠️ and update mechanism descriptions based on findings
 - Evolve shape parts into more detailed mechanisms informed by research
 
 If no initial shape exists: draft shape parts from scratch based on spec requirements.

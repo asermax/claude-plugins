@@ -169,7 +169,12 @@ export const normalize = (payload: HookPayload): NormalizedEvent => {
         status: EVENT_STATUS.INFO,
       }
 
-    case HOOK_EVENTS.STOP:
+    case HOOK_EVENTS.STOP: {
+      const lastMessage = payload.last_assistant_message ?? null
+      const summary = lastMessage
+        ? `Agent: ${truncate(lastMessage, 120)}`
+        : "Agent turn complete"
+
       return {
         id: randomUUID(),
         timestamp: new Date().toISOString(),
@@ -177,14 +182,11 @@ export const normalize = (payload: HookPayload): NormalizedEvent => {
         hookEvent: payload.hook_event_name,
         toolName: null,
         toolUseId: null,
-        summary: "Agent turn complete",
-        detail: {
-          lastMessage: payload.last_assistant_message
-            ? truncate(payload.last_assistant_message, 200)
-            : null,
-        },
+        summary,
+        detail: { lastMessage },
         status: EVENT_STATUS.INFO,
       }
+    }
 
     default:
       return {

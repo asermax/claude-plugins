@@ -76,7 +76,17 @@ const server = createServer(async (req, res) => {
     try {
       const body = await readBody(req)
       const payload: HookPayload = JSON.parse(body)
+
       const event = normalize(payload)
+
+      // When the user submits a new prompt or the agent stops, any pending tools were rejected/skipped
+      if (payload.hook_event_name === "UserPromptSubmit" || payload.hook_event_name === "Stop") {
+        const canceled = store.flushPending()
+
+        for (const evt of canceled) {
+          broadcast({ type: "update", event: evt })
+        }
+      }
 
       // For PostToolUse/PostToolUseFailure, try to update the matching PreToolUse event
       if (

@@ -38,20 +38,3 @@ When the dashboard server isn't running, hooks fail silently - no impact on Clau
 ## Configuration
 
 Set `KANSHI_PORT` environment variable to use a different port (default: 3838).
-
-## Backlog
-
-Future visualization ideas to experiment with:
-
-1. **Code heat map** - Which files/directories the agent touches most, color-coded by frequency
-2. **Real-time diffs** - Show Edit/Write changes as they happen with syntax highlighting
-3. **Session timeline** - Horizontal timeline showing tool call sequence and duration, with parallel subagent tracks
-4. **File exploration graph** - Graph of which files led to which other files being explored, surfacing implicit relationships
-5. **Tool usage stats** - Aggregate dashboard: call frequency, success/failure rates, most-read files
-6. **Decision trail** - From user prompt through tool chain to Stop, showing how the agent decomposed the request
-7. **Error pattern detection** - Track recurring failures to identify agent confusion about the codebase
-8. **Subagent tree** - Visualize parallel agent work with task descriptions and outcomes
-9. **Search replay** - Grep/Glob patterns and results showing the agent's exploration path
-10. **Session comparison** - Side-by-side comparison of how the agent approaches similar tasks
-11. **Review mode** - Pause, inspect, annotate agent decisions post-hoc
-12. **Session replay** - Replay a completed session at adjustable speed

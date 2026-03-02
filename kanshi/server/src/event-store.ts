@@ -27,6 +27,19 @@ export class EventStore {
     return null
   }
 
+  flushPending(): NormalizedEvent[] {
+    const flushed: NormalizedEvent[] = []
+
+    for (let i = 0; i < this.events.length; i++) {
+      if (this.events[i].status === "pending") {
+        this.events[i] = { ...this.events[i], status: "canceled" }
+        flushed.push(this.events[i])
+      }
+    }
+
+    return flushed
+  }
+
   getAll(): NormalizedEvent[] {
     return this.events
   }

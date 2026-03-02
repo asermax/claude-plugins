@@ -177,6 +177,11 @@ body {
   border-left-color: var(--failure);
 }
 
+.event-card.status-canceled {
+  border-left-color: var(--text-muted);
+  opacity: 0.6;
+}
+
 .event-card.status-info {
   border-left-color: var(--info);
 }
@@ -239,6 +244,10 @@ body {
 
 .event-status-badge.failure {
   background: var(--failure);
+}
+
+.event-status-badge.canceled {
+  background: var(--text-muted);
 }
 
 .event-status-badge.info {

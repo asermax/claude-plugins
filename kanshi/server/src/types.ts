@@ -16,6 +16,7 @@ export const EVENT_STATUS = {
   PENDING: "pending",
   SUCCESS: "success",
   FAILURE: "failure",
+  CANCELED: "canceled",
   INFO: "info",
 } as const
 

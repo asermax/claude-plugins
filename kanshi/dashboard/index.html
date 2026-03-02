@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanshi - Claude Code Observability</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <h1 class="title">kanshi</h1>
+      <span class="subtitle">observability</span>
+    </div>
+    <div class="header-right">
+      <span class="event-count" id="event-count">0 events</span>
+      <span class="connection-status" id="connection-status">
+        <span class="status-dot disconnected" id="status-dot"></span>
+        <span id="status-text">disconnected</span>
+      </span>
+    </div>
+  </header>
+
+  <main class="feed-container">
+    <div class="feed" id="feed"></div>
+    <button class="jump-to-latest" id="jump-to-latest" hidden>Jump to latest</button>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

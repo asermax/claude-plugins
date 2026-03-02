@@ -1,0 +1,8 @@
+{
+  "name": "kanshi",
+  "version": "0.1.0",
+  "description": "Real-time observability dashboard for Claude Code agent activity",
+  "author": {
+    "name": "Agustin Carrasco"
+  }
+}

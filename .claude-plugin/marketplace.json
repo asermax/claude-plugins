@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "2.11.17"
+    "version": "2.12.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -36,6 +36,11 @@
       "name": "memu",
       "source": "./memu",
       "description": "Agentic memory framework for long-term memory, user preferences, and conversation history"
+    },
+    {
+      "name": "kanshi",
+      "source": "./kanshi",
+      "description": "Real-time observability dashboard for Claude Code agent activity"
     }
   ]
 }

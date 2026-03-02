@@ -1,6 +1,6 @@
 ---
 name: create-aur-package
-description: This skill should be used when the user asks to "create an AUR package", "make a new AUR package", "scaffold AUR package", "create PKGBUILD", "package for AUR", or mentions AUR package creation with a specific source type (npm, rust, go, git, binary). Provides comprehensive guidance for creating Arch User Repository packages with proper structure, checksums, and git setup.
+description: This skill should be used when the user asks to "create an AUR package", "make a new AUR package", "scaffold AUR package", "create PKGBUILD", "package for AUR", or mentions AUR package creation with a specific source type (npm, rust, go, git, binary, appimage). Provides comprehensive guidance for creating Arch User Repository packages with proper structure, checksums, and git setup.
 argument-hint: <package-name> <source-type>
 ---
 
@@ -13,7 +13,7 @@ Source type: $ARGUMENTS[1]
 
 1. **Gather package information**:
    - Package name (provided by user)
-   - Source type (npm, rust, go, git, binary)
+   - Source type (npm, rust, go, git, binary, appimage)
    - Fetch metadata from upstream (version, description, license, URL)
 
 2. **Create package directory structure**:
@@ -59,6 +59,7 @@ src
 ```
 
 For NPM packages, use the actual package name (without scope for scoped packages).
+For AppImage packages, also include `squashfs-root`, `*.AppImage`, and the downloaded license file.
 
 ## Common PKGBUILD Structure
 
@@ -91,6 +92,7 @@ Load the appropriate reference file based on source type:
 - **Go packages**: See `references/go-packages.md` - For Go modules
 - **VCS/Git packages**: See `references/vcs-packages.md` - For `-git` packages tracking upstream
 - **Binary packages**: See `references/binary-packages.md` - For pre-compiled binaries
+- **AppImage packages**: See `references/appimage-packages.md` - For AppImage binaries (typically Electron apps)
 
 ## Useful Commands
 
@@ -108,6 +110,7 @@ Load the appropriate reference file based on source type:
 - **Standard**: `<package-name>` - For release tarballs
 - **VCS tracking**: `<package-name>-git` - For git repositories
 - **Binary**: `<package-name>-bin` - For pre-compiled binaries
+- **AppImage**: `<package-name>-appimage` - For AppImage binaries
 
 ## Additional Resources
 
@@ -118,6 +121,7 @@ Load the appropriate reference file based on source type:
 - **`references/go-packages.md`** - Go module specifics (build flags, GOPATH handling)
 - **`references/vcs-packages.md`** - VCS/Git package specifics (pkgver() function, provides/conflicts)
 - **`references/binary-packages.md`** - Binary package specifics (release downloads, architecture handling)
+- **`references/appimage-packages.md`** - AppImage package specifics (extraction, desktop integration, /opt/ install)
 
 ### Examples
 

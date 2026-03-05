@@ -1,6 +1,6 @@
 ---
 description: Evolve novel algorithms through LLM-driven mutation, crossover, and selection
-allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task, TodoWrite, WebSearch, WebFetch, AskUserQuestion, Skill
+allowed-tools: Bash, Read, Write, Edit, Glob, Grep, TodoWrite
 argument-hint: <problem description>
 ---
 
@@ -8,17 +8,17 @@ argument-hint: <problem description>
 
 Evolve novel algorithms through LLM-driven mutation and selection with **true genetic recombination**. Runs adaptively—continuing while improvement is possible, stopping when plateaued.
 
-This is the **master skill** that analyzes the request and delegates to specialized subskills.
+**Implementation**: Uses the evolve-sdk Python package for hierarchical agent orchestration.
 
 ---
 
 ## Available Modes
 
-| Mode | Subskill | Optimizes | Use When |
-|------|----------|-----------|----------|
-| **perf** | `/evolve-perf` | Runtime speed (ops/sec, latency) | Faster algorithms, benchmarks |
-| **size** | `/evolve-size` | Length (bytes, chars) | Code golf, minimal configs |
-| **ml** | `/evolve-ml` | Model accuracy (F1, loss) | ML optimization (coming soon) |
+| Mode | Optimizes | Use When |
+|------|-----------|----------|
+| **perf** | Runtime speed (ops/sec, latency) | Faster algorithms, benchmarks |
+| **size** | Length (bytes, chars) | Code golf, minimal configs |
+| **ml** | Model accuracy (F1, loss) | ML optimization |
 
 ---
 
@@ -30,131 +30,124 @@ This is the **master skill** that analyzes the request and delegates to speciali
 /evolve --resume
 ```
 
+**Examples**:
+```
+/evolve faster sorting algorithm to beat std::sort
+/evolve shortest Python solution for ARC task
+/evolve improve F1 score for classification
+/evolve --resume
+```
+
 ---
 
-## Mode Detection Instructions
+## Execution Instructions
 
-You are the master `/evolve` skill. Your job is to understand the user's intent and delegate to the appropriate subskill.
+You are the master `/evolve` skill. Your job is to:
+1. Detect the optimization mode
+2. Run evolution via the SDK
 
 ### Step 1: Check for Explicit Override
 
-If the request contains `--mode=perf`, `--mode=size`, or `--mode=ml`, use that mode directly. No further analysis needed.
+If the request contains `--mode=perf`, `--mode=size`, or `--mode=ml`, use that mode directly.
 
 ### Step 2: Check for Resume
 
-If the request is `--resume` or contains `--resume`:
-1. Search for the most recent `.evolve/*/evolution.json` file
-2. Read it to determine the mode from the `"mode"` field
-3. Delegate to that subskill with `--resume`
+If the request is `--resume`:
+1. Search for `.evolve-sdk/*/evolution.json`
+2. Read it to get the mode from the `"mode"` field
+3. Run SDK with `--resume`
 
-### Step 3: Analyze the Request
+### Step 3: Detect Mode from Intent
 
-Read the user's request carefully and determine what they want to optimize:
+**Choose SIZE mode** when goal is minimizing length:
+- "shortest", "smallest", "fewest bytes", "most concise"
+- ARC-AGI tasks, code golf
+- Reducing file/config/prompt size
 
-**Choose SIZE mode when the goal is to minimize length:**
-- Making code shorter, smaller, more concise
-- Code golf challenges
-- Minimizing byte count or character count
-- ARC-AGI tasks (these are code golf competitions)
-- Reducing file size, config size, prompt length
-- "Shortest", "smallest", "fewest bytes", "most concise"
+**Choose PERF mode** when goal is maximizing speed:
+- "faster", "optimize", "speed up", "high performance"
+- Beating benchmarks, improving throughput
+- Runtime optimization
 
-**Choose PERF mode when the goal is to maximize speed:**
-- Making code faster, quicker, more efficient
-- Improving throughput, reducing latency
-- Beating benchmarks, optimizing algorithms
-- Runtime performance, ops/sec, iterations/sec
-- "Faster", "optimize", "speed up", "high performance"
-
-**Choose ML mode when the goal is to improve model metrics:**
-- Improving accuracy, F1 score, precision, recall
-- Reducing loss, error rate
+**Choose ML mode** when goal is improving model metrics:
+- "accuracy", "F1 score", "precision", "recall"
+- Classification/regression tasks
 - Model training, hyperparameter tuning
-- Neural network architecture optimization
-- Kaggle competitions, classification tasks
 
-### Step 4: Consider Context (Optional)
+### Step 4: Handle Ambiguity
 
-If you're unsure, you may check the codebase for context clues:
-- Files in `code-golf/` or `tasks/*.json` suggest SIZE mode
-- Files like `benchmark.rs` or perf harnesses suggest PERF mode
-- Files like `.h5`, `.pt`, `.pkl`, `model.py` suggest ML mode
-
-### Step 5: Handle Ambiguity
-
-If after analysis you genuinely cannot determine the mode, use AskUserQuestion:
-
+If genuinely ambiguous (e.g., just "optimize"), ask:
 ```
-Question: "What are we optimizing for?"
-Options:
-- "Fastest runtime (speed)" → perf
-- "Smallest code (bytes)" → size
-- "Best accuracy (ML)" → ml
+What are we optimizing for?
+- Fastest runtime (speed) → perf
+- Smallest code (bytes) → size
+- Best accuracy (ML) → ml
 ```
 
-### Step 6: Delegate
+### Step 5: Verify SDK Installation
 
-Once you've determined the mode:
+```bash
+python3 -c "import evolve_sdk" 2>/dev/null && echo "SDK ready" || echo "SDK missing"
+```
 
-1. Announce: `**Evolution mode: {mode}**` with brief reasoning
-2. Invoke the subskill using the Skill tool:
-   - `perf` → invoke `evolve-perf`
-   - `size` → invoke `evolve-size`
-   - `ml` → invoke `evolve-ml`
-3. Pass the original request (minus --mode= if present) as args
+If missing:
+```
+The evolve-sdk package is not installed. Install with:
+  cd <repo-root>/sdk && pip install -e .
+```
+
+### Step 6: Check for evolve_config.json
+
+```bash
+ls evolve_config.json 2>/dev/null
+```
+
+If found, use `--config` flag.
+
+### Step 7: Run Evolution
+
+```bash
+# With config file:
+python3 -m evolve_sdk --config=evolve_config.json --mode=<detected_mode>
+
+# Without config file:
+python3 -m evolve_sdk "<problem description>" --mode=<detected_mode>
+
+# Resume:
+python3 -m evolve_sdk --resume
+```
+
+**Available flags**:
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--max-generations=N` | 50 | Maximum generations |
+| `--population-size=N` | 10 | Population size |
+| `--plateau=N` | 5 | Stop after N gens without improvement |
+| `--no-parallel` | false | Run mutations sequentially |
+| `--model=X` | claude-opus-4-6 | Model for subagents |
+
+### Step 8: Report Results
+
+After completion:
+1. Read `.evolve-sdk/<problem>/evolution.json`
+2. Summarize: generations run, final fitness, champion path
+3. Show key innovations and improvement trajectory
 
 ---
 
-## Examples with Reasoning
+## Mode Detection Examples
 
-### Example 1: Clear SIZE intent
-```
-Request: "shortest Python solution for ARC task 0520fde7"
-Reasoning: "shortest" + "ARC task" = clearly minimizing code length
-Mode: size
-Action: Skill(evolve-size, "shortest Python solution for ARC task 0520fde7")
-```
-
-### Example 2: Clear PERF intent
-```
-Request: "faster sorting algorithm to beat std::sort"
-Reasoning: "faster" + "beat benchmark" = clearly optimizing speed
-Mode: perf
-Action: Skill(evolve-perf, "faster sorting algorithm to beat std::sort")
-```
-
-### Example 3: Clear ML intent
-```
-Request: "improve accuracy on this classification task"
-Reasoning: "accuracy" + "classification" = clearly optimizing model metrics
-Mode: ml
-Action: Skill(evolve-ml, "improve accuracy on this classification task")
-```
-
-### Example 4: Explicit override
-```
-Request: "--mode=size optimize this function"
-Reasoning: Explicit --mode=size overrides any inference
-Mode: size
-Action: Skill(evolve-size, "optimize this function")
-```
-
-### Example 5: Needs clarification
-```
-Request: "optimize this algorithm"
-Reasoning: "optimize" is ambiguous - could mean speed OR size
-Action: AskUserQuestion to clarify
-```
-
-### Example 6: Resume
-```
-Request: "--resume"
-Action: Find .evolve/*/evolution.json, read mode, delegate with --resume
-```
+| Request | Mode | Reasoning |
+|---------|------|-----------|
+| "shortest Python solution for ARC task" | size | "shortest" = minimize length |
+| "faster sorting algorithm to beat std::sort" | perf | "faster" = maximize speed |
+| "improve accuracy on this classification task" | ml | "accuracy" = model metrics |
+| "optimize this function" | **ask** | "optimize" is ambiguous |
+| "--mode=size optimize this" | size | Explicit override |
 
 ---
 
-## Core Features (All Modes)
+## Core Features
 
 1. **Population-based**: Maintains diverse solutions, not just the winner
 2. **Semantic crossover**: Combines innovations from multiple parents
@@ -162,100 +155,147 @@ Action: Find .evolve/*/evolution.json, read mode, delegate with --resume
 4. **Budget control**: User sets token/generation limits
 5. **Checkpointing**: Resume evolution from where you left off
 6. **Correctness first**: Invalid solutions get fitness 0
+7. **Trust-aware validation**: Adversary agent challenges suspicious improvements
 
 ---
 
-## Budget Options
+## Trust-Aware Evolution
 
-| Budget | Meaning | Approx. Generations |
-|--------|---------|---------------------|
-| `10k` | 10,000 tokens | ~2-3 generations |
-| `50k` | 50,000 tokens | ~10-12 generations |
-| `100k` | 100,000 tokens | ~20-25 generations |
-| `5gen` | 5 generations | Fixed count |
-| `unlimited` | No limit | Until plateau |
-| (none) | Default 50k | ~10-12 generations |
+The evolution system includes an **Adversary agent** that challenges candidate solutions before they're promoted. This prevents the evolution from exploiting evaluator blind spots or claiming false improvements.
 
----
-
-## Resume Previous Evolution
-
-Run `/evolve --resume` to continue a previous evolution:
-
-1. Finds the most recent `evolution.json`
-2. Loads population and champion state
-3. Continues from last generation
-4. Preserves all history and lineage
-
----
-
-## Execution Flow
+### How It Works
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  /evolve <request>                                          │
-│                                                             │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │  Mode Detection (LLM-based)                           │  │
-│  │  • Check for explicit --mode= override                │  │
-│  │  • Analyze request intent                             │  │
-│  │  • Consider codebase context if needed                │  │
-│  │  • Ask user if genuinely ambiguous                    │  │
-│  └──────────────────┬────────────────────────────────────┘  │
-│                     │                                       │
-│         ┌───────────┼───────────┬───────────┐               │
-│         ▼           ▼           ▼           ▼               │
-│   ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │
-│   │ size     │ │ perf     │ │ ml       │ │ resume   │      │
-│   │ subskill │ │ subskill │ │ subskill │ │ (detect) │      │
-│   └──────────┘ └──────────┘ └──────────┘ └──────────┘      │
-│                                                             │
-│  Each subskill runs the full evolution loop:                │
-│  • Bootstrap → Baseline → Evolution → Finalize              │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+Mutation → Evaluation → ADVERSARY CHALLENGE → Selection
+                             │
+                             ├── Trust score (0.0-1.0)
+                             ├── Recommendation (accept/challenge/reject)
+                             └── Escalation level (0-3 for deeper validation)
 ```
+
+### Trust Triggers
+
+The Adversary reviews candidates when:
+- **Suspicious jump**: Fitness improves >20% in a single generation
+- **New champion**: Any candidate that would become the new best solution
+
+### Escalation Levels
+
+| Level | Validation | Use Case |
+|-------|------------|----------|
+| 0 | Basic evaluator | Normal mutations |
+| 1 | Extended tests | Edge cases, boundary conditions |
+| 2 | Out-of-distribution | Unseen data patterns |
+| 3 | Gold standard | Full reference validation |
+
+### Configuration
+
+Add `trust` section to `evolve_config.json`:
+
+```json
+{
+  "description": "...",
+  "mode": "perf",
+  "trust": {
+    "enabled": true,
+    "accept_threshold": 0.7,
+    "suspicious_jump_pct": 20.0,
+    "max_escalation_level": 2,
+    "extended_test_command": "python validate.py {solution} --thorough"
+  }
+}
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `enabled` | true | Enable/disable adversary |
+| `accept_threshold` | 0.7 | Trust >= this: accept without escalation |
+| `challenge_threshold` | 0.4 | Trust >= this: escalate before decision |
+| `reject_threshold` | 0.4 | Trust < this: reject outright |
+| `suspicious_jump_pct` | 20.0 | Improvement threshold triggering review |
+| `apply_trust_adjustment` | true | Multiply fitness by trust_score |
+| `require_adversary_for_champion` | true | New champions must pass adversary |
+
+### Red Flags (Lower Trust)
+
+- Fitness jump >20% in a single mutation
+- Hardcoded constants matching test cases
+- Pattern matching instead of algorithms
+- Suspiciously fast execution (cached results)
+- No clear algorithmic improvement
+
+### Green Flags (Higher Trust)
+
+- Incremental improvements (<10% per generation)
+- Clear algorithmic innovation in diff
+- Performance scales correctly with input size
+- Improvement consistent across test cases
 
 ---
 
-## Subskill Responsibilities
+## Baseline Selection: The Fitness Landscape
 
-### /evolve-perf (Performance)
-- Optimizes runtime speed (ops/sec, latency, throughput)
-- Supports any language (Rust, Python, Go, etc.)
-- Uses statistical significance testing for timing benchmarks
-- Focuses on algorithm families, SIMD, cache optimization
-- See: `/evolve-perf` for full documentation
+**Critical insight**: Starting with a near-optimal solution can be counterproductive.
 
-### /evolve-size (Size)
-- Optimizes length (bytes, characters, tokens)
-- Supports code (Python, Rust, Go) and text (markdown, prompts, configs)
-- Uses trick library for systematic transformations
-- Focuses on compression, golf tricks, minimal implementations
-- See: `/evolve-size` for full documentation
+### Why Suboptimal Baselines Often Work Better
 
-### /evolve-ml (ML - Coming Soon)
-- Will optimize model accuracy, loss, F1, etc.
-- Will support hyperparameter tuning, architecture search
-- See: `/evolve-ml` for planned features
+Evolution navigates a "fitness landscape" - imagine terrain where height = fitness:
+
+**Near-optimal start (local peak)**:
+- Small mutations either break correctness or don't improve
+- Remaining optimizations require simultaneous changes
+- Evolution gets stuck at a "local maximum"
+
+**Suboptimal start (valley with uphill paths)**:
+- Many single mutations can improve fitness
+- Diverse population emerges from different improvement paths
+- Crossover combines independently-discovered optimizations
+- Broader exploration of the search space
+
+### Guidelines for Baseline Selection
+
+| Scenario | Recommendation |
+|----------|----------------|
+| Known optimal exists | Start 20-50% worse to allow exploration |
+| Competing algorithms | Start with the simpler/worse one |
+| Hitting plateau quickly | Try a more naive baseline |
+| Many invalid mutations | Baseline may be too optimized already |
+
+**Example**: For sorting networks (n=16), starting from:
+- Odd-even mergesort (63 comparators, near-optimal) → Plateau quickly
+- Bubble sort (120 comparators, 2x optimal) → Rich optimization landscape
+
+### When to Use Near-Optimal Baselines
+
+- When you need to find **alternative** optimal solutions (not better ones)
+- When exploring minor variations on a known-good approach
+- When the fitness function rewards diversity, not just the metric
 
 ---
 
 ## Directory Structure
 
-All evolution modes use a consistent directory structure:
+All modes use `.evolve-sdk/<problem>/`:
 
 ```
-.evolve/<problem>/
+.evolve-sdk/<problem>/
 ├── evolution.json       # Full state (mode, population, history)
 ├── champion.json        # Best solution manifest
 ├── generations.jsonl    # Per-generation log (append-only)
 ├── mutations/           # All tested mutations
-└── [mode-specific]/     # Mode-specific artifacts
-    ├── rust/            # (perf) Rust benchmark code
-    ├── solutions/       # (size) Working solutions by size
-    └── models/          # (ml) Trained models
+└── benchmark.py         # Auto-generated evaluation harness
 ```
+
+---
+
+## Subskill Reference
+
+For mode-specific details, see:
+- `/evolve-perf` - Performance optimization (ops/sec, latency)
+- `/evolve-size` - Size optimization (bytes, characters)
+- `/evolve-ml` - ML optimization (F1, accuracy)
+
+Each contains domain-specific guidance for evaluation, mutation strategies, and acceptance criteria.
 
 ---
 
@@ -265,6 +305,6 @@ All evolution modes use a consistent directory structure:
 |------------|---------|
 | Make code faster | `/evolve faster <algorithm>` |
 | Make code shorter | `/evolve shortest <code>` |
-| Minimize config file | `/evolve minimal <file type>` |
+| Improve ML model | `/evolve improve accuracy <task>` |
 | Continue previous | `/evolve --resume` |
 | Force specific mode | `/evolve --mode=<mode> <problem>` |

@@ -1,12 +1,11 @@
 ---
-description: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve, agent-browser)
+description: Sync plugins from upstream repositories (superpowers, quint, agentic-evolve, agent-browser)
 ---
 
 # Sync Upstream
 
 This command synchronizes plugins with their upstream repositories:
 - **superpowers**: `~/workspace/random/superpowers` - Core workflow skills
-- **claudekit-skills**: `~/workspace/random/claudekit-skills` - Browser automation and other utilities
 - **quint**: `~/workspace/random/quint-code` - FPF reasoning methodology
 - **agentic-evolve**: `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
 - **agent-browser**: `~/workspace/random/agent-browser` - Browser automation CLI
@@ -15,11 +14,10 @@ This command synchronizes plugins with their upstream repositories:
 
 1. **Pull Latest Changes**: Update upstream repositories
 2. **Sync Superpowers**: Compare and update skills with intelligent merging
-3. **Sync Claudekit**: Copy skills directly from upstream
-4. **Sync Quint**: Copy commands and build MCP binary
-5. **Sync Agentic-Evolve**: Copy evolve command directly from upstream
-6. **Sync Agent-Browser**: Copy skill directly from upstream
-7. **Report Summary**: Display successful updates
+3. **Sync Quint**: Copy commands and build MCP binary
+4. **Sync Agentic-Evolve**: Copy evolve command directly from upstream
+5. **Sync Agent-Browser**: Copy skill directly from upstream
+6. **Report Summary**: Display successful updates
 
 ## Implementation Steps
 
@@ -30,12 +28,6 @@ Navigate to the upstream repositories and pull the latest changes:
 **Superpowers repository:**
 ```bash
 cd ~/workspace/random/superpowers
-git pull origin main
-```
-
-**Claudekit-skills repository:**
-```bash
-cd ~/workspace/random/claudekit-skills
 git pull origin main
 ```
 

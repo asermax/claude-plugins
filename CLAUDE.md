@@ -54,7 +54,7 @@ AUR (Arch User Repository) package management automation.
 Development workflow skills for systematic debugging, code review, planning, and more.
 
 **Commands:**
-- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, claudekit-skills, quint, agentic-evolve, agent-browser), compare differences, and intelligently merge updates while preserving plugin customizations
+- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, quint, agentic-evolve, agent-browser), compare differences, and intelligently merge updates while preserving plugin customizations
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
 - `/superpowers:evolve <problem>`: Master dispatcher for evolutionary algorithm discovery - routes to specialized modes:
   - `/superpowers:evolve-perf`: Optimize runtime speed (ops/sec, latency)

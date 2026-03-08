@@ -95,9 +95,9 @@ Present the batch definitions to the user. The user validates:
 
 Iterate on batch definitions until the user approves them.
 
-### 4. Expand Steps and Research (One Batch at a Time)
+### 4. Expand Steps and Research (Silent)
 
-For each batch individually, draft the implementation details:
+For each batch, draft the implementation details:
 
 **Steps:**
 - Draft implementation steps following the same granularity rules as before (atomic, verifiable, in dependency order)
@@ -122,8 +122,6 @@ Example of appropriate snippet usage:
 # - Should follow DES-002 error handling pattern
 # - Must validate refresh token expiry per spec AC-3
 ```
-
-Present each batch's expanded steps to the user before moving to the next batch. This allows focused review and prevents context overload.
 
 ### 5. External Validation (Silent)
 
@@ -197,8 +195,8 @@ Next step: /katachi:implement-delta $ARGUMENTS
 **This is a validate-first process with progressive disclosure:**
 - Research silently, then scope batches
 - Present all batches for user validation
-- Expand steps one batch at a time, presenting each
-- Validate complete plan with plan-reviewer agent
+- Expand steps silently for all batches
+- Validate complete plan (batches + steps) with plan-reviewer agent
 - Apply validation feedback
 - Present validated plan to user
 - User provides feedback

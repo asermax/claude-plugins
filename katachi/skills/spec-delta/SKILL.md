@@ -2,7 +2,6 @@
 name: spec-delta
 description: Write a specification for a delta
 argument-hint: "[DELTA-ID]"
-disable-model-invocation: true
 ---
 
 # Delta Specification Workflow

@@ -2,7 +2,6 @@
 name: design-delta
 description: Write design rationale for a delta
 argument-hint: "[DELTA-ID]"
-disable-model-invocation: true
 ---
 
 # Delta Design Workflow

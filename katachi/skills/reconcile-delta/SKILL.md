@@ -2,7 +2,6 @@
 name: reconcile-delta
 description: Reconcile delta implementation into feature documentation
 argument-hint: "[DELTA-ID]"
-disable-model-invocation: true
 ---
 
 # Delta Reconciliation Workflow

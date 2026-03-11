@@ -2,7 +2,6 @@
 name: implement-delta
 description: Implement a delta following its plan
 argument-hint: "[DELTA-ID]"
-disable-model-invocation: true
 ---
 
 # Implementation Workflow

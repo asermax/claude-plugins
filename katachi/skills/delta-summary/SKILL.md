@@ -2,7 +2,6 @@
 name: delta-summary
 description: Display a summary table of available deltas or show recommended next deltas
 argument-hint: "[filter|next work|critical|high|medium|low|backlog]"
-disable-model-invocation: true
 ---
 
 # Delta Summary

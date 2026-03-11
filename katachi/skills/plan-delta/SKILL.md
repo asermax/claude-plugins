@@ -2,7 +2,6 @@
 name: plan-delta
 description: Create step-by-step implementation plan for a delta
 argument-hint: "[DELTA-ID]"
-disable-model-invocation: true
 ---
 
 # Implementation Plan Workflow

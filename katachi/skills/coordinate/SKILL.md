@@ -85,7 +85,7 @@ Build the work queue:
 3. Check dependency readiness — only include deltas whose dependencies are at or past the required status
 4. Sort by priority (from DELTAS.md priority levels)
 
-Present the work queue to the user:
+Present the work queue to the user and proceed immediately:
 ```
 Coordination plan:
 
@@ -94,10 +94,8 @@ Coordination plan:
 3. DLT-012 (Priority 2, ✓ Plan): Next → implement-delta
    ⚠ Blocked by DLT-003 (needs ✓ Implementation)
 
-Proceed with this order?
+Starting coordination...
 ```
-
-Wait for user confirmation before starting.
 
 ### Step 2: Initialize State Tracking
 
@@ -108,7 +106,7 @@ Create or read state file at `/tmp/katachi-coordinate-state.md`:
 
 ## Configuration
 - Repo: <owner/repo>
-- Poll interval: 5 minutes
+- Poll interval: 2 minutes (via CronCreate)
 
 ## Work Queue
 1. [ ] DLT-003: design (Issue #__)
@@ -124,7 +122,7 @@ Create or read state file at `/tmp/katachi-coordinate-state.md`:
 ## Decisions Log
 ```
 
-If state file exists from a previous session, read it and offer to resume from where it left off.
+If state file exists from a previous session, read it and resume from where it left off.
 
 ### Step 3: Main Loop
 
@@ -237,26 +235,39 @@ This is the core coordination cycle. Repeat until the phase is complete:
    gh pr comment <NUMBER> --body "## Questions from phase executor\n\n[questions]"
    ```
 
-4. Notify user on terminal:
+4. Log to terminal:
    ```
    "Updated GitHub issue/PR: <URL>
-   Questions posted as comment. Review and reply when ready."
+   Questions posted as comment. Polling for response every 2 minutes..."
    ```
 
-5. Poll for user response on GitHub (default interval: 5 minutes):
-   ```bash
-   # For issues — get latest comment with timestamp and author
-   gh issue view <NUMBER> --json comments \
-     --jq '.comments[-1] | {body, createdAt, author: .author.login}'
+5. Schedule a cron job to poll for user response every 2 minutes:
+   ```python
+   CronCreate(
+       cron="*/2 * * * *",
+       prompt=f"""
+   Check for new GitHub comments on {issue_or_pr} #{number}.
 
-   # For PRs
-   gh pr view <NUMBER> --json comments \
-     --jq '.comments[-1] | {body, createdAt, author: .author.login}'
+   Run:
+   gh {issue_or_pr} view {number} --json comments \
+     --jq '.comments[-1] | {{body, createdAt, author: .author.login}}'
+
+   If the latest comment is newer than the last known comment timestamp
+   ({last_comment_timestamp}), was authored by a user (not a bot), and
+   is not from the coordinator:
+   - Delete this cron job via CronDelete(id="{cron_job_id}")
+   - Resume the phase-executor sub-agent (ID: {sub_agent_id}) with the
+     user's feedback
+   - Continue the coordination workflow from step 3d.6
+
+   If no new comment found, do nothing (cron will fire again in 2 minutes).
+   """
+   )
    ```
 
-   Compare: if the latest comment is newer than the questions comment, was authored by the user (not the coordinator's GitHub account), and is not a bot comment, treat it as the response. Keep polling until a response is found.
+   Record the cron job ID in state. The coordinator is now idle — the cron job will fire when a response arrives and resume the workflow.
 
-6. **Resume** the same sub-agent with the user's feedback:
+6. **When the cron job detects a response**, delete the cron job and **resume** the same sub-agent with the user's feedback:
    ```python
    Agent(
        resume=<sub_agent_id>,
@@ -306,17 +317,36 @@ This is the core coordination cycle. Repeat until the phase is complete:
    gh issue comment <NUMBER> --body "## Phase complete: <phase>\n\n<summary>\n\nReview the final document above. Comment 'approved' to proceed to the next phase."
    ```
 
-3. Poll for approval (same interval as relay polling):
-   - For issues: look for a comment containing "approved" (case-insensitive)
-   - For PRs: check for PR review approval OR comment containing "approved"
-   ```bash
-   gh issue view <NUMBER> --json comments --jq '[.comments[].body | select(test("approved"; "i"))] | length'
+3. Schedule a cron job to poll for approval every 2 minutes:
+   ```python
+   CronCreate(
+       cron="*/2 * * * *",
+       prompt=f"""
+   Check for approval on {issue_or_pr} #{number}.
+
+   Run:
+   gh {issue_or_pr} view {number} --json comments \
+     --jq '.comments[-1] | {{body, createdAt, author: .author.login}}'
+
+   Check the latest comment from a non-bot user after timestamp {last_comment_timestamp}:
+   - If it contains "approved" (case-insensitive): delete this cron job,
+     mark phase complete in state, and proceed to the next phase (step 3e)
+   - If it contains feedback/changes: delete this cron job, resume the
+     phase-executor sub-agent (ID: {sub_agent_id}) with the feedback
+     (back to relay loop step 3d)
+   - For PRs, also check: gh pr view {number} --json reviews \
+       --jq '[.reviews[] | select(.state == "APPROVED")] | length'
+     If approved via PR review, treat as approval.
+   - If no new comment, do nothing (cron fires again in 2 minutes).
+   """
+   )
    ```
 
-4. On **approval**: mark phase complete in state, proceed to next phase (3a)
+   Record the cron job ID in state. The coordinator is idle until the cron job detects a response.
 
-5. On **feedback** (user comments with changes instead of approving):
-   - **Resume** the same sub-agent with the feedback (back to relay loop)
+4. On **approval** (detected by cron): mark phase complete in state, proceed to next phase (3a)
+
+5. On **feedback** (detected by cron): **resume** the same sub-agent with the feedback (back to relay loop)
 
 #### 3e. Phase Transition
 
@@ -367,32 +397,40 @@ State saved to /tmp/katachi-coordinate-state.md
 ## Error Handling
 
 **Sub-agent fails or returns unexpected output:**
-- Report to user on terminal with the error details
-- Offer to retry the phase (new sub-agent) or skip the delta
+- Log error to terminal
+- Retry the phase once with a new sub-agent
+- If retry fails, skip the delta and continue with the next one in the queue
 
 **GitHub API errors:**
 - Retry once after a short delay
-- If persistent, fall back to terminal-only mode (present document directly, ask user for approval)
+- If persistent, log error and skip to next delta
 
 **Dependency blocks:**
-- Skip blocked deltas, report them in the summary
-- Process unblocked deltas first
+- Skip blocked deltas automatically
+- Process unblocked deltas first, report blocked ones in the summary
 
 **State file missing mid-session:**
 - Reconstruct from DELTAS.md statuses and GitHub issue/PR state
-- Confirm with user before resuming
+- Resume automatically from reconstructed state
+
+**Cron job cleanup:**
+- On any error or skip, delete active cron jobs before moving on
+- On session end, all cron jobs are cleaned up automatically (session-only)
 
 ## Workflow Summary
 
 ```
-Pre-check → Build queue → Confirm with user →
+Pre-check → Build queue → Start automatically →
 For each delta:
   For each remaining phase:
     Setup GitHub channel →
     Spawn phase-executor →
-    Relay loop (document ↔ GitHub ↔ user feedback) →
-    Reviewer dispatch (delegated) →
-    Approval polling →
+    Relay to GitHub + schedule cron poll (every 2 min) →
+    [idle until cron detects response] →
+    Resume sub-agent with feedback / dispatch reviewer →
+    Repeat until PHASE_COMPLETE →
+    Schedule cron poll for approval (every 2 min) →
+    [idle until cron detects approval] →
     Phase transition (new sub-agent) →
   Delta complete →
 Session summary

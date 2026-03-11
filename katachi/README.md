@@ -74,7 +74,7 @@ All functionality is exposed as skills in the `skills/` directory. User-facing s
 
 ## Agents
 
-The framework uses specialized agents for validation:
+The framework uses specialized agents for validation and orchestration:
 
 | Agent | Purpose |
 |-------|---------|
@@ -85,6 +85,8 @@ The framework uses specialized agents for validation:
 | `impact-analyzer` | Analyze change impact on dependencies |
 | `codebase-analyzer` | Infer requirements/decisions from existing code |
 | `phase-executor` | Execute a delta phase skill within coordinated workflow |
+| `pr-updater` | Commit and update GitHub PR with phase outputs (haiku) |
+| `feedback-checker` | Poll GitHub PR for new comments/reviews (haiku) |
 
 ## Project Structure
 

@@ -21,13 +21,14 @@ Mode based on `$ARGUMENTS`:
 
 ## Context
 
-**You must load the following skills and read the following files before proceeding.**
+**You must load the following skill before proceeding.**
 
 ### Skills
 - `katachi:framework-core` - Workflow principles
 
-### Files
-- `docs/planning/DELTAS.md` - Delta inventory with priorities, statuses, and dependencies
+### Delta Inventory
+
+!`cat docs/planning/DELTAS.md`
 
 ## Agents
 
@@ -63,35 +64,27 @@ Static mapping from current delta status to next action. This is the single sour
 
 ### Step 0: Pre-Check
 
-1. Verify framework is initialized (`docs/planning/DELTAS.md` exists)
+The following context was pre-loaded at skill invocation time:
 
-2. Detect GitHub repo:
+**GitHub repo:** !`gh repo view --json nameWithOwner --jq '.nameWithOwner'`
+
+**Existing labels:**
+!`gh label list --json name --jq '.[].name'`
+
+Create any missing katachi labels from this list: `katachi-review`, `katachi-spec`, `katachi-design`, `katachi-plan`, `katachi-implementation`, `katachi-reconcile`. Use `gh label create` for any that don't appear above:
 ```bash
-gh repo view --json nameWithOwner --jq '.nameWithOwner'
+gh label create "<name>" --description "<description>" --color "<color>" 2>/dev/null || true
 ```
 
-3. Fetch existing labels to check which katachi labels already exist:
-```bash
-gh label list --json name --jq '.[].name'
-```
-
-4. Create any missing labels:
-```bash
-gh label create "katachi-review" --description "Katachi phase review" --color "0E8A16" 2>/dev/null || true
-gh label create "katachi-spec" --description "Katachi spec phase" --color "C5DEF5" 2>/dev/null || true
-gh label create "katachi-design" --description "Katachi design phase" --color "BFD4F2" 2>/dev/null || true
-gh label create "katachi-plan" --description "Katachi plan phase" --color "D4C5F9" 2>/dev/null || true
-gh label create "katachi-implementation" --description "Katachi implementation phase" --color "FBCA04" 2>/dev/null || true
-gh label create "katachi-reconcile" --description "Katachi reconcile phase" --color "E99695" 2>/dev/null || true
-```
+Label colors: review=`0E8A16`, spec=`C5DEF5`, design=`BFD4F2`, plan=`D4C5F9`, implementation=`FBCA04`, reconcile=`E99695`.
 
 ### Step 1: Build Work Queue
 
-Run delta analysis:
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py next --top 20 --group
-python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list
-```
+**Delta analysis (priority order):**
+!`python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py next --top 20 --group`
+
+**Current statuses:**
+!`python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status list`
 
 Build the work queue:
 1. Filter deltas based on input (single ID, next, or all)
@@ -246,7 +239,6 @@ This is the core coordination cycle. Repeat until the phase is complete:
 
    - PR number: {pr_number}
    - Last activity timestamp: {last_activity_timestamp}
-   - Coordinator account: {coordinator_github_account}
    \"\"\"
    )
 

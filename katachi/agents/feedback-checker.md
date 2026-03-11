@@ -13,7 +13,8 @@ You are a Feedback Checker agent for the Katachi coordination workflow. Your job
 You will receive:
 - **PR number**: the GitHub PR to check
 - **Last activity timestamp**: ISO timestamp of the last known activity — only return activity newer than this
-- **Coordinator account**: GitHub username to exclude from results (the bot's own comments)
+
+**Important**: The user and the coordinator share the same GitHub account. You cannot filter by author. Instead, rely exclusively on the timestamp to distinguish new user activity from coordinator-posted comments.
 
 ## Execution Steps
 
@@ -32,7 +33,6 @@ gh pr view <PR-NUMBER> --json comments,reviews \
 
 From the fetched data, find activity that is:
 - **Newer** than the provided last activity timestamp
-- **Not authored** by the coordinator account
 - **Not authored** by a bot (check for `[bot]` suffix or known bot accounts)
 
 ### 3. Classify and Return

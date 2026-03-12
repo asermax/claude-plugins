@@ -428,14 +428,6 @@ class StatusManager:
             for dep in sorted(dependents):
                 print(f"    - {dep}")
 
-    def is_complete(self, delta_id: str) -> bool:
-        """Check if a delta is complete (implementation done)"""
-        delta = self.deltas.get(delta_id)
-        if not delta:
-            return False
-        status = delta['status'].lower()
-        return '✓ implementation' in status or 'complete' in status
-
     def _is_reconciled_status(self, status: str) -> bool:
         """Check if a status string indicates reconciliation complete"""
         return '✓ reconciled' in status.lower()
@@ -488,15 +480,20 @@ class StatusManager:
         for delta_id in self.deltas:
             delta = self.deltas[delta_id]
 
-            # Skip if already in progress or complete
-            if '⧗' in delta['status'] or self.is_complete(delta_id):
+            # Skip if in progress
+            if '⧗' in delta['status']:
                 continue
 
-            # Check if all dependencies are complete
+            # Check if all dependencies are implemented
             deps = self.get_dependencies(delta_id)
-            all_deps_complete = all(self.is_complete(dep) for dep in deps)
+            all_deps_implemented = all(
+                '✓ implementation' in self.deltas[dep]['status'].lower()
+                or 'complete' in self.deltas[dep]['status'].lower()
+                for dep in deps
+                if dep in self.deltas
+            )
 
-            if all_deps_complete:
+            if all_deps_implemented:
                 ready.append(delta_id)
 
         return ready
@@ -508,7 +505,7 @@ class StatusManager:
 
         def walk(fid: str):
             for dep_id in self.get_dependents(fid):
-                if dep_id in visited or dep_id not in self.deltas or self.is_complete(dep_id):
+                if dep_id in visited or dep_id not in self.deltas:
                     continue
 
                 visited.add(dep_id)
@@ -571,10 +568,16 @@ class StatusManager:
                     continue
 
             if ready_only:
-                if '⧗' in delta['status'] or self.is_complete(delta_id):
+                if '⧗' in delta['status']:
                     continue
                 deps = self.get_dependencies(delta_id)
-                if not all(self.is_complete(dep) for dep in deps):
+                all_deps_implemented = all(
+                    '✓ implementation' in self.deltas[dep]['status'].lower()
+                    or 'complete' in self.deltas[dep]['status'].lower()
+                    for dep in deps
+                    if dep in self.deltas
+                )
+                if not all_deps_implemented:
                     continue
 
             filtered_deltas.append((delta_id, delta))

@@ -480,10 +480,6 @@ class StatusManager:
         for delta_id in self.deltas:
             delta = self.deltas[delta_id]
 
-            # Skip if in progress
-            if '⧗' in delta['status']:
-                continue
-
             # Check if all dependencies are implemented
             deps = self.get_dependencies(delta_id)
             all_deps_implemented = all(
@@ -568,8 +564,6 @@ class StatusManager:
                     continue
 
             if ready_only:
-                if '⧗' in delta['status']:
-                    continue
                 deps = self.get_dependencies(delta_id)
                 all_deps_implemented = all(
                     '✓ implementation' in self.deltas[dep]['status'].lower()

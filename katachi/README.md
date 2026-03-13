@@ -43,8 +43,8 @@ All functionality is exposed as skills in the `skills/` directory. User-facing s
 - `/katachi:implement-delta <ID>` - Implement following plan
 - `/katachi:reconcile-delta <ID>` - Update feature documentation
 
-### Orchestration
-- `/katachi:coordinate [ID|next|all]` - Orchestrate full delta workflow with GitHub review
+### Focused Changes
+- `/katachi:patch <description>` - Apply focused change with compressed workflow (plan → implement → reconcile in one session)
 
 ### Migration
 - `/katachi:migrate-to-deltas` - Migrate existing katachi project to delta-based workflow
@@ -74,7 +74,7 @@ All functionality is exposed as skills in the `skills/` directory. User-facing s
 
 ## Agents
 
-The framework uses specialized agents for validation and orchestration:
+The framework uses specialized agents for validation:
 
 | Agent | Purpose |
 |-------|---------|
@@ -84,9 +84,6 @@ The framework uses specialized agents for validation and orchestration:
 | `code-reviewer` | Review code against specs, designs, and decisions |
 | `impact-analyzer` | Analyze change impact on dependencies |
 | `codebase-analyzer` | Infer requirements/decisions from existing code |
-| `phase-executor` | Execute a delta phase skill within coordinated workflow |
-| `pr-updater` | Commit and update GitHub PR with phase outputs (haiku) |
-| `feedback-checker` | Poll GitHub PR for new comments/reviews (haiku) |
 
 ## Project Structure
 

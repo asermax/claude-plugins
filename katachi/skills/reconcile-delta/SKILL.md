@@ -227,13 +227,41 @@ Apply validation feedback:
 
 ### 7. Validate Updates (Silent)
 
-Dispatch reviewer agent to validate the proposed updates:
+Dispatch reviewer agents to validate the proposed updates. Run both in parallel:
+
+**Validate spec updates:**
 
 ```python
 Task(
     subagent_type="katachi:spec-reviewer",
     prompt=f"""
-Review these feature documentation updates from delta reconciliation.
+Review these feature spec updates from delta reconciliation.
+
+## Delta Description (from DELTAS.md)
+{delta_description}
+
+## Delta Spec
+{delta_spec}
+
+## Proposed Feature Spec Updates
+{proposed_spec_updates}
+
+Verify that updates:
+- Accurately reflect what was implemented
+- Maintain consistency with existing feature specs
+- Follow spec documentation patterns (user stories, behaviors, acceptance criteria)
+- Preserve coherent narrative
+"""
+)
+```
+
+**Validate design updates:**
+
+```python
+Task(
+    subagent_type="katachi:design-reviewer",
+    prompt=f"""
+Review these feature design updates from delta reconciliation.
 
 ## Delta Spec
 {delta_spec}
@@ -241,25 +269,26 @@ Review these feature documentation updates from delta reconciliation.
 ## Delta Design
 {delta_design}
 
-## Implementation Summary
-{implementation_summary}
-
-## Proposed Feature Spec Updates
-{proposed_spec_updates}
-
 ## Proposed Feature Design Updates
 {proposed_design_updates}
 
+## ADR Index Summary
+{adr_index}
+
+## DES Index Summary
+{des_index}
+
 Verify that updates:
 - Accurately reflect what was implemented
-- Maintain consistency with existing documentation
-- Follow documentation patterns
+- Maintain design coherence and pattern alignment
+- Follow design documentation patterns (components, data flow, decisions)
+- Properly reference relevant ADRs and DES patterns
 - Preserve coherent narrative
 """
 )
 ```
 
-Apply validation feedback to improve proposed updates.
+Apply validation feedback from both reviewers to improve proposed updates.
 
 ### 8. Present Proposal for Review
 
@@ -421,7 +450,8 @@ Reference `decision-types.md` for the full decision tree.
 - Draft complete updates
 - Analyze decisions for promotion candidates
 - Validate decisions with decision-reviewer agent
-- Validate feature updates with spec-reviewer agent
+- Validate feature spec updates with spec-reviewer agent
+- Validate feature design updates with design-reviewer agent
 - Present to user for approval (including decision candidates)
 - Iterate based on feedback
 - Apply all updates when approved (features + decisions)

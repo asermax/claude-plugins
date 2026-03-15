@@ -199,12 +199,15 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Implem
 ```
 
 Present summary:
+
 ```
-"Delta implementation complete:
+"Delta implementation complete for $ARGUMENTS.
 
-ID: $ARGUMENTS
+[Brief explanation of what was implemented]
 
-Next step: /katachi:reconcile-delta $ARGUMENTS (to update feature documentation)
+Files changed:
+- [file]: [what changed]
+- ..."
 ```
 
 Offer to commit: "Ready to commit this implementation?"

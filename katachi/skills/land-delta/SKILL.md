@@ -155,16 +155,20 @@ Verify the codebase still works after incorporating main's changes:
 **If all pass:** Proceed silently.
 
 **If failures:**
-- Analyze each failure to determine if it's caused by semantic conflicts with main's changes
-- **Auto-fix** simple issues:
+- Fix ALL failing tests, lints, and type errors — not just those caused by the merge. The goal is to leave main in a clean state after landing.
+- **Pay special attention to merge-related semantic conflicts**: Failures caused by interactions between the delta's changes and main's changes are the highest priority. These may indicate deeper integration issues that need careful analysis (e.g., both sides changed related logic in incompatible ways, renamed references, changed APIs).
+- **Auto-fix** straightforward issues:
   - Import path changes due to main's refactoring
   - Renamed references (functions, variables, types)
-  - Minor API changes from main (added required parameters, changed return types)
-- **Ask the user** about complex issues:
-  - Present what main changed that likely caused the breakage
-  - Explain the semantic conflict
-  - Propose fix options
-- Re-run tests after fixes until green
+  - Minor API changes (added required parameters, changed return types)
+  - Lint violations and formatting issues
+  - Type errors with obvious fixes
+  - Test failures with clear root causes
+- **Ask the user** about issues that require judgment:
+  - Semantic conflicts where the delta and main changed related behavior in incompatible ways
+  - Ambiguous failures where the correct fix isn't obvious
+  - Issues where fixing could change intended behavior
+- Re-run checks after fixes until all pass
 
 ### Phase 4: Documentation Reconciliation (Silent with checkpoint)
 
@@ -362,14 +366,15 @@ git checkout <main>
 git merge <delta-branch>
 ```
 
-Present success message.
+Present landing summary:
 
-**Offer to push main:**
-- Ask if the user wants to push main to remote: `git push origin <main>`
+```
+"DLT-XXX landed onto <main>.
 
-**Offer branch cleanup:**
-- Delete local branch: `git branch -d <delta-branch>`
-- If remote branch exists: ask about `git push origin --delete <delta-branch>`
+Merge from main: [Clean / Resolved N conflicts]
+Checks: [All passing / Fixed N issues (brief description)]
+Documentation: [Consistent / Reconciled N files]"
+```
 
 ## Edge Cases
 
@@ -404,4 +409,3 @@ Pre-check warns the user and asks for confirmation. The user may have a valid re
 - Documentation reconciliation (semantic doc conflicts — auto-fix or ask)
 - Targeted validation (only conflicting categories get reviewed)
 - Merge into main (with user confirmation)
-- Optional branch cleanup

@@ -302,14 +302,16 @@ If `docs/delta-designs/$ARGUMENTS.md` does not already exist:
 This bridges spec and design — the design phase starts with the shape already drafted.
 
 Present summary:
+
 ```
-"Delta spec complete:
+"Delta spec complete for $ARGUMENTS.
 
-ID: $ARGUMENTS
+[Requirements table]
+
+[Shape parts table]
+
 Detected impacts: [list of affected feature docs]
-Design doc seeded with initial shape: docs/delta-designs/$ARGUMENTS.md
-
-Next step: /katachi:design-delta $ARGUMENTS
+Design doc seeded with initial shape: docs/delta-designs/$ARGUMENTS.md"
 ```
 
 ## Workflow

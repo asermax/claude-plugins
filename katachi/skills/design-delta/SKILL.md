@@ -360,13 +360,13 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Design
 ```
 
 Present summary:
+
 ```
-"Delta design complete:
+"Delta design complete for $ARGUMENTS.
 
-ID: $ARGUMENTS
-Detected impacts: [list of affected feature design docs]
+[Finalized shape parts table]
 
-Next step: /katachi:plan-delta $ARGUMENTS
+Detected impacts: [list of affected feature design docs]"
 ```
 
 ## Decision Detection

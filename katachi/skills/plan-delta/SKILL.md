@@ -181,12 +181,14 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Plan"
 ```
 
 Present summary:
+
 ```
-"Delta plan complete:
+"Delta plan complete for $ARGUMENTS.
 
-ID: $ARGUMENTS
-
-Next step: /katachi:implement-delta $ARGUMENTS
+Batches:
+- [Batch 1 scope name]: [one-line description]
+- [Batch 2 scope name]: [one-line description]
+- ..."
 ```
 
 ## Workflow

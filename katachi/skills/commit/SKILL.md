@@ -86,7 +86,7 @@ Example format:
 ```
 Question: "I've analyzed the changes and propose the following commit groups:
 
-feat(CORE-002): add audio capture functionality
+feat(audio): add audio capture functionality
    - src/audio/capture.py (new)
    - src/audio/__init__.py (modified)
    - tests/test_audio.py (new)
@@ -131,6 +131,7 @@ EOF
 - Subject line under 50-72 characters
 - Body wrapped at 72 chars when needed
 - **CRITICAL**: Do NOT use the exclamation mark after the type/scope to indicate breaking changes. Use the `BREAKING CHANGE:` footer instead
+- **CRITICAL**: Do NOT use internal tracking IDs (such as delta IDs like `DLT-001`) as the commit scope. The scope should reflect the actual project area affected (e.g., `auth`, `api`, `ui`, `parser`). Tracking IDs are internal workflow artifacts and have no meaning in git history
 
 **Grouping rules:**
 - **IMPORTANT**: Do NOT mix unrelated changes in a single commit

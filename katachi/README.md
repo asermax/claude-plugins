@@ -42,6 +42,7 @@ All functionality is exposed as skills in the `skills/` directory. User-facing s
 - `/katachi:plan-delta <ID>` - Create implementation plan
 - `/katachi:implement-delta <ID>` - Implement following plan
 - `/katachi:reconcile-delta <ID>` - Update feature documentation
+- `/katachi:land-delta [ID]` - Land reconciled delta branch onto main
 
 ### Focused Changes
 - `/katachi:patch <description>` - Apply focused change with compressed workflow (plan → implement → reconcile in one session)
@@ -112,7 +113,7 @@ your-project/
 2. `/katachi:vision` - Define problem and scope
 3. `/katachi:deltas` - Extract deltas (work items)
 4. `/katachi:dependencies` - Build dependency matrix
-5. For each delta: spec → design → plan → implement → reconcile
+5. For each delta: spec → design → plan → implement → reconcile → land
 
 ### For Existing Projects
 
@@ -125,7 +126,7 @@ your-project/
 
 1. `/katachi:add-delta` - Describe the new work item
 2. Framework assigns ID, analyzes dependencies, integrates into matrix
-3. Continue with spec → design → plan → implement → reconcile
+3. Continue with spec → design → plan → implement → reconcile → land
 
 ## Ejecting the Plugin
 

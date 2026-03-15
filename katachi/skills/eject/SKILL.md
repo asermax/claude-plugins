@@ -123,6 +123,7 @@ Skills to copy (all skills except eject itself):
 - framework-core
 - implement-delta
 - init-framework
+- land-delta
 - iterative-development
 - migrate-to-deltas
 - optimize-docs

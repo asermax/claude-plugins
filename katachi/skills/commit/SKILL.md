@@ -1,7 +1,6 @@
 ---
 name: commit
 description: Analyze uncommitted changes and create grouped conventional commits
-disable-model-invocation: true
 ---
 
 # Commit Workflow

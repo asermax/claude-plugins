@@ -88,6 +88,15 @@ Based on the description, codebase research, and existing patterns, draft a comp
 Does this look right? What needs adjustment?"
 ```
 
+#### Description writing rule
+
+When this delta builds on capabilities provided by other deltas, describe those capabilities by name — not by delta ID. Delta IDs belong exclusively in the `Depends on` field.
+
+- **Correct**: "uses the user authentication system to verify the session"
+- **Incorrect**: "uses DLT-001 to verify the session"
+
+This keeps descriptions self-explanatory and ensures context is preserved when dependencies are reconciled and their IDs become less meaningful.
+
 #### Priority Rationale
 
 The agent proposes a priority based on:
@@ -162,6 +171,8 @@ Add new delta entry:
 **Complexity**: [complexity]
 **Description**: [follow the format in the DELTAS template from framework-core]
 ```
+
+Reminder: the description must reference dependency capabilities by concept name, not by delta ID. Delta IDs belong only in `Depends on`.
 
 If dependencies were identified during the process, include them inline. For adding dependencies to *existing* deltas, use:
 ```bash

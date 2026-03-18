@@ -48,6 +48,7 @@ First, determine the delta type from its name and description:
 - **Self-explanatory** - Understandable in isolation, without project context or reading the spec
 - **Concise but complete** - No wasted words, but covers what/who/why fully
 - **Layer-agnostic** - Describes user capability, not implementation (no "API endpoint", "UI form", etc.)
+- **No delta ID references** - Description must not mention other deltas by ID (e.g., DLT-001). Delta relationships belong exclusively in the `Depends on` field. When a capability from another delta is needed, name the concept it provides ("uses the user authentication system") instead of citing its ID
 
 #### 3. Naming Quality
 - **Action-oriented preferred** - "Parse config file" over "Config parser"
@@ -67,6 +68,7 @@ First, determine the delta type from its name and description:
 - **Benefit is stated** - Why this improves the system (quality, maintainability, reliability)
 - **Scope is bounded** - Clear boundaries on what's affected
 - Layer-specific terms are allowed (since the delta IS about a specific layer)
+- **No delta ID references** - Description must not mention other deltas by ID (e.g., DLT-001). Dependencies belong in the `Depends on` field. Name the concept or capability provided instead
 
 #### 3. Naming Quality
 - **Describes the change** - "Add unit tests for auth module" not "Improve testing"
@@ -87,6 +89,7 @@ First, determine the delta type from its name and description:
 - **Missing context**: "Export report" - who exports? why? what format?
 - **Too terse**: "Handle errors" - which errors? how handled?
 - **Layer-focused**: "Call API endpoint", "Render UI form" - describe the user capability instead
+- **Delta ID references**: `"This delta uses DLT-001 to authenticate users"` → `"This delta uses the user authentication system to..."` — dependency IDs belong in `Depends on`, not in descriptions
 
 #### Naming
 - **Noun phrases**: "Error handler" → "Handle validation errors"
@@ -214,6 +217,18 @@ BAD (too terse):
 ```
 AUTH-001: Login
 Description: Handles login
+```
+
+BAD (references other delta by ID):
+```
+AUTH-003: Change password
+Description: Uses DLT-001 to verify the current user session, then allows the user to set a new password.
+```
+
+GOOD:
+```
+AUTH-003: Change password
+Description: Authenticated users need to update their password without losing their session. This delta allows users to set a new password after verifying their current one, keeping them logged in on success.
 ```
 
 ### Technical Delta Examples

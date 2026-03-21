@@ -1,15 +1,15 @@
 ---
 name: land-delta
 description: |
-  Land a reconciled delta branch onto main. Merges main into the delta branch,
-  reconciles code and documentation with changes introduced on main, validates
-  conflicting areas with reviewer agents, and merges into main with user confirmation.
+  Prepare a reconciled delta branch for merging into main. Merges main into the
+  delta branch, reconciles code and documentation with changes introduced on main,
+  and validates conflicting areas with reviewer agents.
 argument-hint: "[DELTA-ID]"
 ---
 
 # Land Delta Workflow
 
-Land a reconciled delta branch onto the project's main branch, reconciling any conflicts with changes introduced on main since the delta branched off.
+Prepare a reconciled delta branch for merging into the project's main branch, reconciling any conflicts with changes introduced on main since the delta branched off.
 
 ## Input
 
@@ -155,7 +155,7 @@ Verify the codebase still works after incorporating main's changes:
 **If all pass:** Proceed silently.
 
 **If failures:**
-- Fix ALL failing tests, lints, and type errors — not just those caused by the merge. The goal is to leave main in a clean state after landing.
+- Fix ALL failing tests, lints, and type errors — not just those caused by the merge. The goal is to leave the branch in a clean state ready to merge.
 - **Pay special attention to merge-related semantic conflicts**: Failures caused by interactions between the delta's changes and main's changes are the highest priority. These may indicate deeper integration issues that need careful analysis (e.g., both sides changed related logic in incompatible ways, renamed references, changed APIs).
 - **Auto-fix** straightforward issues:
   - Import path changes due to main's refactoring
@@ -343,37 +343,17 @@ After all dispatched reviewers return:
 - Run full test suite one final time
 - If issues remain after fixes: present to user with context and discuss
 
-### Phase 6: Merge into Main and Cleanup (Interactive)
+### Phase 6: Summary
 
-Present landing summary to the user:
-
-```
-"Ready to land DLT-XXX onto <main>:
-
-Commits: [N commits]
-Merge from main: Clean / Resolved N conflicts
-Tests: All passing
-Documentation: Consistent / Updated N files
-Validation: [Passed / Skipped (no conflicts)]
-
-Merge into <main>?"
-```
-
-**On user confirmation:**
-
-```bash
-git checkout <main>
-git merge --no-ff <delta-branch>
-```
-
-Present landing summary:
+Present the ready-to-merge summary:
 
 ```
-"DLT-XXX landed onto <main>.
+"DLT-XXX is ready to merge into <main>.
 
 Merge from main: [Clean / Resolved N conflicts]
 Checks: [All passing / Fixed N issues (brief description)]
-Documentation: [Consistent / Reconciled N files]"
+Documentation: [Consistent / Reconciled N files]
+Validation: [Passed / Skipped (no conflicts)]"
 ```
 
 ## Edge Cases
@@ -401,11 +381,11 @@ Pre-check warns the user and asks for confirmation. The user may have a valid re
 
 ## Workflow
 
-**This is a merge-reconcile-land process:**
+**This is a merge-reconcile-validate process:**
 - Pre-check (clean tree, correct branch, reconciled delta)
 - Gather context (branch commits, main changes, feature docs, decisions)
 - Merge main into branch (resolve conflicts interactively)
 - Code reconciliation (tests, lint, typecheck — auto-fix or ask)
 - Documentation reconciliation (semantic doc conflicts — auto-fix or ask)
 - Targeted validation (only conflicting categories get reviewed)
-- Merge into main (with user confirmation)
+- Present ready-to-merge summary

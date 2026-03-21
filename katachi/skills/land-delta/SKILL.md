@@ -363,7 +363,7 @@ Merge into <main>?"
 
 ```bash
 git checkout <main>
-git merge <delta-branch>
+git merge --no-ff <delta-branch>
 ```
 
 Present landing summary:

@@ -936,7 +936,6 @@ def main():
         sm = StatusManager(str(deltas_path))
 
         top_n = 1
-        group_by_priority = False
 
         i = 2
         while i < len(sys.argv):
@@ -950,9 +949,6 @@ def main():
                     print(f"Error: --top requires a number, got: {sys.argv[i + 1]}")
                     sys.exit(1)
                 i += 2
-            elif sys.argv[i] == "--group":
-                group_by_priority = True
-                i += 1
             else:
                 i += 1
 
@@ -965,39 +961,7 @@ def main():
 
         ready.sort(key=lambda f: (-sm.compute_score(f), f))
 
-        if group_by_priority:
-            from collections import defaultdict
-            by_priority = defaultdict(list)
-
-            for fid in ready[:top_n] if top_n > 0 else ready:
-                priority = sm.deltas[fid].get('priority', DEFAULT_PRIORITY)
-                by_priority[priority].append(fid)
-
-            print(f"\n🎯 Top {min(top_n, len(ready))} Recommended Deltas (by Priority):\n")
-
-            for level in range(1, 6):
-                if level not in by_priority:
-                    continue
-
-                label = PRIORITY_LABELS[level]
-                emoji = {1: "🔴", 2: "🟠", 3: "🟡", 4: "⚪", 5: "⚫"}.get(level, "")
-                print(f"\n{emoji} {label} ({len(by_priority[level])})\n")
-
-                for fid in by_priority[level]:
-                    delta = sm.deltas[fid]
-                    dependents = sm.get_dependents(fid)
-                    deps = sm.get_dependencies(fid)
-                    complexity = delta.get('complexity', 'Unknown')
-                    score = sm.compute_score(fid)
-
-                    impact_str = f" | blocks {len(dependents)}" if dependents else ""
-                    print(f"  {fid}: {delta['name']}")
-                    print(f"    Complexity: {complexity}{impact_str} | Score: {score}")
-
-                    if deps:
-                        print(f"    Depends on: {', '.join(sorted(deps))}")
-        else:
-            if top_n == 1:
+        if top_n == 1:
                 suggestion = ready[0]
                 delta = sm.deltas[suggestion]
                 dependents = sm.get_dependents(suggestion)

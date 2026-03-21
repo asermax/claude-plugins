@@ -54,6 +54,7 @@ Analyze $ARGUMENTS to determine which command to run:
 | "medium" | `summary --priority 3` | Show only Medium priority |
 | "low" | `summary --priority 4` | Show only Low priority |
 | "backlog" | `summary --priority 5` | Show only Backlog priority |
+| "ready" | `summary --ready` | Show only deltas ready to implement |
 | Anything else | `summary <filter>` | Treat as status filter |
 
 ### 3. Execute Appropriate Command
@@ -70,6 +71,16 @@ This shows the top 5 deltas recommended to work on next, ranked by:
 - Priority level (Critical/High first)
 - Impact (how many other deltas are blocked)
 - Complexity (prefer easier wins)
+
+#### Mode: Ready (Unblocked Deltas)
+
+When user asks for "ready":
+
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py summary --ready
+```
+
+This shows only deltas whose dependencies are all complete, meaning they can be started immediately.
 
 #### Mode: Priority Filter
 
@@ -127,6 +138,9 @@ The command outputs directly to the console:
 
 # Show only Implementation-related deltas
 /katachi:delta-summary Implementation
+
+# Show only deltas ready to implement (unblocked)
+/katachi:delta-summary ready
 
 # Show only "Not Started" deltas
 /katachi:delta-summary "Not Started"

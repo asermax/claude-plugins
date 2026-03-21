@@ -58,10 +58,10 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 - systematic-debugging (includes supporting techniques as .md files)
 
 **From quint-code repository (`~/workspace/random/quint-code/src/mcp/cmd/commands/`):**
-- All 13 command files (q0-init, q1-hypothesize, q1-add, q2-verify, q3-validate, q4-audit, q5-decide, q-status, q-query, q-decay, q-actualize, q-reset, q-audit)
+- All command files (q-frame, q-char, q-explore, q-compare, q-decide, q-note, q-onboard, q-problems, q-refresh, q-search, q-status)
 
 **MCP Binary:**
-- Build from `~/workspace/random/quint-code/src/mcp` and install to `~/.local/bin/quint-code`
+- Delete cached binary at `${CLAUDE_PLUGIN_ROOT}/bin/quint-code` so it rebuilds on next session start
 
 **From agentic-evolve repository (`~/workspace/random/agentic-evolve/.claude/commands/`):**
 - evolve.md (master dispatcher)
@@ -129,7 +129,7 @@ git show e3d881b:agents/code-reviewer.md  # For new files
 - `skills/requesting-code-review/code-reviewer.md` (synced to our `skills/requesting-code-review/code-reviewer.md`)
 
 **Files we track from quint-code:**
-- `src/mcp/cmd/commands/*.md` (all 13 command files - synced to our `quint/commands/`)
+- `src/mcp/cmd/commands/*.md` (all command files - synced to our `quint/commands/`)
 
 **Files we track from agentic-evolve:**
 - `.claude/commands/evolve.md` (master dispatcher - synced to `superpowers/commands/evolve.md`)
@@ -233,8 +233,9 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 
 **Type 5: Quint commands and context**
-- Copy command files directly from upstream (no customization):
+- Remove old command files and copy new ones from upstream (no customization):
   ```bash
+  rm -f ~/workspace/asermax/claude-plugins/quint/commands/*.md
   cp ~/workspace/random/quint-code/src/mcp/cmd/commands/*.md \
      ~/workspace/asermax/claude-plugins/quint/commands/
   ```
@@ -242,6 +243,10 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```bash
   cp ~/workspace/random/quint-code/CLAUDE.md \
      ~/workspace/asermax/claude-plugins/quint/context/PRINCIPLES.md
+  ```
+- Delete cached MCP binary so it rebuilds on next session start:
+  ```bash
+  rm -f ~/workspace/asermax/claude-plugins/quint/bin/quint-code
   ```
 - MCP binary is built on-demand by the SessionStart hook (see `quint/hooks/session-init.sh`)
 - Commands use MCP tools directly, no modification needed
@@ -285,9 +290,9 @@ Superpowers:
 - systematic-debugging (adapted from superpowers, skill references removed)
 
 Quint:
-- 13 command files synced (Q0-Q5 cycle + utilities)
+- command files synced (core workflow + lightweight ops + lifecycle)
 - PRINCIPLES.md context updated from upstream CLAUDE.md
-- MCP binary builds on-demand via SessionStart hook
+- Cached MCP binary deleted (rebuilds on next session start)
 
 Agentic-Evolve:
 - evolve commands synced (4 files: master dispatcher + perf/size/ml subskills)

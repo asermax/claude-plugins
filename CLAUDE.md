@@ -93,21 +93,26 @@ The plugin provides a collection of proven workflow skills organized by category
 - All skills use `superpowers:` namespace prefix for skill references
 
 ### quint
-FPF (First Principles Framework) methodology for structured decision-making.
+FPF (First Principles Framework) methodology for artifact-centric decision engineering.
 
-**Commands:**
-- `/q0-init`: Initialize knowledge base and bounded context
-- `/q1-hypothesize`: Generate L0 hypotheses (abduction)
-- `/q1-add`: Manually add hypothesis
-- `/q2-verify`: Verify logic, promote L0→L1 (deduction)
-- `/q3-validate`: Validate empirically, promote L1→L2 (induction)
-- `/q4-audit`: Calculate trust scores and assurance
-- `/q5-decide`: Select winner, create Design Rationale Record
-- `/q-status`: Display current cycle state
-- `/q-query`: Search knowledge base
-- `/q-decay`: Report expired evidence (epistemic debt)
-- `/q-actualize`: Reconcile KB with code changes
-- `/q-reset`: Discard current cycle
+**Commands — Core Decision Workflow:**
+- `/q-frame`: Frame an engineering problem (signal, constraints, targets, blast radius, mode)
+- `/q-char`: Define comparison dimensions for a framed problem (scale, polarity, parity rules)
+- `/q-explore`: Generate 2-3+ genuinely distinct solution variants with weakest links
+- `/q-compare`: Compare variants on Pareto front with parity enforcement
+- `/q-decide`: Finalize decision with full DecisionRecord (DRR) and verification gate
+
+**Commands — Lightweight Operations:**
+- `/q-note`: Record micro-decisions during coding (title, rationale, affected files)
+- `/q-onboard`: Discover and capture existing project knowledge via systematic scanning
+
+**Commands — Lifecycle & Discovery:**
+- `/q-problems`: List active ProblemCards with readiness and complexity signals
+- `/q-refresh`: Manage artifact lifecycle (scan stale, waive, reopen, supersede, deprecate)
+- `/q-search`: Full-text search across all artifacts
+- `/q-status`: Dashboard with active decisions, stale items, notes, and module coverage
+
+**Recommended workflow:** `/q-frame` → `/q-char` → `/q-explore` → `/q-compare` → `/q-decide`
 
 **MCP Server:**
 - Binary built on-demand via SessionStart hook (first use)
@@ -121,11 +126,14 @@ FPF (First Principles Framework) methodology for structured decision-making.
 - Context synced from `~/workspace/random/quint-code/CLAUDE.md`
 
 **Key concepts:**
-- **Knowledge levels**: L0 (raw) → L1 (verified) → L2 (validated) → Invalid
-- **WLNK**: Weakest link principle for trust calculation
-- **Congruence Level**: CL0-CL3 rating for evidence applicability to project context
-- **Epistemic debt**: Evidence that expires over time, requires conscious re-evaluation
-- **Design Rationale Records**: Auditable decision documentation with alternatives considered
+- **R_eff (Effective Reliability)**: Trust score (0-1) = min(evidence_scores) — strict weakest-link, never average
+- **WLNK**: Weakest link principle — system reliability ≤ min(component reliabilities)
+- **Congruence Level**: CL3 (same context, no penalty) → CL0 (opposed context, -0.9 penalty)
+- **Evidence Decay**: Evidence has `valid_until`; expired scores 0.1 (weak, not absent)
+- **DRR (Decision Record)**: Problem Frame + Decision/Contract + Rationale + Consequences
+- **Module Coverage**: Tracks which codebase areas have decisions vs blind spots
+- **Transformer Mandate**: Agents generate options, humans decide — no autonomous architectural decisions
+- **Artifact Lifecycle**: active → refresh_due → superseded/deprecated
 
 **Key workflows:**
 - Commands synced from `~/workspace/random/quint-code`
@@ -133,7 +141,8 @@ FPF (First Principles Framework) methodology for structured decision-making.
 - MCP binary builds automatically on first session start (slow), then cached (fast)
 - Commands use MCP tools directly (no customization)
 - Use for architectural decisions with long-term consequences
-- Skip for quick fixes or easily reversible decisions
+- Tactical mode available for simple decisions (frame → decide, skip char/explore/compare)
+- Skip entirely for quick fixes or easily reversible decisions
 
 ### beads
 Dependency-aware issue tracking for AI-supervised workflows.

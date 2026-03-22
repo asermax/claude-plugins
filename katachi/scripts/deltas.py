@@ -962,31 +962,31 @@ def main():
         ready.sort(key=lambda f: (-sm.compute_score(f), f))
 
         if top_n == 1:
-                suggestion = ready[0]
-                delta = sm.deltas[suggestion]
-                dependents = sm.get_dependents(suggestion)
-                priority = delta.get('priority', DEFAULT_PRIORITY)
-                priority_label = PRIORITY_LABELS.get(priority, "Unknown")
+            suggestion = ready[0]
+            delta = sm.deltas[suggestion]
+            dependents = sm.get_dependents(suggestion)
+            priority = delta.get('priority', DEFAULT_PRIORITY)
+            priority_label = PRIORITY_LABELS.get(priority, "Unknown")
 
-                print(f"\nSuggested next delta: {suggestion}")
-                print(f"  Name: {delta['name']}")
-                print(f"  Status: {delta['status']}")
-                print(f"  Priority: {priority} ({priority_label})")
-                print(f"  Complexity: {delta.get('complexity', 'Unknown')}")
+            print(f"\nSuggested next delta: {suggestion}")
+            print(f"  Name: {delta['name']}")
+            print(f"  Status: {delta['status']}")
+            print(f"  Priority: {priority} ({priority_label})")
+            print(f"  Complexity: {delta.get('complexity', 'Unknown')}")
 
-                if dependents:
-                    print(f"  Unlocks {len(dependents)} delta(s):")
-                    for dep in sorted(dependents):
-                        print(f"    - {dep}")
-                else:
-                    print("  Unlocks: No other deltas directly depend on this")
-
-                deps = sm.get_dependencies(suggestion)
-                if deps:
-                    print(f"  Depends on ({len(deps)} complete):")
-                    for dep in sorted(deps):
-                        print(f"    - {dep} ✓")
+            if dependents:
+                print(f"  Unlocks {len(dependents)} delta(s):")
+                for dep in sorted(dependents):
+                    print(f"    - {dep}")
             else:
+                print("  Unlocks: No other deltas directly depend on this")
+
+            deps = sm.get_dependencies(suggestion)
+            if deps:
+                print(f"  Depends on ({len(deps)} complete):")
+                for dep in sorted(deps):
+                    print(f"    - {dep} ✓")
+        else:
                 print(f"\n🎯 Top {min(top_n, len(ready))} Recommended Deltas:\n")
 
                 for i, fid in enumerate(ready[:top_n], 1):

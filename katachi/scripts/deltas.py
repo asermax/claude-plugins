@@ -433,6 +433,7 @@ class StatusManager:
         print(f"  Status: {delta['status']}")
         print(f"  Priority: {priority} ({priority_label})")
         print(f"  Complexity: {delta['complexity']}")
+        print(f"  Description: {delta['description']}")
 
         deps = self.get_dependencies(delta_id)
         if deps:

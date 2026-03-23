@@ -4,16 +4,16 @@ description: |
   Apply a focused change using a compressed delta workflow. Reads project context
   (specs, designs, decisions), plans inline via plan mode, implements, and reconciles
   feature documentation in a single session without creating intermediate delta files.
-argument-hint: "<change description>"
+argument-hint: "<change description | DELTA-ID>"
 ---
 
 # Patch Workflow
 
-Apply a focused change to the project using a compressed delta workflow. This skill runs the full spec → design → plan → implement → reconcile process in a single session without creating a delta entry or intermediate files.
+Apply a focused change to the project using a compressed delta workflow. This skill runs the full spec → design → plan → implement → reconcile process in a single session without creating intermediate files. Can also accept a tracked delta ID to use its description and mark it as reconciled when done.
 
 ## Input
 
-Change description: $ARGUMENTS (optional — will prompt if not provided)
+Change description or delta ID: $ARGUMENTS (optional — will prompt if not provided)
 
 ## Context
 
@@ -26,8 +26,10 @@ Change description: $ARGUMENTS (optional — will prompt if not provided)
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - ASCII diagram guidance
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/code-examples.md` - Code snippet guidance
 
+### Delta inventory
+- `docs/planning/DELTAS.md` - Delta definitions (used for delta matching in Pre-Check and conflict awareness in Phase 1)
+
 ### Project documentation (read during Phase 1)
-- `docs/planning/DELTAS.md` - In-flight delta awareness
 - `docs/feature-specs/README.md` + relevant feature specs
 - `docs/feature-designs/README.md` + relevant feature designs
 - `docs/architecture/README.md` + relevant ADRs
@@ -49,6 +51,8 @@ Change description: $ARGUMENTS (optional — will prompt if not provided)
 - Spans many feature areas or introduces cross-cutting concerns
 - Has complex dependencies on in-flight deltas
 
+**Delta-driven patches**: You can run patch with a delta ID (e.g., `/katachi:patch DLT-042`). This uses the delta's description as the change description and marks it as `✓ Reconciled` when done. Best for Easy-Medium complexity deltas that don't need the full multi-session workflow.
+
 ## Pre-Check
 
 Verify framework is initialized:
@@ -57,13 +61,56 @@ Verify framework is initialized:
 
 If no $ARGUMENTS provided, ask the user to describe the change they want to make.
 
-If $ARGUMENTS looks like a delta ID (e.g., "DLT-042"), suggest using the full delta workflow instead: "It looks like you're referencing a tracked delta. Would you like to use `/katachi:spec-delta` or `/katachi:implement-delta` instead? Patches are for untracked changes."
+### Free-Text Path
+
+If $ARGUMENTS is free text (not a delta ID):
+
+1. **Delta matching**: Scan `docs/planning/DELTAS.md` (already loaded as context) for existing deltas whose description closely matches the provided change description. If a match is found, use `AskUserQuestion` to offer treating it as a delta-driven patch:
+
+   - Option A: "Yes, use DLT-042" — continue to the Delta-Driven Path below with the matched delta ID
+   - Option B: "No, continue as an untracked patch" — proceed with the free-text description
+
+   Include the delta's name, description, status, and complexity in the question context so the user can make an informed choice.
+
+### Delta-Driven Path
+
+If $ARGUMENTS looks like a delta ID (e.g., "DLT-042"), or the Free-Text Path matched an existing delta:
+
+1. Fetch delta info:
+   ```bash
+   python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status show DELTA-ID
+   ```
+
+2. If the delta is not found, report the error and stop.
+
+3. Extract the description, complexity, and dependencies from the output.
+
+4. Check for existing work files for this delta: `docs/delta-specs/DELTA-ID.md`, `docs/delta-designs/DELTA-ID.md`, `docs/delta-plans/DELTA-ID.md`. If any exist, note them — they'll be used as additional context during Phase 1 research and Phase 3 planning.
+
+5. If the description is empty, prompt the user for a change description.
+
+6. Use the delta description as the change description for the rest of the workflow.
+
+7. Note the delta ID and any existing work file paths in the scratchpad.
+
+### Patch Fitness Assessment
+
+After resolving the input (whether free-text or delta-driven), evaluate whether the change is suitable for the compressed patch workflow. Consider the change description's scope, and — if delta-driven — the delta's complexity, number of dependencies, and whether existing work files suggest deeper investigation was needed.
+
+If the change appears too complex for a single-session patch (e.g., spans many feature areas, suggests architectural unknowns, Hard complexity, many dependencies), warn the user:
+
+- **Delta-driven**: Recommend the full delta workflow instead (`/katachi:spec-delta DLT-042`). Ask if they want to continue as a patch anyway.
+- **Free-text**: Recommend creating a tracked delta via `/katachi:add-delta` instead. Ask if they want to continue as a patch anyway.
+
+Wait for user response. If they decline, stop.
 
 ## Scratchpad
 
 Use `/tmp/patch-<animal-adjective>-state.md` for state tracking (animal-adjective pattern for parallel execution support).
 
 Track:
+- Delta ID (if patching a tracked delta)
+- Existing delta work files found (if any)
 - Change description
 - Affected features discovered
 - Plan file path
@@ -77,13 +124,15 @@ Track:
 
 Read project documentation to understand the current state:
 
-1. **Delta awareness**: Read `docs/planning/DELTAS.md` to understand in-flight work. Check for conflicts — if the patch modifies files being worked on by an in-flight delta (status is `⧗ ...`), warn the user about potential conflicts.
+1. **Delta awareness**: Review `docs/planning/DELTAS.md` (already loaded as context) for in-flight work. Check for conflicts — if the patch modifies files being worked on by an in-flight delta (status is `⧗ ...`), warn the user about potential conflicts.
 
 2. **Feature documentation**: Read `docs/feature-specs/README.md` and `docs/feature-designs/README.md` to identify affected features. Read the specific feature specs and designs relevant to the change.
 
 3. **Project decisions**: Read `docs/architecture/README.md` and `docs/design/README.md`. Read full ADR/DES documents that are relevant to the affected areas.
 
-4. **Source code**: Explore relevant source code in the affected areas to understand current implementation.
+4. **Existing delta work files** (delta-driven only): If the scratchpad notes existing work files (spec, design, plan) for this delta, read them. These provide valuable context from prior analysis — use them to inform scope assessment and planning.
+
+5. **Source code**: Explore relevant source code in the affected areas to understand current implementation.
 
 ### Phase 2: Scope Assessment (Checkpoint)
 
@@ -614,6 +663,16 @@ For each approved DES candidate:
 For each approved update to existing decision:
 - Update the ADR/DES document with the new information
 
+#### 7.9 Mark Delta as Reconciled (Delta-Driven Only)
+
+If this patch was initiated with a delta ID, mark the delta as reconciled:
+
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set DELTA-ID "✓ Reconciled"
+```
+
+This removes the delta from DELTAS.md, cleans dependency references, and deletes any work files (specs, designs, plans) that existed for the delta.
+
 ### Phase 8: Summary
 
 Do NOT offer to commit — the user decides when to commit.
@@ -624,6 +683,7 @@ Present summary:
 "Patch complete:
 
 Change: [description]
+Delta: [DLT-XXX — marked as ✓ Reconciled] (only if delta-driven)
 Files modified: [list]
 
 Feature docs updated:
@@ -646,6 +706,9 @@ Warning only, not blocking: "DLT-042 is currently in ⧗ Implementation and modi
 
 **Reconciliation produces zero updates:**
 If the patch is purely internal (refactoring, bug fix) and doesn't change any documented behavior, reconciliation may produce no updates. Explicitly state: "This change doesn't affect any documented feature behavior. No reconciliation updates needed." This is a valid outcome.
+
+**Delta-driven patch with existing work files:**
+If the delta already has spec, design, or plan files from a partially completed full workflow, use them as additional context during research (Phase 1) and planning (Phase 3). Note to the user what was found: "DLT-042 has existing work files (spec/design/plan) from a prior workflow — using them as context." These files will be cleaned up automatically when the delta is marked as reconciled.
 
 ## Workflow
 

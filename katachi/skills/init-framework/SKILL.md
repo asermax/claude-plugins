@@ -75,10 +75,20 @@ For new projects:
 1. `/katachi:vision` - Define what you're building
 2. `/katachi:deltas` - Create the delta inventory
 
-For existing projects:
-1. `/katachi:retrofit-spec <path>` - Document existing code
-2. `/katachi:retrofit-design <ID>` - Create designs from specs
-3. `/katachi:vision` - Synthesize vision from features
+For existing projects with code:
+
+Ask the user:
+"This looks like an existing project with code. Would you like to run a full
+project retrofit? This will discover your modules, create specs, designs,
+decisions, and synthesize a vision document."
+
+If yes → invoke the `katachi:retrofit-project` skill (it will take over from here)
+
+If no → show individual commands:
+- `/katachi:retrofit-spec <path>` - Document one module
+- `/katachi:retrofit-design <ID>` - Create design from spec
+- `/katachi:retrofit-decision <topic>` - Document one decision
+- `/katachi:vision` - Create/synthesize vision
 
 The deltas.py script is available at:
 ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py

@@ -132,6 +132,7 @@ Skills to copy (all skills except eject itself):
 - retrofit-decision
 - retrofit-design
 - retrofit-existing
+- retrofit-project
 - retrofit-spec
 - review-code
 - review-priorities

@@ -250,19 +250,7 @@ After all specs are written:
 - Create/update `docs/feature-specs/README.md` using the `feature-specs-readme.md` template
 - Update scratchpad marking all specs as done
 
-Present a summary of all specs created:
-```
-## Specs Created
-
-| Module | File | Domain |
-|--------|------|--------|
-| src/auth/ | docs/feature-specs/auth/authentication.md | auth |
-| ... | ... | ... |
-
-Quick review before proceeding to designs?
-```
-
-Wait for user confirmation before proceeding.
+Update scratchpad with a summary of specs created, then proceed immediately to designs.
 
 #### Step 2 — Retrofit Designs (parallel)
 
@@ -316,16 +304,7 @@ After all designs are written:
 - Create/update `docs/feature-designs/README.md`
 - Update scratchpad marking all designs as done
 
-If new decisions were discovered:
-```
-"During design analysis, I discovered these additional decisions:
-
-| # | Topic | Type | Source |
-|---|-------|------|--------|
-| N | [new decision] | ADR/DES | [module where found] |
-
-These will be documented in the next step along with the originally planned decisions."
-```
+If new decisions were discovered, merge them into the plan's decision list and note the additions in the scratchpad. Proceed immediately to decisions.
 
 #### Step 3 — Retrofit Decisions (parallel)
 
@@ -485,9 +464,9 @@ File: `/tmp/retrofit-project-<project-name>-state.md`
 
 ## Workflow
 
-This is a phased autonomous process with user checkpoints:
+This is a phased autonomous process with two user touchpoints:
 1. **Inventory** — Discover and confirm project structure (interactive)
-2. **Plan** — Build and confirm retrofit plan (interactive)
-3. **Execute** — Specs → Designs → Decisions, each phase runs in parallel via subagents (autonomous, with brief checkpoint after specs)
+2. **Plan** — Build and confirm retrofit plan (interactive — last approval before autonomous execution)
+3. **Execute** — Specs → Designs → Decisions, all run autonomously via subagents with no user stops
 4. **Vision** — Synthesize and iterate with user (interactive)
 5. **Summary** — Present results and next steps

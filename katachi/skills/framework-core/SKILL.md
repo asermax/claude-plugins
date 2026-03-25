@@ -156,8 +156,8 @@ Track state in `/tmp/<command>-state.md`:
   - Enables multiple concurrent sessions without state file conflicts
   - Keep state files after completion (don't auto-clean) for debugging/audit trail
 
-**Commands that don't need parallel support:**
-- `/vision`, `/deltas`, `/dependencies` - Sequential execution sufficient, use `/tmp/<command>-state.md`
+**Commands scoped by project name (directory basename):**
+- `/vision`, `/deltas`, `/dependencies` - Use `/tmp/<command>-<project-name>-state.md`
 
 **Commands without scratchpads:**
 - `/commit`, `/record-learnings` - No scratchpad needed

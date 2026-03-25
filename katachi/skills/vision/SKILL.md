@@ -24,7 +24,7 @@ Follow the collaborative workflow principles from the framework-core skill.
 
 **Vision-specific guidance:**
 
-**Use a scratchpad** - Track state in `/tmp/vision-state.md`:
+**Use a scratchpad** - Track state in `/tmp/vision-<project-name>-state.md` (where `<project-name>` is the basename of the current working directory):
 - Current section being worked on
 - Questions asked and answered
 - Gaps identified

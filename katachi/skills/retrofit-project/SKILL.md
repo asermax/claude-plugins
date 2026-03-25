@@ -47,7 +47,9 @@ Verify before starting:
 
 ### 0. Check for Existing Scratchpad
 
-Check if `/tmp/retrofit-project-state.md` exists.
+Derive the project name from the basename of the current working directory (e.g. `/home/user/workspace/myapp` → `myapp`).
+
+Check if `/tmp/retrofit-project-<project-name>-state.md` exists.
 
 If yes:
 - Read the scratchpad
@@ -134,7 +136,7 @@ Does this inventory look right? Any modules missing, misidentified, or domains t
 
 Wait for user confirmation/adjustments before proceeding.
 
-Initialize scratchpad at `/tmp/retrofit-project-state.md`:
+Initialize scratchpad at `/tmp/retrofit-project-<project-name>-state.md`:
 
 ```markdown
 # Retrofit Project State
@@ -436,13 +438,13 @@ The project is now documented in the katachi framework. For future work:
 - `/katachi:decision <topic>` - Record new decisions
 ```
 
-Clean up scratchpad (delete `/tmp/retrofit-project-state.md`).
+Clean up scratchpad (delete `/tmp/retrofit-project-<project-name>-state.md`).
 
 ---
 
 ## Scratchpad Format
 
-File: `/tmp/retrofit-project-state.md`
+File: `/tmp/retrofit-project-<project-name>-state.md`
 
 ```markdown
 # Retrofit Project State

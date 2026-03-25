@@ -25,7 +25,7 @@ Follow the collaborative workflow principles from the framework-core skill.
 
 **Deltas-specific guidance:**
 
-**Use a scratchpad** - Track state in `/tmp/deltas-state.md`:
+**Use a scratchpad** - Track state in `/tmp/deltas-<project-name>-state.md` (where `<project-name>` is the basename of the current working directory):
 - Raw deltas identified with source traceability
 - Agent validation findings
 - Refinements to apply

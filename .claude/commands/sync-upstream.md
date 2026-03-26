@@ -54,7 +54,6 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 ### Step 2: Identify Skills to Update
 
 **From superpowers repository (`~/workspace/random/superpowers/skills/`):**
-- requesting-code-review (SKILL.md only - agent is maintained separately)
 - systematic-debugging (includes supporting techniques as .md files)
 
 **From quint-code repository (`~/workspace/random/quint-code/src/mcp/cmd/commands/`):**
@@ -75,15 +74,10 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 **Plugin-specific skills (not synced from upstream):**
 - using-live-documentation
 - self-maintaining-claude-md
-- testing-skills-activation
 - using-gemini
 - agent-communication
 - financial-summary
 - using-code-directives
-
-**Agents (separate from skills):**
-- code-reviewer agent: Synced from `~/workspace/random/superpowers/agents/code-reviewer.md`
-- code-reviewer template: Synced from `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
 
 ### Step 3: Identify What Changed in Upstream Repository
 
@@ -106,27 +100,23 @@ Example pull output:
 ```
 Updating 7fc125e..e3d881b
 Fast-forward
- agents/code-reviewer.md                     | 47 +++++++++++++++++++++++++++++
- skills/requesting-code-review/SKILL.md      |  8 ++---
+ skills/systematic-debugging/SKILL.md       |  12 +++++---
+ skills/systematic-debugging/techniques.md  |   4 +--
 ```
 
 From this we can see:
 - Old commit: `7fc125e`
 - New commit: `e3d881b`
-- Changed files: `agents/code-reviewer.md` (new), `skills/requesting-code-review/SKILL.md` (modified)
+- Changed files: `skills/systematic-debugging/SKILL.md` (modified), `skills/systematic-debugging/techniques.md` (modified)
 
 To see what actually changed in upstream:
 ```bash
 cd ~/workspace/random/superpowers
-git diff 7fc125e..e3d881b -- skills/requesting-code-review/SKILL.md
-git show e3d881b:agents/code-reviewer.md  # For new files
+git diff 7fc125e..e3d881b -- skills/systematic-debugging/
 ```
 
 **Files we track from superpowers:**
-- `skills/requesting-code-review/SKILL.md`
 - `skills/systematic-debugging/` (entire directory - includes supporting .md files)
-- `agents/code-reviewer.md` (synced to our `agents/code-reviewer.md`)
-- `skills/requesting-code-review/code-reviewer.md` (synced to our `skills/requesting-code-review/code-reviewer.md`)
 
 **Files we track from quint-code:**
 - `src/mcp/cmd/commands/*.md` (all command files - synced to our `quint/commands/`)
@@ -161,7 +151,6 @@ This plugin maintains customized versions of certain base skills to remove depen
 
 - **All skills**: Use `superpowers:` namespace prefix for all skill references
 - **systematic-debugging**: Removed references to skills not included in plugin (defense-in-depth, condition-based-waiting, verification-before-completion)
-- **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"; simplified SHA commands to run directly without variable assignment (use `git rev-parse HEAD~1` and `git rev-parse HEAD` directly instead of assigning to variables)
 
 Format the output clearly:
 
@@ -172,11 +161,6 @@ systematic-debugging (from superpowers)
   Status: Has plugin customizations (removed skill references)
   Changes: Content updates in upstream version
   Action: Manual merge required to preserve simplified workflow
-
-requesting-code-review (from superpowers)
-  Status: Has plugin customizations (broadened scope, simplified SHA commands)
-  Changes: Content updates in upstream version
-  Action: Manual merge required to preserve customizations
 
 ---
 ```
@@ -205,14 +189,7 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 
 **Update procedure by skill type:**
 
-**Type 1: Unmodified skills (requesting-code-review)**
-- Copy directly from upstream (entire directory to include supporting documentation):
-  ```bash
-  cp -r ~/workspace/random/superpowers/skills/requesting-code-review \
-        ~/workspace/asermax/claude-plugins/superpowers/skills/
-  ```
-
-**Type 2: Skills with minor customizations (systematic-debugging)**
+**Type 1: Skills with minor customizations (systematic-debugging)**
 - Copy directly from upstream (entire directory):
   ```bash
   cp -r ~/workspace/random/superpowers/skills/systematic-debugging \
@@ -220,19 +197,10 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - Remove any references to skills not in plugin (e.g., verification-before-completion)
 
-**Type 3: Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives)**
+**Type 2: Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives)**
 - Never modify (no upstream source)
 
-**Type 4: Code-reviewer agent and template**
-- Copy directly from upstream (no customizations):
-  ```bash
-  cp ~/workspace/random/superpowers/agents/code-reviewer.md \
-     ~/workspace/asermax/claude-plugins/superpowers/agents/code-reviewer.md
-  cp ~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md \
-     ~/workspace/asermax/claude-plugins/superpowers/skills/requesting-code-review/code-reviewer.md
-  ```
-
-**Type 5: Quint commands and context**
+**Type 3: Quint commands and context**
 - Remove old command files and copy new ones from upstream (no customization):
   ```bash
   rm -f ~/workspace/asermax/claude-plugins/quint/commands/*.md
@@ -251,7 +219,7 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 - MCP binary is built on-demand by the SessionStart hook (see `quint/hooks/session-init.sh`)
 - Commands use MCP tools directly, no modification needed
 
-**Type 6: Agentic-evolve commands (direct copy)**
+**Type 4: Agentic-evolve commands (direct copy)**
 - Copy all 4 command files directly from upstream (no customization):
   ```bash
   cp ~/workspace/random/agentic-evolve/.claude/commands/evolve.md \
@@ -265,7 +233,7 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - The evolve.md is a master dispatcher that routes to specialized subskills based on optimization goal
 
-**Type 7: Agent-browser skill (direct copy)**
+**Type 5: Agent-browser skill (direct copy)**
 - Copy entire skill directory from upstream (no customization):
   ```bash
   cp -r ~/workspace/random/agent-browser/skills/agent-browser \
@@ -286,7 +254,6 @@ Confirm successful update:
 ✅ Plugins synced successfully:
 
 Superpowers:
-- requesting-code-review (copied directly from superpowers)
 - systematic-debugging (adapted from superpowers, skill references removed)
 
 Quint:
@@ -303,7 +270,6 @@ Agent-Browser:
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references
 - systematic-debugging: removed references to skills not in plugin
-- requesting-code-review: broadened scope and simplified SHA commands
 ```
 
 ## Error Handling

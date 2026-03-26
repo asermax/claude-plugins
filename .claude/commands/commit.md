@@ -148,7 +148,7 @@ Use these heuristics to cluster files into logical commit groups:
 **Scenario 2**: Added new command `bump-version.md` and modified unrelated command `create-aur-package.md`
 → **Two commits**: Separate features
 
-**Scenario 3**: Modified `superpowers/skills/brainstorming/SKILL.md` and `superpowers/agents/code-reviewer.md`
+**Scenario 3**: Modified `superpowers/skills/systematic-debugging/SKILL.md` and `superpowers/agents/documentation-searcher.md`
 → **Two commits**: Different features
 
 ### 3. Present Proposed Groups

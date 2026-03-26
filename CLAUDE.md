@@ -51,7 +51,7 @@ AUR (Arch User Repository) package management automation.
 - Commands: `updpkgsums`, `makepkg --printsrcinfo`
 
 ### superpowers
-Development workflow skills for systematic debugging, code review, planning, and more.
+Development workflow skills for systematic debugging, planning, and more.
 
 **Commands:**
 - `/sync-upstream`: Sync plugins from upstream repositories (superpowers, quint, agentic-evolve, agent-browser), compare differences, and intelligently merge updates while preserving plugin customizations
@@ -66,12 +66,10 @@ Development workflow skills for systematic debugging, code review, planning, and
 The plugin provides a collection of proven workflow skills organized by category:
 
 *Core Development Workflow:*
-- **requesting-code-review**: Request code reviews before merging to verify work meets requirements
 - **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations and security validation for external URLs
 
 *Debugging and Testing:*
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions (includes supporting techniques: root-cause-tracing, defense-in-depth, condition-based-waiting)
-- **testing-skills-activation**: Systematically test and iterate on skill descriptions to ensure correct activation patterns (15-25 test cases, 90%+ accuracy target)
 
 *Documentation and Research:*
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
@@ -258,8 +256,7 @@ Agentic memory framework for long-term memory across sessions.
 **Custom modifications:**
 - **All skills**: Use `superpowers:` namespace prefix for all skill references
 - **systematic-debugging**: Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
-- **requesting-code-review**: Intentionally broadened to "ANY task that modifies code" instead of "major features"; simplified SHA commands to run directly without variable assignment
-- Multiple plugin-specific skills added: using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives
+- Multiple plugin-specific skills added: using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
@@ -268,7 +265,7 @@ Agentic memory framework for long-term memory across sessions.
   - `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
   - `~/workspace/random/agent-browser` - Browser automation CLI
 - Pull latest changes from all repositories' `main` branch
-- Tracked skills from superpowers: requesting-code-review, systematic-debugging
+- Tracked skills from superpowers: systematic-debugging
 - Tracked commands from agentic-evolve (copied directly to superpowers/commands/):
   - evolve.md (master dispatcher)
   - evolve-perf.md (runtime speed optimization)
@@ -276,7 +273,7 @@ Agentic memory framework for long-term memory across sessions.
   - evolve-ml.md (ML accuracy optimization)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
-- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, testing-skills-activation, using-gemini, agent-communication, financial-summary, using-code-directives) are never modified
+- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives) are never modified
 - Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
 
@@ -288,18 +285,11 @@ Agentic memory framework for long-term memory across sessions.
 - No manual activation required - skills are always available
 
 **Agents:**
-- `agents/code-reviewer.md`: Internal agent used by the requesting-code-review skill
-  - Copied directly from upstream `~/workspace/random/superpowers/agents/code-reviewer.md`
-  - NOT customized - we use upstream version as-is
-  - Invoked via Task tool with subagent_type: superpowers:code-reviewer
 - `agents/documentation-searcher.md`: Internal agent used by the using-live-documentation skill
   - Plugin-specific agent (no upstream source)
   - Searches Context7 for library documentation and provides focused synthesis
   - Uses Context7 MCP tools (resolve-library-id, get-library-docs)
   - Invoked via Task tool with subagent_type: superpowers:documentation-searcher
-- `skills/requesting-code-review/code-reviewer.md`: Agent template
-  - Copied directly from upstream `~/workspace/random/superpowers/skills/requesting-code-review/code-reviewer.md`
-  - NOT customized - we use upstream version as-is
 - Agent definitions include frontmatter with name, description, tools, and model
 
 **Hooks:**

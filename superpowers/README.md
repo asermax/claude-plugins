@@ -1,6 +1,6 @@
 # superpowers
 
-Development workflow skills for systematic debugging, code review, planning, and more.
+Development workflow skills for systematic debugging, planning, and more.
 
 ## Description
 
@@ -11,12 +11,10 @@ This plugin provides a collection of Claude Code skills that establish proven wo
 The plugin includes the following skills:
 
 ### Core Development Workflow
-- **requesting-code-review**: Request code reviews before merging to verify work meets requirements
 - **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations
 
 ### Debugging and Testing
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions
-- **testing-skills-activation**: Systematically test and iterate on skill descriptions to ensure correct activation patterns
 
 ### Documentation and Research
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state

@@ -16,17 +16,18 @@ AUR package management commands for building and maintaining Arch User Repositor
 
 ### superpowers
 
-Development workflow skills for systematic debugging, code review, planning, and more.
+Development workflow skills for systematic debugging, planning, and more.
 
 **Commands:**
-- `/update-superpowers-skills` - Sync skills from upstream repositories and intelligently merge updates
+- `/sync-upstream` - Sync plugins from upstream repositories and intelligently merge updates
 
 **Skills:**
-- Core Development Workflow (brainstorming, executing-plans, receiving-code-review, requesting-code-review, writing-plans)
-- Debugging and Testing (root-cause-tracing, systematic-debugging, test-driven-development, testing-skills-activation, testing-skills-with-subagents)
-- Documentation and Research (self-maintaining-claude-md, skill-creator, using-live-documentation, writing-skills)
-- Project Management (using-beads)
+- Core Development Workflow (using-code-directives)
+- Debugging and Testing (systematic-debugging)
+- Documentation and Research (self-maintaining-claude-md, using-live-documentation)
+- Browser Automation (agent-browser)
 - Multi-Agent Collaboration (agent-communication)
+- Other (using-gemini, financial-summary, show-markdown, mermaid-validation)
 
 [View Documentation](./superpowers/README.md)
 

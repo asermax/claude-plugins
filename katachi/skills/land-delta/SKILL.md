@@ -146,7 +146,7 @@ git merge origin/<main>
 
 ### Phase 3: Code Reconciliation (Silent with checkpoint)
 
-Verify the codebase still works after incorporating main's changes:
+Ensure the branch passes all quality checks with zero failures before it can be merged. This is a clean-slate gate — fix everything, including issues that pre-date the delta or were already present on main:
 
 1. **Run test suite**
 2. **Run linting**
@@ -155,7 +155,7 @@ Verify the codebase still works after incorporating main's changes:
 **If all pass:** Proceed silently.
 
 **If failures:**
-- Fix ALL failing tests, lints, and type errors — not just those caused by the merge. The goal is to leave the branch in a clean state ready to merge.
+- Fix ALL failing tests, lints, and type errors — including pre-existing issues that were already on the branch or inherited from main. The merge is the gate: nothing with failing checks gets merged, regardless of when or where the failure was introduced.
 - **Pay special attention to merge-related semantic conflicts**: Failures caused by interactions between the delta's changes and main's changes are the highest priority. These may indicate deeper integration issues that need careful analysis (e.g., both sides changed related logic in incompatible ways, renamed references, changed APIs).
 - **Auto-fix** straightforward issues:
   - Import path changes due to main's refactoring
@@ -340,8 +340,8 @@ Check for:
 
 After all dispatched reviewers return:
 - Auto-fix all issues found
-- Run full test suite one final time
-- If issues remain after fixes: present to user with context and discuss
+- Run full test/lint/typecheck suite one final time — all must pass with zero failures
+- If issues remain after fixes: present to user with context and discuss — do NOT proceed to Phase 6 until all checks pass
 
 ### Phase 6: Summary
 
@@ -351,7 +351,7 @@ Present the ready-to-merge summary:
 "DLT-XXX is ready to merge into <main>.
 
 Merge from main: [Clean / Resolved N conflicts]
-Checks: [All passing / Fixed N issues (brief description)]
+Checks: [All passing (zero failures) / Fixed N issues to reach zero failures (brief description)]
 Documentation: [Consistent / Reconciled N files]
 Validation: [Passed / Skipped (no conflicts)]"
 ```

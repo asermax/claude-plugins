@@ -67,6 +67,7 @@ The plugin provides a collection of proven workflow skills organized by category
 
 *Core Development Workflow:*
 - **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations and security validation for external URLs
+- **mermaid-validation**: Validate mermaid diagram syntax after writing code blocks using bundled merval-based script (~552KB, auto-installs on first run)
 
 *Debugging and Testing:*
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions (includes supporting techniques: root-cause-tracing, defense-in-depth, condition-based-waiting)
@@ -256,7 +257,7 @@ Agentic memory framework for long-term memory across sessions.
 **Custom modifications:**
 - **All skills**: Use `superpowers:` namespace prefix for all skill references
 - **systematic-debugging**: Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
-- Multiple plugin-specific skills added: using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives
+- Multiple plugin-specific skills added: using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives, mermaid-validation
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
@@ -273,7 +274,7 @@ Agentic memory framework for long-term memory across sessions.
   - evolve-ml.md (ML accuracy optimization)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
-- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives) are never modified
+- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives, mermaid-validation) are never modified
 - Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
 

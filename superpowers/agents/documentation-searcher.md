@@ -1,7 +1,7 @@
 ---
 name: documentation-searcher
 description: INTERNAL AGENT - Do not call directly. This agent is invoked exclusively by the superpowers:using-live-documentation skill. The skill handles when to search documentation and how to structure the search parameters with library name and topic.
-tools: mcp__context7__resolve-library-id, mcp__context7__get-library-docs
+tools: mcp__context7__resolve-library-id, mcp__context7__query-docs
 model: sonnet
 ---
 
@@ -20,7 +20,7 @@ Search Context7 for current library documentation and provide a focused synthesi
 ## Search Process
 
 1. **Resolve library ID**: Use `mcp__context7__resolve-library-id` with the library name to get the Context7-compatible library ID
-2. **Fetch documentation**: Use `mcp__context7__get-library-docs` with:
+2. **Fetch documentation**: Use `mcp__context7__query-docs` with:
    - The resolved library ID
    - The specific topic to focus on
    - Token limit (start with 5000, increase to 20000 if needed for comprehensive coverage)

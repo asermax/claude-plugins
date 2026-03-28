@@ -645,9 +645,9 @@ class StatusManager:
 
 
 def main():
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
         print(__doc__)
-        sys.exit(1)
+        sys.exit(0 if len(sys.argv) >= 2 else 1)
 
     subcommand = sys.argv[1]
 

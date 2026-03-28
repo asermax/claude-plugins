@@ -72,6 +72,7 @@ All functionality is exposed as skills in the `skills/` directory. User-facing s
 - `katachi:working-on-delta` - Per-delta workflow orchestration
 - `katachi:iterative-development` - Progressive development support
 - `katachi:retrofit-existing` - Retrofit workflow patterns
+- `katachi:research-docs` - Documentation research for libraries and frameworks
 
 ## Agents
 
@@ -85,6 +86,7 @@ The framework uses specialized agents for validation:
 | `code-reviewer` | Review code against specs, designs, and decisions |
 | `impact-analyzer` | Analyze change impact on dependencies |
 | `codebase-analyzer` | Infer requirements/decisions from existing code |
+| `doc-researcher` | Search and synthesize current library documentation |
 
 ## Project Structure
 

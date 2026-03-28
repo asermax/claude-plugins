@@ -21,6 +21,7 @@ Change description or delta ID: $ARGUMENTS (optional — will prompt if not prov
 
 ### Skills
 - `katachi:framework-core` - Workflow principles
+- `katachi:research-docs` - Documentation research for library verification
 
 ### Reference Guides
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.md` - ASCII diagram guidance
@@ -134,6 +135,8 @@ Read project documentation to understand the current state:
 
 5. **Source code**: Explore relevant source code in the affected areas to understand current implementation.
 
+6. **Library documentation**: If the change involves any external libraries or frameworks, follow the `katachi:research-docs` skill guidance to verify current APIs before planning. Even for simple patches, wrong API usage costs more to fix than a quick doc check.
+
 ### Phase 2: Scope Assessment (Checkpoint)
 
 After research, evaluate whether this change fits the patch model:
@@ -183,7 +186,7 @@ The plan file follows this structure:
 - [feature-design path] — [Adds/Modifies/Removes]: [description]
 
 ## Design Approach
-[How the change will be implemented. Reference existing ADR/DES where applicable.]
+[How the change will be implemented. Reference existing ADR/DES where applicable. When involving library APIs, reference current documentation obtained via `katachi:research-docs`.]
 
 ### Key Decisions
 [Any decisions being made, with rationale. Reference existing ADR/DES.]

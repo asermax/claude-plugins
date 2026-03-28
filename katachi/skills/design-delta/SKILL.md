@@ -19,7 +19,7 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 ### Skills
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-delta` - Per-feature workflow
-- `superpowers:using-live-documentation` - Mandatory workflow for fetching current documentation
+- `katachi:research-docs` - Mandatory workflow for fetching current documentation
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta definitions
@@ -83,16 +83,17 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "⧗ Design
   - If NO: Check if UI component layer exists in design
   - Note which UI elements need wireframe documentation
 
-**External Research (Mandatory):**
+**External Research (Mandatory — No Exceptions):**
 
-Your training data is outdated. Current documentation is always more accurate.
+Your training data is outdated. Current documentation is always more accurate. This step is not optional even when you feel confident about a library.
 
 For each library, framework, or technical approach identified in the spec:
 
-1. **Dispatch documentation-searcher agents** for all libraries/frameworks involved:
-   - Provide library name, specific topic/feature, and what patterns you need
+1. **Search current documentation** for ALL libraries/frameworks involved, following the `katachi:research-docs` skill guidance:
+   - Search for specific topics/features and the patterns you need
    - Get current API signatures, recommended patterns, version-specific guidance
    - Check for deprecation notices or migration guides
+   - Search even for libraries you have used before in this session
 
 2. **Research alternative approaches** using WebSearch:
    - Query: "[problem domain] best practices [current year]"
@@ -111,6 +112,8 @@ For each library, framework, or technical approach identified in the spec:
 - What are the recommended patterns for our use case per current documentation?
 - What alternatives exist and why should we prefer one over another?
 - Are there newer, better approaches than what training data suggests?
+
+**Enforcement:** If your design involves ANY external library and you performed zero documentation searches, you have violated this workflow. Stop and follow the `katachi:research-docs` guidance before continuing.
 
 Build complete understanding without asking questions, but do not proceed to design until external research is complete.
 
@@ -252,6 +255,8 @@ If NOT a UI delta (no User Flow section, no UI components):
 | Why This Over Alternatives | Comparison based on current research, not training data assumptions |
 | Consequences | Trade-offs, maintenance implications |
 
+**If any technology choice lacks a Sources entry citing current documentation, the design is incomplete. Follow the `katachi:research-docs` guidance to fill the gap.**
+
 **Decision Points:** If you encounter choices requiring user input, use AskUserQuestion:
 - Multiple valid architectural approaches
 - Trade-offs between competing concerns (performance vs simplicity, etc.)
@@ -297,6 +302,7 @@ Review this delta design.
 
 ## Additional Review Criteria
 - Verify all technology choices cite current documentation sources
+- Verify that current documentation was searched for each library/framework in the design (zero searches = automatic failure)
 - Check that options were researched broadly (not just validating a pre-assumed choice)
 - Confirm research discovered current solutions, not just validated known libraries
 - Validate design decisions are supported by up-to-date research, not training data

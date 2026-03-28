@@ -19,6 +19,7 @@ Delta ID: $ARGUMENTS (e.g., "DLT-001")
 ### Skills
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-delta` - Per-feature workflow
+- `katachi:research-docs` - Documentation research for correct API usage
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta definitions
@@ -58,7 +59,7 @@ The implementation plan is organized into batches — scoped groups of steps wit
 Each batch lists the documents, code files, and research pointers it needs. These are a **starting point, not a contract**:
 - **Read** the listed entries before starting the batch
 - **Adapt as you go**: remove entries that turn out to be irrelevant, add files you discover during implementation, update references if earlier batches produced different output than planned
-- **Follow research pointers**: when a context entry points to library docs or an existing pattern, look it up. This is how you learn what you need to implement correctly
+- **Follow research pointers**: when a context entry points to library docs or an existing pattern, look it up. For any library or framework referenced in the batch, follow the `katachi:research-docs` skill guidance to verify current API signatures before writing code — do not rely on training data for library APIs
 - **Write findings back**: when research reveals important information (API behavior, library patterns, design constraints), write those findings to the design doc (`docs/delta-designs/$ARGUMENTS.md`) for later reconciliation. This is critical — implementation knowledge must flow back to documentation
 
 ### Batch status tracking
@@ -94,7 +95,7 @@ For each batch in dependency order:
 
 1. **Mark batch** as `⧗ Implementing` in the plan file
 2. **Load context**: Read the batch's Context & Research entries. For ADRs/DES, read the full documents, not just indexes
-3. **Research**: Follow research pointers — look things up, investigate patterns, read library docs. Write important findings to the design doc
+3. **Research**: Follow research pointers — for any libraries/frameworks involved, follow the `katachi:research-docs` skill guidance to verify current APIs. Investigate patterns. Write important findings to the design doc
 4. **Implement steps**: Work through the batch's steps autonomously
    - Follow relevant decisions (ADRs/DES)
    - Add code comments referencing decisions when the choice would be unclear without context (`// See ADR-003 for why we use X instead of Y`)

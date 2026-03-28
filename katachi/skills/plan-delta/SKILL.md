@@ -19,6 +19,7 @@ Delta ID from: $ARGUMENTS (e.g., "DLT-001")
 ### Skills
 - `katachi:framework-core` - Workflow principles
 - `katachi:working-on-delta` - Per-feature workflow
+- `katachi:research-docs` - Awareness of documentation research workflow
 
 ### Delta inventory
 - `docs/planning/DELTAS.md` - Delta definitions
@@ -82,7 +83,7 @@ Identify natural implementation boundaries and define all batches. Present them 
 
 For each batch, define:
 - **Scope name**: What part of the feature it covers (model layer, service logic, API endpoint, frontend, etc.)
-- **Context & Research list**: Specific entries with reasoning — project docs (spec sections, design sections, ADRs, DES), code files to read, and external research pointers (library docs, existing patterns to investigate). Each entry must explain *why* it's needed for this batch.
+- **Context & Research list**: Specific entries with reasoning — project docs (spec sections, design sections, ADRs, DES), code files to read, and external research pointers (library docs, existing patterns to investigate). Each entry must explain *why* it's needed for this batch. When a batch involves external libraries or frameworks, include a research pointer directing the implementing agent to follow the `katachi:research-docs` skill guidance for those libraries to verify current APIs before writing code.
 - **Out of scope**: What this batch explicitly does not cover
 - **Dependencies**: Which batches must complete before this one starts (`Depends on:` field)
 

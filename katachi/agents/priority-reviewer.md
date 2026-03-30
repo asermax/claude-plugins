@@ -21,11 +21,11 @@ You will receive:
 Check for high-priority deltas blocked by low-priority dependencies.
 
 **Issue pattern:**
-- DLT-A has priority 1 (Critical)
-- DLT-A depends on DLT-B
-- DLT-B has priority 4 (Low)
+- Delta A has priority 1 (Critical)
+- Delta A depends on Delta B
+- Delta B has priority 4 (Low)
 
-**Why it's a problem:** The critical delta can't start until the low-priority delta is done. Either raise DLT-B's priority or lower DLT-A's priority.
+**Why it's a problem:** The critical delta can't start until the low-priority delta is done. Either raise Delta B's priority or lower Delta A's priority.
 
 **Severity thresholds:**
 - Critical (1) blocked by Low (4) or Backlog (5) → **Critical issue**
@@ -37,10 +37,10 @@ Check for high-priority deltas blocked by low-priority dependencies.
 Identify deltas that block many others but have low priority.
 
 **Issue pattern:**
-- DLT-X blocks 5+ other deltas
-- DLT-X has priority 3 or lower
+- A delta blocks 5+ other deltas
+- That delta has priority 3 or lower
 
-**Why it's a problem:** Completing DLT-X would unblock significant work. Consider raising its priority.
+**Why it's a problem:** Completing it would unblock significant work. Consider raising its priority.
 
 **Thresholds:**
 - Blocks 5+ deltas, priority 4-5 → **Critical issue**
@@ -89,30 +89,30 @@ Assess the overall priority distribution for balance.
 ### Priority Inversions
 [List any critical blocking issues]
 
-- **DLT-015** (1/Critical) depends on **DLT-003** (4/Low)
-  → Recommendation: Raise DLT-003 to at least 2 (High)
+- **User authentication (DLT-015)** (1/Critical) depends on **Email validation (DLT-003)** (4/Low)
+  → Recommendation: Raise Email validation (DLT-003) to at least 2 (High)
   → Rationale: Cannot start critical work until low-priority dependency completes
 
 ### Bottleneck Alerts
 [List any high-impact bottlenecks]
 
-- **DLT-008** blocks 5 deltas but has priority 3 (Medium)
+- **API refactor (DLT-008)** blocks 5 deltas but has priority 3 (Medium)
   → Recommendation: Consider priority 2 (High) to unblock others
-  → Blocked deltas: DLT-010, DLT-011, DLT-012, DLT-015, DLT-016
+  → Blocked deltas: Cache layer (DLT-010), Rate limiting (DLT-011), Error handling (DLT-012), User authentication (DLT-015), Webhook system (DLT-016)
 
 ---
 
 ## Warnings
 
 ### Moderate Inversions
-- DLT-X (2/High) blocked by DLT-Y (3/Medium)
-  → Consider raising DLT-Y to 2 (High)
+- Session management (DLT-007) (2/High) blocked by Config loader (DLT-004) (3/Medium)
+  → Consider raising Config loader (DLT-004) to 2 (High)
 
 ### Goal Misalignment
 [If user goals provided]
 - User mentioned focus on "authentication" but:
-  - AUTH-001 is priority 4 (Low)
-  - AUTH-002 is priority 5 (Backlog)
+  - Login flow (DLT-018) is priority 4 (Low)
+  - Token refresh (DLT-019) is priority 5 (Backlog)
   → Consider raising auth-related deltas
 
 ---
@@ -120,7 +120,7 @@ Assess the overall priority distribution for balance.
 ## Notes
 
 ### Unreviewed Deltas
-- DLT-001, DLT-002, DLT-005 still at default priority
+- UI polish (DLT-001), Advanced analytics (DLT-002), Logging pipeline (DLT-005) still at default priority
   → Consider explicit assignment during review
 
 ### Distribution
@@ -138,6 +138,7 @@ Assess the overall priority distribution for balance.
 
 ## Analysis Guidelines
 
+- **Use titles**: Always refer to deltas by their title with the ID in parentheses (e.g., "User authentication (DLT-015)"), never by bare ID
 - **Be specific**: Name the deltas involved, show the priority numbers
 - **Be actionable**: Every issue should have a concrete recommendation
 - **Be proportionate**: Critical issues first, then warnings, then notes

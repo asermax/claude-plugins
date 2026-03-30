@@ -52,7 +52,7 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py ready
 
 ### 2. Present Initial Analysis
 
-Summarize the current state for the user:
+Summarize the current state for the user. Always refer to deltas by their title with the ID in parentheses — never by bare ID.
 
 ```
 "Here's your current delta landscape:
@@ -70,8 +70,8 @@ Summarize the current state for the user:
 - Backlog (5): N deltas
 
 **Observations:**
-- [High-impact blockers: deltas that block many others]
-- [Deltas without explicit priority: still at default 3]
+- [High-impact blockers: deltas that block many others, referenced by title (ID)]
+- [Deltas without explicit priority: still at default 3, referenced by title (ID)]
 - [Any obvious inconsistencies]
 
 Let's discuss your current priorities."
@@ -103,20 +103,20 @@ Based on the conversation, draft a priority proposal:
 "Based on our discussion, I suggest:
 
 **Critical (1):**
-- DLT-015: User authentication - blocks 5 other deltas, aligns with your deadline
+- User authentication (DLT-015) - blocks 5 other deltas, aligns with your deadline
 
 **High (2):**
-- DLT-008: API refactor - needed before auth, currently blocking
-- DLT-012: Error handling - you mentioned reliability focus
+- API refactor (DLT-008) - needed before auth, currently blocking
+- Error handling (DLT-012) - you mentioned reliability focus
 
 **Medium (3):** (unchanged)
-- DLT-003, DLT-007
+- Email validation (DLT-003), Session management (DLT-007)
 
 **Low (4):**
-- DLT-001: UI polish - nice to have, no urgency
+- UI polish (DLT-001) - nice to have, no urgency
 
 **Backlog (5):**
-- DLT-002: Advanced analytics - explicitly deferred
+- Advanced analytics (DLT-002) - explicitly deferred
 
 Does this align with your thinking? Any adjustments?"
 ```
@@ -176,11 +176,11 @@ Present the final state:
 "Priorities updated:
 
 **Changes made:**
-- DLT-015: 3 → 1 (Critical)
-- DLT-008: 3 → 2 (High)
-- DLT-012: 3 → 2 (High)
-- DLT-001: 3 → 4 (Low)
-- DLT-002: 3 → 5 (Backlog)
+- User authentication (DLT-015): 3 → 1 (Critical)
+- API refactor (DLT-008): 3 → 2 (High)
+- Error handling (DLT-012): 3 → 2 (High)
+- UI polish (DLT-001): 3 → 4 (Low)
+- Advanced analytics (DLT-002): 3 → 5 (Backlog)
 
 **Suggested next delta:**
 [Run `next` command and show result]
@@ -198,6 +198,7 @@ Present the final state:
 - Let the user's answers guide the conversation
 - Don't go delta-by-delta; work at a strategic level
 - Agent proposes, user confirms
+- Always refer to deltas by their title with the ID in parentheses (e.g., "User authentication (DLT-015)"), never by bare ID
 
 **Focus on understanding context:**
 - Goals and deadlines matter more than individual deltas

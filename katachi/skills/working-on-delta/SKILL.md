@@ -16,6 +16,7 @@ Load this skill when executing:
 - `/katachi:design-delta <ID>`
 - `/katachi:plan-delta <ID>`
 - `/katachi:implement-delta <ID>`
+- `/katachi:review-delta <ID>`
 - `/katachi:retrofit-design <ID>` (retrofit mode)
 
 ## Key References
@@ -110,7 +111,7 @@ Each command dispatches its reviewer agent:
 | spec-delta | `katachi:spec-reviewer` | Delta description, completed spec |
 | design-delta | `katachi:design-reviewer` | Spec, design, ADR/DES summaries |
 | plan-delta | `katachi:plan-reviewer` | Spec, design, plan, ADR/DES summaries |
-| implement-delta | `katachi:code-reviewer` | Spec, design, plan, code, ADR/DES |
+| review-delta | `katachi:code-reviewer` | Spec, design, plan, code, ADR/DES |
 | retrofit-design | `katachi:codebase-analyzer`, `katachi:design-reviewer` | Spec, implementation code, ADR/DES indexes |
 
 Dispatch pattern:
@@ -144,45 +145,13 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "✓ Plan"
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set FEATURE-ID "✓ Implementation"
 ```
 
-## Implementation Specifics
+## Command Summary
 
-### For implement-delta
-
-The implementation workflow is more autonomous:
-
-1. **Read all documentation silently**
-   - Plan, spec, design
-   - Full ADR/DES documents (not just indexes)
-   - Dependency code
-
-2. **Implement all steps autonomously**
-   - Follow plan without asking questions
-   - Documentation is source of truth
-   - Verify each step works before proceeding
-
-3. **Validate with code-reviewer**
-   - Dispatch agent after implementation
-   - Fix ALL issues automatically
-   - Re-run tests after fixes
-
-4. **Present for user review**
-   - Show what was implemented
-   - Highlight any deviations
-   - Note emergent patterns
-
-5. **Iterate based on feedback**
-   - Apply user corrections
-   - Update documents if implementation differs
-
-6. **Surface patterns for DES**
-   - Present discovered patterns
-   - User selects which to document
-
-## Pattern Detection
-
-During implementation, watch for:
-
-- **Repeated code structures** → Candidate for DES
-- **Cross-cutting concerns** → Document in DES
-- **Emerging conventions** → Standardize in DES
-- **Better approaches found** → Update existing DES
+| Command | Description | Reviewer |
+|---------|-------------|----------|
+| `spec-delta` | Write delta specification (requirements, acceptance criteria) | `spec-reviewer` |
+| `design-delta` | Write delta design (approach, rationale, key decisions) | `design-reviewer` |
+| `plan-delta` | Write implementation plan (batches with steps and context) | `plan-reviewer` |
+| `implement-delta` | Implement all batches autonomously, then present for user review | — |
+| `review-delta` | Review-loop: dispatch code-reviewer, fix issues, repeat until PASS | `code-reviewer` |
+| `retrofit-design` | Retrofit existing code with design documentation | `codebase-analyzer`, `design-reviewer` |

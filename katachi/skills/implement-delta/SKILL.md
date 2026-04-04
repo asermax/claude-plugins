@@ -118,48 +118,7 @@ After all batches are done:
 - Perform manual checks against spec
 - Ensure all acceptance criteria are met
 
-### 3. External Validation
-
-Dispatch the code-reviewer agent:
-
-```python
-Task(
-    subagent_type="katachi:code-reviewer",
-    prompt=f"""
-Review this implementation.
-
-## Delta Spec
-{spec_content}
-
-## Delta Design
-{design_content}
-
-## Implementation Plan
-{plan_content}
-
-## Implemented Code
-{code_diff_or_files}
-
-## Relevant ADR/DES Documents
-{adr_des_content}
-"""
-)
-```
-
-### 4. Fix All Issues Found by Agent
-
-Automatically address ALL issues identified in validation:
-- Missing acceptance criteria coverage
-- Design misalignment
-- Pattern violations
-- Code quality issues
-- Missing decision references
-- Missing documentation updates
-
-Re-run tests after fixes.
-Do NOT ask user — fix everything autonomously.
-
-### 5. Present for User Review
+### 3. Present for User Review
 
 Show complete implementation to user:
 - Summarize what was implemented
@@ -169,30 +128,14 @@ Show complete implementation to user:
 
 Invite feedback: "What needs adjustment in this implementation?"
 
-### 6. Iterate Based on User Feedback
+### 4. Iterate Based on User Feedback
 
 Apply user corrections or changes.
 Re-test after changes.
 **When user rejects code changes:** Update documents consistently.
 Repeat until user approves.
 
-### 7. Surface Patterns for DES Consideration
-
-Present discovered patterns to user for selection.
-
-**Suggest new DES if:**
-- Same approach used 2+ times in this delta
-- Solves common problem that will recur
-- Pattern should be consistent across codebase
-
-**Suggest updating existing DES if:**
-- Found better approach than documented
-- Discovered exception case or limitation
-
-User selects which patterns to document.
-Create/update DES documents as approved.
-
-### 8. Finalize
+### 5. Finalize
 
 Update status:
 ```bash
@@ -274,7 +217,7 @@ Once all batches are complete:
 - Run linting and type checking across the whole project
 - Fix any integration issues between agent outputs
 
-Then follow steps 3-8 from Sequential Execution (external validation, fix issues, present to user, iterate, surface patterns, finalize).
+Then follow steps 3-5 from Sequential Execution (present to user, iterate, finalize).
 
 ---
 
@@ -302,9 +245,6 @@ Then follow steps 3-8 from Sequential Execution (external validation, fix issues
 - For each batch: load context, research, implement steps, mark done
 - If independent batches exist: spawn parallel agents per batch
 - After all batches: verify acceptance criteria
-- Run code-reviewer validation
-- Fix ALL issues automatically
 - Present to user for final review
 - Iterate based on feedback
-- Surface patterns for DES
 - Commit when approved

@@ -1,6 +1,6 @@
 ---
 name: using-code-directives
-description: Use when reading or editing files that contain @implement, @docs, @refactor, @test, or @todo directive comments - handle directives systematically with appropriate post-action transformations
+description: Use when reading or editing files that contain @implement, @docs, @refactor, @test, or @todo directive comments. Before acting on a directive, check if you have loaded this skill for the handling procedure. If not, load it first.
 ---
 
 # Using Code Directives
@@ -94,7 +94,7 @@ Follow the procedure in the reference file.
 
 ### 5. Apply Post-Action Transformation
 
-**Transform or remove the directive comment based on context:**
+After executing a directive, check if the original directive comment is still in the file. If it is, transform it (to a docblock for @implement on functions) or remove it (for standalone/other directives) before moving on.
 
 See "Post-Action Rules" section below for quick reference.
 

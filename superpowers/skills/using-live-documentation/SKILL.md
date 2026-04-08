@@ -1,6 +1,6 @@
 ---
 name: using-live-documentation
-description: Use BEFORE implementing, writing, configuring, or setting up ANY feature involving libraries, frameworks, or complex APIs - even before reading existing code. Fetches current documentation to ensure correct usage. Triggers on third-party libraries (such as react-query, FastAPI, Django, pytest), complex standard library modules (such as subprocess, streams, pathlib, logging), and "how to" questions about library usage. Do NOT use for trivial built-ins (such as dict.get, Array.map) or pure algorithms. Load this skill first to receive guidance on finding current documentation when implementing features, exploring code, or answering library-related questions.
+description: Before implementing, writing, configuring, or setting up anything involving libraries, frameworks, or complex APIs, check if you have looked up current documentation for them. If not, load this skill first. Triggers on third-party libraries (such as react-query, FastAPI, Django, pytest), complex standard library modules (such as subprocess, streams, pathlib, logging), and "how to" questions about library usage. Do NOT use for trivial built-ins (such as dict.get, Array.map) or pure algorithms.
 ---
 
 # Using Live Documentation
@@ -9,7 +9,7 @@ description: Use BEFORE implementing, writing, configuring, or setting up ANY fe
 
 **Your training data is outdated. Current documentation is always more accurate.**
 
-When implementing features, answering questions, or debugging issues involving libraries/frameworks/tools, you MUST fetch current documentation using Context7 before writing code or making recommendations.
+Before writing, configuring, or recommending anything involving a library or framework, check if you used the documentation-searcher to get current information on it. If not, dispatch it first.
 
 ## Core Principle
 
@@ -19,13 +19,13 @@ LLM training data becomes stale the moment training ends. Libraries evolve:
 - New features get added
 - Old patterns get deprecated
 
-**Never implement from memory. Always verify with current docs.**
+Before implementing anything involving a library or framework, check if you dispatched the documentation-searcher agent for it already. If not, dispatch it before writing code.
 
 ## Mandatory Workflow
 
 ### Step 1: Recognize the Trigger
 
-You MUST use documentation search when you encounter ANY of these:
+Use documentation search when you encounter ANY of these:
 
 - Library name mentioned (react-query, fastapi, pydantic, express, etc.)
 - Framework name mentioned (Next.js, Django, React, Vue, etc.)
@@ -74,12 +74,12 @@ The agent will search Context7 documentation and provide a focused synthesis wit
 4. Note any differences from what you expected
 5. If gaps exist, dispatch another search or use WebSearch
 
-**Never:**
-- Mix training data patterns with doc patterns
-- Assume API names/signatures
-- Skip documentation check "to save time"
-- Implement first, verify later
-- Use Context7 MCP tools directly (always dispatch documentation-searcher agent)
+**Avoid:**
+- Mixing training data patterns with doc patterns
+- Assuming API names/signatures
+- Skipping documentation check "to save time"
+- Implementing first, verifying later
+- Using Context7 MCP tools directly — to look up documentation, use the documentation-searcher agent, not Context7 directly
 
 ## Red Flags - STOP
 
@@ -165,10 +165,10 @@ Before claiming you've implemented something correctly, verify:
 - Use WebSearch for supplementary info
 - Ask human for clarification
 
-**Never:**
-- Use Context7 MCP tools directly
-- Ship uncertain implementation
-- Skip documentation search to "save time"
+**Avoid:**
+- Using Context7 MCP tools directly — use documentation-searcher agent instead
+- Shipping uncertain implementations
+- Skipping documentation search to "save time"
 
 ## Common Mistakes
 
@@ -230,12 +230,8 @@ Before claiming you've implemented something correctly, verify:
 5. Implement using verified patterns from synthesis
 6. Cite documentation source
 
-**Critical rules:**
-- **NEVER use Context7 MCP tools directly**
-- **ALWAYS dispatch documentation-searcher agent for documentation**
-- **Context savings: 10,000-20,000 tokens per search**
-- **Your training data is always outdated**
-- **Current documentation is always more accurate**
-- **Dispatch agent first, write code second**
-
-**This is not optional. This is mandatory.**
+**Before implementing anything involving a library or framework:**
+- Check if you dispatched documentation-searcher for it — if not, dispatch it first
+- To look up documentation, use the documentation-searcher agent, not Context7 directly
+- Context savings: 10,000-20,000 tokens per search
+- Your training data is always outdated — current documentation is always more accurate

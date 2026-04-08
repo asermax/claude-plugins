@@ -9,7 +9,7 @@ description: Use when starting any task in a project - keeps CLAUDE.md instructi
 
 **CLAUDE.md is your project's instruction file for Claude.** It must stay current with the project's high-level state.
 
-**Core principle:** Add reflection todo BEFORE starting work, or you WILL forget to update CLAUDE.md later.
+**Core principle:** Before starting implementation, check if you created the "Reflect on changes and update CLAUDE.md" todo. If not, create it now — then start working.
 
 ## Mandatory Workflow
 
@@ -27,23 +27,11 @@ Before ANY task, check if CLAUDE.md exists in the project root.
 
 ### 2. Add Reflection Todo BEFORE Work
 
-**Before starting ANY implementation task, add this todo:**
+Before starting any implementation task, check if you created the "Reflect on changes and update CLAUDE.md" todo. If not, create it now at the END of your todo list — then start working.
 
-```
-"Reflect on changes and update CLAUDE.md"
-```
+**Why at the end:** It runs AFTER all implementation work completes, so you update documentation based on actual changes.
 
-**ALWAYS add this todo AT THE END of your todo list, before researching, coding, or planning.**
-
-**Important:** This todo goes LAST so it runs AFTER all implementation work completes.
-
-**No exceptions:**
-- Not "later if needed"
-- Not "existing documentation todo covers it"
-- Not "unnecessary overhead"
-- Not "after I see what changes"
-
-**Why:** "Later" means "forgotten". Adding the todo takes 10 seconds. Forgetting to update CLAUDE.md wastes hours of future work. Placing it at the end ensures you update documentation after completing the actual work.
+**Why before starting:** "Later" means "forgotten". Adding the todo takes 10 seconds. Forgetting to update CLAUDE.md wastes hours of future work.
 
 ### 3. Process Reflection Todo
 

@@ -32,6 +32,14 @@ First, determine the delta type from its name and description:
 
 ## Validation Criteria
 
+### Overlap Check (Full Inventory Mode Only)
+
+When validating a full inventory (Mode 1), check whether any two deltas have substantially overlapping scope. Compare delta names and descriptions looking for pairs that deliver the same core capability or make the same change. Only flag genuine duplication — not deltas that merely share a domain or broad area.
+
+For each overlapping pair found, recommend either:
+- **Merge**: Combine into one delta with broader but still atomic scope
+- **Clarify boundaries**: If they are intentionally separate, each description should make the distinction explicit
+
 ### For Feature Deltas
 
 #### 1. Atomicity Check
@@ -77,6 +85,13 @@ First, determine the delta type from its name and description:
 
 ## Common Issues
 
+### Overlap Problems
+
+#### Duplicates
+- **Same capability, two deltas**: "User Login" and "Authenticate user via email" are the same delta — merge them
+- **Subset overlap**: "Export report as PDF" and "Export report" — clarify whether these are distinct or one subsumes the other
+- **NOT overlap**: "User Login" and "User Registration" share the auth domain but are distinct capabilities — do not flag
+
 ### Feature Delta Problems
 
 #### Atomicity
@@ -118,7 +133,14 @@ First, determine the delta type from its name and description:
 ## Assessment: [PASS | NEEDS_WORK]
 
 ## Summary
-[1-2 sentence summary: X deltas ready, Y need work]
+[1-2 sentence summary: X deltas ready, Y need work, Z overlapping pairs]
+
+## Overlapping Deltas
+(Only present if overlaps detected)
+- **DLT-XXX & DLT-YYY**: [Brief explanation of overlap]
+  - Recommendation: [Merge | Clarify boundaries]
+- **DLT-AAA & DLT-BBB**: [Brief explanation of overlap]
+  - Recommendation: [Merge | Clarify boundaries]
 
 ## Issues Found
 

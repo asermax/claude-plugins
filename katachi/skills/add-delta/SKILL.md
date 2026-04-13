@@ -61,6 +61,8 @@ Read DELTAS.md to understand:
 - Next available ID number
 - Complexity patterns for similar deltas
 
+Compare the user's delta description against each existing delta's name and description. Look for deltas whose core scope — the capability being added or the change being made — substantially overlaps with what the user described. Only flag genuine duplication (same capability/change), not incidental overlap (same broad area or domain). Record any matches for the next step.
+
 #### Codebase and documentation
 
 Use the Explore agent to research the codebase and existing documentation relevant to the delta description. The goal is to understand the current state of the system in the areas the delta would affect:
@@ -72,6 +74,19 @@ Use the Explore agent to research the codebase and existing documentation releva
 This research informs the complexity assessment, dependency identification, and delta description quality.
 
 ### 3. Propose Delta Details
+
+If the overlap check in Step 2 found matching deltas, present them, explain why you think they are similar, and ask the user to confirm how to proceed:
+```
+"This sounds similar to an existing delta:
+
+- **DLT-NNN**: [name] — [description]
+
+[Explain why you think this matches the user's request]
+
+What would you like to do?"
+```
+- If the user confirms it's the same delta and describes what to change: use the existing delta as a base and draft a proposal incorporating the new information. Continue through Steps 4–6 as normal (validation, iteration, update).
+- If the user explains how it's different: use their explanation to refine the proposal and continue below.
 
 Based on the description, codebase research, and existing patterns, draft a complete proposal:
 
@@ -161,7 +176,9 @@ Suggest which existing deltas this likely depends on, with rationale.
 
 ### 6. Update DELTAS.md
 
-Add new delta entry:
+If updating an existing delta (user chose the update path in Step 3), replace the existing entry with the updated version — only the fields that changed should differ. Do not change the delta ID or create a new entry.
+
+Otherwise, add a new delta entry:
 
 ```markdown
 ### DLT-NNN: Delta name

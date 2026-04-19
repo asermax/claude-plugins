@@ -339,9 +339,13 @@ Implement the change following the approved plan:
 
 Use scratchpad to track progress, issues encountered, and deviations from plan.
 
-### Phase 6: Code Validation
+### Phase 6: Code Validation (Review Loop)
 
-Dispatch the code-reviewer agent to validate the implementation:
+Dispatch the code-reviewer agent in a review loop. Repeat until the reviewer returns `PASS`:
+
+**Loop:**
+
+1. Dispatch `katachi:code-reviewer` to validate the implementation:
 
 ```python
 Task(
@@ -367,10 +371,15 @@ Review this implementation.
 )
 ```
 
-Auto-fix ALL issues identified by the reviewer. Re-run tests after fixes.
-Do NOT ask user about fixes — fix everything autonomously.
+2. If assessment is `NEEDS_WORK`, auto-fix ALL issues identified:
+   - Do NOT ask user about fixes — fix everything autonomously
+   - Re-run tests, linting, and type checking
+   - Fix any new issues introduced by fixes
+   - Loop back to step 1 with updated code
 
-Present the validated implementation to the user:
+3. When reviewer returns `PASS`, exit loop
+
+After the loop exits, present the validated implementation to the user:
 - Summarize what was implemented
 - Highlight any deviations from plan (with rationale)
 - Note any emergent patterns detected

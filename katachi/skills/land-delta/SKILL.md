@@ -1,9 +1,9 @@
 ---
 name: land-delta
 description: |
-  Prepare a reconciled delta branch for merging into main. Merges main into the
-  delta branch, reconciles code and documentation with changes introduced on main,
-  and validates conflicting areas with reviewer agents.
+  Prepare a reconciled delta branch for merging into main. Rebases the delta
+  branch onto main, reconciles code and documentation with changes introduced
+  on main, and validates conflicting areas with reviewer agents.
 argument-hint: "[DELTA-ID]"
 ---
 
@@ -67,6 +67,8 @@ Use `/tmp/land-$ARGUMENTS-state.md` for state tracking.
 Track:
 - Delta ID and branch name
 - Main branch name
+- Pre-rebase HEAD (backup reference)
+- Original merge base (captured before rebase)
 - Conflicts encountered (categorized by: code, feature-specs, feature-designs, decisions)
 - Resolution decisions made
 - Test/lint/typecheck results
@@ -95,22 +97,23 @@ Track:
    git fetch origin <main>
    ```
 
-7. **Capture pre-merge references** (these MUST be captured before the merge in Phase 2, as they become invalid after):
-   - **Merge base**: `git merge-base HEAD origin/<main>` — save to scratchpad as `$MERGE_BASE`
-   - **Delta's own commits**: `git log origin/<main>..HEAD --oneline` — save to scratchpad as the delta summary
-   - **Main's changes**: `git log $MERGE_BASE..origin/<main> --oneline`
-   - **Main's doc changes**: `git diff $MERGE_BASE..origin/<main> -- docs/`
+7. **Capture pre-rebase references** (these MUST be captured before the rebase in Phase 2, as rebase rewrites HEAD's history and the original merge base relationship is lost):
+   - **Pre-rebase HEAD**: `git rev-parse HEAD` — save to scratchpad as `$PRE_REBASE_HEAD` (safety backup in case rebase needs to be unwound)
+   - **Original merge base**: `git merge-base HEAD origin/<main>` — save to scratchpad as `$ORIGINAL_BASE`
+   - **Delta's own commits**: `git log $ORIGINAL_BASE..HEAD --oneline` — save to scratchpad as the delta summary
+   - **Main's changes**: `git log $ORIGINAL_BASE..origin/<main> --oneline`
+   - **Main's doc changes**: `git diff $ORIGINAL_BASE..origin/<main> -- docs/`
    Note which feature areas main changed, and whether new ADRs/DES were added.
 
-### Phase 2: Merge Main into Delta Branch (Interactive)
+### Phase 2: Rebase Delta Branch onto Main (Interactive)
 
-Merge main into the delta branch to incorporate its changes:
+Rebase the delta branch onto main to replay its commits on top of main's latest state:
 
 ```bash
-git merge origin/<main>
+git rebase origin/<main>
 ```
 
-**Track conflict categories** — for each conflicting file, classify it:
+**Track conflict categories** — for each conflicting file encountered during the rebase, classify it:
 - **Code**: Source code, tests, configuration files
 - **Feature specs**: Files under `docs/feature-specs/`
 - **Feature designs**: Files under `docs/feature-designs/`
@@ -123,30 +126,38 @@ git merge origin/<main>
 
 **If conflicts arise:**
 - Note `conflicts_occurred = true` and record which categories had conflicts
-- For each conflicting file:
-  - Read the conflict markers
+- Rebase pauses at each conflicting commit. For each paused commit:
+  - Read the conflict markers in the affected files
   - **Auto-resolve** simple conflicts:
     - Non-overlapping edits that git flagged conservatively
     - Whitespace or formatting-only changes
     - Import ordering differences
     - Additive changes from both sides (both added content to the same section)
   - **Ask the user** about complex conflicts:
-    - Show what the delta changed vs what main changed
+    - Show what the delta commit changed vs what main changed
     - Explain the semantic meaning of each side
     - Present resolution options (accept delta's version, accept main's version, propose a merged version)
-- After all conflicts resolved:
-  ```bash
-  git add .
-  git commit
-  ```
+  - After resolving the current commit's conflicts:
+    ```bash
+    git add .
+    git rebase --continue
+    ```
+  - If a commit's changes become empty after resolution (main already incorporated them):
+    ```bash
+    git rebase --skip
+    ```
 
-**If merge becomes untenable:**
-- Offer `git merge --abort`
-- Discuss alternatives with the user
+**If the same conflict recurs across multiple commits:**
+- Note this in the scratchpad — it often indicates a commit sequence that would benefit from squashing before rebase
+- Offer the user the option to abort and re-attempt with `git rebase -i origin/<main>` to squash related commits first
+
+**If rebase becomes untenable:**
+- Offer `git rebase --abort` to restore the pre-rebase state
+- Discuss alternatives with the user (e.g., interactive rebase with squashing, or falling back to a merge approach)
 
 ### Phase 3: Code Reconciliation (Silent with checkpoint)
 
-Ensure the branch passes all quality checks with zero failures before it can be merged. This is a clean-slate gate — fix everything, including issues that pre-date the delta or were already present on main:
+Ensure the branch passes all quality checks with zero failures before it can be landed. This is a clean-slate gate — fix everything, including issues that pre-date the delta or were already present on main:
 
 1. **Run test suite**
 2. **Run linting**
@@ -155,8 +166,8 @@ Ensure the branch passes all quality checks with zero failures before it can be 
 **If all pass:** Proceed silently.
 
 **If failures:**
-- Fix ALL failing tests, lints, and type errors — including pre-existing issues that were already on the branch or inherited from main. The merge is the gate: nothing with failing checks gets merged, regardless of when or where the failure was introduced.
-- **Pay special attention to merge-related semantic conflicts**: Failures caused by interactions between the delta's changes and main's changes are the highest priority. These may indicate deeper integration issues that need careful analysis (e.g., both sides changed related logic in incompatible ways, renamed references, changed APIs).
+- Fix ALL failing tests, lints, and type errors — including pre-existing issues that were already on the branch or inherited from main. The landing is the gate: nothing with failing checks gets landed, regardless of when or where the failure was introduced.
+- **Pay special attention to rebase-related semantic conflicts**: Failures caused by interactions between the delta's changes and main's changes are the highest priority. These may indicate deeper integration issues that need careful analysis (e.g., both sides changed related logic in incompatible ways, renamed references, changed APIs).
 - **Auto-fix** straightforward issues:
   - Import path changes due to main's refactoring
   - Renamed references (functions, variables, types)
@@ -174,14 +185,14 @@ Ensure the branch passes all quality checks with zero failures before it can be 
 
 Compare how both the delta and main changed documentation:
 
-1. **Delta's documentation changes** (use merge base captured in Phase 1):
+1. **Delta's documentation changes** (after rebase, delta's commits sit on top of main):
    ```bash
-   git diff $MERGE_BASE..HEAD -- docs/feature-specs/ docs/feature-designs/
+   git diff origin/<main>..HEAD -- docs/feature-specs/ docs/feature-designs/
    ```
 
-2. **Main's documentation changes** (use merge base captured in Phase 1):
+2. **Main's documentation changes** (use original base captured in Phase 1):
    ```bash
-   git diff $MERGE_BASE..origin/<main> -- docs/feature-specs/ docs/feature-designs/ docs/architecture/ docs/design/
+   git diff $ORIGINAL_BASE..origin/<main> -- docs/feature-specs/ docs/feature-designs/ docs/architecture/ docs/design/
    ```
 
 **Check for:**
@@ -190,7 +201,7 @@ Compare how both the delta and main changed documentation:
 
 2. **New ADRs/DES on main**: Check if main added ADRs or DES patterns that weren't present when the delta was being worked on. Cross-reference against the delta's feature area.
 
-3. **Feature docs deleted on main**: If main deleted feature docs that the delta updated, the merge would have surfaced this as a conflict. If not caught in merge, note as informational.
+3. **Feature docs deleted on main**: If main deleted feature docs that the delta updated, the rebase would have surfaced this as a conflict. If not caught during rebase, note as informational.
 
 4. **New feature docs on main**: Check for overlap with the delta's reconciled documentation.
 
@@ -205,7 +216,7 @@ Compare how both the delta and main changed documentation:
 
 ### Phase 5: Targeted Validation (Silent, only if conflicts occurred)
 
-**Skip this phase entirely if `conflicts_occurred = false`** — the delta was already validated during implementation and reconciliation, and a clean merge means no integration risks.
+**Skip this phase entirely if `conflicts_occurred = false`** — the delta was already validated during implementation and reconciliation, and a clean rebase means no integration risks.
 
 If conflicts occurred, dispatch **only the reviewers relevant to the conflicting categories**. Run applicable reviewers in parallel.
 
@@ -215,7 +226,7 @@ If conflicts occurred, dispatch **only the reviewers relevant to the conflicting
 Task(
     subagent_type="katachi:code-reviewer",
     prompt=f"""
-Review this delta's code after merging main's changes.
+Review this delta's code after rebasing onto main.
 Focus specifically on INTEGRATION concerns:
 
 ## Delta Summary
@@ -224,10 +235,10 @@ Focus specifically on INTEGRATION concerns:
 ## Changes introduced by main since delta branched
 {main_changes_summary}
 
-## Merge conflict files and resolutions
+## Rebase conflict files and resolutions
 {conflict_resolutions}
 
-## Current code diff (delta vs main after merge)
+## Current code diff (delta vs main after rebase)
 {code_diff}
 
 ## Relevant ADR/DES Documents
@@ -248,7 +259,7 @@ Focus on:
 Task(
     subagent_type="katachi:spec-reviewer",
     prompt=f"""
-Review feature specs after merging main's changes into delta branch.
+Review feature specs after rebasing delta branch onto main.
 
 ## Delta Summary
 {delta_summary_from_commits}
@@ -259,10 +270,10 @@ Review feature specs after merging main's changes into delta branch.
 ## Feature Spec Changes from Main
 {main_spec_changes}
 
-## Merged Feature Specs (current state)
+## Reconciled Feature Specs (current state)
 {current_feature_specs}
 
-Verify that merged feature specs:
+Verify that reconciled feature specs:
 - Remain internally consistent after incorporating both sets of changes
 - Acceptance criteria don't contradict each other
 - User stories are coherent
@@ -276,7 +287,7 @@ Verify that merged feature specs:
 Task(
     subagent_type="katachi:design-reviewer",
     prompt=f"""
-Review feature designs after merging main's changes into delta branch.
+Review feature designs after rebasing delta branch onto main.
 
 ## Delta Summary
 {delta_summary_from_commits}
@@ -287,7 +298,7 @@ Review feature designs after merging main's changes into delta branch.
 ## Feature Design Changes from Main
 {main_design_changes}
 
-## Merged Feature Designs (current state)
+## Reconciled Feature Designs (current state)
 {current_feature_designs}
 
 ## ADR Index
@@ -296,7 +307,7 @@ Review feature designs after merging main's changes into delta branch.
 ## DES Index
 {des_index}
 
-Verify that merged feature designs:
+Verify that reconciled feature designs:
 - Maintain design coherence after incorporating both sets of changes
 - Properly reference all relevant ADRs/DES (including any new ones from main)
 - Component interactions remain consistent
@@ -310,7 +321,7 @@ Verify that merged feature designs:
 Task(
     subagent_type="katachi:decision-reviewer",
     prompt=f"""
-Review decision consistency after merging main's changes into delta branch.
+Review decision consistency after rebasing delta branch onto main.
 
 ## Delta Summary
 {delta_summary_from_commits}
@@ -345,24 +356,30 @@ After all dispatched reviewers return:
 
 ### Phase 6: Summary
 
-Present the ready-to-merge summary:
+Present the ready-to-land summary, including a reminder about force-pushing since rebase rewrites history:
 
 ```
 "DLT-XXX is ready to merge into <main>.
 
-Merge from main: [Clean / Resolved N conflicts]
+Rebase onto main: [Clean / Resolved N conflicts across M commits]
 Checks: [All passing (zero failures) / Fixed N issues to reach zero failures (brief description)]
 Documentation: [Consistent / Reconciled N files]
-Validation: [Passed / Skipped (no conflicts)]"
+Validation: [Passed / Skipped (no conflicts)]
+
+Note: this branch was rebased. If it was previously pushed, you'll need to force-push with lease:
+  git push --force-with-lease origin <branch-name>"
 ```
 
 ## Edge Cases
 
-**No conflicts (clean merge):**
-Skip Phase 2 conflict resolution AND Phase 5 validation. Still run Phases 3-4 (code/doc reconciliation) since semantic issues can exist without merge conflicts.
+**No conflicts (clean rebase):**
+Skip Phase 2 conflict resolution AND Phase 5 validation. Still run Phases 3-4 (code/doc reconciliation) since semantic issues can exist without rebase conflicts.
 
-**Merge conflicts that can't be auto-resolved:**
-Present conflict context with both sides explained. Offer options: resolve manually, accept ours/theirs, or abort the merge entirely with `git merge --abort`.
+**Rebase conflicts that can't be auto-resolved:**
+Present conflict context with both sides explained. Offer options: resolve manually, accept ours/theirs, skip the commit if already incorporated on main, or abort the rebase entirely with `git rebase --abort`.
+
+**Same conflict recurring across commits:**
+Indicates a commit history that would benefit from squashing. Offer to abort and re-attempt with `git rebase -i origin/<main>` to consolidate related commits before replaying.
 
 **Working tree is dirty:**
 Pre-check catches this. Ask user to commit or stash before proceeding.
@@ -374,18 +391,21 @@ Detected by presence of delta working documents (`docs/delta-specs/<ID>.md`, etc
 Present both the new decision and the delta's approach in Phase 4. Ask user how to proceed: update delta code to comply, update the decision document, or note the exception.
 
 **Multiple deltas on same branch:**
-Ask user which delta to focus on. The code/doc reconciliation works the same regardless of which delta ID is specified — the merge reconciles all changes on the branch.
+Ask user which delta to focus on. The code/doc reconciliation works the same regardless of which delta ID is specified — the rebase replays all commits on the branch.
 
 **Branch name doesn't match delta ID:**
 Pre-check warns the user and asks for confirmation. The user may have a valid reason (e.g., renamed branch, or branch covers multiple deltas).
 
+**Branch was previously pushed:**
+Rebase rewrites history, so a subsequent push requires `--force-with-lease`. The Phase 6 summary reminds the user. Never force-push on behalf of the user without explicit confirmation.
+
 ## Workflow
 
-**This is a merge-reconcile-validate process:**
+**This is a rebase-reconcile-validate process:**
 - Pre-check (clean tree, correct branch, reconciled delta)
-- Gather context (branch commits, main changes, feature docs, decisions)
-- Merge main into branch (resolve conflicts interactively)
+- Gather context (branch commits, main changes, feature docs, decisions) and capture pre-rebase references
+- Rebase branch onto main (resolve conflicts interactively, per commit)
 - Code reconciliation (tests, lint, typecheck — auto-fix or ask)
 - Documentation reconciliation (semantic doc conflicts — auto-fix or ask)
 - Targeted validation (only conflicting categories get reviewed)
-- Present ready-to-merge summary
+- Present ready-to-land summary (including force-push reminder)

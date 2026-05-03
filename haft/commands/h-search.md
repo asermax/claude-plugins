@@ -6,7 +6,7 @@ description: "Search past decisions, problems, and notes"
 
 Full-text search across all Quint artifacts.
 
-Use `quint_query` tool with `action="search"` and:
+Use `haft_query` tool with `action="search"` and:
 - `query`: search terms
 - `limit`: max results (default 20)
 

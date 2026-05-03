@@ -6,7 +6,7 @@ description: "Explore solution variants for a framed problem"
 
 Generate genuinely distinct solution variants. Each must have a weakest link identified.
 
-Use `quint_solution` tool with `action="explore"` and:
+Use `haft_solution` tool with `action="explore"` and:
 - `problem_ref`: ProblemCard ID (auto-detected if only one active)
 - `variants`: array of options, each with:
   - `title`: variant name

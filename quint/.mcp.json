@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "quint": {
-      "command": "${CLAUDE_PLUGIN_ROOT}/bin/quint-code",
-      "args": ["serve"]
-    }
-  }
-}

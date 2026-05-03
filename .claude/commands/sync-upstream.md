@@ -1,12 +1,12 @@
 ---
-description: Sync plugins from upstream repositories (superpowers, quint, agentic-evolve, agent-browser)
+description: Sync plugins from upstream repositories (superpowers, haft, agentic-evolve, agent-browser)
 ---
 
 # Sync Upstream
 
 This command synchronizes plugins with their upstream repositories:
 - **superpowers**: `~/workspace/random/superpowers` - Core workflow skills
-- **quint**: `~/workspace/random/quint-code` - FPF reasoning methodology
+- **haft** (formerly quint): `~/workspace/random/quint-code` - FPF reasoning methodology (upstream project renamed to `haft`; the local clone path still uses the old `quint-code` name)
 - **agentic-evolve**: `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
 - **agent-browser**: `~/workspace/random/agent-browser` - Browser automation CLI
 
@@ -14,7 +14,7 @@ This command synchronizes plugins with their upstream repositories:
 
 1. **Pull Latest Changes**: Update upstream repositories
 2. **Sync Superpowers**: Compare and update skills with intelligent merging
-3. **Sync Quint**: Copy commands and build MCP binary
+3. **Sync Haft**: Copy commands, refresh PRINCIPLES.md, and trigger MCP binary rebuild
 4. **Sync Agentic-Evolve**: Copy evolve command directly from upstream
 5. **Sync Agent-Browser**: Copy skill directly from upstream
 6. **Report Summary**: Display successful updates
@@ -56,11 +56,14 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 **From superpowers repository (`~/workspace/random/superpowers/skills/`):**
 - systematic-debugging (includes supporting techniques as .md files)
 
-**From quint-code repository (`~/workspace/random/quint-code/src/mcp/cmd/commands/`):**
-- All command files (q-frame, q-char, q-explore, q-compare, q-decide, q-note, q-onboard, q-problems, q-refresh, q-search, q-status)
+**From quint-code repository (`~/workspace/random/quint-code/internal/cli/commands/`):**
+- All `h-*.md` command files (h-frame, h-char, h-explore, h-compare, h-decide, h-verify, h-note, h-onboard, h-commission, h-problems, h-search, h-status, h-view)
+
+**Haft skill (`~/workspace/random/quint-code/internal/cli/skill/h-reason/SKILL.md`):**
+- Synced to `haft/skills/h-reason/SKILL.md` — the marquee `/h-reason` entry point that drives frame → explore → compare → decide
 
 **MCP Binary:**
-- Delete cached binary at `${CLAUDE_PLUGIN_ROOT}/bin/quint-code` so it rebuilds on next session start
+- Delete cached binary at `${CLAUDE_PLUGIN_ROOT}/bin/haft` so it rebuilds on next session start
 
 **From agentic-evolve repository (`~/workspace/random/agentic-evolve/.claude/commands/`):**
 - evolve.md (master dispatcher)
@@ -119,7 +122,9 @@ git diff 7fc125e..e3d881b -- skills/systematic-debugging/
 - `skills/systematic-debugging/` (entire directory - includes supporting .md files)
 
 **Files we track from quint-code:**
-- `src/mcp/cmd/commands/*.md` (all command files - synced to our `quint/commands/`)
+- `internal/cli/commands/h-*.md` (all command files - synced to our `haft/commands/`)
+- `internal/cli/skill/h-reason/SKILL.md` (synced to our `haft/skills/h-reason/SKILL.md`)
+- `CLAUDE.md` (synced to our `haft/context/PRINCIPLES.md`)
 
 **Files we track from agentic-evolve:**
 - `.claude/commands/evolve.md` (master dispatcher - synced to `superpowers/commands/evolve.md`)
@@ -128,9 +133,7 @@ git diff 7fc125e..e3d881b -- skills/systematic-debugging/
 - `.claude/commands/evolve-ml.md` (synced to `superpowers/commands/evolve-ml.md`)
 
 **Files we track from agent-browser:**
-- `skills/agent-browser/SKILL.md`
-- `skills/agent-browser/references/`
-- `skills/agent-browser/templates/`
+- `skills/agent-browser/SKILL.md` (a thin discovery stub — the CLI itself serves the full workflow content via `agent-browser skills get core`)
 
 **Important**: Only analyze files that:
 1. Are in the changed files list from git pull output
@@ -200,23 +203,29 @@ The plugin maintains conceptual modifications to certain skills. When updating t
 **Type 2: Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives)**
 - Never modify (no upstream source)
 
-**Type 3: Quint commands and context**
+**Type 3: Haft commands, skill, and context**
 - Remove old command files and copy new ones from upstream (no customization):
   ```bash
-  rm -f ~/workspace/asermax/claude-plugins/quint/commands/*.md
-  cp ~/workspace/random/quint-code/src/mcp/cmd/commands/*.md \
-     ~/workspace/asermax/claude-plugins/quint/commands/
+  rm -f ~/workspace/asermax/claude-plugins/haft/commands/*.md
+  cp ~/workspace/random/quint-code/internal/cli/commands/h-*.md \
+     ~/workspace/asermax/claude-plugins/haft/commands/
+  ```
+- Copy h-reason skill (the marquee `/h-reason` entry point):
+  ```bash
+  mkdir -p ~/workspace/asermax/claude-plugins/haft/skills/h-reason
+  cp ~/workspace/random/quint-code/internal/cli/skill/h-reason/SKILL.md \
+     ~/workspace/asermax/claude-plugins/haft/skills/h-reason/SKILL.md
   ```
 - Copy CLAUDE.md to PRINCIPLES.md for context injection:
   ```bash
   cp ~/workspace/random/quint-code/CLAUDE.md \
-     ~/workspace/asermax/claude-plugins/quint/context/PRINCIPLES.md
+     ~/workspace/asermax/claude-plugins/haft/context/PRINCIPLES.md
   ```
 - Delete cached MCP binary so it rebuilds on next session start:
   ```bash
-  rm -f ~/workspace/asermax/claude-plugins/quint/bin/quint-code
+  rm -f ~/workspace/asermax/claude-plugins/haft/bin/haft
   ```
-- MCP binary is built on-demand by the SessionStart hook (see `quint/hooks/session-init.sh`)
+- MCP binary is built on-demand by the SessionStart hook (see `haft/hooks/session-init.sh`)
 - Commands use MCP tools directly, no modification needed
 
 **Type 4: Agentic-evolve commands (direct copy)**
@@ -233,11 +242,13 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - The evolve.md is a master dispatcher that routes to specialized subskills based on optimization goal
 
-**Type 5: Agent-browser skill (direct copy)**
-- Copy entire skill directory from upstream (no customization):
+**Type 5: Agent-browser skill (direct copy of slim stub)**
+- Upstream restructured the skill into a slim discovery stub that delegates to `agent-browser skills get core` for the live workflow content. Sync only the SKILL.md and remove any leftover `references/`/`templates/` directories:
   ```bash
-  cp -r ~/workspace/random/agent-browser/skills/agent-browser \
-        ~/workspace/asermax/claude-plugins/superpowers/skills/
+  rm -rf ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/references \
+         ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/templates
+  cp ~/workspace/random/agent-browser/skills/agent-browser/SKILL.md \
+     ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/SKILL.md
   ```
 - No customizations needed - use exactly as provided by upstream
 
@@ -256,8 +267,9 @@ Confirm successful update:
 Superpowers:
 - systematic-debugging (adapted from superpowers, skill references removed)
 
-Quint:
-- command files synced (core workflow + lightweight ops + lifecycle)
+Haft:
+- command files synced (core workflow + lightweight ops + discovery + h-verify/h-view)
+- h-reason skill synced (marquee entry point)
 - PRINCIPLES.md context updated from upstream CLAUDE.md
 - Cached MCP binary deleted (rebuilds on next session start)
 

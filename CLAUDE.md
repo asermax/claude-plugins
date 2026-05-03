@@ -9,7 +9,7 @@ This is a personal collection of Claude Code plugins that provide workflow autom
 ## Repository Structure
 
 - **Root level**: Marketplace configuration (`.claude-plugin/marketplace.json`)
-- **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`, `beads/`, `quint/`) is a separate plugin
+- **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`, `beads/`, `haft/`) is a separate plugin
   - `.claude-plugin/plugin.json`: Plugin metadata
   - `commands/`: Slash command definitions (`.md` files)
   - `.mcp.json`: MCP server configuration (if applicable)
@@ -54,7 +54,7 @@ AUR (Arch User Repository) package management automation.
 Development workflow skills for systematic debugging, planning, and more.
 
 **Commands:**
-- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, quint, agentic-evolve, agent-browser), compare differences, and intelligently merge updates while preserving plugin customizations
+- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, haft, agentic-evolve, agent-browser), compare differences, and intelligently merge updates while preserving plugin customizations
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
 - `/superpowers:evolve <problem>`: Master dispatcher for evolutionary algorithm discovery - routes to specialized modes:
   - `/superpowers:evolve-perf`: Optimize runtime speed (ops/sec, latency)
@@ -91,38 +91,44 @@ The plugin provides a collection of proven workflow skills organized by category
 - Skills are automatically available via Claude Code's skill system
 - All skills use `superpowers:` namespace prefix for skill references
 
-### quint
-FPF (First Principles Framework) methodology for artifact-centric decision engineering.
+### haft
+FPF (First Principles Framework) methodology for artifact-centric decision engineering. Successor to the previous `quint` plugin — upstream `quint-code` was renamed to `haft`, with all `q-*` commands rebranded to `h-*` and the MCP binary renamed `quint-code` → `haft`.
+
+**Skill:**
+- `h-reason` (`/h-reason "<problem>"`): Marquee entry point that auto-routes through frame → explore → compare → decide in one pass. Sourced from upstream `internal/cli/skill/h-reason/SKILL.md` and packaged as a plugin skill at `haft/skills/h-reason/SKILL.md`.
 
 **Commands — Core Decision Workflow:**
-- `/q-frame`: Frame an engineering problem (signal, constraints, targets, blast radius, mode)
-- `/q-char`: Define comparison dimensions for a framed problem (scale, polarity, parity rules)
-- `/q-explore`: Generate 2-3+ genuinely distinct solution variants with weakest links
-- `/q-compare`: Compare variants on Pareto front with parity enforcement
-- `/q-decide`: Finalize decision with full DecisionRecord (DRR) and verification gate
+- `/h-frame`: Frame an engineering problem (signal, constraints, targets, blast radius, mode)
+- `/h-char`: Define comparison dimensions for a framed problem (scale, polarity, parity rules)
+- `/h-explore`: Generate 2-3+ genuinely distinct solution variants with weakest links
+- `/h-compare`: Compare variants on Pareto front with parity enforcement
+- `/h-decide`: Finalize decision with full DecisionRecord (DRR) and verification gate
+- `/h-verify`: Verify mode — check what's stale, drifted, or ready for measurement
 
 **Commands — Lightweight Operations:**
-- `/q-note`: Record micro-decisions during coding (title, rationale, affected files)
-- `/q-onboard`: Discover and capture existing project knowledge via systematic scanning
+- `/h-note`: Record micro-decisions during coding (title, rationale, affected files)
+- `/h-onboard`: Onboard a project into Haft v7 specs and readiness
+- `/h-commission`: Create WorkCommissions from active DecisionRecords without starting the harness
 
-**Commands — Lifecycle & Discovery:**
-- `/q-problems`: List active ProblemCards with readiness and complexity signals
-- `/q-refresh`: Manage artifact lifecycle (scan stale, waive, reopen, supersede, deprecate)
-- `/q-search`: Full-text search across all artifacts
-- `/q-status`: Dashboard with active decisions, stale items, notes, and module coverage
+**Commands — Discovery & Dashboards:**
+- `/h-problems`: List active ProblemCards with readiness and complexity signals
+- `/h-search`: Full-text search across all artifacts
+- `/h-status`: Dashboard with active decisions, stale items, notes, and module coverage
+- `/h-view`: Render canonical brief / rationale / audit / compare views
 
-**Recommended workflow:** `/q-frame` → `/q-char` → `/q-explore` → `/q-compare` → `/q-decide`
+**Recommended workflow:** `/h-frame` → `/h-char` → `/h-explore` → `/h-compare` → `/h-decide` → `/h-verify`
 
 **MCP Server:**
 - Binary built on-demand via SessionStart hook (first use)
-- Built to `${CLAUDE_PLUGIN_ROOT}/bin/quint-code` (within plugin)
-- Source cached in `~/.cache/claude-plugins/quint-code/` for building
-- Manages state in SQLite database (`.quint/quint.db`)
+- Built to `${CLAUDE_PLUGIN_ROOT}/bin/haft` (within plugin)
+- Source cached in `~/.cache/claude-plugins/haft/` for building
+- Build entrypoint: `./cmd/haft` in upstream repo
+- Manages state in `~/.haft/projects/<project-id>/` (unified storage; auto-migrates `.quint/` → `.haft/`)
 
 **Context Injection:**
 - SessionStart hook injects PRINCIPLES.md (upstream's CLAUDE.md)
 - Prepares agent with FPF methodology and decision frameworks
-- Context synced from `~/workspace/random/quint-code/CLAUDE.md`
+- Context synced from `~/workspace/random/quint-code/CLAUDE.md` (the upstream repo path is unchanged — only the project rebranded internally)
 
 **Key concepts:**
 - **R_eff (Effective Reliability)**: Trust score (0-1) = min(evidence_scores) — strict weakest-link, never average
@@ -135,7 +141,7 @@ FPF (First Principles Framework) methodology for artifact-centric decision engin
 - **Artifact Lifecycle**: active → refresh_due → superseded/deprecated
 
 **Key workflows:**
-- Commands synced from `~/workspace/random/quint-code`
+- Commands synced from `~/workspace/random/quint-code/internal/cli/commands/`
 - PRINCIPLES.md updated from upstream CLAUDE.md during sync
 - MCP binary builds automatically on first session start (slow), then cached (fast)
 - Commands use MCP tools directly (no customization)

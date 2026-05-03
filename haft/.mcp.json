@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "haft": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/haft",
+      "args": ["serve"]
+    }
+  }
+}

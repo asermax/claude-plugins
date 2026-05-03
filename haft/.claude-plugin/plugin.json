@@ -1,0 +1,8 @@
+{
+  "name": "haft",
+  "version": "3.0.0",
+  "description": "FPF reasoning methodology for structured decision-making (formerly quint)",
+  "author": {
+    "name": "Agustin Carrasco"
+  }
+}

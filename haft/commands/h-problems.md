@@ -6,7 +6,7 @@ description: "List active engineering problems"
 
 Show active ProblemCards, optionally filtered by context.
 
-Use `quint_problem` tool with `action="select"` and:
+Use `haft_problem` tool with `action="select"` and:
 - `context`: optional filter by context name
 
 $ARGUMENTS

@@ -86,9 +86,51 @@ package() {
 }
 ```
 
+## Disabling strip for self-contained runtimes
+
+makepkg auto-strips ELF binaries by default. For binaries produced by
+"compile to standalone" tools that embed code/bytecode/data into the
+executable itself (Bun, Deno, Node SEA / pkg / nexe, PyInstaller,
+single-file Go binaries that read embedded data, etc.), stripping can
+remove or corrupt the embedded segment. The resulting binary then either
+crashes or falls back to the host runtime's CLI (e.g. a bun-compiled
+binary will print Bun's help instead of running the embedded program).
+
+When packaging this kind of binary, disable stripping:
+
+```bash
+options=('!strip')
+```
+
+### Bun standalone binaries
+
+Upstreams that ship Bun-compiled binaries (`bun build --compile`)
+**always** need `options=('!strip')`. Symptoms when this is missing:
+
+- `<binary> --version` prints Bun's version/help instead of the app's
+- Running the binary with no args drops into Bun's CLI usage
+- The unstripped binary from the upstream tarball works correctly when
+  invoked directly, but the installed `/usr/bin/<binary>` does not
+
+How to recognize a Bun-compiled binary upfront:
+
+- Upstream's `package.json` uses Bun (e.g. `@types/bun`, `"build":
+  "bun build --compile ..."`, scripts run via `bun`)
+- Release assets are large single-file binaries (~50–150 MB) containing
+  the entire Bun runtime
+- `strings <binary> | grep -i 'bun is a fast'` matches
+
+The same caveat applies to Deno (`deno compile`) and Node single-executable
+applications — when in doubt, set `options=('!strip')` and verify the
+installed binary behaves the same as the one in the upstream tarball.
+
 ## Notes
 
 - Binary packages don't need `prepare()`, `build()`, or `check()` functions
 - Always verify the binary works on Arch Linux before publishing
 - Include license file if available in the release
 - Consider checksum verification for security
+- **Always test the installed binary** (`/usr/bin/<name> --version` or
+  similar), not just the one extracted into `src/`. makepkg's strip pass
+  runs between extraction and install, and is a common source of bugs
+  for binaries that embed runtime data.

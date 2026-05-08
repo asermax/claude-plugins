@@ -1,5 +1,5 @@
 ---
-description: Sync plugins from upstream repositories (superpowers, haft, agentic-evolve, agent-browser)
+description: Sync plugins from upstream repositories (superpowers, haft, agentic-evolve, agent-browser, hunk)
 ---
 
 # Sync Upstream
@@ -9,6 +9,7 @@ This command synchronizes plugins with their upstream repositories:
 - **haft** (formerly quint): `~/workspace/random/quint-code` - FPF reasoning methodology (upstream project renamed to `haft`; the local clone path still uses the old `quint-code` name)
 - **agentic-evolve**: `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
 - **agent-browser**: `~/workspace/random/agent-browser` - Browser automation CLI
+- **hunk**: `~/workspace/random/hunk` - Terminal diff viewer for agentic code review
 
 ## Process Overview
 
@@ -17,7 +18,8 @@ This command synchronizes plugins with their upstream repositories:
 3. **Sync Haft**: Copy commands, refresh PRINCIPLES.md, and trigger MCP binary rebuild
 4. **Sync Agentic-Evolve**: Copy evolve command directly from upstream
 5. **Sync Agent-Browser**: Copy skill directly from upstream
-6. **Report Summary**: Display successful updates
+6. **Sync Hunk**: Copy skill directly from upstream
+7. **Report Summary**: Display successful updates
 
 ## Implementation Steps
 
@@ -49,6 +51,12 @@ cd ~/workspace/random/agent-browser
 git pull origin main
 ```
 
+**Hunk repository:**
+```bash
+cd ~/workspace/random/hunk
+git pull origin main
+```
+
 If any git pull fails, inform the user about the error and ask them to resolve it manually.
 
 ### Step 2: Identify Skills to Update
@@ -73,6 +81,9 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 
 **From agent-browser repository (`~/workspace/random/agent-browser/skills/`):**
 - agent-browser (SKILL.md with supporting references/ and templates/ directories)
+
+**From hunk repository (`~/workspace/random/hunk/skills/`):**
+- hunk-review (SKILL.md only — slim CLI wrapper for the `hunk` terminal diff viewer)
 
 **Plugin-specific skills (not synced from upstream):**
 - using-live-documentation
@@ -134,6 +145,9 @@ git diff 7fc125e..e3d881b -- skills/systematic-debugging/
 
 **Files we track from agent-browser:**
 - `skills/agent-browser/SKILL.md` (a thin discovery stub — the CLI itself serves the full workflow content via `agent-browser skills get core`)
+
+**Files we track from hunk:**
+- `skills/hunk-review/SKILL.md` (CLI wrapper skill for the `hunk` terminal diff viewer — direct copy, no customization)
 
 **Important**: Only analyze files that:
 1. Are in the changed files list from git pull output
@@ -252,6 +266,15 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - No customizations needed - use exactly as provided by upstream
 
+**Type 6: Hunk skill (direct copy)**
+- Hunk's `hunk-review` skill is a thin CLI wrapper for the terminal diff viewer. Sync the SKILL.md directly from upstream:
+  ```bash
+  mkdir -p ~/workspace/asermax/claude-plugins/superpowers/skills/hunk-review
+  cp ~/workspace/random/hunk/skills/hunk-review/SKILL.md \
+     ~/workspace/asermax/claude-plugins/superpowers/skills/hunk-review/SKILL.md
+  ```
+- No customizations needed - use exactly as provided by upstream
+
 **Process for manual merge:**
 1. Read the upstream version completely
 2. Read the plugin version completely
@@ -278,6 +301,9 @@ Agentic-Evolve:
 
 Agent-Browser:
 - agent-browser skill synced (SKILL.md + supporting directories)
+
+Hunk:
+- hunk-review skill synced (CLI wrapper for terminal diff viewer)
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied to skill references

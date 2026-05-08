@@ -23,6 +23,9 @@ The plugin includes the following skills:
 ### Browser Automation
 - **agent-browser**: Browser automation CLI for web testing, form filling, screenshots, and data extraction
 
+### Code Review
+- **hunk-review**: Interactive terminal diff review via the `hunk` CLI. Inspect live review sessions, navigate files/hunks, reload contents, and add inline comments. Use when reviewing diffs in a Hunk TUI session.
+
 ### Multi-Agent Collaboration
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories
 

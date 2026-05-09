@@ -159,29 +159,16 @@ Review the plan-reviewer findings and apply improvements:
 
 If the reviewer identified critical issues that require clarification, note them for discussion with the user.
 
-### 7. Present Validated Plan
+### 7. Finalize
 
-Present the complete validated plan to the user in its entirety.
-Highlight any unresolved issues that need user input.
-
-Invite feedback: "What needs adjustment in this plan?"
-
-### 8. Iterate Based on Feedback
-
-Apply user corrections, additions, or changes.
-Re-run validation if significant changes are made.
-Repeat until user approves the plan.
-
-### 9. Finalize
-
-Once user approves, save to `docs/delta-plans/$ARGUMENTS.md`
+Save the plan to `docs/delta-plans/$ARGUMENTS.md`.
 
 Update status:
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/deltas.py status set $ARGUMENTS "✓ Plan"
 ```
 
-Present summary:
+Present summary of the completed plan:
 
 ```
 "Delta plan complete for $ARGUMENTS.
@@ -200,7 +187,4 @@ Batches:
 - Expand steps silently for all batches
 - Validate complete plan (batches + steps) with plan-reviewer agent
 - Apply validation feedback
-- Present validated plan to user
-- User provides feedback
-- Iterate until approved
-- Finalize after user approval
+- Save and present summary

@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "3.0.4"
+    "version": "3.1.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -41,6 +41,14 @@
       "name": "kanshi",
       "source": "./kanshi",
       "description": "Real-time observability dashboard for Claude Code agent activity"
+    },
+    {
+      "name": "annai",
+      "source": {
+        "source": "github",
+        "repo": "asermax/annai"
+      },
+      "description": "Code review surface: agent skill generates a guided JSON view of a PR, local server renders it in the browser"
     }
   ]
 }

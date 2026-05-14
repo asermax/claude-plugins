@@ -54,7 +54,7 @@ AUR (Arch User Repository) package management automation.
 Development workflow skills for systematic debugging, planning, and more.
 
 **Commands:**
-- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, haft, agentic-evolve, agent-browser, hunk), compare differences, and intelligently merge updates while preserving plugin customizations
+- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, haft, agentic-evolve, agent-browser), compare differences, and intelligently merge updates while preserving plugin customizations
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
 - `/superpowers:evolve <problem>`: Master dispatcher for evolutionary algorithm discovery - routes to specialized modes:
   - `/superpowers:evolve-perf`: Optimize runtime speed (ops/sec, latency)
@@ -80,7 +80,7 @@ The plugin provides a collection of proven workflow skills organized by category
 - **agent-browser**: Browser automation CLI for web testing, form filling, screenshots, and data extraction (synced from `~/workspace/random/agent-browser`)
 
 *Code Review:*
-- **hunk-review**: Interactive terminal diff review via the `hunk` CLI — inspect live sessions, navigate files/hunks, reload contents, and add inline review comments (synced from `~/workspace/random/hunk`)
+- **hunk-review**: Interactive terminal diff review via the `hunk` CLI — inspect live sessions, navigate files/hunks, reload contents, and add inline review comments (plugin ships a thin wrapper that inlines the live SKILL.md from the installed Hunk CLI via `hunk skill path` — no syncing needed)
 
 *Multi-Agent Collaboration:*
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories using file-based chat system (agent daemon, chat CLI)
@@ -274,10 +274,9 @@ Agentic memory framework for long-term memory across sessions.
   - `~/workspace/random/superpowers` - Core workflow skills
   - `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
   - `~/workspace/random/agent-browser` - Browser automation CLI
-  - `~/workspace/random/hunk` - Terminal diff viewer skill
 - Pull latest changes from all repositories' `main` branch
 - Tracked skills from superpowers: systematic-debugging
-- Tracked skill from hunk: hunk-review (direct copy of SKILL.md, no customization — same pattern as agent-browser)
+- hunk-review skill is NOT synced: it's a thin wrapper that uses Claude Code's `!`-preprocessing to inline the installed Hunk binary's SKILL.md at skill-load time (via `hunk skill path`). The upstream hunk binary owns the content, so the plugin file rarely needs touching.
 - Tracked commands from agentic-evolve (copied directly to superpowers/commands/):
   - evolve.md (master dispatcher)
   - evolve-perf.md (runtime speed optimization)

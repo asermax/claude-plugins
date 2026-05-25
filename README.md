@@ -18,9 +18,6 @@ AUR package management commands for building and maintaining Arch User Repositor
 
 Development workflow skills for systematic debugging, planning, and more.
 
-**Commands:**
-- `/sync-upstream` - Sync plugins from upstream repositories and intelligently merge updates
-
 **Skills:**
 - Core Development Workflow (using-code-directives)
 - Debugging and Testing (systematic-debugging)
@@ -30,6 +27,13 @@ Development workflow skills for systematic debugging, planning, and more.
 - Other (using-antigravity, financial-summary, show-markdown, mermaid-validation)
 
 [View Documentation](./superpowers/README.md)
+
+## Marketplace-level skills
+
+These skills live at `.claude/skills/` and are available when working inside this repo (they aren't shipped with any plugin):
+
+- `sync-upstream` — sync this marketplace's skills/commands/context from their upstream source repos, preserving plugin customizations
+- `commit` — create conventional commits with automatic semantic version bumps for the marketplace and any affected plugin's `plugin.json`
 
 ## Installation
 

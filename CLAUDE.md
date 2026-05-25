@@ -9,11 +9,19 @@ This is a personal collection of Claude Code plugins that provide workflow autom
 ## Repository Structure
 
 - **Root level**: Marketplace configuration (`.claude-plugin/marketplace.json`)
+- **`.claude/skills/`**: Marketplace-level skills available when working inside this repo (currently `sync-upstream`, `commit`). These are scoped to maintaining the marketplace itself, not shipped to plugin consumers.
 - **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`, `beads/`, `haft/`) is a separate plugin
   - `.claude-plugin/plugin.json`: Plugin metadata
   - `commands/`: Slash command definitions (`.md` files)
   - `.mcp.json`: MCP server configuration (if applicable)
   - `README.md`: Plugin documentation
+
+## Repo-level skills
+
+These live at `.claude/skills/<name>/SKILL.md` and trigger contextually based on natural-language requests when this is the working directory.
+
+- **sync-upstream**: Sync this marketplace's skills, commands, and context from their upstream source repos (`~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`). Preserves plugin customizations (namespace prefixes, removed cross-skill references) and asks before applying.
+- **commit**: Create conventional commits with automatic semantic version bumps for both the marketplace (`.claude-plugin/marketplace.json`) and any affected plugin's `plugin.json`. Groups related files, derives scopes, proposes bumps with reasoning, and asks before each commit.
 
 ## Plugin Architecture
 
@@ -54,7 +62,6 @@ AUR (Arch User Repository) package management automation.
 Development workflow skills for systematic debugging, planning, and more.
 
 **Commands:**
-- `/sync-upstream`: Sync plugins from upstream repositories (superpowers, haft, agentic-evolve, agent-browser), compare differences, and intelligently merge updates while preserving plugin customizations
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
 - `/superpowers:evolve <problem>`: Master dispatcher for evolutionary algorithm discovery - routes to specialized modes:
   - `/superpowers:evolve-perf`: Optimize runtime speed (ops/sec, latency)
@@ -87,7 +94,7 @@ The plugin provides a collection of proven workflow skills organized by category
 
 **Key workflows:**
 - Skills directory contains full skill definitions from upstream repositories
-- Sync command updates from upstream source:
+- Upstream sources synced via the marketplace-level `sync-upstream` skill (see "Repo-level skills"):
   - `~/workspace/random/superpowers` - Core workflow skills
 - Shows high-level summary of changes before updating
 - Intelligently merges updates while preserving plugin-specific customizations

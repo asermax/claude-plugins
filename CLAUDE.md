@@ -266,7 +266,7 @@ Agentic memory framework for long-term memory across sessions.
 **Custom modifications:**
 - **All skills**: Use `superpowers:` namespace prefix for all skill references
 - **systematic-debugging**: Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
-- Multiple plugin-specific skills added: using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives, mermaid-validation
+- Multiple plugin-specific skills added: using-live-documentation, self-maintaining-claude-md, using-antigravity, agent-communication, financial-summary, using-code-directives, mermaid-validation
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
@@ -284,7 +284,7 @@ Agentic memory framework for long-term memory across sessions.
   - evolve-ml.md (ML accuracy optimization)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
-- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives, mermaid-validation) are never modified
+- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-antigravity, agent-communication, financial-summary, using-code-directives, mermaid-validation) are never modified
 - Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
 

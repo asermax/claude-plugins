@@ -77,7 +77,7 @@ If any git pull fails, inform the user about the error and ask them to resolve i
 **Plugin-specific skills (not synced from upstream):**
 - using-live-documentation
 - self-maintaining-claude-md
-- using-gemini
+- using-antigravity
 - agent-communication
 - financial-summary
 - using-code-directives
@@ -200,7 +200,7 @@ The plugin maintains conceptual modifications to certain skills. When updating t
   ```
 - Remove any references to skills not in plugin (e.g., verification-before-completion)
 
-**Type 2: Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-gemini, agent-communication, financial-summary, using-code-directives)**
+**Type 2: Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-antigravity, agent-communication, financial-summary, using-code-directives)**
 - Never modify (no upstream source)
 
 **Type 3: Haft commands, skill, and context**

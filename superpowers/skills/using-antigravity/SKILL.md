@@ -1,23 +1,23 @@
 ---
-name: using-gemini
-description: Use when needing to analyze images (screenshots, diagrams, photos), analyze videos (screencasts, recordings), summarize YouTube videos, fetch and analyze web content, or perform web searches with Google. Gemini CLI provides multimodal and web access capabilities Claude lacks natively. Do NOT use for tasks Claude can handle directly (text analysis, code review, file reading of text files).
+name: using-antigravity
+description: Use when needing to analyze images (screenshots, diagrams, photos), analyze videos (screencasts, recordings), summarize YouTube videos, fetch and analyze web content, or perform web searches with Google. Antigravity CLI provides multimodal and web access capabilities Claude lacks natively. Do NOT use for tasks Claude can handle directly (text analysis, code review, file reading of text files).
 ---
 
-# Using Gemini CLI
+# Using Antigravity CLI
 
-**Gemini CLI extends Claude's capabilities with multimodal and web access features.** Use it for tasks Claude cannot do natively: analyzing images, analyzing videos, accessing YouTube content, fetching web pages, and searching the web with Google.
+**Antigravity CLI extends Claude's capabilities with multimodal and web access features.** Use it for tasks Claude cannot do natively: analyzing images, analyzing videos, accessing YouTube content, fetching web pages, and searching the web with Google.
 
 ## Base Command Syntax
 
 ```bash
-gemini --allowed-mcp-server-names "" [other-flags] "Your prompt here"
+agy --allowed-mcp-server-names "" [other-flags] "Your prompt here"
 ```
 
 **Always use `--allowed-mcp-server-names ""` to disable MCP servers for faster startup.**
 
 ## Controlling Detail Level
 
-Control the detail level of Gemini's responses through your prompt wording:
+Control the detail level of Antigravity's responses through your prompt wording:
 
 - **For comprehensive analysis:** Add "in detail" to your prompt
 - **For quick summaries:** Use "briefly" in your prompt

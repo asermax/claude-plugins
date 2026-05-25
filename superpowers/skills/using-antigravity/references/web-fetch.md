@@ -1,6 +1,6 @@
-# Web Fetch with Gemini CLI
+# Web Fetch with Antygravity CLI
 
-Use Gemini CLI to fetch and analyze content from any URL: articles, documentation, blog posts, or web pages.
+Use Antygravity CLI to fetch and analyze content from any URL: articles, documentation, blog posts, or web pages.
 
 ## Critical Requirement
 
@@ -9,7 +9,7 @@ Use Gemini CLI to fetch and analyze content from any URL: articles, documentatio
 ## Command Syntax
 
 ```bash
-gemini --yolo "Your prompt about https://example.com/page"
+agy --yolo "Your prompt about https://example.com/page"
 ```
 
 ## Common Use Cases
@@ -17,31 +17,31 @@ gemini --yolo "Your prompt about https://example.com/page"
 ### Summarize Article
 
 ```bash
-gemini --yolo "Summarize this article: https://example.com/blog/post"
+agy --yolo "Summarize this article: https://example.com/blog/post"
 ```
 
 ### Extract Specific Information
 
 ```bash
-gemini --yolo "From https://docs.example.com/api, extract all the authentication methods"
+agy --yolo "From https://docs.example.com/api, extract all the authentication methods"
 ```
 
 ### Analyze Documentation
 
 ```bash
-gemini --yolo "What are the main features described at https://product.com/features?"
+agy --yolo "What are the main features described at https://product.com/features?"
 ```
 
 ### Compare Pages
 
 ```bash
-gemini --yolo "Compare the approaches in https://blog1.com/article and https://blog2.com/article"
+agy --yolo "Compare the approaches in https://blog1.com/article and https://blog2.com/article"
 ```
 
 ### Research and Synthesis
 
 ```bash
-gemini --yolo "Read these three articles and identify common themes: https://site1.com/a, https://site2.com/b, https://site3.com/c"
+agy --yolo "Read these three articles and identify common themes: https://site1.com/a, https://site2.com/b, https://site3.com/c"
 ```
 
 ## Output Formatting
@@ -49,7 +49,7 @@ gemini --yolo "Read these three articles and identify common themes: https://sit
 For clean, parseable output:
 
 ```bash
-gemini --yolo "Summarize https://example.com/article" --output-format text
+agy --yolo "Summarize https://example.com/article" --output-format text
 ```
 
 ## Faster Execution
@@ -57,18 +57,18 @@ gemini --yolo "Summarize https://example.com/article" --output-format text
 Disable MCP servers for faster startup:
 
 ```bash
-gemini --yolo --allowed-mcp-server-names "" "Analyze https://example.com"
+agy --yolo --allowed-mcp-server-names "" "Analyze https://example.com"
 ```
 
-## What Gemini Accesses
+## What Antygravity Accesses
 
-Gemini fetches the web page via web_fetch and can access:
+Antygravity fetches the web page via web_fetch and can access:
 - Page HTML content
 - Visible text
 - Page metadata
 - Links and structure
 
-Gemini converts HTML to readable format and analyzes the content.
+Antygravity converts HTML to readable format and analyzes the content.
 
 ## Supported URL Types
 
@@ -76,19 +76,19 @@ Works with any publicly accessible URL:
 
 ```bash
 # Blog posts
-gemini --yolo "Summarize https://blog.example.com/my-post"
+agy --yolo "Summarize https://blog.example.com/my-post"
 
 # Documentation
-gemini --yolo "Extract code examples from https://docs.lib.com/guide"
+agy --yolo "Extract code examples from https://docs.lib.com/guide"
 
 # News articles
-gemini --yolo "What are the key points in https://news.com/article"
+agy --yolo "What are the key points in https://news.com/article"
 
 # Product pages
-gemini --yolo "List features from https://product.com/pricing"
+agy --yolo "List features from https://product.com/pricing"
 
 # GitHub repositories
-gemini --yolo "Summarize the README at https://github.com/user/repo"
+agy --yolo "Summarize the README at https://github.com/user/repo"
 ```
 
 ## Example Full Workflows
@@ -97,28 +97,28 @@ gemini --yolo "Summarize the README at https://github.com/user/repo"
 
 ```bash
 # Collect information from multiple sources
-gemini --yolo "Read these documentation pages and create a comparison table of their rate limits: https://api1.com/docs, https://api2.com/docs, https://api3.com/docs" --output-format text
+agy --yolo "Read these documentation pages and create a comparison table of their rate limits: https://api1.com/docs, https://api2.com/docs, https://api3.com/docs" --output-format text
 ```
 
 ### Documentation Extraction
 
 ```bash
 # Extract specific information
-gemini --yolo "From https://framework.com/docs/config, extract all available configuration options and their default values"
+agy --yolo "From https://framework.com/docs/config, extract all available configuration options and their default values"
 ```
 
 ### Content Analysis
 
 ```bash
 # Analyze writing or content
-gemini --yolo "Analyze the writing style and main arguments in https://blog.com/opinion-piece"
+agy --yolo "Analyze the writing style and main arguments in https://blog.com/opinion-piece"
 ```
 
 ### Quick Facts
 
 ```bash
 # Get quick answers
-gemini --yolo "What is the release date mentioned at https://product.com/announcement?"
+agy --yolo "What is the release date mentioned at https://product.com/announcement?"
 ```
 
 ## Advanced Usage
@@ -126,17 +126,17 @@ gemini --yolo "What is the release date mentioned at https://product.com/announc
 ### Structured Extraction
 
 ```bash
-gemini --yolo "From https://recipe.com/chocolate-cake, extract in JSON format: ingredients (list), prep time, cook time, difficulty level"
+agy --yolo "From https://recipe.com/chocolate-cake, extract in JSON format: ingredients (list), prep time, cook time, difficulty level"
 ```
 
 ### Multi-Step Analysis
 
 ```bash
 # First get overview
-gemini --yolo "What are the main sections covered in https://guide.com/tutorial?"
+agy --yolo "What are the main sections covered in https://guide.com/tutorial?"
 
 # Then dive deeper
-gemini --yolo "From https://guide.com/tutorial section 3, explain the authentication flow in detail"
+agy --yolo "From https://guide.com/tutorial section 3, explain the authentication flow in detail"
 ```
 
 

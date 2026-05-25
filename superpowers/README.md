@@ -30,7 +30,7 @@ The plugin includes the following skills:
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories
 
 ### Other
-- **using-gemini**: Analyze images, videos, fetch web content, and search Google using Gemini CLI
+- **using-antigravity**: Analyze images, videos, fetch web content, and search Google using Antigravity CLI
 - **financial-summary**: Parse and analyze financial transaction CSV exports
 
 ## Commands

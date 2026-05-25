@@ -27,7 +27,7 @@ Development workflow skills for systematic debugging, planning, and more.
 - Documentation and Research (self-maintaining-claude-md, using-live-documentation)
 - Browser Automation (agent-browser)
 - Multi-Agent Collaboration (agent-communication)
-- Other (using-gemini, financial-summary, show-markdown, mermaid-validation)
+- Other (using-antigravity, financial-summary, show-markdown, mermaid-validation)
 
 [View Documentation](./superpowers/README.md)
 

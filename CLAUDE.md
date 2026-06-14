@@ -102,31 +102,32 @@ The plugin provides a collection of proven workflow skills organized by category
 - All skills use `superpowers:` namespace prefix for skill references
 
 ### haft
-FPF (First Principles Framework) methodology for artifact-centric decision engineering. Successor to the previous `quint` plugin — upstream `quint-code` was renamed to `haft`, with all `q-*` commands rebranded to `h-*` and the MCP binary renamed `quint-code` → `haft`.
+FPF (First Principles Framework) methodology for artifact-centric decision engineering. Successor to the previous `quint` plugin — upstream `quint-code` was renamed to `haft`, with the MCP binary renamed `quint-code` → `haft`. As of the upstream **v8 governance-substrate pivot**, haft's surface is a catalog of host-AI **skills** plus the MCP server — the standalone agent, TUI, desktop wrappers, and the old slash-`command` files were dropped. The reasoning kernel, artifact graph, FPF spec retrieval, and WorkCommission lifecycle are unchanged (no schema change); only the surface changed.
 
-**Skill:**
-- `h-reason` (`/h-reason "<problem>"`): Marquee entry point that auto-routes through frame → explore → compare → decide in one pass. Sourced from upstream `internal/cli/skill/h-reason/SKILL.md` and packaged as a plugin skill at `haft/skills/h-reason/SKILL.md`.
+**Skills (15-skill catalog, mirrored from `internal/cli/skill/h-*/SKILL.md`):**
 
-**Commands — Core Decision Workflow:**
-- `/h-frame`: Frame an engineering problem (signal, constraints, targets, blast radius, mode)
-- `/h-char`: Define comparison dimensions for a framed problem (scale, polarity, parity rules)
-- `/h-explore`: Generate 2-3+ genuinely distinct solution variants with weakest links
-- `/h-compare`: Compare variants on Pareto front with parity enforcement
-- `/h-decide`: Finalize decision with full DecisionRecord (DRR) and verification gate
-- `/h-verify`: Verify mode — check what's stale, drifted, or ready for measurement
+*Auto-triggering* — fire when their description matches operator context:
+- `h-reason`: Umbrella entry point — full reasoning palette (framing, exploration, comparison, verification, notes, slideument patterns) in one skill. Manual `/h-reason` always works; auto-fires on broad "let's think this through" signals where no specialized skill matches sharply.
+- `h-frame`: Frame a problem (B.4.1 stabilize + problem typing + umbrella-word repair) before solutioning
+- `h-diagnose`: Diagnose a failure with parallel rival-hypothesis testing (one subagent per hypothesis, prevents anchoring)
+- `h-explore`: Generate distinct candidate variants with NQD diversity discipline
+- `h-compare`: Fair comparison with dim-wise parallel scoring + Pareto front (not a scalar winner)
+- `h-verify`: Baseline → measure → evidence loop with drift detection
+- `h-status`: Read-only project FPF state dashboard
+- `h-onboard`: First-frame ceremony for projects new to haft
+- `h-spec-cover`: Spec-coverage check with blind/stale module triage
+- `h-note`: Lightweight micro-decision recording
 
-**Commands — Lightweight Operations:**
-- `/h-note`: Record micro-decisions during coding (title, rationale, affected files)
-- `/h-onboard`: Onboard a project into Haft v7 specs and readiness
-- `/h-commission`: Create WorkCommissions from active DecisionRecords without starting the harness
+*Manual-only* (`disable-model-invocation: true`, Transformer Mandate — never auto-fired):
+- `h-decide`: Record a binding DecisionRecord with full DRR (problem frame, decision/contract, rationale, consequences)
+- `h-commission`: WorkCommission lifecycle — create commissions from active decisions
 
-**Commands — Discovery & Dashboards:**
-- `/h-problems`: List active ProblemCards with readiness and complexity signals
-- `/h-search`: Full-text search across all artifacts
-- `/h-status`: Dashboard with active decisions, stale items, notes, and module coverage
-- `/h-view`: Render canonical brief / rationale / audit / compare views
+*Subroutines* (called from other skills or invoked explicitly for a specific FPF sub-discipline):
+- `h-abduct`: Pure B.5.2 abductive four-step (frame prompt → ≥3 rivals → filters → prime)
+- `h-boundary-unpack`: A.6.B L/A/D/E decomposition of boundary statements
+- `h-semio-review`: X-FANOUT-AUDIT — concept-rename / spec-consistency audit
 
-**Recommended workflow:** `/h-frame` → `/h-char` → `/h-explore` → `/h-compare` → `/h-decide` → `/h-verify`
+**Recommended workflow:** describe the problem (h-frame fires) → `/h-explore` → `/h-compare` → manual `/h-decide` → `/h-verify`. Routing reliability is testable via `haft check routing`.
 
 **MCP Server:**
 - Binary built on-demand via SessionStart hook (first use)
@@ -151,12 +152,12 @@ FPF (First Principles Framework) methodology for artifact-centric decision engin
 - **Artifact Lifecycle**: active → refresh_due → superseded/deprecated
 
 **Key workflows:**
-- Commands synced from `~/workspace/random/quint-code/internal/cli/commands/`
+- Skills mirrored from `~/workspace/random/quint-code/internal/cli/skill/h-*/SKILL.md` (direct copy, no customization)
 - PRINCIPLES.md updated from upstream CLAUDE.md during sync
 - MCP binary builds automatically on first session start (slow), then cached (fast)
-- Commands use MCP tools directly (no customization)
+- Skills call MCP tools directly via `allowed-tools` (`mcp__haft__haft_*`); the MCP server key `haft` matches the tool namespace
 - Use for architectural decisions with long-term consequences
-- Tactical mode available for simple decisions (frame → decide, skip char/explore/compare)
+- Tactical mode available for simple reversible decisions — record via `/h-decide` `mode="tactical"` with `_skips`/`_skip_reason`
 - Skip entirely for quick fixes or easily reversible decisions
 
 ### beads

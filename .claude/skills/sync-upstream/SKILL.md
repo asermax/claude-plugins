@@ -8,7 +8,7 @@ description: Sync this plugin marketplace's skills, commands, and context from t
 This skill keeps the plugin marketplace in lockstep with its upstream sources while preserving plugin-specific customizations. The upstream repos and what we track from each:
 
 - **superpowers** — `~/workspace/random/superpowers` — core workflow skills (currently: `systematic-debugging`)
-- **haft** — `~/workspace/random/quint-code` (the local path still uses the old `quint-code` name; the project itself is now `haft`) — FPF reasoning methodology: command files, `h-reason` skill, and CLAUDE.md → PRINCIPLES.md context
+- **haft** — `~/workspace/random/quint-code` (the local path still uses the old `quint-code` name; the project itself is now `haft`) — FPF reasoning methodology: the v8 skill catalog (`internal/cli/skill/h-*/SKILL.md`) and CLAUDE.md → PRINCIPLES.md context
 - **agentic-evolve** — `~/workspace/random/agentic-evolve` — evolve commands (master dispatcher + perf/size/ml subskills)
 - **agent-browser** — `~/workspace/random/agent-browser` — browser automation CLI skill (slim discovery stub)
 
@@ -44,8 +44,7 @@ These are the only paths to consider when comparing upstream against this plugin
 - `skills/systematic-debugging/` (entire directory — includes supporting `.md` files)
 
 **From `~/workspace/random/quint-code/`:**
-- `internal/cli/commands/h-*.md` → mirrored into `haft/commands/`
-- `internal/cli/skill/h-reason/SKILL.md` → mirrored into `haft/skills/h-reason/SKILL.md`
+- `internal/cli/skill/h-*/SKILL.md` → mirrored into `haft/skills/h-*/SKILL.md` (the full v8 skill catalog — one directory per skill). As of v8 there are no `internal/cli/commands/` files; the surface is skills only.
 - `CLAUDE.md` → mirrored into `haft/context/PRINCIPLES.md`
 - And: delete the cached MCP binary at `haft/bin/haft` so the SessionStart hook rebuilds it on next launch.
 
@@ -125,24 +124,31 @@ Re-apply the plugin-side edits afterwards. Read the file end-to-end and remove a
 
 Skip entirely. They have no upstream.
 
-### Type 3 — Haft commands, skill, and context
+### Type 3 — Haft skill catalog and context
 
-Direct copy, no plugin customization needed.
+Direct copy, no plugin customization needed. v8 surfaces haft as a catalog of skills (one directory per skill), not slash commands. Mirror the whole catalog so newly-added skills land and removed ones are dropped, then refresh the context and clear the cached binary.
 
 ```bash
-rm -f ~/workspace/asermax/claude-plugins/haft/commands/*.md
-cp ~/workspace/random/quint-code/internal/cli/commands/h-*.md \
-   ~/workspace/asermax/claude-plugins/haft/commands/
+SRC=~/workspace/random/quint-code
+DST=~/workspace/asermax/claude-plugins/haft
 
-mkdir -p ~/workspace/asermax/claude-plugins/haft/skills/h-reason
-cp ~/workspace/random/quint-code/internal/cli/skill/h-reason/SKILL.md \
-   ~/workspace/asermax/claude-plugins/haft/skills/h-reason/SKILL.md
+# Mirror the full skill catalog (adds new skills, drops removed ones)
+rm -rf "$DST/skills"
+for d in "$SRC"/internal/cli/skill/*/; do
+  name=$(basename "$d")
+  mkdir -p "$DST/skills/$name"
+  cp "$d/SKILL.md" "$DST/skills/$name/SKILL.md"
+done
 
-cp ~/workspace/random/quint-code/CLAUDE.md \
-   ~/workspace/asermax/claude-plugins/haft/context/PRINCIPLES.md
+# If a haft/commands/ directory still exists from a pre-v8 layout, remove it
+rm -rf "$DST/commands"
 
-rm -f ~/workspace/asermax/claude-plugins/haft/bin/haft
+cp "$SRC/CLAUDE.md" "$DST/context/PRINCIPLES.md"
+
+rm -f "$DST/bin/haft"
 ```
+
+The skill SKILL.md files reference MCP tools via `allowed-tools: mcp__haft__haft_*`; the `.mcp.json` server key `haft` matches that namespace, so no rewriting is needed. Manual-only skills carry `disable-model-invocation: true` — preserve it verbatim.
 
 Deleting `haft/bin/haft` is intentional — the SessionStart hook (`haft/hooks/session-init.sh`) rebuilds it on next launch from cached source in `~/.cache/claude-plugins/haft/`.
 
@@ -193,8 +199,7 @@ Superpowers:
 - systematic-debugging (adapted from superpowers, skill references removed)
 
 Haft:
-- command files synced (core workflow + lightweight ops + discovery + h-verify/h-view)
-- h-reason skill synced (marquee entry point)
+- skill catalog synced (15 skills: auto-triggering + manual-only + subroutines)
 - PRINCIPLES.md context updated from upstream CLAUDE.md
 - Cached MCP binary deleted (rebuilds on next session start)
 

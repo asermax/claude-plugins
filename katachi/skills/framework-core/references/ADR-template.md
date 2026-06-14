@@ -14,6 +14,10 @@
 
 [What is the change that we're proposing and/or doing?]
 
+<!--
+Describe the current decision in the present tense — what the system does and why. Do not phrase it as what was replaced or what the system used to do. Alternatives belong below as options considered and not chosen; the only place for history is the Status line (Superseded by ADR-XXX).
+-->
+
 ## Consequences
 
 ### Positive

@@ -44,6 +44,10 @@ Look for:
 - **Over-explanation**: Excessive detail that could be consolidated
 - **Content that should be in decision docs**: Technical choices or patterns repeated
   across features that should be extracted to ADR or DES
+- **Changelog-style / backward-looking phrasing**: Prose describing what the system *used to* do or
+  what was replaced ("previously", "used to", "no longer", "replaced by"). Documentation must describe
+  the current system. Recommend **rewriting** this into a present-tense description of what the system
+  does now — not merely deleting it (the only sanctioned place for history is an ADR's `Status: Superseded` line).
 
 **For each verbosity issue, provide:**
 - File path and specific line numbers when relevant

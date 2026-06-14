@@ -76,7 +76,13 @@ Evaluate the design against these criteria:
 - Are error scenarios from spec designed?
 - Are there implementation details missing?
 
-### 10. UI Layout (ONLY if UI Layout section is present)
+### 10. Present-Tense Documentation
+- Does the design describe the **current** system — what it does and what it deliberately does not do?
+- Is it free of backward-looking phrasing ("previously", "used to", "no longer", "replaced by", "was changed from")?
+- Are decisions framed positively — what is implemented and why — with alternatives recorded as *considered and not chosen* (with reasons), rather than as things that were removed?
+- Flag any prose that documents a prior implementation instead of the present one. (The only exception is an ADR's `Status: Superseded` line.)
+
+### 11. UI Layout (ONLY if UI Layout section is present)
 
 <!-- Skip this entire review section if design has no UI Layout section -->
 
@@ -148,6 +154,10 @@ Provide a structured review:
 - ADR violations: [List or "None"]
 - DES violations: [List or "None"]
 - Missing patterns: [Patterns that should be referenced/created]
+
+## Present-Tense Documentation
+- Backward-looking phrasing: [Quote any "previously/used to/replaced by" prose with location, or "None"]
+- Decision framing: [Are decisions stated positively with alternatives as "considered and not chosen"? Flag any framed as removals]
 
 ## UI Layout Compliance (if UI Layout section present)
 <!-- Omit this section entirely if design has no UI Layout section -->

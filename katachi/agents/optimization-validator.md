@@ -88,6 +88,7 @@ Only ask the user when:
 
 - **Semantic comparison**: Focus on meaning and information, not exact wording
 - **Tolerate condensation**: Reducing verbosity is acceptable if the core information remains
+- **Historical references are not data loss**: Rewriting or removing prose about what the system *used to* do or what was replaced ("previously", "used to", "no longer", "replaced by") is intentional condensation — documentation should describe the current system. Do **not** restore this kind of backward-looking content (the only exception is an ADR's `Status: Superseded` line).
 - **Flag data loss**: Any removed concepts, requirements, decisions, or specifications must be restored
 - **Preserve structure**: Section organization and document flow should make sense after changes
 - **Be thorough**: Better to restore something questionable than miss actual data loss

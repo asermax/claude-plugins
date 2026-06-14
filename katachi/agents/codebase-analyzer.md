@@ -309,3 +309,8 @@ See: ${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/technical-diagrams.m
    - If code does something unexpected
    - If there are dead code paths
    - If there are TODO/FIXME comments
+
+5. **Document the present, not the past**
+   - Describe what the system does now, in the present tense — and what it deliberately does not do
+   - Frame decisions positively: state what was chosen and why, then record alternatives as options *considered and not chosen* (with reasons)
+   - Never phrase a retrofitted doc as what the code used to do or what was replaced — you are documenting the current implementation, not its history

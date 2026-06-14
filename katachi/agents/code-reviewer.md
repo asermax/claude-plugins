@@ -66,6 +66,7 @@ Evaluate the implementation against these criteria:
 - If implementation deviated from design, was design updated?
 - If new patterns emerged, were they documented?
 - Are changes reflected in affected documents?
+- **Rewritten, not annotated**: When docs are updated to match the implementation, are they rewritten to describe the new current state — not annotated with what changed or was replaced? Flag any "previously/used to/no longer/replaced by" phrasing introduced into the docs (the only exception is an ADR's `Status: Superseded` line).
 
 ### 8. Unintended Effects & Regression
 - **Breaking changes**: Does this modify behavior that other deltas depend on?

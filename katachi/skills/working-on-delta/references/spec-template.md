@@ -57,6 +57,7 @@ Write in plain English, not technical jargon:
 - Focus on what the user experiences end-to-end
 - **Stay layer-agnostic**: No mention of API, UI, database, or implementation choices
 - Describe the complete user flow, not individual technical components
+- **Describe the present**: Write what the system does now, in the present tense. No "previously", "used to", or "replaced by" — describe current behavior, not how it changed
 
 Bad: "Implements a WebSocket connection to stream updates"
 Good: "Shows real-time updates without requiring page refresh"

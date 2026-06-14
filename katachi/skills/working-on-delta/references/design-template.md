@@ -141,6 +141,10 @@ For each significant choice:
 - List alternatives considered
 - Note consequences (both positive and negative)
 
+Frame decisions positively and in the present tense. Describe what the system does and why, then record alternatives as options *considered and not chosen*, with reasons. Never phrase a decision as what the system used to do or what was replaced.
+- ❌ "We no longer use `X`; it was replaced by `Y`."
+- ✅ "We use `Y` (because `W` and `Z`). `X` was considered and not chosen (because `C`)."
+
 Decisions should reference ADRs/DES if applicable:
 "Per ADR-007, we use X for logging"
 

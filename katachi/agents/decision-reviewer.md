@@ -41,7 +41,12 @@ For proposed updates to existing ADR/DES:
 - **Scope**: Is this a minor clarification or major change (supersede)?
 - **Accurate**: Does the proposed update correctly reflect what changed?
 
-### 4. Decision Tree Alignment
+### 4. Present-Tense Documentation
+- Do ADR/DES bodies describe the **current** decision or pattern in the present tense — what the system does and why?
+- Are alternatives recorded as options *considered and not chosen* (with reasons), rather than as prior implementations that were removed?
+- Is the body free of backward-looking phrasing ("previously", "used to", "no longer", "replaced by")? The only sanctioned place for history is the ADR `Status: Superseded by ADR-XXX` line.
+
+### 5. Decision Tree Alignment
 
 Reference the decision-types.md criteria:
 - WHAT (technology/approach) + hard to reverse → ADR

@@ -74,6 +74,11 @@ First, determine if this is a Feature or Technical delta:
 - Are boundary conditions covered?
 - Do criteria match the delta type (user outcomes for features, technical metrics for technical)?
 
+#### Present-Tense Documentation
+- Does the spec describe the **current** behavior — what the system does and what it deliberately does not do?
+- Is the behavior and acceptance criteria free of backward-looking phrasing ("previously", "used to", "no longer", "replaced by")?
+- Flag any prose that documents how behavior changed instead of what it is now.
+
 #### Edge Cases and Error Scenarios
 - Are invalid inputs addressed?
 - Are boundary conditions (min/max, empty, null) covered?

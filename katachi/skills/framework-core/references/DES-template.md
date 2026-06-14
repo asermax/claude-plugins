@@ -12,6 +12,10 @@
 
 [Why this pattern? What problem does it solve?]
 
+<!--
+Describe why the current pattern applies, in the present tense. Do not describe patterns it replaced or what the codebase used to do.
+-->
+
 ## Examples
 
 <!--

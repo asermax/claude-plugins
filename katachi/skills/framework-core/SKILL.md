@@ -194,6 +194,17 @@ When user shows uncertainty, research to provide informed options.
 
 Use Task tool (general-purpose agent) to research, then synthesize findings to inform questions.
 
+#### 8. Document the Present, Not the Past
+
+All documentation describes the **current** system — what it does and what it deliberately does not do. Never phrase anything as what the system *used to* do or what was replaced. Frame decisions positively: state what is implemented and why, then record alternatives as options *considered and not chosen*, with reasons.
+
+- ❌ "The system doesn't implement `X` because it was replaced by `Y`."
+- ✅ "The system implements `Y` (because `W` and `Z`). `A` and `B` were considered and not chosen (because `C`)."
+
+The only sanctioned place for history is an ADR's `Status: Superseded by ADR-XXX` line — and even there, the body describes the current decision.
+
+**Why:** Documentation is read as the source of truth for the current system. References to prior implementations confuse readers who never saw them, age badly, and turn living documents into changelogs.
+
 ### Workflow Modes
 
 #### Information Gathering

@@ -7,7 +7,7 @@ description: Sync this plugin marketplace's skills, commands, and context from t
 
 This skill keeps the plugin marketplace in lockstep with its upstream sources while preserving plugin-specific customizations. The upstream repos and what we track from each:
 
-- **superpowers** — `~/workspace/random/superpowers` — core workflow skills (currently: `systematic-debugging`)
+- **superpowers** — `~/workspace/random/superpowers` — core workflow skills (currently: `systematic-debugging`, which is mirrored into the **lesserpowers** plugin, not superpowers)
 - **haft** — `~/workspace/random/quint-code` (the local path still uses the old `quint-code` name; the project itself is now `haft`) — FPF reasoning methodology: the v8 skill catalog (`internal/cli/skill/h-*/SKILL.md`) and CLAUDE.md → PRINCIPLES.md context
 - **agentic-evolve** — `~/workspace/random/agentic-evolve` — evolve commands (master dispatcher + perf/size/ml subskills)
 - **agent-browser** — `~/workspace/random/agent-browser` — browser automation CLI skill (slim discovery stub)
@@ -41,7 +41,7 @@ The pull output reveals the old → new commit range and the touched files, whic
 These are the only paths to consider when comparing upstream against this plugin. Anything else upstream changed is irrelevant.
 
 **From `~/workspace/random/superpowers/`:**
-- `skills/systematic-debugging/` (entire directory — includes supporting `.md` files)
+- `skills/systematic-debugging/` (entire directory — includes supporting `.md` files) → mirrored into `lesserpowers/skills/`
 
 **From `~/workspace/random/quint-code/`:**
 - `internal/cli/skill/h-*/SKILL.md` → mirrored into `haft/skills/h-*/SKILL.md` (the full v8 skill catalog — one directory per skill). As of v8 there are no `internal/cli/commands/` files; the surface is skills only.
@@ -49,7 +49,7 @@ These are the only paths to consider when comparing upstream against this plugin
 - And: delete the cached MCP binary at `haft/bin/haft` so the SessionStart hook rebuilds it on next launch.
 
 **From `~/workspace/random/agentic-evolve/.claude/commands/`:**
-- `evolve.md`, `evolve-perf.md`, `evolve-size.md`, `evolve-ml.md` → mirrored into `superpowers/commands/`
+- `evolve.md`, `evolve-perf.md`, `evolve-size.md`, `evolve-ml.md` → mirrored into `lesserpowers/commands/`
 
 **From `~/workspace/random/agent-browser/skills/agent-browser/`:**
 - `SKILL.md` only. Upstream restructured this into a slim discovery stub that delegates to `agent-browser skills get core` at runtime, so any old `references/` or `templates/` directories under the plugin copy should be removed.
@@ -115,7 +115,7 @@ Copy the whole directory from upstream, then strip references to skills not bund
 
 ```bash
 cp -r ~/workspace/random/superpowers/skills/systematic-debugging \
-      ~/workspace/asermax/claude-plugins/superpowers/skills/
+      ~/workspace/asermax/claude-plugins/lesserpowers/skills/
 ```
 
 Re-apply the plugin-side edits afterwards. Read the file end-to-end and remove any lingering cross-skill references to things this plugin doesn't ship.
@@ -158,13 +158,13 @@ Direct copy of all four files.
 
 ```bash
 cp ~/workspace/random/agentic-evolve/.claude/commands/evolve.md \
-   ~/workspace/asermax/claude-plugins/superpowers/commands/evolve.md
+   ~/workspace/asermax/claude-plugins/lesserpowers/commands/evolve.md
 cp ~/workspace/random/agentic-evolve/.claude/commands/evolve-perf.md \
-   ~/workspace/asermax/claude-plugins/superpowers/commands/evolve-perf.md
+   ~/workspace/asermax/claude-plugins/lesserpowers/commands/evolve-perf.md
 cp ~/workspace/random/agentic-evolve/.claude/commands/evolve-size.md \
-   ~/workspace/asermax/claude-plugins/superpowers/commands/evolve-size.md
+   ~/workspace/asermax/claude-plugins/lesserpowers/commands/evolve-size.md
 cp ~/workspace/random/agentic-evolve/.claude/commands/evolve-ml.md \
-   ~/workspace/asermax/claude-plugins/superpowers/commands/evolve-ml.md
+   ~/workspace/asermax/claude-plugins/lesserpowers/commands/evolve-ml.md
 ```
 
 `evolve.md` is a master dispatcher; the other three are mode-specific subskills it routes to.
@@ -195,7 +195,7 @@ Print a clear summary of what was updated and which customizations were preserve
 ```
 ✅ Plugins synced successfully:
 
-Superpowers:
+Lesserpowers:
 - systematic-debugging (adapted from superpowers, skill references removed)
 
 Haft:
@@ -204,7 +204,7 @@ Haft:
 - Cached MCP binary deleted (rebuilds on next session start)
 
 Agentic-Evolve:
-- evolve commands synced (4 files: dispatcher + perf/size/ml)
+- evolve commands synced into lesserpowers (4 files: dispatcher + perf/size/ml)
 
 Agent-Browser:
 - agent-browser SKILL.md synced

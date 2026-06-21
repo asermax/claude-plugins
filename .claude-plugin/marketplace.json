@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "3.2.0"
+    "version": "3.3.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -15,7 +15,12 @@
     {
       "name": "superpowers",
       "source": "./superpowers",
-      "description": "Development workflow skills for systematic debugging, code review, planning, and more"
+      "description": "Curated development workflow skills for browser automation, documentation, and code directives"
+    },
+    {
+      "name": "lesserpowers",
+      "source": "./lesserpowers",
+      "description": "Secondary workflow skills and commands split out from superpowers: systematic debugging, agent communication, evolutionary algorithm discovery, and more"
     },
     {
       "name": "haft",

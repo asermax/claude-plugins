@@ -125,9 +125,9 @@ Show the user the proposed groups in a compact format and offer to adjust:
 
 ```
 Proposed commit groups:
-1. [superpowers/patch] Update agent communication skill
-   - superpowers/skills/agent-communication/SKILL.md
-   - superpowers/skills/agent-communication/scripts/chat.py
+1. [lesserpowers/patch] Update agent communication skill
+   - lesserpowers/skills/agent-communication/SKILL.md
+   - lesserpowers/skills/agent-communication/scripts/chat.py
 
 2. [marketplace/feat] Add commit skill
    - .claude/skills/commit/SKILL.md

@@ -10,7 +10,7 @@ This is a personal collection of Claude Code plugins that provide workflow autom
 
 - **Root level**: Marketplace configuration (`.claude-plugin/marketplace.json`)
 - **`.claude/skills/`**: Marketplace-level skills available when working inside this repo (currently `sync-upstream`, `commit`). These are scoped to maintaining the marketplace itself, not shipped to plugin consumers.
-- **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`, `beads/`, `haft/`) is a separate plugin
+- **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`, `lesserpowers/`, `beads/`, `haft/`) is a separate plugin
   - `.claude-plugin/plugin.json`: Plugin metadata
   - `commands/`: Slash command definitions (`.md` files)
   - `.mcp.json`: MCP server configuration (if applicable)
@@ -59,32 +59,55 @@ AUR (Arch User Repository) package management automation.
 - Commands: `updpkgsums`, `makepkg --printsrcinfo`
 
 ### superpowers
-Development workflow skills for systematic debugging, planning, and more.
+Curated development workflow skills for browser automation, documentation, and code directives. The secondary skills and evolutionary-algorithm commands were split into the companion `lesserpowers` plugin (see below).
 
 **Commands:**
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from various inputs (transcripts, documents, external sources); auto-detects input types and uses available tools to fetch content
-- `/superpowers:evolve <problem>`: Master dispatcher for evolutionary algorithm discovery - routes to specialized modes:
-  - `/superpowers:evolve-perf`: Optimize runtime speed (ops/sec, latency)
-  - `/superpowers:evolve-size`: Optimize code size (bytes, chars) - code golf
-  - `/superpowers:evolve-ml`: Optimize ML metrics (F1, loss)
+- `/superpowers:generate-summary-from-situation-state <state-file> [output]`: Generate an abridged summary from a situation state file
+- `/superpowers:generate-tech-validation-from-situation-state <state-file> [output]`: Generate a technical validation document from a situation state file
 - `/superpowers:process-directives <request>`: Scan and process code directives (@implement, @docs, @refactor, @test, @todo) based on natural language request; applies context-dependent transformations
 
 **Skills:**
-The plugin provides a collection of proven workflow skills organized by category:
 
 *Core Development Workflow:*
 - **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations and security validation for external URLs
+
+*Documentation and Research:*
+- **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
+- **using-antigravity**: Analyze images, videos, fetch web content, and search Google using the Antigravity CLI
+
+*Diagrams and Rendering:*
 - **mermaid-validation**: Validate mermaid diagram syntax after writing code blocks using bundled merval-based script (~552KB, auto-installs on first run)
+- **show-markdown**: Render markdown content in the browser with styling
+
+*Browser Automation:*
+- **agent-browser**: Browser automation CLI for web testing, form filling, screenshots, and data extraction (synced from `~/workspace/random/agent-browser`)
+
+**Key workflows:**
+- Skills directory contains full skill definitions from upstream repositories
+- Upstream sources synced via the marketplace-level `sync-upstream` skill (see "Repo-level skills"):
+  - `~/workspace/random/agent-browser` - Browser automation CLI
+- Shows high-level summary of changes before updating
+- Intelligently merges updates while preserving plugin-specific customizations
+- Skills are automatically available via Claude Code's skill system
+- All skills use `superpowers:` namespace prefix for skill references
+
+### lesserpowers
+Secondary workflow skills and commands split out of `superpowers` to keep that plugin focused on its most-used surface. Functionality is unchanged from when these lived in superpowers — only the plugin (and namespace) differs. Skills are referenced as `lesserpowers:<skill>`.
+
+**Commands:**
+- `/lesserpowers:evolve <problem>`: Master dispatcher for evolutionary algorithm discovery - routes to specialized modes:
+  - `/lesserpowers:evolve-perf`: Optimize runtime speed (ops/sec, latency)
+  - `/lesserpowers:evolve-size`: Optimize code size (bytes, chars) - code golf
+  - `/lesserpowers:evolve-ml`: Optimize ML metrics (F1, loss)
+
+**Skills:**
 
 *Debugging and Testing:*
 - **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions (includes supporting techniques: root-cause-tracing, defense-in-depth, condition-based-waiting)
 
 *Documentation and Research:*
 - **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
-- **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
-
-*Browser Automation:*
-- **agent-browser**: Browser automation CLI for web testing, form filling, screenshots, and data extraction (synced from `~/workspace/random/agent-browser`)
 
 *Code Review:*
 - **hunk-review**: Interactive terminal diff review via the `hunk` CLI — inspect live sessions, navigate files/hunks, reload contents, and add inline review comments (plugin ships a thin wrapper that inlines the live SKILL.md from the installed Hunk CLI via `hunk skill path` — no syncing needed)
@@ -92,14 +115,18 @@ The plugin provides a collection of proven workflow skills organized by category
 *Multi-Agent Collaboration:*
 - **agent-communication**: Enable communication between multiple Claude Code instances across repositories using file-based chat system (agent daemon, chat CLI)
 
+*Other:*
+- **financial-summary**: Parse and analyze personal financial transaction CSV exports
+
+**Hooks:**
+- `hooks/background-daemons.sh`: PreToolUse hook that auto-backgrounds `agent.py` commands for the agent-communication skill (moved here from superpowers along with that skill)
+- `hooks/auto-approve.sh`: PermissionRequest hook that auto-approves `lesserpowers:` skill invocations and bash commands referencing lesserpowers paths
+
 **Key workflows:**
-- Skills directory contains full skill definitions from upstream repositories
 - Upstream sources synced via the marketplace-level `sync-upstream` skill (see "Repo-level skills"):
-  - `~/workspace/random/superpowers` - Core workflow skills
-- Shows high-level summary of changes before updating
-- Intelligently merges updates while preserving plugin-specific customizations
-- Skills are automatically available via Claude Code's skill system
-- All skills use `superpowers:` namespace prefix for skill references
+  - `~/workspace/random/superpowers` - `systematic-debugging`
+  - `~/workspace/random/agentic-evolve` - evolve commands (dispatcher + perf/size/ml)
+- All skills use `lesserpowers:` namespace prefix for skill references
 
 ### haft
 FPF (First Principles Framework) methodology for artifact-centric decision engineering. Successor to the previous `quint` plugin — upstream `quint-code` was renamed to `haft`, with the MCP binary renamed `quint-code` → `haft`. As of the upstream **v8 governance-substrate pivot**, haft's surface is a catalog of host-AI **skills** plus the MCP server — the standalone agent, TUI, desktop wrappers, and the old slash-`command` files were dropped. The reasoning kernel, artifact graph, FPF spec retrieval, and WorkCommission lifecycle are unchanged (no schema change); only the surface changed.
@@ -269,33 +296,34 @@ Agentic memory framework for long-term memory across sessions.
 - Include permission fixes and metadata cleanup in package() function
 - Reference Arch Wiki Node.js packaging guidelines
 
-### Superpowers Plugin Specifics
+### Superpowers / Lesserpowers Plugin Specifics
+
+`superpowers` and `lesserpowers` are sibling plugins. `superpowers` keeps the curated, most-used surface (agent-browser, mermaid-validation, show-markdown, the three `using-` skills, plus the situation-state and process-directives commands); `lesserpowers` holds everything else that was split out (systematic-debugging, self-maintaining-claude-md, hunk-review, agent-communication, financial-summary, and the evolve commands). They have no cross-references — the split is clean.
 
 **Custom modifications:**
-- **All skills**: Use `superpowers:` namespace prefix for all skill references
-- **systematic-debugging**: Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
-- Multiple plugin-specific skills added: using-live-documentation, self-maintaining-claude-md, using-antigravity, agent-communication, financial-summary, using-code-directives, mermaid-validation
+- **superpowers skills**: Use `superpowers:` namespace prefix for any cross-skill reference
+- **lesserpowers skills**: Use `lesserpowers:` namespace prefix for any cross-skill reference
+- **systematic-debugging** (in lesserpowers): Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
 - Upstream repositories:
-  - `~/workspace/random/superpowers` - Core workflow skills
-  - `~/workspace/random/agentic-evolve` - Evolutionary algorithm discovery
-  - `~/workspace/random/agent-browser` - Browser automation CLI
+  - `~/workspace/random/superpowers` - `systematic-debugging` (synced into **lesserpowers**)
+  - `~/workspace/random/agentic-evolve` - evolve commands (synced into **lesserpowers**)
+  - `~/workspace/random/agent-browser` - Browser automation CLI (synced into **superpowers**)
 - Pull latest changes from all repositories' `main` branch
-- Tracked skills from superpowers: systematic-debugging
+- Tracked skill from superpowers upstream: systematic-debugging → `lesserpowers/skills/`
 - hunk-review skill is NOT synced: it's a thin wrapper that uses Claude Code's `!`-preprocessing to inline the installed Hunk binary's SKILL.md at skill-load time (via `hunk skill path`). The upstream hunk binary owns the content, so the plugin file rarely needs touching.
-- Tracked commands from agentic-evolve (copied directly to superpowers/commands/):
+- Tracked commands from agentic-evolve (copied directly to `lesserpowers/commands/`):
   - evolve.md (master dispatcher)
   - evolve-perf.md (runtime speed optimization)
   - evolve-size.md (code size/bytes optimization)
   - evolve-ml.md (ML accuracy optimization)
 - Show high-level summary of changes (not detailed line-by-line diffs)
 - Intelligently merge updates: adapt conceptual improvements while preserving plugin customizations
-- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-antigravity, agent-communication, financial-summary, using-code-directives, mermaid-validation) are never modified
+- Plugin-specific skills (using-live-documentation, self-maintaining-claude-md, using-antigravity, agent-communication, financial-summary, using-code-directives, mermaid-validation, show-markdown) have no upstream and are never modified during sync
 - Confirm before updating skills
 - Skills are available immediately after update via Claude Code's skill system
-
 
 **Skills structure:**
 - Each skill directory contains SKILL.md and optional test cases
@@ -303,7 +331,7 @@ Agentic memory framework for long-term memory across sessions.
 - Skills are loaded automatically by Claude Code from the `skills/` directory
 - No manual activation required - skills are always available
 
-**Agents:**
+**Agents (superpowers):**
 - `agents/documentation-searcher.md`: Internal agent used by the using-live-documentation skill
   - Plugin-specific agent (no upstream source)
   - Searches Context7 for library documentation and provides focused synthesis
@@ -311,10 +339,14 @@ Agentic memory framework for long-term memory across sessions.
   - Invoked via Task tool with subagent_type: superpowers:documentation-searcher
 - Agent definitions include frontmatter with name, description, tools, and model
 
-**Hooks:**
+**Hooks (superpowers):**
 - `hooks/hooks.json`: Plugin hooks configuration
-- `hooks/background-agent.sh`: PreToolUse hook that auto-backgrounds `agent.py` and `broker.py` commands
-- `hooks/auto-approve.sh`: PermissionRequest hook that auto-approves superpowers skill invocations and bash commands referencing superpowers paths
+- `hooks/auto-approve.sh`: PermissionRequest hook that auto-approves `superpowers:` skill invocations and bash commands referencing superpowers paths
+
+**Hooks (lesserpowers):**
+- `hooks/hooks.json`: Plugin hooks configuration
+- `hooks/background-daemons.sh`: PreToolUse hook that auto-backgrounds `agent.py` commands for the agent-communication skill
+- `hooks/auto-approve.sh`: PermissionRequest hook that auto-approves `lesserpowers:` skill invocations and bash commands referencing lesserpowers paths
 
 ## Repository Conventions
 

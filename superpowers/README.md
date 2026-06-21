@@ -1,10 +1,10 @@
 # superpowers
 
-Development workflow skills for systematic debugging, planning, and more.
+Curated development workflow skills for browser automation, documentation, and code directives.
 
 ## Description
 
-This plugin provides a collection of Claude Code skills that establish proven workflows for common development tasks. These skills help ensure consistent, high-quality approaches to debugging, code review, planning, and implementation.
+This plugin provides a focused collection of Claude Code skills for common development tasks. Secondary skills and the evolutionary-algorithm commands were split into the companion `lesserpowers` plugin.
 
 ## Skills
 
@@ -13,42 +13,33 @@ The plugin includes the following skills:
 ### Core Development Workflow
 - **using-code-directives**: Recognize and handle code directives (@implement, @docs, @refactor, @test, @todo) embedded in comments with context-dependent transformations
 
-### Debugging and Testing
-- **systematic-debugging**: Four-phase debugging framework ensuring understanding before solutions
-
 ### Documentation and Research
-- **self-maintaining-claude-md**: Keep CLAUDE.md instruction file current with high-level project state
 - **using-live-documentation**: Dispatch subagents to fetch library documentation with massive context savings (10,000-20,000 tokens per search)
 
 ### Browser Automation
 - **agent-browser**: Browser automation CLI for web testing, form filling, screenshots, and data extraction
 
-### Code Review
-- **hunk-review**: Interactive terminal diff review via the `hunk` CLI. Inspect live review sessions, navigate files/hunks, reload contents, and add inline comments. Use when reviewing diffs in a Hunk TUI session.
-
-### Multi-Agent Collaboration
-- **agent-communication**: Enable communication between multiple Claude Code instances across repositories
+### Diagrams and Rendering
+- **mermaid-validation**: Validate mermaid diagram syntax after writing mermaid code blocks
+- **show-markdown**: Render markdown content in the browser with styling
 
 ### Other
 - **using-antigravity**: Analyze images, videos, fetch web content, and search Google using Antigravity CLI
-- **financial-summary**: Parse and analyze financial transaction CSV exports
 
 ## Commands
 
-- `/superpowers:update-skills`: Pull latest changes from the upstream superpowers repository and show differences
 - `/superpowers:evolve-situation-state <input> [state-file]`: Maintain a living state document that evolves incrementally from transcripts, documents, and external sources
-- `/superpowers:evolve <problem>`: Evolve novel algorithms through LLM-driven mutation, crossover, and selection
-  - Uses 8 parallel mutation strategies: tweak, unroll, specialize, vectorize, memoize, restructure, hybrid, alien
-  - Dynamically scales from 10-32 agents based on problem complexity
-  - Supports configurable token budgets (e.g., `50k`, `20gen`, `unlimited`)
-  - Adaptive stopping when improvements plateau
-  - Resume capability via `--resume` flag
-  - Example: `/superpowers:evolve "fibonacci sequence"` or `/superpowers:evolve "Optimize the string search in src/search.rs" --budget 50k`
+- `/superpowers:generate-summary-from-situation-state <state-file> [output]`: Generate an abridged summary from a situation state file
+- `/superpowers:generate-tech-validation-from-situation-state <state-file> [output]`: Generate a technical validation document from a situation state file
 - `/superpowers:process-directives <request>`: Scan and process code directives based on natural language request
   - Example: `/superpowers:process-directives "implement all @implement directives in src/"`
   - Example: `/superpowers:process-directives "process @todo comments in auth module"`
   - Supports @implement, @docs, @refactor, @test, @todo directives
   - Applies context-dependent transformations (remove vs. convert to docs)
+
+## Agents
+
+- `agents/documentation-searcher.md`: Internal agent used by the using-live-documentation skill to search Context7 for library docs
 
 ## Installation
 
@@ -72,18 +63,4 @@ The plugin includes the following skills:
 
 ## Updating Skills
 
-To sync skills with the upstream repository:
-
-```bash
-/superpowers:update-skills
-```
-
-This command will:
-1. Pull latest changes from `~/workspace/random/superpowers`
-2. Compare existing skills with updated versions
-3. Show differences for each skill
-4. Ask for confirmation before updating
-
-## Version
-
-1.0.0
+Skills are synced from their upstream repositories via the marketplace-level `sync-upstream` skill. From inside this marketplace repo, just ask to "sync upstream".

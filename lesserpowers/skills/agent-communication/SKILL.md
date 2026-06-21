@@ -44,9 +44,9 @@ To call scripts, concatenate:
 
 Example:
 ```bash
-# If skill base is: /home/agus/workspace/asermax/claude-plugins/superpowers/skills/agent-communication
+# If skill base is: /home/agus/workspace/asermax/claude-plugins/lesserpowers/skills/agent-communication
 # Then agent.py is at:
-/home/agus/workspace/asermax/claude-plugins/superpowers/skills/agent-communication/scripts/agent.py
+/home/agus/workspace/asermax/claude-plugins/lesserpowers/skills/agent-communication/scripts/agent.py
 ```
 
 In the examples below, we use `scripts/agent.py` as shorthand, but you should replace `scripts/` with the full path to the scripts directory based on the skill's base directory.

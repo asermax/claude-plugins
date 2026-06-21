@@ -1,0 +1,8 @@
+{
+  "name": "lesserpowers",
+  "version": "1.0.0",
+  "description": "Secondary workflow skills and commands split out from superpowers: systematic debugging, agent communication, evolutionary algorithm discovery, and more",
+  "author": {
+    "name": "Agustin Carrasco"
+  }
+}

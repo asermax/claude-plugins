@@ -243,6 +243,36 @@ Agentic memory framework for long-term memory across sessions.
 - Background fork for memorization prevents session exit blocking
 - Skill description optimized for broad retrieval query triggering
 
+### zenku
+Experiment-driven development framework. A generalization of the experimentation framework proven in the `zukai` project (`~/workspace/asermax/zukai`), plus a katachi-inspired product-development track. Sibling to `katachi`: where katachi bakes validation into its design phase via review loops, zenku's validation comes from **experiments**, and its product-dev docs are **fed from** those experiments rather than re-validated.
+
+**Two halves, joined at `PRODUCT.md`:**
+
+*Experimentation* (generalized from zukai, domain/stack-agnostic):
+- `capture`: append an immature idea to `BACKLOG.md` (free, no interview)
+- `experiment-start`: promote an idea into a numbered one-pager with a pre-registered single question, falsifiable hypothesis, and two-lens (task + insight) judging criteria; scaffold a spike
+- `experiment-run`: collaboratively shape the minimal spike, build it with spike discipline against real data, assist the user through judging sessions while scribing the insight log (includes the fresh-subagent-driver harness discipline for agent-as-judged-actor experiments)
+- `experiment-conclude`: force a verdict against the pre-registered criteria, append a `LEARNINGS.md` entry, promote proven pieces into `PRODUCT.md` under a milestone
+
+*Product development* (new, experiment-fed; lighter than katachi — no ephemeral delta tier):
+- `roadmap`: break a `PRODUCT.md` milestone into features with ordering, a parallelizable set, and a cycle-checked dependency graph → `docs/planning/ROADMAP.md`
+- `spec`: durable feature spec grounded in the source experiments → `docs/feature-specs/<feature>.md`
+- `design`: durable feature design from spec + experiment evidence (spike is reference, not code to copy); creates ADR/DES inline → `docs/feature-designs/<feature>.md`, `docs/architecture/`, `docs/design/`
+- `implement`: build against the design + a code-review loop
+- `reconcile`: fold what was built back into the durable docs (surgical change, document-the-present), promote decisions to ADR/DES
+
+*Supporting:*
+- `framework-core` (`user-invocable: false`): shared collaborative principles, the experiment-sandbox definition (properties, not a stack), the artifact/doc map, project-convention lookup, reviewer-dispatch table, and template pointers
+- `init`: scaffold the artifacts + docs tree and record project conventions in the project's CLAUDE.md
+
+**Agents:** `experiment-researcher`, `onepager-reviewer`, `shape-reviewer`, `conclusion-reviewer` (experimentation); `spec-reviewer`, `design-reviewer`, `code-reviewer`, `reconciliation-reviewer` (product). Reviewers run the silent draft→validate→present loop; criteria check doc quality **and experiment-grounding**, not idea validation.
+
+**Key conventions:**
+- No config file — project-specific bits (purpose, spike location, build/test/lint commands) live in a `## zenku` section of the project's own CLAUDE.md, following katachi's convention-based approach
+- All skills/agents use the `zenku:` namespace prefix; templates live under `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/`
+- Experiment sandboxes are stack-agnostic — defined by properties (isolated, throwaway, minimal, real-data, easy to run/discard); the zukai Vite/React layout survives only as an optional worked example
+- Generalized from zukai (stripped: "visual code comprehension" mission, hardcoded shin-sekai note sync, Vite/React `src/experiments/registry.ts` layout, `pnpm lint && build`, "real change = a PR")
+
 ## Development Patterns
 
 ### Creating New Commands

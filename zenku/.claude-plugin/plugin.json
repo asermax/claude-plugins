@@ -1,0 +1,8 @@
+{
+  "name": "zenku",
+  "version": "0.1.0",
+  "description": "Experiment-driven development: pre-registered experiments for validation, plus an experiment-fed product-dev track (roadmap, spec, design, implement, reconcile)",
+  "author": {
+    "name": "Agustin Carrasco"
+  }
+}

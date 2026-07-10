@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "3.3.0"
+    "version": "3.4.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -36,6 +36,11 @@
       "name": "katachi",
       "source": "./katachi",
       "description": "Spec-driven development framework with iterative growth, progressive adoption, and retrofit support"
+    },
+    {
+      "name": "zenku",
+      "source": "./zenku",
+      "description": "Experiment-driven development: pre-registered experiments for validation, plus an experiment-fed product-dev track (roadmap, spec, design, implement, reconcile)"
     },
     {
       "name": "memu",

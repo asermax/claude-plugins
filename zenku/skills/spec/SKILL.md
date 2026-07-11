@@ -38,8 +38,9 @@ from `$ARGUMENTS` or the user's request.
 - `docs/feature-specs/<feature>.md` — current spec to update or create
 - `docs/feature-specs/` — related feature specs, for consistency and dependency context
 
-### Template
+### Templates
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/feature-spec-template.md` — structure to follow
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/doc-index-templates.md` — the `feature-specs/README.md` index shape to keep current
 
 ## Pre-Check
 
@@ -177,6 +178,11 @@ Apply the user's changes; re-run validation (steps 6-7) if significant. When
 approved, set the doc's Status field to ✓ current, write
 `docs/feature-specs/<feature>.md`, and mark the feature `✓ Spec` in
 `docs/planning/ROADMAP.md`.
+
+Then update the **feature-specs index** `docs/feature-specs/README.md` (create it
+from `doc-index-templates.md` if absent): add this feature's row — link, a one-line
+capability description, its status, and its milestone — or update the existing row
+if the spec already had one. Keep the index consistent with the folder.
 
 Present a summary:
 ```

@@ -32,12 +32,13 @@ The just-implemented feature. Identify it from `$ARGUMENTS` or the user's reques
 - `docs/feature-designs/<feature>.md`
 
 ### Decisions
-- `docs/architecture/` — existing ADRs
-- `docs/design/` — existing DES patterns
+- `docs/architecture/README.md` — ADR index; `docs/architecture/` — existing ADRs
+- `docs/design/README.md` — DES index; `docs/design/` — existing DES patterns
 
 ### Templates
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/ADR-template.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/DES-template.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/doc-index-templates.md` — the folder index shapes to keep current
 
 ## Pre-Check
 
@@ -169,6 +170,14 @@ Apply the user's corrections. When approved:
 - For each approved ADR: determine the next `NNN`, create `docs/architecture/ADR-NNN-<slug>.md` from the template, cite the experiment(s) where relevant, and reference it from the feature design
 - For each approved DES: same, under `docs/design/DES-NNN-<slug>.md`
 - For each approved update to an existing decision: update that document in place (describe the current decision; do not annotate the change)
+
+Keep the folder indexes current (create any from `doc-index-templates.md` if absent):
+- `docs/architecture/README.md` / `docs/design/README.md` — add a row for each new
+  ADR/DES; update the row (status, one-line summary) for any existing decision this
+  build changed.
+- `docs/feature-specs/README.md` / `docs/feature-designs/README.md` — update this
+  feature's row only if the reconciliation changed its capability/approach one-liner
+  or status; leave it untouched otherwise (surgical — no churn).
 
 Mark the feature `✓ Reconciled` in `docs/planning/ROADMAP.md`.
 

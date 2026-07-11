@@ -54,6 +54,14 @@ The critical distinction from katachi: **validation lives in the experiments, no
 - `docs/architecture/ADR-NNN-*.md` — Architecture Decision Records (one-time, hard-to-reverse, project-wide choices).
 - `docs/design/DES-NNN-*.md` — Design pattern docs (repeatable cross-cutting patterns, used 2+ times).
 
+**Folder indexes.** Each of the four content folders carries a `README.md` that
+catalogs its contents — `docs/feature-specs/README.md`, `docs/feature-designs/README.md`,
+`docs/architecture/README.md` (ADR index), `docs/design/README.md` (DES index).
+They are **create-if-missing, keep-current**: the skill that writes a doc into a
+folder adds or updates that doc's row in the folder's index (see the doc-index
+templates). The ROADMAP tracks feature *ordering and dependencies*; the feature
+indexes are a flat *capability catalog* — different reading needs, both kept true.
+
 ## The experiment sandbox
 
 An experiment's code is a **spike**, not product. A good sandbox is defined by its *properties*, never by a stack:
@@ -130,7 +138,7 @@ Specs, designs, decisions, and one-pagers all follow the same loop:
 4. **Apply feedback (silent)** — apply all mechanical fixes automatically; use AskUserQuestion only when a fix requires a genuine choice.
 5. **Present** — show the validated document, summarize the fixes applied, flag anything unresolved, invite feedback.
 6. **Iterate** — apply corrections; re-validate if the change is significant.
-7. **Finalize** — write to its canonical location; update any index/status.
+7. **Finalize** — write to its canonical location; update its folder index `README.md` (create-if-missing, keep-current) and any status marker.
 
 Validate *before* presenting; auto-apply fixes; reserve AskUserQuestion for real decisions.
 
@@ -159,6 +167,7 @@ All under `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/`:
 - `feature-design-template.md` — a durable feature design
 - `ADR-template.md` — Architecture Decision Record
 - `DES-template.md` — Design pattern doc
+- `doc-index-templates.md` — the four `docs/` folder index shapes (feature-specs, feature-designs, ADR, DES)
 - `sandbox-example-web.md` — one worked sandbox example (illustration, not default)
 
 ## State detection

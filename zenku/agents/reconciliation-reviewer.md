@@ -20,6 +20,10 @@ You will receive:
 - The proposed surgical updates (spec + design)
 - The decision candidates (new/updated ADR/DES)
 
+You may also read the folder indexes from the repo to check they are current:
+`docs/architecture/README.md`, `docs/design/README.md`,
+`docs/feature-specs/README.md`, `docs/feature-designs/README.md`.
+
 ## Review Criteria
 
 ### 1. Accuracy — Docs Describe the Present
@@ -59,6 +63,10 @@ You will receive:
 - For updates to existing ADR/DES: does the update describe the current decision
   cleanly (not annotate the change)?
 - Does each new ADR/DES cite its justifying experiment where relevant?
+- Are the folder indexes current — a row for each new ADR/DES in
+  `docs/architecture/README.md` / `docs/design/README.md`, and the feature's row in
+  `docs/feature-specs/README.md` / `docs/feature-designs/README.md` updated when its
+  one-liner or status changed (and left untouched otherwise)?
 
 ## Output Format
 

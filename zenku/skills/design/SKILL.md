@@ -34,8 +34,8 @@ from `$ARGUMENTS` or the user's request.
 - Spike code (at the location noted in the PRODUCT.md piece / the source one-pager) — **reference only**; read it to learn what worked and what the constraints really cost, never to copy
 
 ### Project decisions
-- `docs/architecture/` — existing ADRs
-- `docs/design/` — existing DES patterns
+- `docs/architecture/README.md` — ADR index; `docs/architecture/` — existing ADRs
+- `docs/design/README.md` — DES index; `docs/design/` — existing DES patterns
 
 ### Existing design + related designs (if present)
 - `docs/feature-designs/<feature>.md` — current design to update or create
@@ -45,6 +45,7 @@ from `$ARGUMENTS` or the user's request.
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/feature-design-template.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/ADR-template.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/DES-template.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/doc-index-templates.md` — the `feature-designs/README.md`, `architecture/README.md`, and `design/README.md` index shapes to keep current
 
 ## Pre-Check
 
@@ -132,6 +133,11 @@ Determine the next `NNN` by scanning the respective directory. Keep it
 lightweight: a decision relevant only to this feature stays in the feature
 design; a pattern used once stays inline. When unsure, ask the user.
 
+Whenever you create an ADR or DES here, add its row to the matching index —
+`docs/architecture/README.md` for an ADR, `docs/design/README.md` for a DES
+(create the index from `doc-index-templates.md` if absent). The index row and the
+document are written together.
+
 ### 6. External Validation (Silent)
 
 Dispatch the design-reviewer:
@@ -184,6 +190,12 @@ Apply the user's changes; re-run validation (steps 6-7) if significant. When
 approved, write `docs/feature-designs/<feature>.md` (set the doc's Status
 field to ✓ current), finalize any ADR/DES, and mark the feature `✓ Design` in
 `docs/planning/ROADMAP.md`.
+
+Then update the indexes (create any from `doc-index-templates.md` if absent):
+- `docs/feature-designs/README.md` — add or update this feature's row (link,
+  one-line approach, status, milestone).
+- `docs/architecture/README.md` / `docs/design/README.md` — ensure every ADR/DES
+  finalized in step 5 has its row (added there already if you followed step 5).
 
 Present a summary:
 ```

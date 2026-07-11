@@ -49,7 +49,7 @@ If the project needs a skill to do something project-specific that a convention 
 - `experiments/README.md` — the process note + the one-pager template (copy from `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/onepager-template.md`) + an empty index table (`| # | Experiment | Verdict |`).
 - `LEARNINGS.md` — header + the entry shape (from `learnings-entry-template.md`), append-only note.
 - `PRODUCT.md` — header + the milestone conventions (from `product-entry-template.md`, the prose through "Rules of the road" only — the trailing "## Milestone N" section is a worked example for `/experiment-conclude` to follow later, not something to pre-populate into a new project's file).
-- `docs/` tree — create `docs/planning/`, `docs/feature-specs/`, `docs/feature-designs/`, `docs/architecture/`, `docs/design/`. These stay empty until the product half runs; a short `docs/README.md` explaining the layout is optional.
+- `docs/` tree — create `docs/planning/`, `docs/feature-specs/`, `docs/feature-designs/`, `docs/architecture/`, `docs/design/`. Seed each of the four content folders with its index `README.md` (empty table) from `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/doc-index-templates.md` — `feature-specs/README.md`, `feature-designs/README.md`, `architecture/README.md`, `design/README.md` — the same way `experiments/README.md` starts as an empty index table. The product skills keep these current as they add docs. A short `docs/README.md` explaining the layout is optional.
 
 ## 5. Explain what's next
 

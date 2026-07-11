@@ -271,6 +271,7 @@ Experiment-driven development framework. A generalization of the experimentation
 **Key conventions:**
 - No config file — project-specific bits (purpose, spike location, build/test/lint commands) live in a `## zenku` section of the project's own CLAUDE.md, following katachi's convention-based approach
 - All skills/agents use the `zenku:` namespace prefix; templates live under `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/`
+- Per-folder doc indexes (katachi convention): each `docs/` content folder carries a `README.md` catalog — `feature-specs/`, `feature-designs/`, `architecture/` (ADR), `design/` (DES). Create-if-missing, keep-current: `spec`/`design`/`reconcile`/`patch` upsert rows as they write docs; `init` seeds the empty stubs; `doc-index-templates.md` defines the shapes. The ROADMAP owns feature ordering/dependencies; the feature indexes are a flat capability catalog
 - Experiment sandboxes are stack-agnostic — defined by properties (isolated, throwaway, minimal, real-data, easy to run/discard); the zukai Vite/React layout survives only as an optional worked example
 - Generalized from zukai (stripped: "visual code comprehension" mission, hardcoded shin-sekai note sync, Vite/React `src/experiments/registry.ts` layout, `pnpm lint && build`, "real change = a PR")
 

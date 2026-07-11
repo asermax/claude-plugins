@@ -49,6 +49,7 @@ All under `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/` — used for
 reconciliation output shapes:
 - `feature-spec-template.md`, `feature-design-template.md`
 - `ADR-template.md`, `DES-template.md`
+- `doc-index-templates.md` — the folder index shapes to keep current on reconcile
 
 ## When to Use Patch vs the Full Chain
 
@@ -348,6 +349,12 @@ Fold what was actually built into the durable docs, following `zenku:reconcile`:
   `docs/architecture/ADR-NNN-<slug>.md`; DES = repeatable cross-cutting pattern used
   2+ times → `docs/design/DES-NNN-<slug>.md`. Determine the next `NNN` by scanning
   the directory; cite the justifying experiment(s). Propose before creating.
+- **Keep the folder indexes current** (create any from `doc-index-templates.md` if
+  absent): add a row to `docs/architecture/README.md` / `docs/design/README.md` for
+  each new ADR/DES (update the row for any existing decision the patch changed);
+  update the affected `docs/feature-specs/README.md` / `docs/feature-designs/README.md`
+  row only if the patch changed its one-liner or status. Zero index changes is a
+  valid outcome for a purely internal change.
 - **Validate once** with `zenku:reconciliation-reviewer`:
 
 ```python

@@ -72,6 +72,9 @@ You will receive:
   inline?
 - Does each ADR/DES cite its justifying experiment(s)?
 - Does the design correctly reference existing ADRs/DES and avoid violating them?
+- Is every newly created ADR/DES reflected in its folder index (a row in
+  `docs/architecture/README.md` / `docs/design/README.md`)? Flag any decision doc
+  that was created without an index row.
 
 ### 8. Present-Tense Documentation
 - Describes the current/target system; free of "previously / used to / replaced by" phrasing

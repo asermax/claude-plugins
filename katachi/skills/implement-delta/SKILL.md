@@ -116,6 +116,7 @@ After all batches are done:
 - Run all tests
 - Run linting and type checking (fix any issues)
 - Perform manual checks against spec
+- **Exercise the running system**: launch the delta's feature and drive its real runtime path — hit the HTTP endpoint (e.g. `curl`), invoke the CLI, or drive the UI, as fits the project — and confirm the observed behavior matches each acceptance criterion, not just that tests pass. Infer the run command from the project (package.json/Makefile/etc.) or ask if it's unclear. Stay within the local/dev environment: never touch production or other real shared services, and never run destructive or irreversible commands that could affect anything beyond the local setup — reading/writing local files and data and driving local/dev services is fine. Skip only when the change has no runtime surface to drive (a pure library or internal refactor), and say so.
 - Ensure all acceptance criteria are met
 
 ### 3. Present for User Review
@@ -216,6 +217,7 @@ Once all batches are complete:
 - Run full test suites for all affected areas
 - Run linting and type checking across the whole project
 - Fix any integration issues between agent outputs
+- **Exercise the running system**: launch the delta's feature and drive its real runtime path — hit the HTTP endpoint (e.g. `curl`), invoke the CLI, or drive the UI, as fits the project — and confirm the observed behavior matches each acceptance criterion, not just that tests pass. Infer the run command from the project (package.json/Makefile/etc.) or ask if it's unclear. Stay within the local/dev environment: never touch production or other real shared services, and never run destructive or irreversible commands that could affect anything beyond the local setup — reading/writing local files and data and driving local/dev services is fine. Skip only when the change has no runtime surface to drive (a pure library or internal refactor), and say so.
 
 Then follow steps 3-5 from Sequential Execution (present to user, iterate, finalize).
 
@@ -244,7 +246,7 @@ Then follow steps 3-5 from Sequential Execution (present to user, iterate, final
 - Read plan and analyze batch dependencies
 - For each batch: load context, research, implement steps, mark done
 - If independent batches exist: spawn parallel agents per batch
-- After all batches: verify acceptance criteria
+- After all batches: verify acceptance criteria (tests, lint, types, manual checks, plus exercising the running system against local/dev only)
 - Present to user for final review
 - Iterate based on feedback
 - Commit when approved

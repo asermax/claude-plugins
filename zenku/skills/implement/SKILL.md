@@ -86,6 +86,19 @@ When the build is complete:
 - Walk each acceptance criterion in the spec and confirm the code satisfies it.
   Note any criterion you cannot satisfy and why — that is review input, not
   something to hide.
+- **Exercise the running system.** Confirming the code *looks* like it
+  satisfies a criterion is not enough — launch the feature and drive its real
+  runtime path, observing actual output. Exercise it the way it's actually
+  used: hit the HTTP endpoint (e.g. `curl`), invoke the CLI, or drive the UI,
+  as fits the project. Confirm the observed behavior matches each acceptance
+  criterion. Use the project's documented run command if it has one, else infer
+  it from the manifest/lockfile or ask once. Stay within the local/dev
+  environment: never touch production or other real shared services, and never
+  run destructive or irreversible commands that could affect anything beyond
+  the local setup — reading/writing local files and data and driving local/dev
+  services is fine. If the change genuinely has no runtime surface to drive (a
+  pure library or internal refactor), say so and rely on the automated
+  coverage instead.
 
 ### 4. Code-Review Loop
 
@@ -164,6 +177,6 @@ pending and should run before this lands for good.
 
 - Read spec + design + referenced ADR/DES; study the spike as **reference only**
 - Build against the design into the production codebase; keep the design doc living as you diverge
-- Verify the spec's acceptance criteria (tests, lint, types, plus manual walk)
+- Verify the spec's acceptance criteria (tests, lint, types, manual walk, plus exercising the running system against local/dev only)
 - Loop `zenku:code-reviewer` → fix all → verify → re-dispatch until PASS
 - Present, iterate, finalize; hand off to `zenku:reconcile`

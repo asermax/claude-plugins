@@ -260,6 +260,7 @@ Experiment-driven development framework. A generalization of the experimentation
 - `design`: durable feature design from spec + experiment evidence (spike is reference, not code to copy); creates ADR/DES inline → `docs/feature-designs/<feature>.md`, `docs/architecture/`, `docs/design/`
 - `implement`: build against the design + a code-review loop
 - `reconcile`: fold what was built back into the durable docs (surgical change, document-the-present), promote decisions to ADR/DES
+- `patch`: compressed single-session alternative to the full chain — fuses spec + design into one plan-mode doc (no intermediate files), then implement + reconcile with a single collaborative checkpoint; grounded in a free-text change, a roadmap feature, or an experiment; drives ROADMAP markers to `✓ Reconciled` only when the target is roadmapped, and steers genuinely-new unvalidated capabilities to the experiment track
 
 *Supporting:*
 - `framework-core` (`user-invocable: false`): shared collaborative principles, the experiment-sandbox definition (properties, not a stack), the artifact/doc map, project-convention lookup, reviewer-dispatch table, and template pointers

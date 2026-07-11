@@ -34,6 +34,8 @@ PRODUCT.md milestone
         └─/reconcile──▶ fold what was built back into the durable docs
 ```
 
+For a focused change that doesn't warrant the full chain, **`/patch`** collapses spec → design → implement → reconcile into a single compressed session (no intermediate files, one collaborative checkpoint), grounded in a free-text description, a roadmap feature, or an experiment.
+
 The critical distinction from katachi: **validation lives in the experiments, not in a design-review gate.** The product skills do not re-validate the idea — they ground themselves in the evidence the experiments already produced.
 
 ## Artifact & doc map (fixed conventions, no config file)

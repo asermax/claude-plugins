@@ -33,6 +33,7 @@ zenku is the sibling of [katachi](../katachi). Where katachi bakes validation in
 | `zenku:design` | Durable feature design + inline ADR/DES (the spike is reference, not code to copy) |
 | `zenku:implement` | Build against the design, then a code-review loop |
 | `zenku:reconcile` | Fold what was built back into the durable docs; promote decisions |
+| `zenku:patch` | Compressed single-session change (spec + design fused → implement → reconcile) grounded in a free-text description, a roadmap feature, or an experiment |
 
 ### Supporting
 

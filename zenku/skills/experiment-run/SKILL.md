@@ -9,6 +9,11 @@ Load `zenku:framework-core` first — it holds the collaborative workflow
 principles, the sandbox qualities, and the project conventions (build/test/lint
 commands, where spikes live).
 
+**Project extensions:** if `.zenku/experiment-run.md` exists, read it now and
+fold its steps into the flow where it indicates (a project uses this for
+its own build/prep conventions). See the project-extension-hooks section in
+`zenku:framework-core`.
+
 The one-pager is the contract; the code exists only to answer its question.
 This skill keeps the execution honest in both directions: rough enough that
 nothing is wasted on code that may die, real enough that the judging

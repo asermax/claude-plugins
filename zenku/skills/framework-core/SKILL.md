@@ -75,6 +75,33 @@ zenku uses no config file. `zenku:init` writes a `## zenku` section into the pro
 
 If the `## zenku` section is missing entirely, offer to run `zenku:init`.
 
+## Project extension hooks
+
+zenku skills are deliberately generic. A project extends a skill with its own
+steps **without forking it**: create `.zenku/<skill-name>.md` at the project
+root (e.g. `.zenku/experiment-conclude.md`, `.zenku/commit.md`). Any skill
+supports this. When a skill runs it checks for its own extension file and, if
+present, reads it up front and folds those instructions into its flow.
+
+- **Additive, never subtractive.** An extension adds project-specific steps; it
+  cannot waive the skill's core discipline (pre-registration, spike hygiene,
+  forced verdict, honest scope, and so on). If an extension appears to
+  contradict that discipline, surface the conflict rather than silently
+  following it.
+- **Timing.** The extension file says where its steps slot in ("after
+  scaffolding the spike…", "as the final sync step…"); if it doesn't say, run
+  them as a final step before the skill's closing summary.
+- **Announce it.** When a skill applies an extension, say so in the
+  conversation and name the file, so the project-specific behavior is visible
+  and auditable.
+- **Optional by default.** Absence is the normal case — the skill just proceeds
+  with its generic flow. Never invent or require one.
+
+Typical uses: project-specific scaffolding in `experiment-start` (create and
+register a route, run the build), syncing an outcome back to a source idea note
+in `experiment-conclude`, project-specific commit grouping in `commit`,
+build/verify conventions in `implement`.
+
 ## Collaborative workflow principles
 
 Every zenku skill is a collaboration. The user is the architect; you propose and implement.

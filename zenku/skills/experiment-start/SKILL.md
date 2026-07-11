@@ -9,6 +9,11 @@ Load `zenku:framework-core` first — it holds the collaborative workflow
 principles, the sandbox qualities, the templates list, and the project
 conventions (read from the zenku section of the project's CLAUDE.md).
 
+**Project extensions:** if `.zenku/experiment-start.md` exists, read it now and
+fold its steps into the flow where it indicates (a project uses this to add its
+own spike scaffolding — e.g. create and register a route, then run the build).
+See the project-extension-hooks section in `zenku:framework-core`.
+
 Turn an idea into a defined experiment. The value of this skill is the
 interview: the question, hypothesis, and judging criteria must be written
 **before** any code exists, so the result can't be rationalized after the fact.

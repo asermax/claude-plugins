@@ -11,6 +11,11 @@ spec, and drive a code-review loop until it passes. The experiment's spike is
 **reference material** — this is the real rewrite against the design, not a
 copy of the spike.
 
+**Project extensions:** if `.zenku/implement.md` exists, read it up front and
+fold its steps in where it indicates (a project uses this for its own
+graduation/build/verify conventions). See the project-extension-hooks section
+in `zenku:framework-core`.
+
 ## Input
 
 The feature to implement (has a `docs/feature-designs/<feature>.md`). Identify

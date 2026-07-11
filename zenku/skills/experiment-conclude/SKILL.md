@@ -8,6 +8,12 @@ description: Close an experiment — force a verdict against the pre-registered 
 Load `zenku:framework-core` first — it holds the workflow principles, the
 templates list, and the project conventions.
 
+**Project extensions:** if `.zenku/experiment-conclude.md` exists, read it now
+and fold its steps into the flow where it indicates (a project uses this to
+sync the outcome somewhere durable — e.g. reflect the verdict back into a
+source idea note and bump its last-iterated date). See the
+project-extension-hooks section in `zenku:framework-core`.
+
 An experiment ends with a **decision, not code**. If the honest summary is
 "we learned a lot" with no decision, the experiment isn't concluded — say so
 and help the user either extract the decision or record it as inconclusive

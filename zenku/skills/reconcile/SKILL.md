@@ -12,6 +12,10 @@ into new/updated ADRs and DES. In this track the feature spec and design ARE
 the durable docs — there is no ephemeral tier to discard. Reconciliation is a
 **surgical update**: change only what the implementation changed.
 
+**Project extensions:** if `.zenku/reconcile.md` exists, read it up front and
+fold its steps in where it indicates. See the project-extension-hooks section
+in `zenku:framework-core`.
+
 ## Input
 
 The just-implemented feature. Identify it from `$ARGUMENTS` or the user's request.

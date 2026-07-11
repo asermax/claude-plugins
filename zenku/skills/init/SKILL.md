@@ -41,6 +41,8 @@ Append (or create `CLAUDE.md` with) a `## zenku` section capturing the answers:
 
 Every zenku skill reads this section. This is the only "config" — there is no separate config file.
 
+If the project needs a skill to do something project-specific that a convention line can't capture — bespoke spike scaffolding, syncing an outcome to an external note, custom commit grouping — that goes in a `.zenku/<skill-name>.md` extension file (see the project-extension-hooks section in `zenku:framework-core`), not here. Don't create these during init; mention the mechanism and let them be added when a real need appears.
+
 ## 4. Scaffold artifacts (only what's missing)
 
 - `BACKLOG.md` — with the section headers `## Next up`, `## Ideas`, `## Later / deferred` and a one-line note that capturing is free (`/capture`).

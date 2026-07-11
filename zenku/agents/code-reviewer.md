@@ -52,6 +52,11 @@ You will receive:
 
 ### 7. Decision References
 - Comments reference decisions only where the "why" isn't obvious; no unnecessary comments; no missing ones where intent is unclear
+- **No experiment/spike references in code:** flag any comment or identifier that
+  cites an experiment or the spike (`// from experiment 004`, `// per the spike`,
+  a LEARNINGS date). Code must read self-sufficiently to someone who never saw the
+  experiments — the "why" is explained on its own terms or via a decision
+  reference (ADR/DES), never by pointing at an experiment.
 
 ### 8. Documentation Sync
 - If the implementation deviated from the design, was the design updated to match?
@@ -92,6 +97,9 @@ You will receive:
 
 ## Pattern Violations
 - [Pattern]: [how violated] at [location]
+
+## Provenance Leaks
+- [Experiment/spike references found in code or comments — file:line, or "None"]
 
 ## Documentation Updates Needed
 - [Document]: [what needs updating]

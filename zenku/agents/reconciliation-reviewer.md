@@ -46,6 +46,11 @@ You will receive:
 - Are decisions framed positively, with rejected alternatives recorded as
   "considered and not chosen" rather than as removals? (The only sanctioned
   history is an ADR's `Status: Superseded` line.)
+- **No provenance leaked into the prose:** the update must not introduce
+  experiment references (`experiment NNN`, LEARNINGS dates, spike paths) into the
+  body of the spec or design. Provenance belongs in the `Grounded in` field and
+  the `Evidence` links (which must be *preserved* — see §3); the prose itself
+  stays self-sufficient. Flag any experiment reference added to the content.
 
 ### 5. Decision Promotion
 - Is each new **ADR** genuinely hard-to-reverse and project-wide? Each new **DES**
@@ -77,6 +82,7 @@ You will receive:
 ## Present-Tense Documentation
 - Backward-looking phrasing: [quote any with location, or "None"]
 - Decision framing: [flag any framed as removals, or "None"]
+- Provenance leaks: [experiment references introduced into the prose/content — quote with location, or "None"]
 
 ## Decision Promotion
 - ADR candidates: [each — correctly classified? cites experiment? or issue]

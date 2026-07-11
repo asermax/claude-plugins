@@ -117,6 +117,8 @@ Following the template, draft `docs/feature-specs/<feature>.md`:
 - **Out of scope** — what this feature deliberately does not do, and why
 - **Dependencies** — the roadmap features this one depends on
 
+Keep provenance in the **Grounded in** field and the **Evidence** column only. The user story, requirement text, and acceptance criteria read as self-sufficient statements of what and why — never "because experiment NNN…" (see the content-is-self-sufficient principle in `zenku:framework-core`). A requirement says *what is needed*; its `Evidence` cell says *how we know*.
+
 ### 5. Traceability Check (Internal, not saved)
 
 Verify before validating:

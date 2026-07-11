@@ -35,6 +35,14 @@ You will receive:
   faked/in-memory/smoke-tested rather than re-deriving a production approach.
 - Does anything in the design contradict a concluded experiment?
 - Are the spec's Unknowns either resolved in the design or carried as stated risks?
+- **Provenance stays in its fields:** experiment references (`experiment NNN`,
+  LEARNINGS dates, spike paths) belong *only* in the `Grounded in` header and each
+  key decision's `Evidence` line. Flag any that leaked into the explanatory prose —
+  problem context, design overview, modeling, key mechanisms, a decision's *why*,
+  or system behavior. The design must read self-sufficiently: constraints,
+  mechanisms, and rationale are argued on their own terms, never "because
+  experiment NNN…". (Citing the justifying experiment in an ADR/DES `Evidence`
+  slot is correct — that is a field, not prose.)
 
 ### 2. Problem Context
 - Problem clearly articulated; constraints explicit; interactions documented; scope bounded
@@ -83,6 +91,7 @@ You will receive:
 - Constraint adherence: [experiment constraints ignored or violated, or "None"]
 - Spike-copy risk: [design content that ports spike shortcuts instead of a rewrite, or "None"]
 - Contradictions: [design content contradicting a concluded experiment, or "None"]
+- Provenance leaks: [experiment references found in the explanatory prose instead of the Grounded-in/Evidence fields — quote with location, or "None"]
 
 ## Issues Found
 

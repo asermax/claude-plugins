@@ -42,6 +42,13 @@ paths are provided and content is not inlined.
   dropped or silently promoted to must-haves?
 - Are `New` (unbacked) requirements flagged as such, and is each one plausibly
   in-scope here rather than something owed to a fresh experiment?
+- **Provenance stays in its fields:** experiment references (`experiment NNN`,
+  LEARNINGS dates, spike paths) belong *only* in the `Grounded in` header and the
+  Requirements `Evidence` column. Flag any that leaked into the prose — the user
+  story, a requirement's text, an acceptance criterion, out-of-scope, or
+  dependencies. The content must read self-sufficiently; a requirement states
+  *what is needed* and its Evidence cell states *how we know* — the requirement
+  text itself must never say "because experiment NNN…".
 
 ### 2. User Story Completeness
 - Is the WHO clear, the WHAT concrete, the WHY explained?
@@ -82,6 +89,7 @@ paths are provided and content is not inlined.
 - Contradictions: [any spec content that contradicts a concluded experiment, or "None"]
 - Constraints coverage: [experiment constraints not reflected as requirements, or "None"]
 - Open-question handling: [experiment open questions not carried as Unknowns/captures, or "None"]
+- Provenance leaks: [experiment references found in the prose/content instead of the Grounded-in/Evidence fields — quote with location, or "None"]
 
 ## Issues Found
 

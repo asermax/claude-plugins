@@ -66,6 +66,11 @@ the design names components, build them in dependency order.
 
 - Follow the referenced ADRs/DES. Add a code comment referencing a decision
   only where the choice would otherwise be unclear (`// See ADR-003: …`).
+  Code and comments never cite the experiment or the spike (no
+  `// from the experiment 004 spike`): explain the *why* on its own terms, or
+  point to a decision — the code must read self-sufficiently to someone who
+  never saw the experiments (see the content-is-self-sufficient principle in
+  `zenku:framework-core`).
 - **Living design:** if you must diverge from the design for a valid reason,
   update `docs/feature-designs/<feature>.md` to match reality *as you go*, then
   continue. Write important implementation findings (API behavior, a constraint

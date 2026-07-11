@@ -7,9 +7,11 @@
 
 A durable feature design. It describes how the feature is built **in the present**. The experiment's spike code is *reference material, not code to copy* — graduation is a rewrite. Where a hard-to-reverse project-wide choice arises, spin out an **ADR**; where a repeatable cross-cutting pattern arises (used 2+ times), spin out a **DES**.
 
+Provenance stays in the **Grounded in** field above and each key decision's **Evidence** line. The design prose is self-sufficient: it explains the mechanism and the reasoning on their own terms and never leans on an experiment to justify a choice (no "because experiment NNN…").
+
 ## Problem context
 
-What this feature must do, its constraints (many carried from the experiment), and its interactions with other features.
+What this feature must do, its constraints, and its interactions with other features. State each constraint on its own terms (what it is and why it holds); its evidence lives in the spec's Evidence column and the key-decision fields, not in this prose.
 
 ## Design overview
 

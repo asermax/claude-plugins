@@ -6,6 +6,8 @@
 
 A durable feature spec. It describes the **present intent** of the feature. It is *grounded in experiments* — what proved out becomes must-have behavior; the constraints the sessions discovered become requirements. It does not re-argue the idea; the experiments already validated it.
 
+Provenance stays in the **Grounded in** field above and the Requirements **Evidence** column below. The prose itself is self-sufficient: the user story, requirement text, and acceptance criteria state what and why on their own terms and never point at an experiment to explain themselves (no "because experiment NNN…").
+
 ## User story
 
 As a <user>, I want <capability>, so that <outcome>.

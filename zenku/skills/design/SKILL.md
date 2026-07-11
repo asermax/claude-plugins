@@ -101,14 +101,19 @@ Following the template, draft `docs/feature-designs/<feature>.md`:
 - **Data flow** — inputs → processing → outputs; error flows
 - **Key mechanisms** — flag unresolved unknowns with ⚠️ in the mechanisms
   table; resolve before implementation
-- **Key decisions** — for each: the choice, why (citing the experiment evidence
-  and/or current docs that justify it), alternatives considered and not chosen
-  (with reasons), and consequences
+- **Key decisions** — for each: the choice, the reason it is the right one
+  (self-sufficient prose — the actual argument, not "because experiment NNN"),
+  an **Evidence** line pointing to the experiment/doc that backs it,
+  alternatives considered and not chosen (with reasons), and consequences
 - **System behavior** — scenarios and edge cases, covering the spec's AC
 
 Write in the present tense — describe the system as it will be, framing
 alternatives as "considered and not chosen", never as things "removed" (see
-the document-the-present principle in `zenku:framework-core`).
+the document-the-present principle in `zenku:framework-core`). Keep the design
+prose self-sufficient: constraints, mechanisms, and rationale are explained on
+their own terms; experiment references stay in the `Grounded in` field and each
+decision's `Evidence` line, never in the explanatory prose (see the
+content-is-self-sufficient principle in `zenku:framework-core`).
 
 ### 5. Surface ADRs and DES (Collaborative, Inline)
 

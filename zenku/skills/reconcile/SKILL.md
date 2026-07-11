@@ -81,6 +81,12 @@ spec's requirements/AC changed, keep each requirement's **Evidence link**
 intact — a requirement that changed still traces to its experiment (or is newly
 `New` if the build introduced it).
 
+Keep provenance where it belongs (`zenku:framework-core`, content-is-self-sufficient):
+the `Grounded in` field and the `Evidence` links carry the experiment trace; the
+prose you add or edit stays self-sufficient and must not introduce experiment
+references (`experiment NNN`, LEARNINGS dates, spike paths) into the body of the
+spec or design.
+
 ### 4. Promote Decisions (Collaborative)
 
 Review decisions made *during implementation* (from the divergences, the

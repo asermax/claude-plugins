@@ -250,6 +250,7 @@ Experiment-driven development framework. A generalization of the experimentation
 
 *Experimentation* (generalized from zukai, domain/stack-agnostic):
 - `capture`: append an immature idea to `BACKLOG.md` (free, no interview)
+- `prioritize`: order the experiment `BACKLOG.md` so the most impactful experiments run first — the agent drafts a ranking from the backlog text using a bet-oriented `(Stakes × Uncertainty) / Cost` rubric (rewards uncertainty, unlike feature-scoring frameworks), asks only targeted disambiguating questions, presents a table to adjust, validates via `priority-reviewer`, then reorders the backlog (ordering only — no scores written)
 - `experiment-start`: promote an idea into a numbered one-pager with a pre-registered single question, falsifiable hypothesis, and two-lens (task + insight) judging criteria; scaffold a spike
 - `experiment-run`: collaboratively shape the minimal spike, build it with spike discipline against real data, assist the user through judging sessions while scribing the insight log (includes the fresh-subagent-driver harness discipline for agent-as-judged-actor experiments)
 - `experiment-conclude`: force a verdict against the pre-registered criteria, append a `LEARNINGS.md` entry, promote proven pieces into `PRODUCT.md` under a milestone
@@ -266,7 +267,7 @@ Experiment-driven development framework. A generalization of the experimentation
 - `framework-core` (`user-invocable: false`): shared collaborative principles, the experiment-sandbox definition (properties, not a stack), the artifact/doc map, project-convention lookup, reviewer-dispatch table, and template pointers
 - `init`: scaffold the artifacts + docs tree and record project conventions in the project's CLAUDE.md
 
-**Agents:** `experiment-researcher`, `onepager-reviewer`, `shape-reviewer`, `conclusion-reviewer` (experimentation); `spec-reviewer`, `design-reviewer`, `code-reviewer`, `reconciliation-reviewer` (product). Reviewers run the silent draft→validate→present loop; criteria check doc quality **and experiment-grounding**, not idea validation.
+**Agents:** `experiment-researcher`, `onepager-reviewer`, `shape-reviewer`, `conclusion-reviewer`, `priority-reviewer` (experimentation); `spec-reviewer`, `design-reviewer`, `code-reviewer`, `reconciliation-reviewer` (product). Reviewers run the silent draft→validate→present loop; criteria check doc quality **and experiment-grounding**, not idea validation. `priority-reviewer` is the exception — it audits backlog *ordering* coherence (dependency/uncertainty inversions, bottlenecks, distribution), never idea merit.
 
 **Key conventions:**
 - No config file — project-specific bits (purpose, spike location, build/test/lint commands) live in a `## zenku` section of the project's own CLAUDE.md, following katachi's convention-based approach

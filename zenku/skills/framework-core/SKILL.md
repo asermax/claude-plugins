@@ -16,7 +16,7 @@ zenku has one spine with two halves that meet at `PRODUCT.md`.
 **Experimentation** — answer a single question honestly, judged against real work:
 
 ```
-idea ──/capture──▶ BACKLOG.md
+idea ──/capture──▶ BACKLOG.md ──/prioritize──▶ ordered BACKLOG.md (Next up = ordered queue)
         │
         ├─/experiment-start──▶ experiments/NNN-slug/README.md   (pre-registered one-pager)
         ├─/experiment-run────▶ shape + build spike + run judging sessions
@@ -41,7 +41,7 @@ The critical distinction from katachi: **validation lives in the experiments, no
 ## Artifact & doc map (fixed conventions, no config file)
 
 **Experimentation artifacts** (project root):
-- `BACKLOG.md` — immature ideas. Sections: `Next up`, `Ideas`, `Later / deferred`.
+- `BACKLOG.md` — immature ideas. Sections: `Next up`, `Ideas`, `Later / deferred`. `## Next up` is an **ordered priority queue** (top = run first), curated by `/prioritize`; `/capture` still drops new ideas into `## Ideas` by default.
 - `experiments/README.md` — process note + the one-pager template + an index table of all experiments and their verdicts.
 - `experiments/NNN-slug/README.md` — one one-pager per experiment: Question / Hypothesis / Judging (pre-registered), `## Setup`, `## Notes` (the live insight log), `## Verdict`. Numbers are monotonic and never reused; nothing here is ever deleted — a documented dead end is a deliverable.
 - `LEARNINGS.md` — append-only, one entry per concluded experiment (Believed / Observed / Learned / Scope / Therefore).
@@ -54,13 +54,7 @@ The critical distinction from katachi: **validation lives in the experiments, no
 - `docs/architecture/ADR-NNN-*.md` — Architecture Decision Records (one-time, hard-to-reverse, project-wide choices).
 - `docs/design/DES-NNN-*.md` — Design pattern docs (repeatable cross-cutting patterns, used 2+ times).
 
-**Folder indexes.** Each of the four content folders carries a `README.md` that
-catalogs its contents — `docs/feature-specs/README.md`, `docs/feature-designs/README.md`,
-`docs/architecture/README.md` (ADR index), `docs/design/README.md` (DES index).
-They are **create-if-missing, keep-current**: the skill that writes a doc into a
-folder adds or updates that doc's row in the folder's index (see the doc-index
-templates). The ROADMAP tracks feature *ordering and dependencies*; the feature
-indexes are a flat *capability catalog* — different reading needs, both kept true.
+**Folder indexes.** Each of the four content folders carries a `README.md` that catalogs its contents — `docs/feature-specs/README.md`, `docs/feature-designs/README.md`, `docs/architecture/README.md` (ADR index), `docs/design/README.md` (DES index). They are **create-if-missing, keep-current**: the skill that writes a doc into a folder adds or updates that doc's row in the folder's index (see the doc-index templates). The ROADMAP tracks feature *ordering and dependencies*; the feature indexes are a flat *capability catalog* — different reading needs, both kept true.
 
 ## The experiment sandbox
 
@@ -87,30 +81,14 @@ If the `## zenku` section is missing entirely, offer to run `zenku:init`.
 
 ## Project extension hooks
 
-zenku skills are deliberately generic. A project extends a skill with its own
-steps **without forking it**: create `.zenku/<skill-name>.md` at the project
-root (e.g. `.zenku/experiment-conclude.md`, `.zenku/commit.md`). Any skill
-supports this. When a skill runs it checks for its own extension file and, if
-present, reads it up front and folds those instructions into its flow.
+zenku skills are deliberately generic. A project extends a skill with its own steps **without forking it**: create `.zenku/<skill-name>.md` at the project root (e.g. `.zenku/experiment-conclude.md`, `.zenku/commit.md`). Any skill supports this. When a skill runs it checks for its own extension file and, if present, reads it up front and folds those instructions into its flow.
 
-- **Additive, never subtractive.** An extension adds project-specific steps; it
-  cannot waive the skill's core discipline (pre-registration, spike hygiene,
-  forced verdict, honest scope, and so on). If an extension appears to
-  contradict that discipline, surface the conflict rather than silently
-  following it.
-- **Timing.** The extension file says where its steps slot in ("after
-  scaffolding the spike…", "as the final sync step…"); if it doesn't say, run
-  them as a final step before the skill's closing summary.
-- **Announce it.** When a skill applies an extension, say so in the
-  conversation and name the file, so the project-specific behavior is visible
-  and auditable.
-- **Optional by default.** Absence is the normal case — the skill just proceeds
-  with its generic flow. Never invent or require one.
+- **Additive, never subtractive.** An extension adds project-specific steps; it cannot waive the skill's core discipline (pre-registration, spike hygiene, forced verdict, honest scope, and so on). If an extension appears to contradict that discipline, surface the conflict rather than silently following it.
+- **Timing.** The extension file says where its steps slot in ("after scaffolding the spike…", "as the final sync step…"); if it doesn't say, run them as a final step before the skill's closing summary.
+- **Announce it.** When a skill applies an extension, say so in the conversation and name the file, so the project-specific behavior is visible and auditable.
+- **Optional by default.** Absence is the normal case — the skill just proceeds with its generic flow. Never invent or require one.
 
-Typical uses: project-specific scaffolding in `experiment-start` (create and
-register a route, run the build), syncing an outcome back to a source idea note
-in `experiment-conclude`, project-specific commit grouping in `commit`,
-build/verify conventions in `implement`.
+Typical uses: project-specific scaffolding in `experiment-start` (create and register a route, run the build), syncing an outcome back to a source idea note in `experiment-conclude`, project-specific commit grouping in `commit`, build/verify conventions in `implement`.
 
 ## Collaborative workflow principles
 
@@ -147,6 +125,7 @@ Validate *before* presenting; auto-apply fixes; reserve AskUserQuestion for real
 
 | Artifact | Reviewer | Dispatch |
 |----------|----------|----------|
+| Backlog priority ordering | `zenku:priority-reviewer` | `Task(subagent_type="zenku:priority-reviewer")` |
 | Experiment one-pager | `zenku:onepager-reviewer` | `Task(subagent_type="zenku:onepager-reviewer")` |
 | Experiment build shape | `zenku:shape-reviewer` | `Task(subagent_type="zenku:shape-reviewer")` |
 | Experiment verdict / learnings | `zenku:conclusion-reviewer` | `Task(subagent_type="zenku:conclusion-reviewer")` |
@@ -169,6 +148,7 @@ All under `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/`:
 - `ADR-template.md` — Architecture Decision Record
 - `DES-template.md` — Design pattern doc
 - `doc-index-templates.md` — the four `docs/` folder index shapes (feature-specs, feature-designs, ADR, DES)
+- `prioritization-rubric.md` — the experiment-backlog scoring rubric (Stakes/Uncertainty/Cost/Unlock) shared by `/prioritize` and `zenku:priority-reviewer`
 - `sandbox-example-web.md` — one worked sandbox example (illustration, not default)
 
 ## State detection

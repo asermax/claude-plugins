@@ -56,11 +56,11 @@ Evaluate the implementation against these criteria:
 - No security vulnerabilities
 - Reasonable performance
 
-### 6. Decision References
-- Are code comments referencing decisions appropriate?
-- Are comments present where the "why" isn't obvious?
-- Are there missing comments that should exist?
-- Are there unnecessary comments?
+### 6. Comments & Decision References
+- Comments must explain the **why** (a non-obvious constraint, workaround, or subtle invariant) or summarize a complex block whose intent isn't clear from reading it — never restate the **what**
+- Flag redundant/narrative comments: explaining what a well-named variable holds, or restating what the next line does. Good naming and types already convey the *what*; if removing the comment wouldn't leave a future reader confused, it shouldn't exist
+- Comments referencing decisions (ADR/DES) are appropriate and present where the "why" isn't obvious
+- Flag missing comments where intent is genuinely unclear
 
 ### 7. Documentation Sync
 - If implementation deviated from design, was design updated?

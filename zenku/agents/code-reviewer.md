@@ -50,8 +50,9 @@ You will receive:
 - Proper error handling; type safety where applicable; no obvious bugs
 - Edge cases handled per spec; no security vulnerabilities; reasonable performance
 
-### 7. Decision References
-- Comments reference decisions only where the "why" isn't obvious; no unnecessary comments; no missing ones where intent is unclear
+### 7. Comments & Decision References
+- Comments must explain the **why** (a non-obvious constraint, workaround, or subtle invariant) or summarize a complex block whose intent isn't clear — never restate the **what**. Flag redundant/narrative comments (explaining what a well-named variable holds, restating the next line); good naming and types already convey the *what*, so if removing the comment wouldn't leave a reader confused it shouldn't exist
+- Comments reference decisions (ADR/DES) only where the "why" isn't obvious; flag missing ones where intent is genuinely unclear
 - **No experiment/spike references in code:** flag any comment or identifier that
   cites an experiment or the spike (`// from experiment 004`, `// per the spike`,
   a LEARNINGS date). Code must read self-sufficiently to someone who never saw the

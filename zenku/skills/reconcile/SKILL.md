@@ -6,15 +6,9 @@ description: |
 
 # Feature Reconciliation Workflow
 
-Fold what was **actually built** back into the long-lived feature docs so they
-describe the **present**, and promote any decisions made during implementation
-into new/updated ADRs and DES. In this track the feature spec and design ARE
-the durable docs — there is no ephemeral tier to discard. Reconciliation is a
-**surgical update**: change only what the implementation changed.
+Fold what was **actually built** back into the long-lived feature docs so they describe the **present**, and promote any decisions made during implementation into new/updated ADRs and DES. In this track the feature spec and design ARE the durable docs — there is no ephemeral tier to discard. Reconciliation is a **surgical update**: change only what the implementation changed.
 
-**Project extensions:** if `.zenku/reconcile.md` exists, read it up front and
-fold its steps in where it indicates. See the project-extension-hooks section
-in `zenku:framework-core`.
+**Project extensions:** if `.zenku/reconcile.md` exists, read it up front and fold its steps in where it indicates. See the project-extension-hooks section in `zenku:framework-core`.
 
 ## Input
 
@@ -49,10 +43,8 @@ The just-implemented feature. Identify it from `$ARGUMENTS` or the user's reques
 ### 1. Gather Context (Silent)
 
 - Read the current `docs/feature-specs/<feature>.md` and `docs/feature-designs/<feature>.md`.
-- Get the actual implementation: `git diff` / `git diff --staged`, or
-  `git diff origin/main...HEAD` on a feature branch, plus recent commits.
-- Note any updates the implementer already wrote back into the design (living
-  doc) and any findings recorded in the scratchpad.
+- Get the actual implementation: `git diff` / `git diff --staged`, or `git diff origin/main...HEAD` on a feature branch, plus recent commits.
+- Note any updates the implementer already wrote back into the design (living doc) and any findings recorded in the scratchpad.
 
 ### 2. Compare Built vs Documented (Silent)
 
@@ -61,45 +53,27 @@ Identify where the implementation diverged from what the spec/design describe:
 - Approach, components, data flow, or decisions that differ from the design
 - Constraints or findings the build discovered that the docs don't yet state
 
-This diff is the *only* thing you touch. If a doc section still matches the
-code, leave it exactly as is.
+This diff is the *only* thing you touch. If a doc section still matches the code, leave it exactly as is.
 
 ### 3. Draft Surgical Updates
 
-For the feature spec and feature design, update **only** the sections the
-implementation changed. Apply the surgical-change principle:
+For the feature spec and feature design, update **only** the sections the implementation changed. Apply the surgical-change principle:
 - For added behavior: insert new content without disturbing untouched sections
-- For changed behavior: update the specific sub-section only; keep unchanged
-  prose, voice, and structure intact
+- For changed behavior: update the specific sub-section only; keep unchanged prose, voice, and structure intact
 - For dropped behavior: remove it (don't annotate it as removed)
 - Do NOT reword or "improve" sections that still describe the code correctly
 
-**Document the present, not the past** (`zenku:framework-core`): the docs must
-read as a description of the current system. No "previously / used to / no
-longer / replaced by" phrasing. Frame decisions positively; record rejected
-alternatives as "considered and not chosen", not as things removed. If the
-spec's requirements/AC changed, keep each requirement's **Evidence link**
-intact — a requirement that changed still traces to its experiment (or is newly
-`New` if the build introduced it).
+**Document the present, not the past** (`zenku:framework-core`): the docs must read as a description of the current system. No "previously / used to / no longer / replaced by" phrasing. Frame decisions positively; record rejected alternatives as "considered and not chosen", not as things removed. If the spec's requirements/AC changed, keep each requirement's **Evidence link** intact — a requirement that changed still traces to its experiment (or is newly `New` if the build introduced it).
 
-Keep provenance where it belongs (`zenku:framework-core`, content-is-self-sufficient):
-the `Grounded in` field and the `Evidence` links carry the experiment trace; the
-prose you add or edit stays self-sufficient and must not introduce experiment
-references (`experiment NNN`, LEARNINGS dates, spike paths) into the body of the
-spec or design.
+Keep provenance where it belongs (`zenku:framework-core`, content-is-self-sufficient): the `Grounded in` field and the `Evidence` links carry the experiment trace; the prose you add or edit stays self-sufficient and must not introduce experiment references (`experiment NNN`, LEARNINGS dates, spike paths) into the body of the spec or design.
 
 ### 4. Promote Decisions (Collaborative)
 
-Review decisions made *during implementation* (from the divergences, the
-living-design updates, and repeated code structures) for promotion:
-- **ADR** — a hard-to-reverse, project-wide choice made during the build that
-  isn't already covered by an ADR
+Review decisions made *during implementation* (from the divergences, the living-design updates, and repeated code structures) for promotion:
+- **ADR** — a hard-to-reverse, project-wide choice made during the build that isn't already covered by an ADR
 - **DES** — a repeatable pattern (2+ uses / cross-cutting) that emerged in the code
 
-Also check whether the build **invalidated or extended an existing** ADR/DES —
-if so, that document needs updating. Propose all candidates to the user before
-creating anything (propose, don't decide). Keep it lightweight: local,
-one-off, or easily-reversible decisions need no promotion.
+Also check whether the build **invalidated or extended an existing** ADR/DES — if so, that document needs updating. Propose all candidates to the user before creating anything (propose, don't decide). Keep it lightweight: local, one-off, or easily-reversible decisions need no promotion.
 
 ### 5. External Validation (Silent)
 
@@ -136,8 +110,7 @@ Verify:
 
 ### 6. Apply Feedback (Silent)
 
-Apply ALL reconciliation-reviewer recommendations automatically. Use
-AskUserQuestion only when a fix requires a genuine choice.
+Apply ALL reconciliation-reviewer recommendations automatically. Use AskUserQuestion only when a fix requires a genuine choice.
 
 ### 7. Present the Proposal
 
@@ -172,12 +145,8 @@ Apply the user's corrections. When approved:
 - For each approved update to an existing decision: update that document in place (describe the current decision; do not annotate the change)
 
 Keep the folder indexes current (create any from `doc-index-templates.md` if absent):
-- `docs/architecture/README.md` / `docs/design/README.md` — add a row for each new
-  ADR/DES; update the row (status, one-line summary) for any existing decision this
-  build changed.
-- `docs/feature-specs/README.md` / `docs/feature-designs/README.md` — update this
-  feature's row only if the reconciliation changed its capability/approach one-liner
-  or status; leave it untouched otherwise (surgical — no churn).
+- `docs/architecture/README.md` / `docs/design/README.md` — add a row for each new ADR/DES; update the row (status, one-line summary) for any existing decision this build changed.
+- `docs/feature-specs/README.md` / `docs/feature-designs/README.md` — update this feature's row only if the reconciliation changed its capability/approach one-liner or status; leave it untouched otherwise (surgical — no churn).
 
 Mark the feature `✓ Reconciled` in `docs/planning/ROADMAP.md`.
 

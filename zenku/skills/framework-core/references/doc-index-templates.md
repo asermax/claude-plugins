@@ -1,14 +1,8 @@
 # Doc index templates
 
-Each `docs/` subfolder carries a `README.md` that indexes its contents — a flat
-catalog a reader (or a skill) scans before drilling into an individual document.
-There are four, one per folder. They are **create-if-missing, keep-current**: the
-skill that writes a doc into a folder is the skill that adds or updates that doc's
-row in the folder's index. Never let the index drift from the folder.
+Each `docs/` subfolder carries a `README.md` that indexes its contents — a flat catalog a reader (or a skill) scans before drilling into an individual document. There are four, one per folder. They are **create-if-missing, keep-current**: the skill that writes a doc into a folder is the skill that adds or updates that doc's row in the folder's index. Never let the index drift from the folder.
 
-Provenance stays in the dedicated **Grounded in** column (the same rule as a spec's
-Evidence column) — the rest of each row is self-sufficient: a link and a one-line
-description of what the doc covers.
+Provenance stays in the dedicated **Grounded in** column (the same rule as a spec's Evidence column) — the rest of each row is self-sufficient: a link and a one-line description of what the doc covers.
 
 Rows are ordered by ID (ADR/DES) or by milestone then feature (feature indexes).
 
@@ -53,8 +47,7 @@ One-time, hard-to-reverse, project-wide choices. Repeatable patterns live in the
 | [ADR-001](ADR-001-<slug>.md) | <the choice, in one line> | Accepted | [exp NNN](../../experiments/NNN-slug/README.md) |
 ```
 
-Status mirrors the ADR's own `Status` field: `Proposed` / `Accepted` /
-`Superseded by ADR-XXX`.
+Status mirrors the ADR's own `Status` field: `Proposed` / `Accepted` / `Superseded by ADR-XXX`.
 
 ## `docs/design/README.md`
 
@@ -69,6 +62,5 @@ Repeatable, cross-cutting patterns (used 2+ places). One-time choices live in th
 | [DES-001](DES-001-<slug>.md) | <the pattern, in one line> | Active | <where it applies> | [exp NNN](../../experiments/NNN-slug/README.md) |
 ```
 
-Status mirrors the DES's own `Status` field: `Active` / `Deprecated`. `Grounded in`
-is blank when no experiment shaped the pattern.
+Status mirrors the DES's own `Status` field: `Active` / `Deprecated`. `Grounded in` is blank when no experiment shaped the pattern.
 ```

@@ -1,8 +1,6 @@
 # Feature Spec — <feature name>
 
-**Status**: <✗ draft | ✓ current>
-**Roadmap**: [Milestone N / `<feature-slug>`](../planning/ROADMAP.md)
-**Grounded in**: [experiment NNN](../../experiments/NNN-slug/README.md), `LEARNINGS.md` YYYY-MM-DD — NNN
+**Status**: <✗ draft | ✓ current> **Roadmap**: [Milestone N / `<feature-slug>`](../planning/ROADMAP.md) **Grounded in**: [experiment NNN](../../experiments/NNN-slug/README.md), `LEARNINGS.md` YYYY-MM-DD — NNN
 
 A durable feature spec. It describes the **present intent** of the feature. It is *grounded in experiments* — what proved out becomes must-have behavior; the constraints the sessions discovered become requirements. It does not re-argue the idea; the experiments already validated it.
 

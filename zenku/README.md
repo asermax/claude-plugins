@@ -43,14 +43,7 @@ zenku is the sibling of [katachi](../katachi). Where katachi bakes validation in
 
 ## Project extension hooks
 
-zenku's skills are generic. A project extends any skill with its own steps
-**without forking it**: drop a `.zenku/<skill-name>.md` at the project root and
-the skill folds those instructions into its flow (announcing that it did).
-Extensions are additive — they add project-specific steps, never waive a
-skill's core discipline. Typical uses: project-specific spike scaffolding in
-`experiment-start`, syncing an outcome back to a source idea note in
-`experiment-conclude`, project commit-grouping rules in `commit`. See the
-project-extension-hooks section in `framework-core`.
+zenku's skills are generic. A project extends any skill with its own steps **without forking it**: drop a `.zenku/<skill-name>.md` at the project root and the skill folds those instructions into its flow (announcing that it did). Extensions are additive — they add project-specific steps, never waive a skill's core discipline. Typical uses: project-specific spike scaffolding in `experiment-start`, syncing an outcome back to a source idea note in `experiment-conclude`, project commit-grouping rules in `commit`. See the project-extension-hooks section in `framework-core`.
 
 ## Artifact & doc map
 

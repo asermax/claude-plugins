@@ -1,9 +1,6 @@
 # Feature Design — <feature name>
 
-**Status**: <✗ draft | ✓ current>
-**Spec**: [feature-specs/<feature>.md](../feature-specs/<feature>.md)
-**Grounded in**: [experiment NNN](../../experiments/NNN-slug/README.md) (the spike is reference material — this design is the rewrite)
-**Decisions**: [ADR-NNN](../architecture/ADR-NNN-*.md), [DES-NNN](../design/DES-NNN-*.md)
+**Status**: <✗ draft | ✓ current> **Spec**: [feature-specs/<feature>.md](../feature-specs/<feature>.md) **Grounded in**: [experiment NNN](../../experiments/NNN-slug/README.md) (the spike is reference material — this design is the rewrite) **Decisions**: [ADR-NNN](../architecture/ADR-NNN-*.md), [DES-NNN](../design/DES-NNN-*.md)
 
 A durable feature design. It describes how the feature is built **in the present**. The experiment's spike code is *reference material, not code to copy* — graduation is a rewrite. Where a hard-to-reverse project-wide choice arises, spin out an **ADR**; where a repeatable cross-cutting pattern arises (used 2+ times), spin out a **DES**.
 

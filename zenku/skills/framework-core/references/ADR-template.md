@@ -1,8 +1,6 @@
 # ADR-NNN — <title>
 
-**Status**: <Proposed | Accepted | Superseded by ADR-XXX>
-**Date**: YYYY-MM-DD
-**Grounded in**: [experiment NNN](../../experiments/NNN-slug/README.md) (if an experiment justifies this choice)
+**Status**: <Proposed | Accepted | Superseded by ADR-XXX> **Date**: YYYY-MM-DD **Grounded in**: [experiment NNN](../../experiments/NNN-slug/README.md) (if an experiment justifies this choice)
 
 An Architecture Decision Record captures a **one-time, hard-to-reverse, project-wide** choice (a technology, a boundary, a protocol). Repeatable patterns are DES documents, not ADRs.
 

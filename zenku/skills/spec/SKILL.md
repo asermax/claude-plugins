@@ -6,17 +6,11 @@ description: |
 
 # Feature Specification Workflow
 
-Write the spec for a roadmap feature. The idea was already **validated in the
-experiments** — this skill does not re-derive or re-validate it. Instead it
-**grounds the spec in that evidence**: what proved out becomes must-have
-behavior, documented constraints become requirements, and open questions
-become explicit unknowns (or new backlog captures). Every requirement is
-traceably linked to the experiment that justifies it.
+Write the spec for a roadmap feature. The idea was already **validated in the experiments** — this skill does not re-derive or re-validate it. Instead it **grounds the spec in that evidence**: what proved out becomes must-have behavior, documented constraints become requirements, and open questions become explicit unknowns (or new backlog captures). Every requirement is traceably linked to the experiment that justifies it.
 
 ## Input
 
-The feature to spec (a feature from `docs/planning/ROADMAP.md`). Identify it
-from `$ARGUMENTS` or the user's request.
+The feature to spec (a feature from `docs/planning/ROADMAP.md`). Identify it from `$ARGUMENTS` or the user's request.
 
 ## Context
 
@@ -60,25 +54,14 @@ If no spec exists: proceed with initial creation. Mark the feature `⧗ Spec` in
 
 ### 2. Follow the Evidence (Silent)
 
-This is the heart of the skill. From the roadmap feature, follow the pointers
-to the PRODUCT.md piece, then to the **source experiment one-pagers** and their
-`LEARNINGS.md` entries. Read them fully. Extract, keeping the experiment id
-attached to each item:
+This is the heart of the skill. From the roadmap feature, follow the pointers to the PRODUCT.md piece, then to the **source experiment one-pagers** and their `LEARNINGS.md` entries. Read them fully. Extract, keeping the experiment id attached to each item:
 
-- **What proved out** — the behaviors and properties the experiment
-  established. These become **must-have behavior**.
-- **Documented constraints** — the implementation-relevant constraints the
-  sessions discovered (correctness requirements, things that "must" hold,
-  noted-but-not-exercised limits). These become **requirements**.
-- **Open questions / deferred items** — things the experiment explicitly left
-  open, smoke-tested-only, or deferred. These become **explicit unknowns** in
-  the spec, or — if out of scope for this feature — new `zenku:capture` entries.
-- **Spike code location** — note it as reference material only; the spec
-  describes behavior, not the spike's implementation.
+- **What proved out** — the behaviors and properties the experiment established. These become **must-have behavior**.
+- **Documented constraints** — the implementation-relevant constraints the sessions discovered (correctness requirements, things that "must" hold, noted-but-not-exercised limits). These become **requirements**.
+- **Open questions / deferred items** — things the experiment explicitly left open, smoke-tested-only, or deferred. These become **explicit unknowns** in the spec, or — if out of scope for this feature — new `zenku:capture` entries.
+- **Spike code location** — note it as reference material only; the spec describes behavior, not the spike's implementation.
 
-Do **not** re-litigate the experiment's verdict. If something was concluded,
-treat it as settled evidence. Your job is to translate evidence into a spec,
-flag where evidence is thin, and surface genuine gaps — not to re-validate.
+Do **not** re-litigate the experiment's verdict. If something was concluded, treat it as settled evidence. Your job is to translate evidence into a spec, flag where evidence is thin, and surface genuine gaps — not to re-validate.
 
 ### 3. Interview: Refine Requirements (Collaborative)
 
@@ -86,35 +69,24 @@ Follow the one-question-at-a-time principle from `zenku:framework-core`.
 
 Present your evidence-grounded understanding:
 - The core user story (who/what/why) for this feature
-- A proposed **Requirements table** where each row carries an **Evidence**
-  cell citing the experiment(s) that justify it (e.g. `exp 004`, `exp 002:
-  cursor-persistence constraint`), or `New` if it has no direct experiment
-  backing
-- The unknowns you extracted, and which ones you think are in-scope vs
-  capture-worthy
+- A proposed **Requirements table** where each row carries an **Evidence** cell citing the experiment(s) that justify it (e.g. `exp 004`, `exp 002: cursor-persistence constraint`), or `New` if it has no direct experiment backing
+- The unknowns you extracted, and which ones you think are in-scope vs capture-worthy
 
-Use AskUserQuestion for structured choices (2-4 options). Because validation
-already happened, focus questions on **build-scope decisions**, not idea merit:
+Use AskUserQuestion for structured choices (2-4 options). Because validation already happened, focus questions on **build-scope decisions**, not idea merit:
 - Priority negotiation (`Core goal` / `Must-have` / `Nice-to-have` / `Out`)
 - Which documented constraints are in-scope for this feature vs a later one
 - How to handle each open question: spec it as a known unknown, or capture it
 - Scope boundaries against neighbouring roadmap features
 
-`New` (unbacked) requirements deserve extra scrutiny — ask the user to confirm
-they belong here rather than in a fresh experiment.
+`New` (unbacked) requirements deserve extra scrutiny — ask the user to confirm they belong here rather than in a fresh experiment.
 
 ### 4. Draft the Spec
 
 Following the template, draft `docs/feature-specs/<feature>.md`:
 - **User story** — who, what, why; specific and concrete
-- **Requirements table** — finalized from the interview. Each requirement has a
-  status (`Core goal` / `Must-have` / `Nice-to-have` / `Out`) **and an Evidence
-  cell linking it to the experiment that justifies it**. R1 is the core goal.
-- **Acceptance criteria** — Given/When/Then, grouped by requirement area; each
-  requirement maps to one or more AC groups
-- **Unknowns** — open questions carried from the experiments (with the
-  experiment id), plus anything the interview surfaced; captured items link to
-  their `BACKLOG.md` entry
+- **Requirements table** — finalized from the interview. Each requirement has a status (`Core goal` / `Must-have` / `Nice-to-have` / `Out`) **and an Evidence cell linking it to the experiment that justifies it**. R1 is the core goal.
+- **Acceptance criteria** — Given/When/Then, grouped by requirement area; each requirement maps to one or more AC groups
+- **Unknowns** — open questions carried from the experiments (with the experiment id), plus anything the interview surfaced; captured items link to their `BACKLOG.md` entry
 - **Out of scope** — what this feature deliberately does not do, and why
 - **Dependencies** — the roadmap features this one depends on
 
@@ -123,8 +95,7 @@ Keep provenance in the **Grounded in** field and the **Evidence** column only. T
 ### 5. Traceability Check (Internal, not saved)
 
 Verify before validating:
-- Every requirement either traces to an experiment (Evidence cell) or is
-  explicitly marked `New` — no silent unbacked requirements
+- Every requirement either traces to an experiment (Evidence cell) or is explicitly marked `New` — no silent unbacked requirements
 - No requirement **contradicts** a concluded experiment's findings
 - Every requirement maps to at least one AC group; every AC group traces to a requirement
 
@@ -157,11 +128,7 @@ Review this feature specification for completeness AND experiment-grounding.
 
 ### 7. Apply Feedback (Silent)
 
-Apply ALL spec-reviewer recommendations automatically: fill traceability gaps,
-add missing edge cases, clarify criteria, correct any requirement that drifted
-from the evidence. Use AskUserQuestion only when a fix requires a genuine choice
-(multiple valid ways, conflict with an earlier decision). Track changes for the
-next step.
+Apply ALL spec-reviewer recommendations automatically: fill traceability gaps, add missing edge cases, clarify criteria, correct any requirement that drifted from the evidence. Use AskUserQuestion only when a fix requires a genuine choice (multiple valid ways, conflict with an earlier decision). Track changes for the next step.
 
 ### 8. Present the Validated Spec
 
@@ -174,15 +141,9 @@ Invite feedback: "What needs adjustment in this spec?"
 
 ### 9. Iterate, Then Finalize
 
-Apply the user's changes; re-run validation (steps 6-7) if significant. When
-approved, set the doc's Status field to ✓ current, write
-`docs/feature-specs/<feature>.md`, and mark the feature `✓ Spec` in
-`docs/planning/ROADMAP.md`.
+Apply the user's changes; re-run validation (steps 6-7) if significant. When approved, set the doc's Status field to ✓ current, write `docs/feature-specs/<feature>.md`, and mark the feature `✓ Spec` in `docs/planning/ROADMAP.md`.
 
-Then update the **feature-specs index** `docs/feature-specs/README.md` (create it
-from `doc-index-templates.md` if absent): add this feature's row — link, a one-line
-capability description, its status, and its milestone — or update the existing row
-if the spec already had one. Keep the index consistent with the folder.
+Then update the **feature-specs index** `docs/feature-specs/README.md` (create it from `doc-index-templates.md` if absent): add this feature's row — link, a one-line capability description, its status, and its milestone — or update the existing row if the spec already had one. Keep the index consistent with the folder.
 
 Present a summary:
 ```

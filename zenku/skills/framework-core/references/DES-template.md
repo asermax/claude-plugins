@@ -1,8 +1,6 @@
 # DES-NNN — <pattern name>
 
-**Status**: <Active | Deprecated>
-**Applies to**: <where this pattern is used — must be 2+ places to warrant a DES>
-**Grounded in**: [experiment NNN](../../experiments/NNN-slug/README.md) (if an experiment shaped the pattern)
+**Status**: <Active | Deprecated> **Applies to**: <where this pattern is used — must be 2+ places to warrant a DES> **Grounded in**: [experiment NNN](../../experiments/NNN-slug/README.md) (if an experiment shaped the pattern)
 
 A Design pattern document captures a **repeatable, cross-cutting pattern** — a prescriptive way of doing a recurring thing. One-time architectural choices are ADRs, not DES.
 

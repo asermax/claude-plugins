@@ -6,17 +6,11 @@ description: |
 
 # Feature Design Workflow
 
-Write the design for a feature that already has a spec. Ground it in the spec
-and the **experiment evidence**, treating the experiment's **spike code as
-reference material, not code to copy** — graduation into the product is a
-rewrite. When the design surfaces a hard-to-reverse project-wide choice, create
-an **ADR** inline; when it surfaces a repeatable cross-cutting pattern, create a
-**DES** inline. Each cites the experiment(s) that justify it.
+Write the design for a feature that already has a spec. Ground it in the spec and the **experiment evidence**, treating the experiment's **spike code as reference material, not code to copy** — graduation into the product is a rewrite. When the design surfaces a hard-to-reverse project-wide choice, create an **ADR** inline; when it surfaces a repeatable cross-cutting pattern, create a **DES** inline. Each cites the experiment(s) that justify it.
 
 ## Input
 
-The feature to design (has a `docs/feature-specs/<feature>.md`). Identify it
-from `$ARGUMENTS` or the user's request.
+The feature to design (has a `docs/feature-specs/<feature>.md`). Identify it from `$ARGUMENTS` or the user's request.
 
 ## Context
 
@@ -64,16 +58,10 @@ If no design exists: proceed with initial creation. Mark the feature `⧗ Design
 ### 2. Research (Silent)
 
 - Read the spec fully — requirements, AC, unknowns, evidence links.
-- Read the source experiment one-pagers and **study the spike code as
-  reference**: what mechanism actually worked, what the documented constraints
-  cost in practice, what the spike deliberately faked or left in-memory. The
-  spike tells you what to build; it is not what you ship.
+- Read the source experiment one-pagers and **study the spike code as reference**: what mechanism actually worked, what the documented constraints cost in practice, what the spike deliberately faked or left in-memory. The spike tells you what to build; it is not what you ship.
 - Read relevant existing ADRs and DES; note patterns you can reuse.
-- For any library/framework/API the design will lean on, look up **current**
-  documentation (use `superpowers:using-live-documentation` if available) —
-  training data ages; do not design against a remembered API.
-- Resolve as many of the spec's **unknowns** as you can from the spike and
-  research. Unknowns you cannot resolve carry into the design as stated risks.
+- For any library/framework/API the design will lean on, look up **current** documentation (use `superpowers:using-live-documentation` if available) — training data ages; do not design against a remembered API.
+- Resolve as many of the spec's **unknowns** as you can from the spike and research. Unknowns you cannot resolve carry into the design as stated risks.
 
 Build understanding without asking upfront questions.
 
@@ -87,56 +75,31 @@ Present your design thinking grounded in the evidence:
 - Architectural choices with genuine alternatives
 - Any spec unknown you couldn't resolve and how you propose to handle it
 
-Use AskUserQuestion for structured choices (2-4 options with trade-offs).
-Ask about architectural direction, technology selection, and integration with
-existing patterns — not about the feature's merit (that was settled in the
-experiments).
+Use AskUserQuestion for structured choices (2-4 options with trade-offs). Ask about architectural direction, technology selection, and integration with existing patterns — not about the feature's merit (that was settled in the experiments).
 
 ### 4. Draft the Design
 
 Following the template, draft `docs/feature-designs/<feature>.md`:
-- **Problem context** — what this feature must do, constraints (many carried
-  from the experiment), interactions with other features
+- **Problem context** — what this feature must do, constraints (many carried from the experiment), interactions with other features
 - **Design overview** — the approach and its main components
 - **Modeling** — entities, relationships, state transitions
 - **Data flow** — inputs → processing → outputs; error flows
-- **Key mechanisms** — flag unresolved unknowns with ⚠️ in the mechanisms
-  table; resolve before implementation
-- **Key decisions** — for each: the choice, the reason it is the right one
-  (self-sufficient prose — the actual argument, not "because experiment NNN"),
-  an **Evidence** line pointing to the experiment/doc that backs it,
-  alternatives considered and not chosen (with reasons), and consequences
+- **Key mechanisms** — flag unresolved unknowns with ⚠️ in the mechanisms table; resolve before implementation
+- **Key decisions** — for each: the choice, the reason it is the right one (self-sufficient prose — the actual argument, not "because experiment NNN"), an **Evidence** line pointing to the experiment/doc that backs it, alternatives considered and not chosen (with reasons), and consequences
 - **System behavior** — scenarios and edge cases, covering the spec's AC
 
-Write in the present tense — describe the system as it will be, framing
-alternatives as "considered and not chosen", never as things "removed" (see
-the document-the-present principle in `zenku:framework-core`). Keep the design
-prose self-sufficient: constraints, mechanisms, and rationale are explained on
-their own terms; experiment references stay in the `Grounded in` field and each
-decision's `Evidence` line, never in the explanatory prose (see the
-content-is-self-sufficient principle in `zenku:framework-core`).
+Write in the present tense — describe the system as it will be, framing alternatives as "considered and not chosen", never as things "removed" (see the document-the-present principle in `zenku:framework-core`). Keep the design prose self-sufficient: constraints, mechanisms, and rationale are explained on their own terms; experiment references stay in the `Grounded in` field and each decision's `Evidence` line, never in the explanatory prose (see the content-is-self-sufficient principle in `zenku:framework-core`).
 
 ### 5. Surface ADRs and DES (Collaborative, Inline)
 
-As the design takes shape, watch for decisions that outgrow the feature doc.
-Propose them to the user before creating anything (propose, don't decide):
+As the design takes shape, watch for decisions that outgrow the feature doc. Propose them to the user before creating anything (propose, don't decide):
 
-- **ADR** — a choice that is **hard to reverse AND project-wide** (a
-  technology, an architectural pattern, an integration approach that sets
-  precedent). Create `docs/architecture/ADR-NNN-<slug>.md` from the template,
-  **citing the experiment(s)** that justify it, and reference it from the design.
-- **DES** — a **repeatable cross-cutting pattern used 2+ times** (or that
-  should be consistent across the codebase). Create `docs/design/DES-NNN-<slug>.md`
-  from the template, cite the experiment(s), and reference it from the design.
+- **ADR** — a choice that is **hard to reverse AND project-wide** (a technology, an architectural pattern, an integration approach that sets precedent). Create `docs/architecture/ADR-NNN-<slug>.md` from the template, **citing the experiment(s)** that justify it, and reference it from the design.
+- **DES** — a **repeatable cross-cutting pattern used 2+ times** (or that should be consistent across the codebase). Create `docs/design/DES-NNN-<slug>.md` from the template, cite the experiment(s), and reference it from the design.
 
-Determine the next `NNN` by scanning the respective directory. Keep it
-lightweight: a decision relevant only to this feature stays in the feature
-design; a pattern used once stays inline. When unsure, ask the user.
+Determine the next `NNN` by scanning the respective directory. Keep it lightweight: a decision relevant only to this feature stays in the feature design; a pattern used once stays inline. When unsure, ask the user.
 
-Whenever you create an ADR or DES here, add its row to the matching index —
-`docs/architecture/README.md` for an ADR, `docs/design/README.md` for a DES
-(create the index from `doc-index-templates.md` if absent). The index row and the
-document are written together.
+Whenever you create an ADR or DES here, add its row to the matching index — `docs/architecture/README.md` for an ADR, `docs/design/README.md` for a DES (create the index from `doc-index-templates.md` if absent). The index row and the document are written together.
 
 ### 6. External Validation (Silent)
 
@@ -174,28 +137,21 @@ wasn't, and any ADR/DES that doesn't cite its justifying experiment.
 
 ### 7. Apply Feedback (Silent)
 
-Apply ALL design-reviewer recommendations automatically. Use AskUserQuestion
-only when a fix requires a genuine choice. Track changes for the next step.
+Apply ALL design-reviewer recommendations automatically. Use AskUserQuestion only when a fix requires a genuine choice. Track changes for the next step.
 
 ### 8. Present the Validated Design
 
-Show the complete design plus any ADR/DES created. Highlight the key decisions
-(and their evidence), and what the reviewer changed.
+Show the complete design plus any ADR/DES created. Highlight the key decisions (and their evidence), and what the reviewer changed.
 
 Invite feedback: "What needs adjustment in this design?"
 
 ### 9. Iterate, Then Finalize
 
-Apply the user's changes; re-run validation (steps 6-7) if significant. When
-approved, write `docs/feature-designs/<feature>.md` (set the doc's Status
-field to ✓ current), finalize any ADR/DES, and mark the feature `✓ Design` in
-`docs/planning/ROADMAP.md`.
+Apply the user's changes; re-run validation (steps 6-7) if significant. When approved, write `docs/feature-designs/<feature>.md` (set the doc's Status field to ✓ current), finalize any ADR/DES, and mark the feature `✓ Design` in `docs/planning/ROADMAP.md`.
 
 Then update the indexes (create any from `doc-index-templates.md` if absent):
-- `docs/feature-designs/README.md` — add or update this feature's row (link,
-  one-line approach, status, milestone).
-- `docs/architecture/README.md` / `docs/design/README.md` — ensure every ADR/DES
-  finalized in step 5 has its row (added there already if you followed step 5).
+- `docs/feature-designs/README.md` — add or update this feature's row (link, one-line approach, status, milestone).
+- `docs/architecture/README.md` / `docs/design/README.md` — ensure every ADR/DES finalized in step 5 has its row (added there already if you followed step 5).
 
 Present a summary:
 ```

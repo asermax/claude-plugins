@@ -6,20 +6,13 @@ description: |
 
 # Feature Implementation Workflow
 
-Build a designed feature into the production codebase, verify it against the
-spec, and drive a code-review loop until it passes. The experiment's spike is
-**reference material** — this is the real rewrite against the design, not a
-copy of the spike.
+Build a designed feature into the production codebase, verify it against the spec, and drive a code-review loop until it passes. The experiment's spike is **reference material** — this is the real rewrite against the design, not a copy of the spike.
 
-**Project extensions:** if `.zenku/implement.md` exists, read it up front and
-fold its steps in where it indicates (a project uses this for its own
-graduation/build/verify conventions). See the project-extension-hooks section
-in `zenku:framework-core`.
+**Project extensions:** if `.zenku/implement.md` exists, read it up front and fold its steps in where it indicates (a project uses this for its own graduation/build/verify conventions). See the project-extension-hooks section in `zenku:framework-core`.
 
 ## Input
 
-The feature to implement (has a `docs/feature-designs/<feature>.md`). Identify
-it from `$ARGUMENTS` or the user's request.
+The feature to implement (has a `docs/feature-designs/<feature>.md`). Identify it from `$ARGUMENTS` or the user's request.
 
 ## Context
 
@@ -52,58 +45,26 @@ Mark the feature `⧗ Implemented` in `docs/planning/ROADMAP.md`.
 
 - Read the spec (acceptance criteria are the target) and the design (the approach).
 - Read the full ADR/DES documents the design references — follow their constraints.
-- Study the spike code as **reference**: it shows a working shape and what the
-  documented constraints cost. Reproduce the *behavior* against the design;
-  write production-quality code, not a port of the spike.
-- For any library/framework the build uses, verify current APIs (use
-  `superpowers:using-live-documentation` if available) rather than relying on
-  training data.
+- Study the spike code as **reference**: it shows a working shape and what the documented constraints cost. Reproduce the *behavior* against the design; write production-quality code, not a port of the spike.
+- For any library/framework the build uses, verify current APIs (use `superpowers:using-live-documentation` if available) rather than relying on training data.
 
 ### 2. Implement Against the Design
 
-Build the feature following the design. Work in coherent, verifiable steps; if
-the design names components, build them in dependency order.
+Build the feature following the design. Work in coherent, verifiable steps; if the design names components, build them in dependency order.
 
-- Follow the referenced ADRs/DES. Add a code comment referencing a decision
-  only where the choice would otherwise be unclear (`// See ADR-003: …`).
-  Code and comments never cite the experiment or the spike (no
-  `// from the experiment 004 spike`): explain the *why* on its own terms, or
-  point to a decision — the code must read self-sufficiently to someone who
-  never saw the experiments (see the content-is-self-sufficient principle in
-  `zenku:framework-core`).
-- **Living design:** if you must diverge from the design for a valid reason,
-  update `docs/feature-designs/<feature>.md` to match reality *as you go*, then
-  continue. Write important implementation findings (API behavior, a constraint
-  the spike hid) back into the design too — this is what `zenku:reconcile` folds
-  in later.
+- Follow the referenced ADRs/DES. Add a code comment referencing a decision only where the choice would otherwise be unclear (`// See ADR-003: …`). Code and comments never cite the experiment or the spike (no `// from the experiment 004 spike`): explain the *why* on its own terms, or point to a decision — the code must read self-sufficiently to someone who never saw the experiments (see the content-is-self-sufficient principle in `zenku:framework-core`).
+- **Living design:** if you must diverge from the design for a valid reason, update `docs/feature-designs/<feature>.md` to match reality *as you go*, then continue. Write important implementation findings (API behavior, a constraint the spike hid) back into the design too — this is what `zenku:reconcile` folds in later.
 - No test-mode branches or environment checks in production code.
 
-Track progress in a scratchpad (`/tmp/zenku-implement-<feature>-state.md`): current
-step, deviations from design, findings, issues.
+Track progress in a scratchpad (`/tmp/zenku-implement-<feature>-state.md`): current step, deviations from design, findings, issues.
 
 ### 3. Verify Acceptance Criteria
 
 When the build is complete:
-- Run the project's tests, linter, and type checker (the documented commands).
-  Fix what they surface.
-- New or changed behavior must get new or updated automated test coverage —
-  running the existing suite is not enough.
-- Walk each acceptance criterion in the spec and confirm the code satisfies it.
-  Note any criterion you cannot satisfy and why — that is review input, not
-  something to hide.
-- **Exercise the running system.** Confirming the code *looks* like it
-  satisfies a criterion is not enough — launch the feature and drive its real
-  runtime path, observing actual output. Exercise it the way it's actually
-  used: hit the HTTP endpoint (e.g. `curl`), invoke the CLI, or drive the UI,
-  as fits the project. Confirm the observed behavior matches each acceptance
-  criterion. Use the project's documented run command if it has one, else infer
-  it from the manifest/lockfile or ask once. Stay within the local/dev
-  environment: never touch production or other real shared services, and never
-  run destructive or irreversible commands that could affect anything beyond
-  the local setup — reading/writing local files and data and driving local/dev
-  services is fine. If the change genuinely has no runtime surface to drive (a
-  pure library or internal refactor), say so and rely on the automated
-  coverage instead.
+- Run the project's tests, linter, and type checker (the documented commands). Fix what they surface.
+- New or changed behavior must get new or updated automated test coverage — running the existing suite is not enough.
+- Walk each acceptance criterion in the spec and confirm the code satisfies it. Note any criterion you cannot satisfy and why — that is review input, not something to hide.
+- **Exercise the running system.** Confirming the code *looks* like it satisfies a criterion is not enough — launch the feature and drive its real runtime path, observing actual output. Exercise it the way it's actually used: hit the HTTP endpoint (e.g. `curl`), invoke the CLI, or drive the UI, as fits the project. Confirm the observed behavior matches each acceptance criterion. Use the project's documented run command if it has one, else infer it from the manifest/lockfile or ask once. Stay within the local/dev environment: never touch production or other real shared services, and never run destructive or irreversible commands that could affect anything beyond the local setup — reading/writing local files and data and driving local/dev services is fine. If the change genuinely has no runtime surface to drive (a pure library or internal refactor), say so and rely on the automated coverage instead.
 
 ### 4. Code-Review Loop
 
@@ -132,17 +93,11 @@ Review this implementation against its spec, design, and decisions.
 )
 ```
 
-Gather the code as a diff (`git diff` / `git diff --staged`, or
-`git diff origin/main...HEAD` on a feature branch).
+Gather the code as a diff (`git diff` / `git diff --staged`, or `git diff origin/main...HEAD` on a feature branch).
 
-**4b. Fix all issues:** if the assessment is `NEEDS_WORK`, address ALL findings
-automatically — missing acceptance-criteria coverage, design misalignment,
-pattern violations, quality issues, unintended effects/regressions. Use
-AskUserQuestion only when a fix requires a genuine choice (e.g. multiple valid
-resolutions, or a conflict with an earlier decision).
+**4b. Fix all issues:** if the assessment is `NEEDS_WORK`, address ALL findings automatically — missing acceptance-criteria coverage, design misalignment, pattern violations, quality issues, unintended effects/regressions. Use AskUserQuestion only when a fix requires a genuine choice (e.g. multiple valid resolutions, or a conflict with an earlier decision).
 
-**4c. Verify fixes:** re-run tests, lint, and type checking; fix anything the
-fixes broke.
+**4c. Verify fixes:** re-run tests, lint, and type checking; fix anything the fixes broke.
 
 **4d. Re-dispatch:** loop back to 4a with the updated code until `PASS`.
 
@@ -158,8 +113,7 @@ Invite feedback: "What needs adjustment in this implementation?"
 
 ### 6. Iterate, Then Finalize
 
-Apply the user's changes; re-run the review loop if changes are significant.
-When approved, mark the feature `✓ Implemented` in `docs/planning/ROADMAP.md`.
+Apply the user's changes; re-run the review loop if changes are significant. When approved, mark the feature `✓ Implemented` in `docs/planning/ROADMAP.md`.
 
 Present a summary:
 ```
@@ -175,8 +129,7 @@ Design updates made during build: [list, if any]
 Next: /zenku:reconcile <feature>"
 ```
 
-Offer to commit as an optional pre-reconcile checkpoint — reconcile is still
-pending and should run before this lands for good.
+Offer to commit as an optional pre-reconcile checkpoint — reconcile is still pending and should run before this lands for good.
 
 ## Workflow
 

@@ -6,15 +6,11 @@ description: |
 
 # Roadmap Workflow
 
-Turn a milestone from `PRODUCT.md` into a buildable roadmap: an ordered feature
-list, the set that can go in parallel, and a cycle-checked dependency graph.
-The features you name here are the units the rest of the track operates on —
-each becomes a `zenku:spec`, then a `zenku:design`, then an implementation.
+Turn a milestone from `PRODUCT.md` into a buildable roadmap: an ordered feature list, the set that can go in parallel, and a cycle-checked dependency graph. The features you name here are the units the rest of the track operates on — each becomes a `zenku:spec`, then a `zenku:design`, then an implementation.
 
 ## Input
 
-The milestone to plan (from `PRODUCT.md`). Identify it from `$ARGUMENTS` or the
-user's request; if ambiguous, list the milestones in `PRODUCT.md` and ask which.
+The milestone to plan (from `PRODUCT.md`). Identify it from `$ARGUMENTS` or the user's request; if ambiguous, list the milestones in `PRODUCT.md` and ask which.
 
 ## Context
 
@@ -50,80 +46,54 @@ If no section exists: proceed with a fresh plan.
 
 ### 2. Read the Milestone (Silent)
 
-Read the milestone entry in `PRODUCT.md`. For each promoted piece, note its
-title, what proved out, its documented constraints, and the experiment(s) it
-links to (`experiments/NNN-slug/README.md`). Build a complete picture of the
-package this milestone adds up to — do not read the experiment one-pagers in
-full here (that is `zenku:spec`'s job); you only need enough to carve features.
+Read the milestone entry in `PRODUCT.md`. For each promoted piece, note its title, what proved out, its documented constraints, and the experiment(s) it links to (`experiments/NNN-slug/README.md`). Build a complete picture of the package this milestone adds up to — do not read the experiment one-pagers in full here (that is `zenku:spec`'s job); you only need enough to carve features.
 
 ### 3. Interview: Carve the Milestone into Features (Collaborative)
 
 Follow the one-question-at-a-time principle from `zenku:framework-core`.
 
-Present your reading of the milestone, then propose an initial feature
-breakdown for the user to refine. A **feature** is a buildable slice with a
-stable slug (used for `docs/feature-specs/<feature>.md` and
-`docs/feature-designs/<feature>.md`). A promoted piece may become one feature,
-split into several, or fold together with another — this is the decision to
-make with the user.
+Present your reading of the milestone, then propose an initial feature breakdown for the user to refine. A **feature** is a buildable slice with a stable slug (used for `docs/feature-specs/<feature>.md` and `docs/feature-designs/<feature>.md`). A promoted piece may become one feature, split into several, or fold together with another — this is the decision to make with the user.
 
-Use AskUserQuestion for structured choices (2-4 options: how to split a piece,
-whether two pieces are one feature, granularity). Ask about:
+Use AskUserQuestion for structured choices (2-4 options: how to split a piece, whether two pieces are one feature, granularity). Ask about:
 - **Feature boundaries** — where one feature ends and the next begins
 - **Ordering** — what must be built first (foundations, shared mechanisms)
 - **Naming** — confirm each feature's slug
 
-Each feature must map back to the PRODUCT.md milestone entry (and thereby its
-source experiments) — record that link. Do not invent features with no basis
-in a promoted piece; if the user wants one, that is a gap to `zenku:capture` or
-a new experiment, not a roadmap entry.
+Each feature must map back to the PRODUCT.md milestone entry (and thereby its source experiments) — record that link. Do not invent features with no basis in a promoted piece; if the user wants one, that is a gap to `zenku:capture` or a new experiment, not a roadmap entry.
 
 ### 4. Establish Dependencies and Ordering (Collaborative)
 
-For each feature, determine its `Depends on:` list (other features in this or
-an earlier milestone that must exist first). Propose dependencies from what you
-read, then confirm with the user.
+For each feature, determine its `Depends on:` list (other features in this or an earlier milestone that must exist first). Propose dependencies from what you read, then confirm with the user.
 
 Derive from the dependency graph:
 - **Build order** — a topological ordering; foundations first
 - **Parallelizable set** — features with no interdependency that can be worked at once
 
-**Cycle check (required):** verify the `Depends on:` edges form a DAG. If you
-find a cycle, surface it to the user and resolve it (drop or redirect an edge)
-before writing anything.
+**Cycle check (required):** verify the `Depends on:` edges form a DAG. If you find a cycle, surface it to the user and resolve it (drop or redirect an edge) before writing anything.
 
 ### 5. Draft the Roadmap Section
 
-Following the template, draft (or update) the milestone's section in
-`docs/planning/ROADMAP.md`:
+Following the template, draft (or update) the milestone's section in `docs/planning/ROADMAP.md`:
 - A short milestone summary (what package it adds up to), linking to the `PRODUCT.md` milestone
 - An **ordered feature list**: each row carries the feature name/slug, its `Depends on:` list, features it is **Parallel-safe with**, a link back to the PRODUCT.md piece + source experiment(s), and a **Status** marker
 - The **parallelizable set** called out explicitly
 - The **dependency graph** rendered as a mermaid diagram (`graph TD`), one node per feature, edges from dependency to dependent
 
-Status markers (the lifecycle the rest of the track advances):
-`✗ Defined` → `✓ Spec` → `✓ Design` → `✓ Implemented` → `✓ Reconciled`
-(use `⧗` for a phase in progress). New features start `✗ Defined`.
+Status markers (the lifecycle the rest of the track advances): `✗ Defined` → `✓ Spec` → `✓ Design` → `✓ Implemented` → `✓ Reconciled` (use `⧗` for a phase in progress). New features start `✗ Defined`.
 
 ### 6. Validate the Mermaid Diagram
 
-If the `superpowers:mermaid-validation` skill is available, use it to validate
-the dependency-graph code block. If it is not available, skip validation
-gracefully (do not block on it) — just double-check the syntax by eye.
+If the `superpowers:mermaid-validation` skill is available, use it to validate the dependency-graph code block. If it is not available, skip validation gracefully (do not block on it) — just double-check the syntax by eye.
 
 ### 7. Present for Review
 
-Show the drafted section to the user: the ordered feature list, the
-parallelizable set, and the rendered dependency graph. Highlight the build
-order and any feature whose dependencies you inferred rather than confirmed.
+Show the drafted section to the user: the ordered feature list, the parallelizable set, and the rendered dependency graph. Highlight the build order and any feature whose dependencies you inferred rather than confirmed.
 
-Invite feedback: "Does this ordering and dependency graph match how you'd
-build the milestone?"
+Invite feedback: "Does this ordering and dependency graph match how you'd build the milestone?"
 
 ### 8. Iterate, Then Finalize
 
-Apply the user's corrections (re-run the cycle check and mermaid validation if
-edges changed). When approved, write the section to `docs/planning/ROADMAP.md`.
+Apply the user's corrections (re-run the cycle check and mermaid validation if edges changed). When approved, write the section to `docs/planning/ROADMAP.md`.
 
 Present a summary:
 ```

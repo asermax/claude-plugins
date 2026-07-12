@@ -68,6 +68,15 @@ You may also read the folder indexes from the repo to check they are current:
   `docs/feature-specs/README.md` / `docs/feature-designs/README.md` updated when its
   one-liner or status changed (and left untouched otherwise)?
 
+### 6. Altitude — No Lower-Level Detail Dragged Up
+- Folding the build into the docs must not pull code-level detail into the durable
+  spec/design/ADR: flag any import paths, API/method surfaces, config literals,
+  flags, or command syntax the update introduced that belong in code or an
+  operational README instead. A short *generic* pattern snippet is fine; the
+  project's real imports, symbols, or command strings are not. (Reconciliation is
+  the common place this leaks — the built code is fresh, so its exact calls and
+  commands are tempting to paste up into the durable docs.)
+
 ## Output Format
 
 ```
@@ -91,6 +100,9 @@ You may also read the folder indexes from the repo to check they are current:
 - Backward-looking phrasing: [quote any with location, or "None"]
 - Decision framing: [flag any framed as removals, or "None"]
 - Provenance leaks: [experiment references introduced into the prose/content — quote with location, or "None"]
+
+## Altitude
+- Lower-level detail dragged up: [imports / API or method surfaces / config literals / flags / command syntax introduced into the durable docs that belong in code or an operational README — quote with location, or "None"]
 
 ## Decision Promotion
 - ADR candidates: [each — correctly classified? cites experiment? or issue]

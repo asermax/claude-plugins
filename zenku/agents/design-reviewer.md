@@ -50,7 +50,13 @@ You will receive:
 ### 3. Design Coherence
 - Does the approach actually solve the problem in the spec?
 - Are components well-defined with clear responsibilities and interfaces?
-- Right level of abstraction?
+- **Altitude — design level, not code level.** The design describes mechanism and
+  names technologies as *decisions* (pointing to their ADR); it must not reproduce
+  import paths, API/method surfaces, config literals, flags, or command syntax —
+  those belong in code and operational docs (a README/runbook). A short *generic*
+  snippet illustrating a pattern is fine; the project's real imports, symbol names,
+  or call signatures are not. Flag any such lower-altitude detail that crept up, and
+  any decision or behavior buried under it.
 
 ### 4. Modeling & Data Flow
 - Entities, relationships, state transitions clear
@@ -116,6 +122,9 @@ You will receive:
 ## Present-Tense Documentation
 - Backward-looking phrasing: [quote any with location, or "None"]
 - Decision framing: [flag any framed as removals rather than "considered and not chosen"]
+
+## Altitude
+- Lower-altitude detail: [import paths / API or method surfaces / config literals / flags / command syntax reproduced in the design that belong in code or operational docs — quote with location, or "None"]
 
 ## Strengths
 - [What's done well]

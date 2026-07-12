@@ -205,6 +205,22 @@ The only sanctioned place for history is an ADR's `Status: Superseded by ADR-XXX
 
 **Why:** Documentation is read as the source of truth for the current system. References to prior implementations confuse readers who never saw them, age badly, and turn living documents into changelogs.
 
+#### 9. Match Altitude to the Artifact
+
+Each document describes the system at its own level of abstraction; detail that belongs to a lower level is pushed down, not copied up.
+
+- **Spec** — behavior and constraints: *what* is guaranteed, as a user or consumer observes it. No libraries, APIs, or code shapes.
+- **Design** — approach and mechanism: parts by role, data flow, seams. Name a chosen technology only as a *decision* (pointing to its ADR), never its import paths, API/method surface, config literals, flags, or command syntax. A short **generic** snippet illustrating a *pattern* is welcome — but it stays illustrative (schematic shapes, pseudocode) and never reproduces the project's real imports, symbol names, or call signatures.
+- **ADR / DES** — the decision and *why*: name the concrete thing chosen (a library, a topology, a pattern), not how you call it.
+- **Code and operational docs** (README/runbook) — the only home for imports, exact commands, flags, and file paths.
+
+- ❌ (in a design) "Render the menu with `<Menu.Root>` from `@acme/ui/menu`, passing `collisionAvoidance={{ side: 'shift' }}`."
+- ✅ (in a design) "A headless menu, positioned in JS from the click point and shifted to stay on-screen; the concrete library is fixed in its ADR."
+
+Rule of thumb: if a detail would change in a refactor that alters neither the behavior nor the decision (an import path, a method name, a CLI flag), it does not belong in a durable spec/design/ADR.
+
+**Why:** A durable doc pinned to an import path or a command string rots the moment the code is refactored, and it buries the decision or behavior a reader needs under detail they could read from the code. Keeping each artifact at its altitude lets it survive change and stay readable to whoever only needs that level.
+
 ### Workflow Modes
 
 #### Information Gathering

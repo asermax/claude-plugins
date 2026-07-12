@@ -29,7 +29,7 @@ Evaluate the design against these criteria:
 - Does the approach actually solve the problem?
 - Are components well-defined and their responsibilities clear?
 - Are interfaces between components specified?
-- Is the design at the right level of abstraction?
+- **Altitude — design level, not code level.** Does the design describe mechanism and name technologies as *decisions* (pointing to their ADR) rather than reproducing import paths, API/method surfaces, config literals, flags, or command syntax (which belong in code and operational docs)? A short *generic* snippet illustrating a pattern is fine; the project's real imports, symbol names, or call signatures are not.
 
 ### 3. Shape Coverage
 - Are all shape parts mechanisms (what to build/change), not constraints (those belong in spec's Requirements)?
@@ -158,6 +158,9 @@ Provide a structured review:
 ## Present-Tense Documentation
 - Backward-looking phrasing: [Quote any "previously/used to/replaced by" prose with location, or "None"]
 - Decision framing: [Are decisions stated positively with alternatives as "considered and not chosen"? Flag any framed as removals]
+
+## Altitude
+- Lower-altitude detail: [import paths / API or method surfaces / config literals / flags / command syntax reproduced in the design that belong in code or operational docs — quote with location, or "None"]
 
 ## UI Layout Compliance (if UI Layout section present)
 <!-- Omit this section entirely if design has no UI Layout section -->

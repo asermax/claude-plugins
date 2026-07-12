@@ -53,6 +53,10 @@ Reference the decision-types.md criteria:
 - HOW (implementation pattern) + repeatable → DES
 - Single-use or easily reversible → keep in feature design only
 
+### 6. Altitude — Decision, Not Usage
+
+- Does each ADR/DES body name the concrete thing chosen (a library, a topology, a pattern) and *why*, without drifting into how you *call* it? Flag import paths, API/method surfaces, config literals, flags, or command syntax in the body — those belong in code and operational docs, not the decision record. A short *generic* snippet illustrating the pattern a DES establishes is fine; the project's real symbols, imports, or command strings are not.
+
 ## Output Format
 
 ```
@@ -78,6 +82,9 @@ Reference the decision-types.md criteria:
 ### [ADR/DES-NNN]: [APPROVE | REJECT | SUGGEST_SUPERSEDE]
 - Justification: [Why update is/isn't warranted]
 - Recommendation: [Action to take]
+
+## Altitude
+- Usage detail in a decision body: [import paths / API or method surfaces / config literals / flags / command syntax in an ADR/DES body that belong in code or operational docs — quote with location, or "None"]
 
 ## Missed Decisions
 - [Any decisions in Key Decisions that should be candidates but weren't identified]

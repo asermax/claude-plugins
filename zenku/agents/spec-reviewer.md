@@ -76,6 +76,13 @@ paths are provided and content is not inlined.
 ### 7. Gaps and Ambiguities
 - Unaddressed scenarios, ambiguous terms, conflicting requirements
 
+### 8. Altitude — Behavior, Not Implementation
+- Does the spec stay at behavior/constraint level — *what* is guaranteed as a
+  consumer observes it — free of libraries, APIs, code shapes, commands, or file
+  paths? A named technology or a chosen mechanism belongs in the design, not the
+  spec. Flag any implementation detail that crept into a requirement, an
+  acceptance criterion, or the user story.
+
 ## Output Format
 
 ```
@@ -108,6 +115,9 @@ paths are provided and content is not inlined.
 
 ## Present-Tense Documentation
 - Backward-looking phrasing: [quote any with location, or "None"]
+
+## Altitude
+- Implementation detail in the spec: [libraries / APIs / code shapes / commands / file paths that belong in the design or in code — quote with location, or "None"]
 
 ## Strengths
 - [What's done well]

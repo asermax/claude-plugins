@@ -87,6 +87,7 @@ zenku skills are deliberately generic. A project extends a skill with its own st
 - **Timing.** The extension file says where its steps slot in ("after scaffolding the spike…", "as the final sync step…"); if it doesn't say, run them as a final step before the skill's closing summary.
 - **Announce it.** When a skill applies an extension, say so in the conversation and name the file, so the project-specific behavior is visible and auditable.
 - **Optional by default.** Absence is the normal case — the skill just proceeds with its generic flow. Never invent or require one.
+- **Grown, not just authored.** These files accumulate over a project's life, not only at setup. `experiment-conclude` routes harvested process learnings about a skill into that skill's extension file (create-if-missing) — so a project's hard-won conventions about how its experiments run become durable and self-applying on the next run.
 
 Typical uses: project-specific scaffolding in `experiment-start` (create and register a route, run the build), syncing an outcome back to a source idea note in `experiment-conclude`, project-specific commit grouping in `commit`, build/verify conventions in `implement`.
 

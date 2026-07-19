@@ -22,7 +22,9 @@ An experiment ends with a **decision, not code**. If the honest summary is "we l
    - things learned about the *process* itself (judging protocol, tooling, how the sessions ran),
    - ideas the experiment sparked.
 
-Route every item somewhere durable: into the verdict, into the LEARNINGS entry, into `BACKLOG.md` (via `/capture`), or into a process change (skills / templates / CLAUDE.md). Don't stop until the user confirms there's nothing left that lives only in their head or this conversation.
+Route every item somewhere durable: into the verdict, into the LEARNINGS entry, into `BACKLOG.md` (via `/capture`), or into a **process change**. Don't stop until the user confirms there's nothing left that lives only in their head or this conversation.
+
+A process improvement that changes how a zenku skill should run *in this project* — a judging-protocol tweak, a tooling step, a scaffolding or one-pager convention — belongs in that skill's project-extension file, `.zenku/<skill-name>.md` (create-if-missing; see project-extension-hooks in `zenku:framework-core`), so the next run of that skill picks it up automatically. Route each item to the file for the skill it affects — a judging-session change → `.zenku/experiment-run.md`, a one-pager convention → `.zenku/experiment-start.md`, a conclusion-sync step → `.zenku/experiment-conclude.md`. A project-wide convention with no single owning skill (a build/test/lint command, the spike location, the project purpose) goes in the `## zenku` section of `CLAUDE.md` instead. Only a genuinely framework-generic improvement — one that would help *every* zenku project, not just this one — is a plugin-level change to the shared skills/templates, and it's recorded as such rather than written into this project.
 
 4. **Force the decision.** One of:
    - **Promote** — some piece proved durable; it gets parked in `PRODUCT.md` under a milestone. Implementation happens later, from the product backlog — never directly out of a conclusion.

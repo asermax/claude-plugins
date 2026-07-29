@@ -1,73 +1,71 @@
 # zenku
 
-Experiment-driven development. Ideas become **pre-registered experiments** that produce honest evidence; proven evidence flows into **durable engineering docs and code**. One spine, two halves, joined at `PRODUCT.md`.
+An experiment-driven way of working, run out of an Obsidian vault the project owns.
 
-zenku is the sibling of [katachi](../katachi). Where katachi bakes validation into its design phase through review loops, zenku's validation lives in the **experiments** — and its product-development docs are *fed from* those experiments rather than re-validated. Use zenku when the right design is genuinely unknown and has to be discovered, not just specified.
+**The plugin owns the process. The project owns the structure.**
 
-## Philosophy
+That seam is the whole design. The process is zenku's: an idea is an objective plus the unknowns standing between us and it; experiments clear those unknowns one at a time; acceptance criteria are written before the code; the decision about whether an objective is worth reaching happens once, at the idea, and it is the user's.
 
-- **Pre-register the judgment.** Write the single question, the falsifiable hypothesis, and how you'll judge the result *before* building. The verdict is rendered against that contract and the insight log — never against how it feels afterward.
-- **One question per experiment.** If it needs an "and", split it.
-- **Two-lens judging.** A *task* criterion (something concrete to do against a real work artifact) and an *insight* criterion (what understanding it produces) — because either lens alone has failure modes.
-- **Spike discipline.** The experiment's code is a throwaway spike: minimal, real data, everything untested faked. Graduation to product is a *rewrite*, not a copy.
-- **Negative results are first-class.** A documented dead end stops the team re-exploring it. Numbers are never reused; nothing is deleted.
-- **Docs describe the present.** Durable docs are the source of truth for the current system — not a changelog.
+Everything else is the project's — which folders exist and what each holds, every template body, every index, the tags, the note headings, the commands, what "seeing it work" means, the code style, the branch pattern. `zenku:init` seeds a sane default and then gets out of the way. From that moment the files belong to the project: edit a template, add a folder, rewrite the charter, and the skills read what is there rather than what was seeded.
 
-## The two halves
+The test applied to every line of every skill: **a skill that contains a string which would be wrong in a different repository is a bug.**
 
-### Experimentation
+## The two backlogs
 
-| Skill | What it does |
-|-------|--------------|
-| `zenku:capture` | Append an immature idea to `BACKLOG.md` — free, no interview |
-| `zenku:experiment-start` | Promote an idea into a numbered pre-registered one-pager; scaffold a spike |
-| `zenku:experiment-run` | Shape the minimal spike, build it against real data, assist + scribe the judging sessions |
-| `zenku:experiment-conclude` | Force a verdict, append a `LEARNINGS.md` entry, promote proven pieces into a `PRODUCT.md` milestone |
+|  | Experiment backlog | Work backlog |
+|---|---|---|
+| Holds | An **objective** — something we want to be able to do — plus the **unknowns** standing between us and it | Work already decided: a defect, an agreed slice, a chore |
+| Written by | `zenku:capture-experiment` | `zenku:capture-backlog` |
+| Done by | `zenku:experiment`, then `zenku:promote` or `zenku:drop` | `zenku:work-on-backlog` |
 
-### Product development (fed from the experiments)
+The test for which one you have: *is there anything here we would have to find out before we could start?* Nothing → a work item. Something real → an idea. An objective is a goal and does not come out true or false; falsifiability lives one level down, in the unknowns. A bug has neither, and pushing one through a shaping lifecycle produces states that mean nothing.
 
-| Skill | What it does |
-|-------|--------------|
-| `zenku:roadmap` | Break a `PRODUCT.md` milestone into features with ordering, a parallel set, and a dependency graph |
-| `zenku:spec` | Durable feature spec, grounded in the source experiments |
-| `zenku:design` | Durable feature design + inline ADR/DES (the spike is reference, not code to copy) |
-| `zenku:implement` | Build against the design, then a code-review loop |
-| `zenku:reconcile` | Fold what was built back into the durable docs; promote decisions |
-| `zenku:patch` | Compressed single-session change (spec + design fused → implement → reconcile) grounded in a free-text description, a roadmap feature, or an experiment |
+They feed each other, which is what replaces a product backlog: a work item that turns out to carry a real unknown becomes an idea, and a promoted idea leaves its deferred furniture behind as work items.
 
-### Supporting
+## The skills
 
-- `zenku:framework-core` *(internal)* — the shared principles, sandbox definition, artifact/doc map, and templates every skill loads first.
-- `zenku:init` — scaffold the artifacts + docs tree and record project conventions.
-- `zenku:commit` — analyze uncommitted changes and create grouped conventional commits.
+| Skill | Does |
+|---|---|
+| `zenku:init` | Seed a vault the project then owns; re-run to fill a gap or add a folder |
+| `zenku:capture-experiment` | Write an objective and its unknowns into the lab, in seconds |
+| `zenku:capture-backlog` | Write down something already decided, in seconds |
+| `zenku:experiment` | Define, run and conclude one experiment against one idea's unknowns |
+| `zenku:promote` | Decide the objective is worth reaching, then reach it |
+| `zenku:drop` | Decide it is not, and record what would reopen it |
+| `zenku:work-on-backlog` | Build a defined work item |
+| `zenku:note` | Write or update a durable note, per the project's own charter |
+| `zenku:commit` | Group the working changes into conventional commits |
 
-## Project extension hooks
+Two more are loaded rather than invoked: `framework-core` carries the runtime-resolution contract every skill uses to find the project's vault and conventions, and `delivering-change` carries the build discipline shared by `promote` and `work-on-backlog`.
 
-zenku's skills are generic. A project extends any skill with its own steps **without forking it**: drop a `.zenku/<skill-name>.md` at the project root and the skill folds those instructions into its flow (announcing that it did). Extensions are additive — they add project-specific steps, never waive a skill's core discipline. Typical uses: project-specific spike scaffolding in `experiment-start`, syncing an outcome back to a source idea note in `experiment-conclude`, project commit-grouping rules in `commit`. See the project-extension-hooks section in `framework-core`.
+Two reviewers: `zenku:idea-reviewer` checks an idea's framing before it is written back, and `zenku:change-reviewer` checks a built change for fit with the rest of the project.
 
-## Artifact & doc map
+## The four rules
 
-```
-BACKLOG.md                         ideas (Next up / Ideas / Later)
-experiments/README.md              process note + one-pager template + index
-experiments/NNN-slug/README.md     one-pager: question/hypothesis/judging, setup, insight log, verdict
-LEARNINGS.md                       append-only, one entry per concluded experiment
-PRODUCT.md                         milestones of promoted pieces ── the bridge ──▶
-docs/planning/ROADMAP.md           per-milestone feature order + dependency graph
-docs/feature-specs/<feature>.md    durable feature specs
-docs/feature-designs/<feature>.md  durable feature designs
-docs/architecture/ADR-NNN-*.md     one-time, hard-to-reverse decisions
-docs/design/DES-NNN-*.md           repeatable cross-cutting patterns
-```
+**Acceptance criteria are written before the code.** The reason is timing rather than rigor: decided afterwards, they will be met — because a result is much easier to admire once it is the only one you have. A criterion need not be numeric; it has to be **observable**.
+
+**Every note reaches the trunk before any code is discarded.** Code lives on the idea's branch and is expected to be thrown away. The notes travel to the trunk with the decision.
+
+**Promoting is not a cleanup.** The decision about the objective comes first and separately from the shape of what gets built, and the spike commits are dropped rather than cleaned up — the permission to hardcode is what made them cheap, and auditing it back out is slower and less reliable than writing the real thing with the answers in hand.
+
+**What gets built is reviewed before it is committed.** Green checks say the code runs, not that it is the thing anyone wanted. Nothing is committed until the user has looked at it.
 
 ## Getting started
 
-1. `zenku:init` — scaffold the artifacts and record this project's conventions (purpose, spike location, build/test/lint commands) in its `CLAUDE.md`. There is no separate config file.
-2. `zenku:capture` an idea → `zenku:experiment-start` → `zenku:experiment-run` → `zenku:experiment-conclude`.
-3. When a `PRODUCT.md` milestone is worth building: `zenku:roadmap` → `zenku:spec` → `zenku:design` → `zenku:implement` → `zenku:reconcile`.
+1. `zenku:init` — answer the interview, look at what it wrote, change whatever you disagree with. It is yours now.
+2. `zenku:capture-experiment` when you want something you do not know how to get; `zenku:capture-backlog` when you know exactly what needs doing.
+3. `zenku:experiment` to clear an unknown; `zenku:promote` or `zenku:drop` when the list is empty.
 
-## Conventions
+## Documents
 
-- Project-specific bits live in a `## zenku` section of the project's own `CLAUDE.md` — no config file.
-- Experiment sandboxes are **stack-agnostic**, defined by properties (isolated, throwaway, minimal, real-data, easy to run/discard). A web/React example ships as one illustration, never the default.
-- All skills and agents use the `zenku:` namespace.
+Durable knowledge lives in **narrative notes**: mechanism first, with the reasoning in a callout beside the thing it justifies. Not decision records — no requirements tables, no acceptance criteria, no traceability columns, no status ladders. Those describe work being planned; a note describes something that exists, and it should be readable by someone auditing the system rather than administering it.
+
+A project that wants a standing-rules list, a decision register or anything else keeps one **as its own structure**. zenku names no such artifact, which is why it cannot impose one.
+
+## What this replaced
+
+The previous version carried a second half — a product-development track of roadmap, feature spec, feature design, implement and reconcile skills, with ADR and DES decision records, requirements tables, Given/When/Then acceptance criteria and a status ladder, plus nine reviewer subagents. It is gone, and so are `BACKLOG.md`, `PRODUCT.md`, `LEARNINGS.md` and `ROADMAP.md` as artifacts.
+
+What survives of it: requirements-before-code lives on as the experiment's acceptance criteria, the only place the framework insists on it. The shape conversation those documents existed to force still happens, in `delivering-change` — it just leaves no artifact of its own. A decision's reasoning lives in a callout beside the mechanism it justifies, and the record of what was decided and on what evidence lives in the idea's conclusion. Ordering lives in a priority field and a generated index.
+
+What does not survive, deliberately: the documents between an answer and the code, the monotonic experiment numbering, and the per-skill project override files. A project's own behaviour now goes where a human will read it — the vault's charter, a folder's README, or a labelled field in the project's agent instructions.

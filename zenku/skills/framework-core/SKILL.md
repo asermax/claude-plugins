@@ -1,161 +1,142 @@
 ---
 name: framework-core
-description: |
-  Load first when working with any zenku framework skill. Provides the collaborative workflow principles, the experiment-sandbox definition, the artifact/doc map, project-convention lookup, reviewer-dispatch table, and template pointers shared by every zenku command.
+description: Load first when working with any zenku skill. Provides the runtime-resolution contract for finding the project's vault and conventions, the rule against assuming structure, the shape of the CLAUDE.md section every skill reads and maintains, the three writing habits, and the framework's non-negotiables.
 user-invocable: false
 ---
 
-# Framework Core
+# The shared spine
 
-The shared context every zenku skill loads first. zenku is an **experiment-driven development framework**: ideas become pre-registered experiments that produce evidence, and proven evidence flows into durable engineering docs and code.
+**The plugin owns the process. The project owns the structure.**
 
-## The two halves
+The process is this framework's: an idea is an objective plus the unknowns standing between us and it; experiments clear those unknowns one at a time; acceptance criteria are written before the code; a decision about the objective happens once, at the idea, and it is the user's. That much is carried in the skills.
 
-zenku has one spine with two halves that meet at `PRODUCT.md`.
+Everything else belongs to the project: which folders exist and what each holds, every template body, every index, the tag names, the note headings, the naming conventions, the commands, what "seeing it work" means here, the code style, the branch pattern, the trunk name. **This file contains no doc structure of its own** — structure comes from the project, which is what §1 is for.
 
-**Experimentation** — answer a single question honestly, judged against real work:
+## §1 The resolution contract
 
+### The three authorities, and which one wins
+
+| Layer | Authority over | How you get it |
+|---|---|---|
+| CLAUDE.md's lab section | Where the vault is · the commands · the spike model · the branch pattern · what "seeing it work" means · the recipe for where a kind of change goes | Already in your context. Read it; do not grep for it. |
+| The vault's charter READMEs | Which folders exist · what each holds · naming · frontmatter · which template a kind uses · how to write a note · house style · the full lifecycles | `Read <vault>/README.md`, then the relevant folder's `README.md` |
+| Frontmatter | A note's classification (`tags`), its lifecycle (`status`), and its cross-links | Read the note |
+
+CLAUDE.md carries the pointers and the commands; the charter carries the structure. **If they disagree, the charter is right, and both get fixed.**
+
+### Never assume the structure
+
+A skill does not assert a folder name, a note kind, a section heading, a frontmatter field, or a template shape. It reads the charter and the target folder's own README first, and adapts to what it finds — **including the parts it did not expect.**
+
+- Frontmatter fields come off the project's template, not off any list in a skill. A project that carries an extra field gets it proposed like every other one.
+- Sections come off the template and off the notes already in that folder.
+- Where the project's shape differs from anything a skill sketches as an example, **the project is right.**
+
+Two exceptions, and they are stated as exceptions where they appear: the lab's **status vocabularies**, because the lifecycles *are* the process and the decision skills are defined in terms of them, and the **`## Acceptance criteria`** heading on an experiment, because writing it before the code is the one rule the framework will not bend.
+
+### L1 — Find the vault
+
+1. The `**Vault**` field in CLAUDE.md's lab section.
+2. If absent: a directory at depth ≤ 2 holding both a `README.md` and a templates folder. Exactly one → use it, and offer to record it.
+3. Several → ask which.
+4. None → **the project is not initialized.** Say so, offer `zenku:init`, and stop. Never create a vault as a side effect of another skill.
+
+### L2 — Find the folders and what they hold
+
+`Read <vault>/README.md`. Its folder table is the authority. Then list the vault and **cross-check the two**:
+
+- A table row with no directory, or a directory carrying an index README with no row → the structure changed in one place only. Report both lists in one message, ask which is right, and offer to fix *the table*. **Never create a folder to satisfy a stale row.**
+- No charter at all, but a vault directory → say plainly *"this vault has no charter, so I am inferring its shape from what is on disk"*, infer from the directory listing plus the heading structure of one existing note per folder, and **do not write a note into an inferred folder without confirming the folder in the conversation.** Then offer `zenku:init`, which can add a charter without touching a single note.
+
+This is deliberately also the behaviour when someone renames a folder. The rename is theirs, the table is theirs, and the skill's job is to notice the half-done state loudly and cheaply rather than to guess or to "fix" the vault.
+
+### L3 — Find the template for a note kind
+
+1. The target folder's `README.md` names the template it uses.
+2. Failing that, the charter's how-to-write section.
+3. Confirm against the templates folder listing.
+
+**If no template exists for the kind you were asked to write:** mirror the heading structure of the closest existing note in that folder and say in one line that you did. If the folder is empty too, ask for the shape, or offer `zenku:init` to seed the kind. **Never fall back to a body carried in this plugin** — a plugin-side shape written into a project's vault is indistinguishable from something the project chose, and that is the single failure this design exists to prevent.
+
+The one exception: if the project's experiment template has no `## Acceptance criteria` heading, add the heading and say you added it.
+
+### L4 — Find the commands
+
+The `**Run**` and `**Checks**` fields. Absent → detect from the lockfile or manifest, propose what you found, **run nothing until it is confirmed**, and offer to record it so the next skill does not re-ask. Never infer a package manager from a language.
+
+### L5 — Find the spike model and the branch convention
+
+`**Spikes**` is either `throwaway` — the spike is discarded at promotion and the real thing rebuilt with the answers in hand — or `graduate-in-place`, where the spike is hardened into the real thing. `**Branch**` gives the pattern, commonly one branch per idea. Absent → assume `throwaway` and one branch per idea, say so in one line, and offer to record it.
+
+`throwaway` is the default because the argument for it belongs to the framework: the permission to hardcode, skip tests and ignore structure is what made the spike cheap, and auditing that back out afterwards is slower and less reliable than writing the real thing once the answers are known. A project choosing otherwise should say why in its own charter, and should know the cost — a spike you intend to keep grows scope by gravity, which weakens the criteria-before-code rule.
+
+### L6 — Find the trunk and the code roots
+
+**Never hardcode a trunk name.** Resolve it — `git symbolic-ref --short refs/remotes/origin/HEAD`, falling back to the repository's default branch.
+
+Code roots come from the `**Code**` field. If it is absent and you are about to run anything destructive, **ask** — getting this wrong destroys work.
+
+## §2 The CLAUDE.md lab section
+
+Every skill reads this section, and **every skill maintains it**: if you need a field and it is not there, resolve it as above and then offer to add it. A project can reach this framework without ever running `zenku:init` — an existing vault, a hand-written charter — and a field only becomes necessary at the moment something needs it. So the section grows as the project is used, and no interview has to anticipate it.
+
+```markdown
+## The lab
+
+- **Vault**: `<path>` — an Obsidian vault. Read its `README.md` before adding, editing, renaming or moving anything under it. It is the authority on what each folder holds, how files are named, what frontmatter they carry, and how the indexes are generated; getting any of that wrong breaks links or silently drops a note out of its index.
+- **Notes**: <one line per note folder — what each holds>
+- **Records**: <where the ideas, the experiments and the work backlog live>
+- **Code**: <the roots a change touches>
+- **Run**: <how to launch it>
+- **Checks**: <the commands that must be green before a change is done>
+- **Seeing it work**: <how someone confirms a change works here, and what fails silently>
+- **Spikes**: <throwaway | graduate-in-place>, one branch per idea, `<pattern>`
+
+### When adding something
+
+<a table or list: a kind of change → where it goes>
 ```
-idea ──/capture──▶ BACKLOG.md ──/prioritize──▶ ordered BACKLOG.md (Next up = ordered queue)
-        │
-        ├─/experiment-start──▶ experiments/NNN-slug/README.md   (pre-registered one-pager)
-        ├─/experiment-run────▶ shape + build spike + run judging sessions
-        └─/experiment-conclude▶ verdict → LEARNINGS.md, promote → PRODUCT.md milestone
-```
 
-**Product development** — turn a promoted milestone into durable docs and real code, *fed from the experiments that justified it*:
+Every field is optional and every one is discovered lazily. Add a missing one when you need it; never rewrite a field someone has edited.
 
-```
-PRODUCT.md milestone
-        ├─/roadmap────▶ docs/planning/ROADMAP.md      (feature ordering + parallel set + dependency graph)
-        ├─/spec───────▶ docs/feature-specs/<feature>.md   (grounded in the source experiments)
-        ├─/design─────▶ docs/feature-designs/<feature>.md + docs/architecture/ADR-*.md + docs/design/DES-*.md
-        ├─/implement──▶ real code + code-review loop
-        └─/reconcile──▶ fold what was built back into the durable docs
-```
+**`Seeing it work`** deserves a note, because it is the one field a project cannot be asked for in the abstract. It records how someone confirms a change actually works here *and what fails silently* — the failure mode that passes every check and still does not work. Ask for it once, after the first build, and record the answer. The framework asserts nothing about what "working" means; it only insists the project has said.
 
-For a focused change that doesn't warrant the full chain, **`/patch`** collapses spec → design → implement → reconcile into a single compressed session (no intermediate files, one collaborative checkpoint), grounded in a free-text description, a roadmap feature, or an experiment.
+There is deliberately **no restatement of the lab process** in CLAUDE.md. The charter is the only authority on it, and a summary sitting beside it is a second thing to keep in step.
 
-The critical distinction from katachi: **validation lives in the experiments, not in a design-review gate.** The product skills do not re-validate the idea — they ground themselves in the evidence the experiments already produced.
+## §3 Nothing lands in a file the user has not seen
 
-## Artifact & doc map (fixed conventions, no config file)
+Every skill here writes to the vault, and a note carrying your assumptions is worse than a question — it is an assumption with a commit hash. Three habits, and they cost about one message each.
 
-**Experimentation artifacts** (project root):
-- `BACKLOG.md` — immature ideas. Sections: `Next up`, `Ideas`, `Later / deferred`. `## Next up` is an **ordered priority queue** (top = run first), curated by `/prioritize`; `/capture` still drops new ideas into `## Ideas` by default.
-- `experiments/README.md` — process note + the one-pager template + an index table of all experiments and their verdicts.
-- `experiments/NNN-slug/README.md` — one one-pager per experiment: Question / Hypothesis / Judging (pre-registered), `## Setup`, `## Notes` (the live insight log), `## Verdict`. Numbers are monotonic and never reused; nothing here is ever deleted — a documented dead end is a deliverable.
-- `LEARNINGS.md` — append-only, one entry per concluded experiment (Believed / Observed / Learned / Scope / Therefore).
-- `PRODUCT.md` — the product backlog: proven pieces parked under **milestones**, each entry pointing back at its evidence. This is the bridge into the product half.
+**Quote it, never refer to it.** The user has not read these notes recently and may never have read them at all; several were written by an earlier session. Paste the objective, the unknowns, the criteria **verbatim** into the conversation before discussing them. Never say "unknowns 1 and 2", "the sharp one", or a paraphrase of your own. An unknown the user cannot see is an unknown they cannot correct, and asking someone to choose between numbered items they have never read is asking them to rubber-stamp your reading of the note.
 
-**Durable docs** (product half):
-- `docs/planning/ROADMAP.md` — per-milestone feature ordering + dependency graph.
-- `docs/feature-specs/<feature>.md` — long-lived feature specs.
-- `docs/feature-designs/<feature>.md` — long-lived feature designs.
-- `docs/architecture/ADR-NNN-*.md` — Architecture Decision Records (one-time, hard-to-reverse, project-wide choices).
-- `docs/design/DES-NNN-*.md` — Design pattern docs (repeatable cross-cutting patterns, used 2+ times).
+**Show the words, then write them.** Acceptance criteria, the scope of a build, a rewritten unknown, a conclusion, a verdict — draft it in the conversation, get it agreed, and only then put it in the file. Not the reverse with an offer to adjust afterwards: text that is already committed reads as settled, and it gets corrected far less often than it should.
 
-**Folder indexes.** Each of the four content folders carries a `README.md` that catalogs its contents — `docs/feature-specs/README.md`, `docs/feature-designs/README.md`, `docs/architecture/README.md` (ADR index), `docs/design/README.md` (DES index). They are **create-if-missing, keep-current**: the skill that writes a doc into a folder adds or updates that doc's row in the folder's index (see the doc-index templates). The ROADMAP tracks feature *ordering and dependencies*; the feature indexes are a flat *capability catalog* — different reading needs, both kept true.
+**Write only what was actually said.** Do not add apparatus nobody asked for — a taxonomy of cases, a scoring table, a threshold, a constraint nobody mentioned. If a framing of your own seems useful, offer it as yours and let it be taken or left. A note that accumulates machinery nobody asked for stops being the user's, and it is the usual reason a cheap objective ends up looking expensive.
 
-## The experiment sandbox
+## §4 The non-negotiables
 
-An experiment's code is a **spike**, not product. A good sandbox is defined by its *properties*, never by a stack:
+Four, and they are the whole of it. They belong to the framework, so a project extends them and never waives them; if a project's charter contradicts one, surface the conflict rather than quietly following the charter.
 
-- **Isolated** — lives apart from production code; nothing production imports it, and it imports production only as read-only reference.
-- **Throwaway** — built to be discarded; graduation to real code is a *rewrite*, never a copy. Held to no production-quality bar except one: keep it modular enough that a later rewrite is cheap.
-- **Minimal** — the cheapest thing that can answer the question. Everything the judging does not test is hardcoded, faked, or static.
-- **Real data from day one** — snapshot the real work artifact the experiment is judged against into fixtures; never a toy input.
-- **Easy to launch and to discard** — one obvious command to run it, no ceremony to tear it down.
+**Acceptance criteria are written before the code.** The reason is timing rather than rigor: decided afterwards, they will be met — not through dishonesty, but because a result is much easier to admire once it is the only one you have. A criterion does not have to be numeric and does not have to be designed to fail. It has to be **observable**: something a person could point at and agree on without having been in the room.
 
-**Where spikes live is project-specific.** Read the project's `## zenku` section in its `CLAUDE.md` for the spike location and how to run one. If it is not documented, ask once and record the answer (in the one-pager, and offer to note it in CLAUDE.md). Do **not** assume a language, framework, or directory. `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/sandbox-example-web.md` is one worked example (a web/React layout) — an illustration, never the default.
+**Every note reaches the trunk before any code is discarded.** Code is expected to be thrown away; the record of what it taught is not. Disposal happens once, at the decision, and that is the last moment a missing note is recoverable.
 
-## Project conventions (read from CLAUDE.md)
+**Promoting is not a cleanup.** A decision about the objective comes first and separately from the shape of what gets built, and under a throwaway spike model what gets built is written fresh with the answers in hand.
 
-zenku uses no config file. `zenku:init` writes a `## zenku` section into the project's `CLAUDE.md`; every skill reads it. It records:
+**What gets built is reviewed before it is committed.** Green checks say the code runs, not that it is the thing anyone wanted. See `zenku:delivering-change`.
 
-- **Purpose** — what the project is for. Experiments are judged partly on whether they serve it. If absent, skip any "serves the purpose" check rather than inventing one.
-- **Spike location & run command** — where experiment sandboxes live and how to launch them.
-- **Build / test / lint commands** — used by `experiment-start` (verify a scaffold), `implement`, and `reconcile`. If absent, detect from the lockfile/manifest or ask once.
-- **Docs layout** — defaults to the map above; a project may record deviations.
+## §5 The skills
 
-If the `## zenku` section is missing entirely, offer to run `zenku:init`.
+| Skill | Does |
+|---|---|
+| `zenku:init` | Seed a vault the project then owns, and gap-fill one that exists |
+| `zenku:capture-experiment` | Write an objective and its unknowns into the lab |
+| `zenku:capture-backlog` | Write down work that is already decided |
+| `zenku:experiment` | Define, run and conclude one experiment against one idea's unknowns |
+| `zenku:promote` | Decide the objective is worth reaching, then reach it |
+| `zenku:drop` | Decide it is not, and record what would reopen it |
+| `zenku:work-on-backlog` | Build a defined work item |
+| `zenku:note` | Write or update a durable note, per the project's own charter |
+| `zenku:commit` | Group the working changes into conventional commits |
 
-## Project extension hooks
-
-zenku skills are deliberately generic. A project extends a skill with its own steps **without forking it**: create `.zenku/<skill-name>.md` at the project root (e.g. `.zenku/experiment-conclude.md`, `.zenku/commit.md`). Any skill supports this. When a skill runs it checks for its own extension file and, if present, reads it up front and folds those instructions into its flow.
-
-- **Additive, never subtractive.** An extension adds project-specific steps; it cannot waive the skill's core discipline (pre-registration, spike hygiene, forced verdict, honest scope, and so on). If an extension appears to contradict that discipline, surface the conflict rather than silently following it.
-- **Timing.** The extension file says where its steps slot in ("after scaffolding the spike…", "as the final sync step…"); if it doesn't say, run them as a final step before the skill's closing summary.
-- **Announce it.** When a skill applies an extension, say so in the conversation and name the file, so the project-specific behavior is visible and auditable.
-- **Optional by default.** Absence is the normal case — the skill just proceeds with its generic flow. Never invent or require one.
-- **Grown, not just authored.** These files accumulate over a project's life, not only at setup. `experiment-conclude` routes harvested process learnings about a skill into that skill's extension file (create-if-missing) — so a project's hard-won conventions about how its experiments run become durable and self-applying on the next run.
-
-Typical uses: project-specific scaffolding in `experiment-start` (create and register a route, run the build), syncing an outcome back to a source idea note in `experiment-conclude`, project-specific commit grouping in `commit`, build/verify conventions in `implement`.
-
-## Collaborative workflow principles
-
-Every zenku skill is a collaboration. The user is the architect; you propose and implement.
-
-1. **One question at a time.** Never batch questions; wait for the answer before proceeding.
-2. **Propose, don't decide.** Offer options with trade-offs; never add or change scope without agreement.
-3. **Use AskUserQuestion for 2–4 structured choices.** Clear header (≤12 chars), full question, a description per option. Plain text for open-ended or yes/no.
-4. **Detect gaps proactively.** Surface unstated assumptions and edge cases; challenge vague answers; ask "what's missing?" and "what could go wrong?" — but never fill a gap yourself.
-5. **Use a scratchpad.** Track state in `/tmp/zenku-<skill>-<id>-state.md` (id = the experiment number, the feature name, or an animal-adjective for parallel-safe runs). Keep it after completion for audit.
-6. **Bridge the context gap.** You hold the full picture across many files; the user does not. When asking or explaining, include diagrams (ASCII, sequence, data-flow), name the specific files/components, and show concrete examples.
-7. **Research when uncertain.** When the user signals "not sure" or a technical choice is in play, research (dispatch `zenku:experiment-researcher` for landscape surveys, or a general-purpose agent) before presenting options.
-8. **Document the present, not the past.** All durable docs describe the *current* system — what it does and what it deliberately does not do. Never phrase anything as what the system *used to* do. Record rejected alternatives as "considered and not chosen (because …)", not as history. The only sanctioned place for history is an ADR's `Status: Superseded by ADR-XXX` line.
-9. **Content is self-sufficient; provenance stays in its fields.** Experiment references — `experiment NNN`, `LEARNINGS` dates, spike locations — live *only* in the dedicated traceability fields: the `Grounded in` header, the Requirements table's `Evidence` column, and a key decision's `Evidence` line. The body prose and the code explain *what* the feature does and *why*, on their own terms — a reader who never saw the experiments understands the artifact in full. Never write "because experiment 004 showed…" into a requirement, a design rationale, an acceptance criterion, or a code comment; state the actual reason. Provenance answers "how do we know this?" in a field; the content answers "what and why" in prose. **Why:** durable docs and code outlive the experiments' salience — an artifact that leans on "see experiment 004" to justify itself is unreadable to anyone who wasn't there and rots as the experiments recede.
-10. **Match the altitude to the artifact.** Each doc describes the system at its own level; detail belonging to a lower level is pushed down, not copied up. A **spec** states behavior and constraints — *what* is guaranteed, as a consumer observes it (no libraries, APIs, or code shapes). A **design** states approach and mechanism — components by role, data flow, seams — and names a chosen technology only as a *decision* (pointing to its ADR), never its import paths, API/method surface, config literals, flags, or command syntax; a short **generic** snippet illustrating a *pattern* is welcome, but it stays illustrative (schematic shapes, pseudocode) and never reproduces the project's real imports, symbol names, or call signatures — if it could be pasted straight into the codebase, it has dropped to the wrong altitude. An **ADR/DES** records the decision and *why* — it names the concrete thing chosen (a library, a topology, a pattern), not how you call it. Imports, exact commands, flags, and file paths live only in **code and operational docs** (a README/runbook). Rule of thumb: if a detail would change in a refactor that alters neither the behavior nor the decision (an import path, a method name, a CLI flag), it does not belong in a durable spec/design/ADR. **Why:** a durable doc pinned to an import or a command rots on the next refactor and buries the decision or behavior a reader actually needs; keeping each artifact at its altitude lets it survive change and stay readable to whoever only needs that level.
-
-## Document-creation workflow
-
-Specs, designs, decisions, and one-pagers all follow the same loop:
-
-(Roadmaps are the exception: `/roadmap` validates structurally — dependency cycle-check + mermaid validation + user confirmation — rather than via a reviewer agent.)
-
-1. **Research (silent, thorough)** — read the source evidence (for the product half: the source experiments, `LEARNINGS.md`, prior ADRs/DES; for a one-pager: the backlog idea and any prior related experiments). Build understanding before asking anything.
-2. **Draft (with decision points)** — write the complete document from the template. Base every choice on the research. Where a genuine choice exists (multiple valid approaches, real trade-offs), use AskUserQuestion.
-3. **Validate (silent)** — dispatch the matching reviewer agent (table below). Feed it only the artifact, its templates/evidence, and the user's stated constraints — not your reasoning history.
-4. **Apply feedback (silent)** — apply all mechanical fixes automatically; use AskUserQuestion only when a fix requires a genuine choice.
-5. **Present** — show the validated document, summarize the fixes applied, flag anything unresolved, invite feedback.
-6. **Iterate** — apply corrections; re-validate if the change is significant.
-7. **Finalize** — write to its canonical location; update its folder index `README.md` (create-if-missing, keep-current) and any status marker.
-
-Validate *before* presenting; auto-apply fixes; reserve AskUserQuestion for real decisions.
-
-## Reviewer-dispatch table
-
-| Artifact | Reviewer | Dispatch |
-|----------|----------|----------|
-| Backlog priority ordering | `zenku:priority-reviewer` | `Task(subagent_type="zenku:priority-reviewer")` |
-| Experiment one-pager | `zenku:onepager-reviewer` | `Task(subagent_type="zenku:onepager-reviewer")` |
-| Experiment build shape | `zenku:shape-reviewer` | `Task(subagent_type="zenku:shape-reviewer")` |
-| Experiment verdict / learnings | `zenku:conclusion-reviewer` | `Task(subagent_type="zenku:conclusion-reviewer")` |
-| Feature spec | `zenku:spec-reviewer` | `Task(subagent_type="zenku:spec-reviewer")` |
-| Feature design (incl. ADR/DES) | `zenku:design-reviewer` | `Task(subagent_type="zenku:design-reviewer")` |
-| Implemented code | `zenku:code-reviewer` | `Task(subagent_type="zenku:code-reviewer")` |
-| Reconciled durable docs | `zenku:reconciliation-reviewer` | `Task(subagent_type="zenku:reconciliation-reviewer")` |
-| Knowledge-gap research | `zenku:experiment-researcher` | `Task(subagent_type="zenku:experiment-researcher")` |
-
-## Templates
-
-All under `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/`:
-
-- `onepager-template.md` — experiment one-pager
-- `learnings-entry-template.md` — a `LEARNINGS.md` entry
-- `product-entry-template.md` — a `PRODUCT.md` milestone entry
-- `roadmap-template.md` — a `ROADMAP.md` milestone section
-- `feature-spec-template.md` — a durable feature spec
-- `feature-design-template.md` — a durable feature design
-- `ADR-template.md` — Architecture Decision Record
-- `DES-template.md` — Design pattern doc
-- `doc-index-templates.md` — the four `docs/` folder index shapes (feature-specs, feature-designs, ADR, DES)
-- `prioritization-rubric.md` — the experiment-backlog scoring rubric (Stakes/Uncertainty/Cost/Unlock) shared by `/prioritize` and `zenku:priority-reviewer`
-- `sandbox-example-web.md` — one worked sandbox example (illustration, not default)
-
-## State detection
-
-Before executing a skill, detect project state:
-
-- **Not initialized** (no `BACKLOG.md` / `experiments/` and no `## zenku` in CLAUDE.md) → offer `zenku:init`.
-- **Experiments only** (experimentation artifacts exist, no `docs/planning/ROADMAP.md`) → the experimentation half is live; the product half starts once a milestone in `PRODUCT.md` is worth building.
-- **Full** (both halves present) → proceed normally.
+`zenku:delivering-change` is loaded by `promote` and `work-on-backlog` rather than invoked. Two reviewers exist: `zenku:idea-reviewer` for an idea's framing and `zenku:change-reviewer` for a built change.

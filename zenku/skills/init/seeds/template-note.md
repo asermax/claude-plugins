@@ -1,0 +1,49 @@
+---
+title: "{{title}}"
+tags:
+  - <<FIRST_TAG>>
+summary: "One line — what part of the system this explains. Shown in search, in hover previews and in the index."
+created: {{date:YYYY-MM-DD}}
+---
+
+# {{title}}
+
+One or two sentences: what part of the system this is and what it is responsible for. No preamble about the note itself.
+
+## The shape of the data
+
+The types or structures, as they are actually declared. Copy the real ones — a reader comparing this to the code should find them identical, not paraphrased.
+
+## How it works
+
+The mechanism, in the order it happens. This is the bulk of the note.
+
+```mermaid
+flowchart LR
+  A[input] --> B[the thing] --> C[result]
+```
+
+Use a diagram whenever the subject is a flow, a tree, a sequence or a state machine. Mermaid renders in Obsidian and on GitHub; do not draw it in ASCII.
+
+Headings name the thing they cover. "The four phases" gives a reader nothing to search for; "the four phases of a request's life" does.
+
+> [!note] Why it is this way and not the obvious alternative
+> The reasoning, next to the mechanism it justifies. One callout per real choice — not a section, and not a list of every option anyone mentioned.
+
+> [!warning] The failure mode
+> What breaks, how it presents, and whether anything catches it. Prefer failures that have actually happened.
+
+> [!info] Rejected: the alternative someone would otherwise try
+> What it was and the constraint it failed. Worth writing only for an alternative a reasonable person would reach for; "we did not use some other vendor" is not one.
+
+## What it costs
+
+The honest price: performance, ergonomics, what it makes harder later. A note with no cost section is usually a note that has not been thought about.
+
+## What is not built yet
+
+What is deliberately absent, and what would ask for it. Keeps the next person from reading an omission as an oversight.
+
+---
+
+Related: [[some-other-note]]

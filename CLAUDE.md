@@ -244,37 +244,32 @@ Agentic memory framework for long-term memory across sessions.
 - Skill description optimized for broad retrieval query triggering
 
 ### zenku
-Experiment-driven development framework. A generalization of the experimentation framework proven in the `zukai` project (`~/workspace/asermax/zukai`), plus a katachi-inspired product-development track. Sibling to `katachi`: where katachi bakes validation into its design phase via review loops, zenku's validation comes from **experiments**, and its product-dev docs are **fed from** those experiments rather than re-validated.
+An experiment-driven way of working, run out of an Obsidian vault **the project owns**. Rewritten from scratch at 1.0.0 — the previous product-development track (roadmap/spec/design/implement/reconcile/patch, ADR + DES records, requirements tables, Given/When/Then criteria, status ladders) and seven of its nine agents are gone. Distilled from the hand-refined variant in `~/workspace/asermax/tanks`, which is the origin story the way `zukai` was for the old version.
 
-**Two halves, joined at `PRODUCT.md`:**
+**The governing seam:** *the plugin owns the process, the project owns the structure.* The process is zenku's (idea = objective + unknowns; experiments clear them one at a time; acceptance criteria before code; the decision happens once, at the idea, and it is the user's). Everything else — folders, every template body, every index, tags, headings, commands, code style, branch pattern — belongs to the project. `init` seeds defaults and then gets out of the way; every other skill resolves structure at runtime and **never carries a template body**, because a plugin-side shape written into a project's vault is indistinguishable from something the project chose. The test applied to every line: *a skill containing a string that would be wrong in a different repo is a bug.*
 
-*Experimentation* (generalized from zukai, domain/stack-agnostic):
-- `capture`: append an immature idea to `BACKLOG.md` (free, no interview)
-- `prioritize`: order the experiment `BACKLOG.md` so the most impactful experiments run first — the agent drafts a ranking from the backlog text using a bet-oriented `(Stakes × Uncertainty) / Cost` rubric (rewards uncertainty, unlike feature-scoring frameworks), asks only targeted disambiguating questions, presents a table to adjust, validates via `priority-reviewer`, then reorders the backlog (ordering only — no scores written)
-- `experiment-start`: promote an idea into a numbered one-pager with a pre-registered single question, falsifiable hypothesis, and two-lens (task + insight) judging criteria; scaffold a spike
-- `experiment-run`: collaboratively shape the minimal spike, build it with spike discipline against real data, assist the user through judging sessions while scribing the insight log (includes the fresh-subagent-driver harness discipline for agent-as-judged-actor experiments)
-- `experiment-conclude`: force a verdict against the pre-registered criteria, append a `LEARNINGS.md` entry, promote proven pieces into `PRODUCT.md` under a milestone
+**Two backlogs**, and the split is load-bearing. The experiment backlog holds objectives with unknowns; the work backlog holds work already decided (defect / slice / chore). The test: *is there anything we would have to find out before starting?* Nothing → work item. Something → idea. They feed each other, which is what replaced `PRODUCT.md`: a work item carrying a real unknown becomes an idea, and a promoted idea leaves its deferred furniture as work items.
 
-*Product development* (new, experiment-fed; lighter than katachi — no ephemeral delta tier):
-- `roadmap`: break a `PRODUCT.md` milestone into features with ordering, a parallelizable set, and a cycle-checked dependency graph → `docs/planning/ROADMAP.md`
-- `spec`: durable feature spec grounded in the source experiments → `docs/feature-specs/<feature>.md`
-- `design`: durable feature design from spec + experiment evidence (spike is reference, not code to copy); creates ADR/DES inline → `docs/feature-designs/<feature>.md`, `docs/architecture/`, `docs/design/`
-- `implement`: build against the design + a code-review loop
-- `reconcile`: fold what was built back into the durable docs (surgical change, document-the-present), promote decisions to ADR/DES
-- `patch`: compressed single-session alternative to the full chain — fuses spec + design into one plan-mode doc (no intermediate files), then implement + reconcile with a single collaborative checkpoint; grounded in a free-text change, a roadmap feature, or an experiment; drives ROADMAP markers to `✓ Reconciled` only when the target is roadmapped, and steers genuinely-new unvalidated capabilities to the experiment track
+**Skills:**
+- `capture-experiment` / `capture-backlog`: seconds each, commit to nothing; each offers the other when the item is the wrong kind
+- `experiment`: define, run and conclude one experiment in 11 steps — shape the idea (validated by `idea-reviewer`), pick the unknowns, write the note *before the code*, build the spike on the idea's branch, log findings live, score against the written record, write the answers back to the idea
+- `promote`: decide the objective is worth reaching (the user's call, on quoted evidence), carry the lab notes onto the trunk **with the decision**, drop the spike commits via `reset --hard <trunk>` rather than reverting paths, then build
+- `drop`: the other terminal decision — four kinds, and a required *what would reopen it*
+- `work-on-backlog`: build a defined item through the same gate; a work item is not a smaller class of change
+- `note`: write or update a durable note per the project's own charter
+- `init`: seed the vault; a re-run is how a folder/template/base gets added later (never overwrites, reports added/kept/needs-a-decision)
+- `commit`: grouped conventional commits, lab-aware
 
-*Supporting:*
-- `framework-core` (`user-invocable: false`): shared collaborative principles, the experiment-sandbox definition (properties, not a stack), the artifact/doc map, project-convention lookup, reviewer-dispatch table, and template pointers
-- `init`: scaffold the artifacts + docs tree and record project conventions in the project's CLAUDE.md
+**Loaded, not invoked:** `framework-core` (the runtime-resolution contract L1–L6, the never-assume-structure rule, the CLAUDE.md section shape + add-a-missing-field-when-you-need-it guidance, the three write habits, the four non-negotiables) and `delivering-change` (shape → build → verify → fit review → note → **user review gate** → commit), shared by `promote` and `work-on-backlog`.
 
-**Agents:** `experiment-researcher`, `onepager-reviewer`, `shape-reviewer`, `conclusion-reviewer`, `priority-reviewer` (experimentation); `spec-reviewer`, `design-reviewer`, `code-reviewer`, `reconciliation-reviewer` (product). Reviewers run the silent draft→validate→present loop; criteria check doc quality **and experiment-grounding**, not idea validation. `priority-reviewer` is the exception — it audits backlog *ordering* coherence (dependency/uncertainty inversions, bottlenecks, distribution), never idea merit.
+**Agents:** `idea-reviewer` (an idea's framing: is the objective a goal rather than a smuggled question, is each unknown clearable by one experiment, is any already answered in the vault) and `change-reviewer` (a built change's fit: contradicts a recorded rule, reimplements something existing, drifts from surrounding shape, leaves a note now untrue). Both are terse, agent-facing, and refuse to judge merit.
 
 **Key conventions:**
-- No config file — project-specific bits (purpose, spike location, build/test/lint commands) live in a `## zenku` section of the project's own CLAUDE.md, following katachi's convention-based approach
-- All skills/agents use the `zenku:` namespace prefix; templates live under `${CLAUDE_PLUGIN_ROOT}/skills/framework-core/references/`
-- Per-folder doc indexes (katachi convention): each `docs/` content folder carries a `README.md` catalog — `feature-specs/`, `feature-designs/`, `architecture/` (ADR), `design/` (DES). Create-if-missing, keep-current: `spec`/`design`/`reconcile`/`patch` upsert rows as they write docs; `init` seeds the empty stubs; `doc-index-templates.md` defines the shapes. The ROADMAP owns feature ordering/dependencies; the feature indexes are a flat capability catalog
-- Experiment sandboxes are stack-agnostic — defined by properties (isolated, throwaway, minimal, real-data, easy to run/discard); the zukai Vite/React layout survives only as an optional worked example
-- Generalized from zukai (stripped: "visual code comprehension" mission, hardcoded shin-sekai note sync, Vite/React `src/experiments/registry.ts` layout, `pnpm lint && build`, "real change = a PR")
+- No config file and **no `.zenku/` extension files** — a project's own behaviour goes where a human will read it: the vault charter, a folder README, or a labelled field in the project's `## The lab` CLAUDE.md section. Fields are discovered lazily and any skill offers to add a missing one.
+- `init/seeds/` is the only place template bodies live, and `init` is the only skill that reads it. Two token syntaxes: `{{title}}`/`{{date:…}}` pass through untouched (Obsidian's, so one file serves both human "Insert template" and agent scaffolding), `<<TOKEN>>` is init's, and the post-condition **zero `<<` remain** is what makes the never-overwrite comparison possible on a re-run.
+- Indexes are Obsidian **Bases** embedded in folder READMEs, so a note joins its index by existing — and a wrong tag drops it out silently, which the charter warns about. `_templates/` and `_bases/` sit *outside* `.obsidian/` on purpose, because that directory is per-person and gitignored.
+- Two seeds are instantiated **once per note folder** (the folder README and its base), which is what makes an arbitrary number of project-chosen folders work. There is no built-in folder set anywhere in the plugin.
+- Durable docs are **narrative notes**: mechanism first, reasoning in a callout beside the thing it justifies, plus a cost section and a what-is-not-built-yet section. No ADR/DES concept and no invariants concept — the framework names no decision artifact at all; a project wanting a standing-rules list keeps one as its own structure.
 
 ## Development Patterns
 

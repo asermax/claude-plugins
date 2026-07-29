@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "3.4.12"
+    "version": "3.5.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -40,7 +40,7 @@
     {
       "name": "zenku",
       "source": "./zenku",
-      "description": "Experiment-driven development: pre-registered experiments for validation, plus an experiment-fed product-dev track (roadmap, spec, design, implement, reconcile)"
+      "description": "An Obsidian-vault lab: ideas as objectives plus unknowns, experiments that clear them, a backlog for work already decided, and narrative docs the project owns"
     },
     {
       "name": "memu",

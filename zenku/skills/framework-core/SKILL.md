@@ -68,7 +68,7 @@ The `**Run**` and `**Checks**` fields. Absent → detect from the lockfile or ma
 
 `**Spikes**` is either `throwaway` — the spike is discarded at promotion and the real thing rebuilt with the answers in hand — or `graduate-in-place`, where the spike is hardened into the real thing. `**Branch**` gives the pattern, commonly one branch per idea. Absent → assume `throwaway` and one branch per idea, say so in one line, and offer to record it.
 
-`throwaway` is the default because the argument for it belongs to the framework: the permission to hardcode, skip tests and ignore structure is what made the spike cheap, and auditing that back out afterwards is slower and less reliable than writing the real thing once the answers are known. A project choosing otherwise should say why in its own charter, and should know the cost — a spike you intend to keep grows scope by gravity, which weakens the criteria-before-code rule.
+`throwaway` is the default because the argument for it belongs to the framework: the permission to hardcode, skip tests and ignore structure is what made the spike cheap, and auditing that back out afterwards is slower and less reliable than writing the real thing once the answers are known. A project choosing otherwise should say why in its own charter, and should know the trade-off — a spike you intend to keep grows scope by gravity, which weakens the criteria-before-code rule.
 
 ### L6 — Find the trunk and the code roots
 

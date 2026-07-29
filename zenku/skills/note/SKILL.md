@@ -33,10 +33,7 @@ The charter owns the shape. The framework asserts three things about the content
 
 **No ceremony.** No acceptance criteria, no requirements table, no traceability table, no user story, no status ladder. Those describe work being planned; a note describes something that exists. If a section is doing bookkeeping rather than explaining, it does not belong.
 
-Two things worth writing that are easy to skip, and that most charters ask for:
-
-- **What this costs** — the honest price: performance, ergonomics, what it makes harder later. A note with no cost section is usually a note that has not been thought about.
-- **What is not built yet** — what is deliberately absent, and what would ask for it. Keeps the next person from reading an omission as an oversight.
+One thing worth writing that is easy to skip, and that most charters ask for: **what is not built yet** — what is deliberately absent, and what would ask for it. Keeps the next person from reading an omission as an oversight.
 
 Copy real declarations rather than paraphrasing them. Someone comparing the note to the code should find them identical.
 

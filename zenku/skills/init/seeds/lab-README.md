@@ -34,7 +34,7 @@ Like the rest of this folder, both kinds are **records rather than notes**, and 
 
 **An idea outlives its experiments**, and everything else here follows from that. Four unknowns can take four experiments, each scored and concluded on its own, while the idea stays open the whole time. So an experiment never decides whether the thing gets built, and never throws anything away: its spike stays on the branch where the next experiment can start from it. The disposal happens once, at the end, when the idea is decided.
 
-That decision is two decisions rather than one, and `zenku:promote` keeps them apart deliberately: whether the objective is still worth reaching now that its cost is known, and only then what shape the real thing takes.
+That decision is two decisions rather than one, and `zenku:promote` keeps them apart deliberately: whether the objective is still worth reaching now that the answers are in, and only then what shape the real thing takes.
 
 ## A work item's life
 
@@ -95,7 +95,7 @@ An **experiment** carries `status`, `started`, `concluded` and the branch it ran
 - **`running`** — in flight, on its branch.
 - **`cleared`** — met its acceptance criteria. The unknowns it went after have answers.
 - **`partial`** — some cleared and some not, or the answer arrived from somewhere the criteria did not anticipate. Common, and not a failure.
-- **`inconclusive`** — the criteria were not met and the unknowns are still open. A blown timebox lands here, and it is a real result about cost rather than an absence of one.
+- **`inconclusive`** — the criteria were not met and the unknowns are still open. An honest status rather than a euphemism, and a real result: it says this approach did not answer the question.
 
 A **work item** carries `status` (`open` · `doing` · `done` · `dropped`), `priority`, `size` and `kind` (`defect` · `slice` · `chore`). An item that is only partly done stays `open` with what is left named — a `done` item that is not done is worse than an open one.
 

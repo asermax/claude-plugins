@@ -1,12 +1,12 @@
 ---
 name: delivering-change
-description: The shared discipline for building something that has already been decided — agree the shape, build to the project's bar, verify, review for fit, write the note, then stop for the user before anything is committed. Loaded by zenku:promote and zenku:work-on-backlog.
+description: The shared discipline for building something that has already been decided — agree the shape, build to the project's bar, verify, review for fit, write the note, then stop for the user before anything is committed.
 user-invocable: false
 ---
 
 # Building something that has been decided
 
-Loaded by `zenku:promote` and `zenku:work-on-backlog`, so a built change goes through the same gate whichever door it came in by. Resolve the project's conventions per `zenku:framework-core` §1 before starting.
+Resolve the project's conventions per `zenku:framework-core` §1 before starting.
 
 What is *not* here is the decision. By the time this runs, someone has already decided the thing is worth building — at the idea, or when the work item was written down. This is about what happens between that decision and a commit.
 
@@ -20,7 +20,7 @@ What the experiments learned usually changes the shape of the answer, and often 
 - **Where it lives.** Read the recipe table in CLAUDE.md's lab section and the charter of the folder this touches, and follow them.
 - **What the project's standing rules force.** Whatever the project records as non-negotiable — wherever it records it — walked against the proposed shape *before* writing code, not after. Each such rule tends to rule out a shape a spike was allowed to use. If the project records none, **say so** rather than inventing any.
 - **What was deliberately faked**, and which of those fakes now needs to be real. Some do not — a hardcoded value is fine if there is only ever one of them.
-- **What it costs.** Easier to write before building than after, and the fastest way to find out that the plan is wrong.
+- **What it drags in behind it.** What else has to change, what it constrains later, what it makes harder. Easier to name before building than after, and the fastest way to find out that the plan is wrong.
 
 Agree the shape before writing anything. If the conversation reveals the change is larger than one branch, say so and stop — that is a finding, and it goes back through `zenku:capture-experiment` or `zenku:capture-backlog` rather than being built anyway.
 
@@ -73,6 +73,8 @@ Then hand it over and wait.
 
 This step exists because it was missed in practice: an implementation reached a merged trunk before the user had seen a line of it, and undoing it cost a five-commit rewind.
 
-## 7. Commit what was approved
+## 7. Iterate until they are done, then offer to commit
 
-Via `zenku:commit`, grouped as it would group them. Commit what the user approved and no more; if they asked for changes, make them and come back to step 6 rather than committing the version they did not want.
+If they asked for changes, make them and come back to step 6. That loop runs as many times as it needs to; the change stays uncommitted throughout.
+
+When they are done, **offer** to commit via `zenku:commit`. Never commit as a matter of course — approval of a diff is not an instruction to commit it, and the user may want to keep iterating, fold this into other work, or handle the commit themselves. Offer, and wait.

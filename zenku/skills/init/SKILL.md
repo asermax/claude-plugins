@@ -43,7 +43,7 @@ One question at a time. **Propose rather than asking cold** — infer from the r
 
 5. **The lab folder names.** Propose a lab directory holding ideas, experiments and work; take any override.
 
-6. **The spike model and the branch pattern.** Explain the two models in one line each and what each costs (`zenku:framework-core` §1 L5). Default to throwaway spikes on one branch per idea.
+6. **The spike model and the branch pattern.** Explain the two models in one line each and what each trades off (`zenku:framework-core` §1 L5). Default to throwaway spikes on one branch per idea.
 
 7. **The commands.** Detect from the lockfile or manifest — never infer a package manager from a language — and confirm two separately: how to run the thing, and what must be green before a change is done.
 

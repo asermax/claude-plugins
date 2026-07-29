@@ -35,7 +35,7 @@ This is the list the experiments work through. The idea stays open until it is e
 
 ## Conclusion
 
-Left out until there is one. This is where the idea ends: what was decided, on what evidence, and what it cost — written by `zenku:promote` or `zenku:drop`, and by nothing else.
+Left out until there is one. This is where the idea ends: what was decided and on what evidence — written by `zenku:promote` or `zenku:drop`, and by nothing else.
 
 A promoted idea says what was actually built and where it now lives, which is rarely the shape any experiment used. A dropped one says which kind of drop it was and, most valuably, **what would reopen it** — that line is the difference between an idea that stays closed and one that gets re-argued every few months.
 

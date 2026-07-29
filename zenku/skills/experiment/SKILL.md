@@ -38,7 +38,7 @@ If it cannot get there, stop. Say what is missing and do not branch. An idea nob
 
 Usually one. Sometimes a cluster that genuinely cannot be separated — an attach path and what the attached thing can see are one build.
 
-**Going after all of them is how you clear none of them.** Everything not picked stays on the idea and waits for another experiment; there is no cost to leaving it, because the idea outlives every experiment under it.
+**Going after all of them is how you clear none of them.** Everything not picked stays on the idea and waits for another experiment; nothing is lost by leaving it, because the idea outlives every experiment under it.
 
 **The pick is the user's, and they need the list in front of them to make it.** Lay the unknowns out in full — the text of each one, and what it would take to clear it, since that is the part they cannot see and you can. Then recommend one and say why. What you must not do is offer a choice phrased in terms only you can resolve: an option that reads "unknowns 1 and 2" or "the model one" is unanswerable by anyone who has not read the same file you just did.
 
@@ -63,7 +63,7 @@ They do not have to be numeric and do not have to be designed to fail. They have
 
 **Where the real subject cannot exercise a criterion, pre-register a synthetic probe for it** — a fixture built to carry exactly the case the real one lacks — and say plainly that it is synthetic, kept separate from the judgment made against real material. A criterion nothing can test is a criterion that will quietly be dropped.
 
-Include when to stop. If it needs more than a couple of sittings, that is itself a finding.
+Say what would count as enough to judge on, so stopping is a decision someone can make rather than a feeling.
 
 Then point the idea note back at this experiment, so the link works both ways.
 
@@ -88,11 +88,11 @@ The project's `**Spikes**` field decides what kind of build this is.
 **Under `throwaway`:**
 
 - **Hardcode everything the unknowns do not touch.** One case, one path, no configuration, no persistence, magic numbers inline.
-- **Do not pre-graduate.** Resist building it the way the real code will want it — that is `zenku:promote`'s job, and doing it now costs time before anyone knows whether there will be a real version.
+- **Do not pre-graduate.** Resist building it the way the real code will want it — that is `zenku:promote`'s job, and doing it now is work nobody yet knows is needed, because nobody yet knows there will be a real version.
 - **Keep it modular anyway**, only so far as it makes the later rewrite cheap. Modularity is the one quality throwaway code keeps.
 - **No tests yet.** Tests are part of building the real thing, not part of clearing an unknown.
 
-**Under `graduate-in-place`:** build it small but to the project's bar, tests included, faking only what the unknowns do not touch. Be aware of what this costs and say it out loud when it starts happening: production hardening absorbed inside an experiment's timebox is time the experiment did not spend on the question, and it makes the timebox a bad estimate of what the *answer* cost.
+**Under `graduate-in-place`:** build it small but to the project's bar, tests included, faking only what the unknowns do not touch. Say it out loud when production hardening starts crowding out the question — that is work the experiment is doing instead of answering anything, and it is the known weakness of this model.
 
 Either way, **the project's standing rules still apply.** A spike is exempt from the quality bar and not from those — a spike that cannot be re-run is an anecdote rather than a result.
 
@@ -106,15 +106,21 @@ If you change how the experiment is being run, write that down *before* running 
 
 Where the user is the one judging, you are the scribe: record what they say as they say it, and record the order they explored things in. Do not summarise a session from memory once it is over.
 
-## 7. See it work
+## 7. See it work, then put it in front of the user
 
 Run the project's `**Run**` command, then do whatever its `**Seeing it work**` field says.
 
 If that field is not recorded, ask once — *"beyond the checks, how would you confirm this actually works, and what fails silently here?"* — and offer to record the answer. Most projects have a failure mode that passes every check and still does not work, and the whole value of the field is that someone has named theirs.
 
-## 8. Stop when the criteria have data against them, or when the timebox is spent
+**Then offer it to the user and let them try it.** Say what is running, how to reach it, and what the criteria are asking them to look for. Your own reading of a spike is one observation and theirs is the one that counts — an unknown about whether something is usable, legible or worth having cannot be cleared by the person who just built it.
 
-Not when the prototype feels finished. Blowing the timebox is **a finding** — about what the thing costs — rather than a reason to keep going.
+**Their reaction is evidence.** Write it into the findings as they say it, in their words, before scoring anything. If they contradict what you concluded from looking at it yourself, that contradiction is the finding — record both readings rather than resolving them quietly in favour of yours.
+
+If they would rather not try it, that is fine and it goes in the note: a criterion judged only by the builder was judged by the builder, and the conclusion's scope sentence has to say so.
+
+## 8. Stop when the criteria have data against them, or when the user says stop
+
+Not when the prototype feels finished, and not when some allotment is used up — the framework tracks no budget of effort or time, and there is nothing to overrun. **The user decides when there is enough to judge on.** Ask when you think there is, and keep going if they disagree.
 
 Stopping early is legitimate too: once the criteria have been decisively answered, running the remaining probes only scores a result that is already in. Record the unrun ones as unrun and say why.
 
@@ -132,7 +138,7 @@ Then set the status. The framework's vocabulary, which the project's charter wil
 
 - **cleared** — the criteria were met and the unknowns have answers.
 - **partial** — some cleared and some not, or the answer arrived from somewhere the criteria did not anticipate. Common, and not a failure.
-- **inconclusive** — the criteria were not met and the unknowns are still open. A blown timebox lands here and is a real result about cost rather than an absence of one.
+- **inconclusive** — the criteria were not met and the unknowns are still open. An honest status rather than a euphemism, and a real result: it says this approach did not answer the question.
 
 Write the conclusion: what the unknowns turned out to be, the learning stated so it **generalises beyond this one case**, and **how far the evidence actually reaches** — how many inputs, how many people, on whose machine. That scope sentence carries real weight; one person on one case is a narrow base, and saying so is what stops the result being over-trusted a year from now.
 
@@ -177,4 +183,4 @@ Then stop, on the branch. The notes stay here with the code until the idea is de
 
 ## Where this stops
 
-An experiment clears unknowns and says what they turned out to be. Whether the objective is worth reaching now that its cost is known is a different judgement, made once, at the idea — by `zenku:promote` or `zenku:drop`, and by the user rather than by you.
+An experiment clears unknowns and says what they turned out to be. Whether the objective is worth reaching now that the answers are in is a different judgement, made once, at the idea — by `zenku:promote` or `zenku:drop`, and by the user rather than by you.

@@ -5,7 +5,7 @@ description: Write down work that is already decided — a defect, an agreed sli
 
 # Capture a piece of work
 
-The other half of the backlog. Same cheapness as `zenku:capture-experiment`, different thing being written down: this one holds work where **what to do is known and the only open question is whether it is done yet.**
+Cheap by design. This takes seconds, commits to nothing, and gets out of the way. It holds work where **what to do is known and the only open question is whether it is done yet.**
 
 Resolve the vault, the work folder and its template per `zenku:framework-core` §1 before writing anything.
 

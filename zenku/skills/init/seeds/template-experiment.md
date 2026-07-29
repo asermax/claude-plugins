@@ -33,7 +33,7 @@ Observable outcomes rather than impressions: nothing here has to be a number, bu
 
 Where the real subject cannot exercise one of these, say so and pre-register the synthetic case that will — kept separate from the judgment made against real material, so nobody later reads the two as the same evidence.
 
-Include when to stop. If it needs more than a couple of sittings, that is itself a finding.
+Say what would count as enough to judge on, so stopping is a decision someone can make rather than a feeling.
 
 ## Findings
 

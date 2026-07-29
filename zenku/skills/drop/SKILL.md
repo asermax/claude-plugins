@@ -33,13 +33,14 @@ Worth one sentence before proceeding, and no more than one:
 
 Then drop it, and do not keep arguing for it.
 
-## 3. Write the reason on the idea
+## 3. Write the reason on the idea, on its branch
 
-The notes are on the idea's branch, so carry them to the trunk with the decision exactly as `zenku:promote` does — this is the last moment they are recoverable, and unlike a promotion there will be no code left to remember any of it by:
+Everything happens on the idea's branch, as in `zenku:promote` — the notes are there with the spike they document, and unlike a promotion there will be no code left to remember any of it by.
 
 ```bash
-git switch <trunk>
-git checkout <branch> -- <the lab folder>    # the notes arrive with the decision
+git switch <branch>
+git status                       # nothing uncommitted; commit it if there is
+git merge <trunk>                # so the branch is current
 ```
 
 Then write the idea's conclusion section — it exists for this and nothing else writes to it:
@@ -53,23 +54,43 @@ Set the status to dropped. **Leave the unknowns in place, cleared and uncleared 
 
 **Show the conclusion text before committing it**, and particularly the reopening condition. It is written on the user's behalf about a judgement they just made, and it is the line that decides whether this comes back — so it has to say what they would actually want to hear, not what you would.
 
-## 4. Commit on the trunk
+## 4. Drop the spike commits, keep the notes
+
+The goal is a branch that is **the trunk plus the notes and nothing else**, so the merge in step 5 carries only the record.
+
+Note that a plain `git reset --hard <trunk>` — what `zenku:promote` uses — is wrong here. In a promotion the notes are already on the trunk before the reset happens; here they are still on this branch, so a hard reset would take them with it. A **soft** reset drops the commits while keeping every change they made:
 
 ```bash
+git reset --soft <trunk>                               # branch is the trunk again; all its changes stay staged
+git restore --staged --worktree -- <the code roots>    # throw the spike's edits away
+git clean -fd -- <the code roots>                      # and the files it added
+git status                                             # only the lab folder should remain
 git add <the lab folder>
-git commit          # e.g. docs(lab): drop <slug>
+git commit                                             # one commit: the notes, and nothing else
 ```
 
-## 5. Dispose of the leftovers
+The conclusion written in step 3 is still uncommitted in the working tree, so it lands in that single commit along with everything the experiments wrote. One commit for the whole record is what you want here — the branch is about to become the trunk plus that.
 
-One branch holds every spike this idea produced. Step 3 brought the notes across; confirm it rather than assuming it, because a branch deleted before its notes are committed has cost the only thing those experiments produced:
+Check the `git status` before committing. If anything outside the lab folder is still staged, the spike touched somewhere the code roots do not cover — say so rather than committing it.
+
+The dropped commits stay reachable through the reflog. If the user wants a durable reference — a spike whose approach might be worth revisiting when the reopening condition fires — **offer to tag the branch tip before the reset**, and name the tag in the conclusion.
+
+## 5. Merge and delete the branch — once the user says so
+
+**The merge is the user's call.** They have just decided not to do something; landing that decision on the trunk and destroying the only copy of the work are separate acts, and the second is irreversible in practice.
+
+Say what the trunk would receive and what would be deleted, and wait. Then:
 
 ```bash
-git log <trunk> --oneline -- <each experiment note>
-git branch -D <branch>
+git log <branch> --oneline           # notes present, spike commits gone
+git switch <trunk>
+git merge <branch>                   # fast-forward: just the notes
+git branch -d <branch>               # -d, not -D — it is merged now
 ```
 
-Say what was deleted. If a note is missing, fix that first and do not delete anything until it is on the trunk.
+`-d` rather than `-D` is the point: if git refuses, the branch is not merged and something is about to be lost. Do not force it — find out what is unmerged first.
+
+Say what was deleted. If a note is missing, fix that before anything is deleted.
 
 ## 6. Harvest what is left
 

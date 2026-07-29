@@ -17,7 +17,7 @@ The unknowns should be empty, or every survivor should be something the user is 
 
 Inconclusive experiments deserve a sentence each. An unknown that defeated an experiment has not gone away because time passed.
 
-**The decision is the user's, and it is only theirs if they can see what it rests on.** Present the record in the conversation: the objective quoted as it stands, each unknown with what it turned out to be, and what the experiments cost. Quote them — do not refer to "the remaining unknowns" or summarise an experiment's conclusion in your own words, because the user has very likely not read these notes and cannot weigh a decision built out of your paraphrase of them. Then let them call it. **Do not promote an idea on your own reading of the evidence.**
+**The decision is the user's, and it is only theirs if they can see what it rests on.** Present the record in the conversation: the objective quoted as it stands, each unknown with what it turned out to be, and what the experiments found along the way. Quote them — do not refer to "the remaining unknowns" or summarise an experiment's conclusion in your own words, because the user has very likely not read these notes and cannot weigh a decision built out of your paraphrase of them. Then let them call it. **Do not promote an idea on your own reading of the evidence.**
 
 ## 2. Record the decision on the trunk, before any code
 
@@ -59,24 +59,28 @@ The dropped commits stay reachable through the reflog. If the user wants a durab
 
 The findings in each experiment note are the version that matters — that is what the log was written live for.
 
-## 4–7. Build it
+## 4. Build it
 
-Load `zenku:delivering-change` and follow it: agree the shape, build to the project's bar, verify, review for fit, write the note, **stop for the user before anything is committed**, then commit what they approved.
+Load `zenku:delivering-change` and follow it: agree the shape, build to the project's bar, verify, review for fit, write the note, **stop for the user before anything is committed**, iterate until they are done, and offer to commit.
 
 Two things that skill will ask for and this one can answer:
 
 - **What the experiments deliberately faked** is in each experiment's build-scope section. Which of those fakes now needs to be real is part of the shape conversation; some do not need to be — a hardcoded value is fine if there is only ever one of them.
-- **The spike is reference, not source.** Read it to learn what worked and what the constraints really cost. Under `throwaway`, do not copy it; graduation is a rewrite, which is why step 3 removed it from sight.
+- **The spike is reference, not source.** Read it to learn what worked and what the constraints really turned out to demand. Under `throwaway`, do not copy it; graduation is a rewrite, which is why step 3 removed it from sight.
 
-## 8. Finish the idea's conclusion
+## 5. Finish the idea's conclusion
 
 **What was actually built and where it lives** — rarely the shape any spike used — what was accepted knowingly, and the learning stated so it generalises beyond this one case.
 
 The idea note is what someone reads first when they wonder why the code looks like this, so it is worth the paragraph. If a spike was tagged in step 3, name the tag here; a reference nobody can find is not a reference.
 
-## 9. Merge, then dispose of the leftovers
+## 6. Merge, then dispose of the leftovers — once the user says so
 
-The notes reached the trunk in step 2, so the branch is safe to lose. Confirm that rather than assuming it — this is the last moment it is recoverable, and a branch deleted before its notes are committed has cost the only thing several experiments produced:
+**The merge is the user's call, not a consequence of the build passing.** Committing on the branch settled what the code looks like; merging settles that it lands, and deleting the branch settles that nothing is coming back. Those are separate decisions and the largest of them is last.
+
+So say where things stand — what is committed on the branch, what the trunk would receive, what would be deleted — and wait. If they want changes, go back to step 4 and keep iterating; nothing here is urgent.
+
+When they agree, confirm the notes are on the trunk rather than assuming it. This is the last moment the branch is recoverable, and one deleted before its notes are committed takes the only thing several experiments produced:
 
 ```bash
 git log <trunk> --oneline -- <each experiment note>
@@ -85,9 +89,9 @@ git merge <branch>
 git branch -d <branch>
 ```
 
-Say what was deleted. If the user wants the spike history kept as reference, keep the branch or the tag from step 3; the cost is one stale ref and the benefit is occasionally real.
+Say what was deleted. If the user wants the spike history kept as reference, keep the branch or the tag from step 3 — one stale ref, and the benefit is occasionally real.
 
-## 10. Harvest what is left
+## 7. Harvest what is left
 
 Do not stop until nothing lives only in this conversation:
 

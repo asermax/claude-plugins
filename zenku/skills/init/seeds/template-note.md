@@ -36,10 +36,6 @@ Headings name the thing they cover. "The four phases" gives a reader nothing to 
 > [!info] Rejected: the alternative someone would otherwise try
 > What it was and the constraint it failed. Worth writing only for an alternative a reasonable person would reach for; "we did not use some other vendor" is not one.
 
-## What it costs
-
-The honest price: performance, ergonomics, what it makes harder later. A note with no cost section is usually a note that has not been thought about.
-
 ## What is not built yet
 
 What is deliberately absent, and what would ask for it. Keeps the next person from reading an omission as an oversight.

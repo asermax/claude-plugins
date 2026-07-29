@@ -8,7 +8,7 @@ Read this before writing anything. These files are **seed material**: once writt
 
 **`<<TOKEN>>` is yours.** Every one gets replaced during `init`.
 
-**Post-condition: zero `<<` remain in anything you wrote.** Check it before reporting. Token substitution is used rather than "adapt this prose to the project" precisely because it is checkable — a generative adaptation produces different output every run, and different output makes the never-overwrite comparison impossible on a re-run.
+**Post-condition: zero `<<` remain in anything you wrote.** Check it before reporting. Token substitution is used rather than "adapt this prose to the project" precisely because it is checkable: a generative adaptation produces different output every run, and different output makes the never-overwrite comparison impossible on a re-run.
 
 ## Where each seed lands
 
@@ -28,21 +28,21 @@ Read this before writing anything. These files are **seed material**: once writt
 
 Plus a `.gitkeep` in each lab folder that starts empty.
 
-The two per-folder seeds are what make an arbitrary number of project-chosen folders work. **There is no built-in set of note folders anywhere in this plugin** — there are only instantiations of these two files.
+The two per-folder seeds are what make an arbitrary number of project-chosen folders work. **There is no built-in set of note folders anywhere in this plugin**: there are only instantiations of these two files.
 
-## The tokens
+## Which tokens get substituted
 
 Vault-wide, decided once in the interview:
 
 | Token | Is |
 |---|---|
 | `<<PROJECT>>` | The project's name, as its repository calls it |
-| `<<VAULT>>` | The vault directory, relative to the repository root — e.g. `docs` |
-| `<<LAB>>` | The lab directory, relative to the vault — e.g. `lab` |
+| `<<VAULT>>` | The vault directory, relative to the repository root (e.g. `docs`) |
+| `<<LAB>>` | The lab directory, relative to the vault (e.g. `lab`) |
 | `<<IDEAS>>` `<<EXPERIMENTS>>` `<<WORK>>` | The three lab subdirectory names |
 | `<<FOLDER_ROWS>>` | The rows of the charter's folder table, one per folder including the lab and the two support folders |
 | `<<FOLDER_SPLIT>>` | A paragraph naming the seam between the note folders and giving **one worked example from this project** of a subject that could look like either and belongs on one side. Without a concrete example the rule does not survive contact with a real note. |
-| `<<FIRST_TAG>>` | The tag of the first note folder — the default in the note template, which someone swaps by hand for the other |
+| `<<FIRST_TAG>>` | The tag of the first note folder: the default in the note template, which someone swaps by hand for the other |
 
 Per note folder, in `note-folder-README.md` and `base-notes.base`:
 
@@ -50,9 +50,9 @@ Per note folder, in `note-folder-README.md` and `base-notes.base`:
 |---|---|
 | `<<FOLDER>>` | The directory name |
 | `<<TAG>>` | The tag that puts a note in this folder's index |
-| `<<HOLDS>>` | One line on what this folder holds — the charter's row for it, expanded |
+| `<<HOLDS>>` | One line on what this folder holds: the charter's row for it, expanded |
 | `<<DISPLAY>>` | The human name for this folder's index, e.g. `Technical design` |
-| `<<EXPLAINS>>` | What the index's summary column should be called — what a note here *does*, in one word or two: `Explains`, `Describes`, `Covers` |
+| `<<EXPLAINS>>` | What the index's summary column should be called: what a note here *does*, in one word or two: `Explains`, `Describes`, `Covers` |
 
 ## Rules while writing
 
@@ -62,4 +62,4 @@ Per note folder, in `note-folder-README.md` and `base-notes.base`:
 
 **Leave a field out rather than guessing it.** An unanswered interview question means the line is omitted, not filled with a plausible default. A later skill will ask at the moment it matters and offer to record the answer.
 
-**The seeds are minimal on purpose.** Each one is instructional prose in place of placeholder content — the template *is* the writing guide, which is why there is no separate reference explaining how to write a note. Resist expanding them during `init`; the project will expand what it actually needs.
+**The seeds are minimal on purpose.** Each one is instructional prose in place of placeholder content: the template *is* the writing guide, which is why there is no separate reference explaining how to write a note. Resist expanding them during `init`; the project will expand what it actually needs.

@@ -337,6 +337,7 @@ Experiment-driven development framework. A generalization of the experimentation
 - **superpowers skills**: Use `superpowers:` namespace prefix for any cross-skill reference
 - **lesserpowers skills**: Use `lesserpowers:` namespace prefix for any cross-skill reference
 - **systematic-debugging** (in lesserpowers): Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
+- **agent-browser** (in superpowers): Local-only "Visible browser inside herdr" section, not present upstream — preserve it on sync. It probes `HERDR_ENV` + the `official.browser` plugin root via `!`-preprocessing at skill load and echoes the already-resolved pane commands, so the agent doesn't spend turns on discovery (same trick as `hunk-review`)
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**

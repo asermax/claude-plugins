@@ -16,3 +16,6 @@ views:
     order:
       - file.name
       - note.summary
+    sort:
+      - property: file.name
+        direction: ASC

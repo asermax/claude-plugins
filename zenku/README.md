@@ -1,71 +1,70 @@
 # zenku
 
-An experiment-driven way of working, run out of an Obsidian vault the project owns.
+A way of working on things you do not yet understand, run out of an Obsidian vault the project owns.
 
 **The plugin owns the process. The project owns the structure.**
 
-That seam is the whole design. The process is zenku's: an idea is an objective plus the unknowns standing between us and it; experiments clear those unknowns one at a time; acceptance criteria are written before the code; the decision about whether an objective is worth reaching happens once, at the idea, and it is the user's.
+That seam is the whole design. The process is zenku's: an adventure faces its trials one quest at a time, the destination is named before anything else so it can fix what is out of scope, the shape is settled in text before there is code, and a trial you cannot yet name is one you are not ready to face.
 
-Everything else is the project's: which folders exist and what each holds, every template body, every index, the tags, the note headings, the commands, what "seeing it work" means, the code style, the branch pattern. `zenku:init` seeds a sane default and then gets out of the way. From that moment the files belong to the project: edit a template, add a folder, rewrite the charter, and the skills read what is there rather than what was seeded.
+Everything else is the project's: which folders exist and what each holds, every template body, every index, the tags, the headings, the commands, the code style, the branch pattern. `zenku:init` seeds a sane default and then gets out of the way. From that moment the files belong to the project: edit a template, add a folder, rewrite the charter, and the skills read what is there rather than what was seeded.
 
 The test applied to every line of every skill: **a skill that contains a string which would be wrong in a different repository is a bug.**
 
-## Which backlog does this go in
+## Adventures, quests and trials
 
-|  | Experiment backlog | Work backlog |
-|---|---|---|
-| Holds | An **objective** (something we want to be able to do) plus the **unknowns** standing between us and it | Work already decided: a defect, an agreed slice, a chore |
-| Written by | `zenku:capture-idea` | `zenku:capture-backlog` |
-| Done by | `zenku:experiment`, then `zenku:promote` or `zenku:drop` | `zenku:work-on-backlog` |
+One backlog — the **quest log** — holding two kinds of thing.
 
-The test for which one you have: *is there anything here we would have to find out before we could start?* Nothing → a work item. Something real → an idea. An objective is a goal and does not come out true or false; falsifiability lives one level down, in the unknowns. A bug has neither, and pushing one through a shaping lifecycle produces states that mean nothing.
+A **quest** is one session's work. Solving it either answers something or builds a slice.
 
-They feed each other, which is what replaces a product backlog: a work item that turns out to carry a real unknown becomes an idea, and a promoted idea leaves its deferred furniture behind as work items.
+An **adventure** is too big and too foggy for that. It carries a **destination**, its **bearings** (the ground it works in, what to read first, and the standing warnings), the **trials** standing between here and it, and a **solved** index of the quests that have come back.
+
+An adventure holds no design of its own. A decision lives in exactly one place, the quest that settled it, and the solved index points there rather than restating it. The whole shape is reconciled once, when the last trial is gone, and that reconciliation becomes the build quests. The durable note comes last of all, written out of every quest's design at once, when there is something built to describe.
+
+A **trial** is an ordeal you can sense coming but cannot yet phrase as a single quest. The test is whether you can state the question precisely *now*, not whether you can answer it: a sharp question you cannot act on yet is a blocked quest, while a vague sense that sync is going to be a problem is a trial. A trial graduates into a quest the moment it can be stated, and the quests **in reach** — open, unblocked, unclaimed — are what you choose from.
+
+Two rules the whole thing rests on. **Find the path**: while an adventure still has trials, the work produces decisions, not deliverables, and the pull to just build is the signal you have reached the edge of what is known. **Keep the pace**: one quest per session, research excepted.
 
 ## Which skill does what
 
+You type three of them:
+
 | Skill | Does |
 |---|---|
-| `zenku:init` | Seed a vault the project then owns; re-run to fill a gap or add a folder |
-| `zenku:capture-idea` | Write an objective and its unknowns into the lab, in seconds |
-| `zenku:capture-backlog` | Write down something already decided, in seconds |
-| `zenku:experiment` | Define, run and conclude one experiment against one idea's unknowns |
-| `zenku:promote` | Decide the objective is worth reaching, then reach it |
-| `zenku:drop` | Decide it is not, and record what would reopen it |
-| `zenku:work-on-backlog` | Build a defined work item |
-| `zenku:note` | Write or update a durable note, per the project's own charter |
-| `zenku:commit` | Group the working changes into conventional commits |
+| `zenku:venture` | Work on something. Decides whether it needs mapping out first or can be built now, then does that. |
+| `zenku:init` | Seed a vault the project then owns; re-run to fill a gap or add a folder. |
+| `zenku:commit` | Group the working changes into conventional commits. |
 
-Two more are loaded rather than invoked: `framework-core` carries the runtime-resolution contract every skill uses to find the project's vault and conventions, and `delivering-change` carries the build discipline shared by `promote` and `work-on-backlog`.
+The rest are primitives. The skills above reach them by name, and so can you:
 
-Two reviewers: `zenku:idea-reviewer` checks an idea's framing before it is written back, and `zenku:change-reviewer` checks a built change for fit with the rest of the project.
+| Skill | Does |
+|---|---|
+| `zenku:parley` | Interview you relentlessly, one question at a time, until the thinking holds. |
+| `zenku:log` | Write something into the quest log in seconds, committing to nothing. |
+| `zenku:design` | Settle the shape in text: modules, seams, data flow, types, signatures. |
+| `zenku:research` | Send a subagent at primary sources and capture what it finds. |
+| `zenku:spike` | Throwaway code in the adventure's worktree, to find something out. |
+| `zenku:solve` | Close a quest out: the answer, its status, and what it unblocks. |
+| `zenku:build` | Build it with you, verify it, offer to commit. |
+| `zenku:lore` | Write or update a durable note, per the project's own charter. |
+
+`codex` is loaded rather than invoked: it carries the runtime-resolution contract every skill uses to find the project's vault and conventions.
 
 ## What the framework never bends on
 
-**Acceptance criteria are written before the code.** The reason is timing rather than rigor: decided afterwards, they will be met, because a result is much easier to admire once it is the only one you have. A criterion need not be numeric; it has to be **observable**.
-
-**Every note reaches the trunk before any code is discarded.** Code lives on the idea's branch and is expected to be thrown away. The notes travel to the trunk with the decision.
-
-**Promoting is not a cleanup.** The decision about the objective comes first and separately from the shape of what gets built, and the spike commits are dropped rather than cleaned up: the permission to hardcode is what made them cheap, and auditing it back out is slower and less reliable than writing the real thing with the answers in hand.
-
-**What gets built is reviewed before it is committed.** Green checks say the code runs, not that it is the thing anyone wanted. Nothing is committed until the user has looked at it.
+**Nothing is committed unprompted.** Approval of the work is not an instruction to commit it.
 
 ## Getting started
 
-1. `zenku:init`: answer the interview, look at what it wrote, change whatever you disagree with. It is yours now.
-2. `zenku:capture-idea` when you want something you do not know how to get; `zenku:capture-backlog` when you know exactly what needs doing.
-3. `zenku:experiment` to clear an unknown; `zenku:promote` or `zenku:drop` when the list is empty.
+1. `zenku:init` — answer the interview, read what it wrote, change whatever you disagree with. It is yours now.
+2. `zenku:log` when something is worth not losing but you are not starting on it.
+3. `zenku:venture` when you are. It works out whether the thing needs an adventure or just needs building.
 
-## Documents
+## Two kinds of writing
 
-Durable knowledge lives in **narrative notes**: mechanism first, with the reasoning in a callout beside the thing it justifies. Not decision records: no requirements tables, no acceptance criteria, no traceability columns, no status ladders. Those describe work being planned; a note describes something that exists, and it should be readable by someone auditing the system rather than administering it.
+**The quest log** records what we did and decided. It goes stale by design: a solved quest is history.
+
+**Lore** explains how a part works, in the present tense, and is maintained, not accumulated. Mechanism first, with the reasoning in a callout beside the thing it justifies. No requirements tables, no acceptance criteria, no traceability columns, no status ladders — those describe work being planned, and lore describes something that exists.
+
+The two meet at the design `zenku:design` settled: it is already mechanism-first prose with a diagram in it, so it becomes the durable page, minus the signatures the code now owns. A loose quest makes that move as it builds. An adventure makes it once, at the very end, out of every quest's design at once, so the page describes a thing that exists rather than a plan for one.
 
 A project that wants a standing-rules list, a decision register or anything else keeps one **as its own structure**. zenku names no such artifact, which is why it cannot impose one.
-
-## What this replaced
-
-The previous version carried a second half: a product-development track of roadmap, feature spec, feature design, implement and reconcile skills, with ADR and DES decision records, requirements tables, Given/When/Then acceptance criteria and a status ladder, plus nine reviewer subagents. It is gone, and so are `BACKLOG.md`, `PRODUCT.md`, `LEARNINGS.md` and `ROADMAP.md` as artifacts.
-
-What survives of it: requirements-before-code lives on as the experiment's acceptance criteria, the only place the framework insists on it. The shape conversation those documents existed to force still happens, in `delivering-change`. It just leaves no artifact of its own. A decision's reasoning lives in a callout beside the mechanism it justifies, and the record of what was decided and on what evidence lives in the idea's conclusion. Ordering lives in a priority field and a generated index.
-
-What does not survive, deliberately: the documents between an answer and the code, the monotonic experiment numbering, and the per-skill project override files. A project's own behaviour now goes where a human will read it: the vault's charter, a folder's README, or a labelled field in the project's agent instructions.

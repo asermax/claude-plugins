@@ -3,7 +3,7 @@ title: "{{title}}"
 tags:
   - <<FIRST_TAG>>
 summary: "One line: what part of the system this explains. Shown in search, in hover previews and in the index."
-created: {{date:YYYY-MM-DD}}
+created: "{{date:YYYY-MM-DD}}"
 ---
 
 # {{title}}
@@ -27,11 +27,7 @@ flowchart LR
   A[input] --> B[the thing] --> C[result]
 ```
 
-Use a diagram whenever the subject is a flow, a tree, a sequence or a state machine. Mermaid renders in Obsidian and on GitHub; do not draw it in ASCII.
-
-**Explain the code, do not reprint it.** A declaration, a constructor body or a whole function belongs in the file it lives in, where it cannot fall out of date. A snippet earns its place only where the code *is* the insight (an exact formula, a guard whose precise form is the point, a line whose shape a reader would get wrong from a description), and then it is two to four lines, not a block.
-
-Headings name the thing they cover. "The four phases" gives a reader nothing to search for; "the four phases of a request's life" does.
+Use a diagram whenever the subject is a flow, a tree, a sequence or a state machine.
 
 > [!note] Why it is this way and not the obvious alternative
 > The reasoning, next to the mechanism it justifies. One callout per real choice, not a section, and not a list of every option anyone mentioned.

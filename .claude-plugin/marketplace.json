@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "3.6.0"
+    "version": "3.7.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -40,7 +40,7 @@
     {
       "name": "zenku",
       "source": "./zenku",
-      "description": "An Obsidian-vault lab: ideas as objectives plus unknowns, experiments that clear them, a backlog for work already decided, and narrative docs the project owns"
+      "description": "An Obsidian-vault quest log: adventures that face their trials one quest at a time, a single dispatcher that decides whether to map the way or just build, and durable notes the project owns"
     },
     {
       "name": "memu",

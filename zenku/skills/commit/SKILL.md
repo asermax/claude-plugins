@@ -1,135 +1,55 @@
 ---
 name: commit
-description: Analyze uncommitted changes and create grouped conventional commits. Use whenever the user asks to "commit", "commit my changes", "make a commit", or similar.
+description: Analyze uncommitted changes and create grouped conventional commits.
+disable-model-invocation: true
 ---
 
-# Commit Workflow
+# Commit
 
-Analyze changes and create appropriately grouped conventional commits.
+Load `zenku:codex` first, for the project's code roots and checks and for the habit of showing the plan before writing anything.
 
-Load `zenku:framework-core` first: §1 for the project's code roots and checks, §3 for the habit of showing the plan before writing anything.
+## 1. Analyze
 
-## Process
+Run in parallel: `git status`, `git diff --staged`, `git diff`, `git log -5 --oneline`. Staged and unstaged changes are both fair game — the user may have started staging selectively before invoking this.
 
-### 1. Analyze changes
+**Read `git log` to match the repository's existing style**: its scopes, its trailer, whether it writes bodies or bare subjects, whether it hard-wraps. None of that is this skill's to decide, and all of it is visible in the last handful of commits.
 
-Run in parallel:
+## 2. Group
 
-```sh
-git status
-git diff --staged
-git diff
-git log -5 --oneline
-```
+Closely related work belongs together even when it spans patterns. Group by the capability being changed; keep code with the doc describing that same change; separate unrelated changes, formatting from logic, and tests from implementation unless they are one thing. Where the project's layout implies a grouping — a unit that does not compile if split — follow it.
 
-Both staged and unstaged changes are fair game: the user may have started staging selectively before invoking this.
+Two groupings are this framework's rather than the project's, and neither is visible from the paths:
 
-**Read `git log` to match the repository's existing commit style**: its scopes, its trailer, whether it writes real bodies or bare subjects, whether it hard-wraps. None of that is this skill's to decide, and all of it is visible in the last handful of commits.
+- **Quest log records commit apart from the code they are about.** A record has to stand on its own on the trunk; the code it describes may never get there.
+- **Spike commits stay in the adventure's spike worktree**, on a branch that is never merged, so they never reach a group here at all.
 
-### 2. Group changes logically
+## 3. Draft the messages
 
-Group changes that should be committed together. Apply judgment: closely related work belongs together even if it spans patterns. Default heuristics:
+Conventional commits: `type(scope): brief description`, optionally a body saying **why**.
 
-- Group by the feature/capability being added or changed.
-- Keep code and the doc that describes the same change together.
-- Separate unrelated changes; separate formatting from logic; separate tests from implementation unless closely related.
-- Config/tooling changes are their own commit unless clearly part of one change.
+Scopes derive from the area touched, or are omitted for repo-wide changes — follow what `git log` shows.
 
-**Don't mix unrelated changes** in a single commit. Keep commits atomic but meaningful.
+Add a co-author or generated-by trailer only if `git log` already uses one, copying its exact form.
 
-Two groupings are the lab's rather than the project's, and neither is obvious from the paths:
+## 4. Verify anything under the code roots
 
-- **Lab notes commit apart from the code they are about.** The framework requires a note to reach the trunk on its own, and a spike never does.
-- **On an idea's branch, each experiment's spike is its own recognisable commit.** `zenku:promote` drops those commits with a single reset, which is only clean if the boundary is clean.
+Run the project's `**Checks**` before committing code. A commit is the last honest place to check. Anything red: say which, and do not commit.
 
-Where the project's own layout implies a grouping (a unit of code that does not compile if split), follow it. The log and the surrounding structure will show it.
+Two exemptions: a **spike** skips this entirely, because exemption from the quality bar is what made it cheap enough to throw away, and a group with **nothing under the code roots** has nothing to run.
 
-### 3. Draft commit messages
+## 5. Confirm
 
-Conventional commits format:
+**Always** use `AskUserQuestion` to present the groups, even for a single obvious one. Put the full breakdown with file lists in the question text, as plain text with indentation and dashes — markdown does not render there, and do not add an "Other" option because the system adds it.
 
-```
-type(scope): brief description
+Offer "Merge into fewer commits" when there are four or more groups.
 
-Longer explanation if needed.
-- Detail 1
-- Detail 2
-```
+## 6. Execute
 
-**Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
-
-**Scopes:** derive from the area touched, or omit for repo-wide changes. Follow the scope conventions evident in `git log`.
-
-**Message quality:**
-- Imperative mood ("add", not "added" or "adding").
-- No period at end of subject line.
-- Subject line under 50-72 characters.
-- Body wrapped at 72 chars when needed, unless the log shows otherwise.
-- Bodies say **why** rather than restating the diff.
-- Do NOT use `!` after type/scope for breaking changes; use a `BREAKING CHANGE:` footer instead.
-- Do NOT use internal tracking IDs as the scope.
-- Include a co-author / generated-by trailer only if the project's convention, evident in `git log`, uses one, and copy its exact form.
-
-### 4. Verify anything under the code roots
-
-Run the project's checks before committing code. A commit is the last honest place to check, and the project's own rule is that they are green before a change counts as done.
-
-If any of them fails, say which and **do not commit**.
-
-Two exemptions:
-
-- **A spike on an idea's branch skips this entirely.** Experiment code is exempt from the quality bar, and speed is the whole reason it is cheap enough to throw away.
-- **Nothing under the code roots in the group** (notes only, configuration only) means there is nothing to run.
-
-### 5. Present plan and get confirmation
-
-**Always** use `AskUserQuestion` to present the proposed groups and get confirmation, even for a single obvious group. Include the full breakdown with file lists in the question text.
-
-- Do NOT use markdown formatting in the question text; it doesn't render. Use plain text with indentation and dashes.
-- Do NOT include "Other" as an option; the system adds it automatically.
-
-Options:
-- "Proceed with these N commit group(s)" (recommended)
-- If there are 4+ groups: "Merge into fewer commits"
-
-Example:
-
-```
-Question: "I've analyzed the changes and propose the following commit groups:
-
-feat(auth): add token refresh
-   - src/auth/refresh.ts (new)
-   - src/auth/index.ts (modified)
-
-docs: update setup instructions
-   - README.md (modified)
-
-How would you like to proceed?"
-
-Options:
-- "Proceed with these 2 commit groups"
-```
-
-### 6. Execute commits
-
-For each approved group:
-
-```sh
-git add <files>
-git commit -m "$(cat <<'EOF'
-type(scope): description
-
-Optional body.
-EOF
-)"
-```
-
-Stage exactly the files in the current group, never `git add -A` or `git commit -a`. A stray file in a commit is invisible until someone reverts it.
+Stage exactly the files in the group, never `git add -A` or `git commit -a`. A stray file in a commit is invisible until someone reverts it.
 
 ## Safety
 
-- Never force push, never modify git config, never skip hooks unless explicitly requested.
-- **Committing lab notes to the trunk is normal** and needs no warning: the framework requires them to land there directly. **Code is different:** if a group touches the code roots and you are on the trunk, say so and offer a branch first.
-- If a pre-commit hook fails: fix the issue, re-stage, create a **new** commit rather than amending.
-- No changes to commit → say so and stop.
-- Merge conflicts present → list them, ask the user to resolve, stop.
+**Nothing gets committed that the user has not approved in step 5.** That holds however obvious the change looks and however recently they approved a previous one.
+
+- **Committing quest log records to the trunk is normal** and needs no warning. **Code is different:** if a group touches the code roots and you are on the trunk, say so and offer a branch first.
+- A failing pre-commit hook: fix it, re-stage, and make a **new** commit rather than amending.

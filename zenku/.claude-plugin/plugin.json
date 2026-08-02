@@ -1,7 +1,7 @@
 {
   "name": "zenku",
-  "version": "2.0.0",
-  "description": "An Obsidian-vault lab: ideas as objectives plus unknowns, experiments that clear them, a backlog for work already decided, and narrative docs the project owns",
+  "version": "3.0.0",
+  "description": "An Obsidian-vault quest log: adventures that face their trials one quest at a time, a single dispatcher that decides whether to map the way or just build, and durable notes the project owns",
   "author": {
     "name": "Agustin Carrasco"
   }

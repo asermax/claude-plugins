@@ -19,7 +19,7 @@ This folder is an Obsidian vault. Open `<<VAULT>>/` as the vault root.
 
 <<FOLDER_SPLIT>>
 
-`<<LAB>>/` holds records rather than notes, and the writing charter below does not apply to it: see its own index for what does. The distinction that matters is that a note explains how something *is*, while a record says what we tried or what we intend to do. When an experiment settles something, the outcome moves into a note; the experiment stays where it is, as the evidence behind it.
+`<<QUESTLOG>>/` holds records rather than notes, and the writing charter below does not apply to it: see its own index for what does. The distinction that matters is that a note explains how something *is*, while a record says what we did or what we intend to do. When a quest settles something durable, the explanation moves into a note; the quest stays where it is, as the record of how we found out.
 
 `_templates/` and `_bases/` hold no notes. The underscore is a sorting convention and nothing more: it floats them to the top of the file explorer. Obsidian gives it no meaning and neither folder is hidden.
 
@@ -27,11 +27,11 @@ This folder is an Obsidian vault. Open `<<VAULT>>/` as the vault root.
 
 Wikilinks resolve by note name rather than by path, so `[[some-note]]` works from anywhere and nobody has to track where a file sits. That holds **only while file names are unique across the whole vault**, which is the constraint behind the naming rule:
 
-A note is named after the aspect it explains, in kebab-case. Not after its folder, not numbered, not dated: an experiment's date is a frontmatter field, which is what its index sorts on.
+A note is named after the aspect it explains, in kebab-case. Not after its folder, not numbered, not dated: dates are frontmatter, so the index can sort on them without every filename carrying one.
 
 Before adding a note, check the name is not taken. A collision does not error; it silently makes every link to that name ambiguous.
 
-Every folder's index is called `README.md`, so that name is the one deliberate collision in the vault: the payoff is that the indexes render as folder front pages when the repository is browsed on the web. Two conventions keep it from costing anything. A link to a *folder's* index names the folder, which disambiguates it: `[[<<LAB>>/README|the lab]]`. A link to *this* file uses its alias, `[[the vault index]]`, because a bare `[[README]]` written from inside a folder that has its own README is ambiguous at best and a link to itself at worst.
+Every folder's index is called `README.md`, so that name is the one deliberate collision in the vault: the payoff is that the indexes render as folder front pages when the repository is browsed on the web. Two conventions keep it from costing anything. A link to a *folder's* index names the folder, which disambiguates it: `[[<<QUESTLOG>>/README|the quest log]]`. A link to *this* file uses its alias, `[[the vault index]]`, because a bare `[[README]]` written from inside a folder that has its own README is ambiguous at best and a link to itself at worst.
 
 ## Frontmatter
 

@@ -46,7 +46,7 @@ One question at a time. **Propose, never ask cold** (infer from the repository a
 
 5. **The quest log folder name.** Propose one directory holding both adventures and quests, and take any override. One folder rather than two: what tells them apart is a tag, and the index queries both.
 
-6. **The branch pattern.** Commonly one branch per adventure. Spikes are not a choice and are not asked about: one worktree per adventure, on a branch that is never merged.
+6. **The branch pattern.** Commonly one branch per adventure. Spikes are not a choice and are not asked about: one worktree per effort, on a branch that is never merged.
 
 7. **The commands, and the code roots.** Detect the commands from the lockfile or manifest (never infer a package manager from a language) and confirm two separately: how to run the thing, and what must be green before a change is done. Then confirm which roots a change actually touches, proposing what the repository layout suggests. That last one is worth asking rather than inferring, because it is the field a skill consults before running anything destructive.
 
@@ -75,4 +75,4 @@ Three columns, and nothing else:
 - **kept**: what already existed and was left alone.
 - **needs a decision**: anything you found inconsistent: a folder with no charter, a table row with no directory, a base whose tag nothing carries, a template for a kind nothing uses.
 
-Then the two sentences that matter: **everything under the vault is the project's now**; edit any template, add a folder, rewrite the charter, and the skills will follow it. And what to do next: write something down with `zenku:log`, or start on something with `zenku:venture`.
+Then the two sentences that matter: **everything under the vault is the project's now**; edit any template, add a folder, rewrite the charter, and the skills will follow it. And what to do next: write something down with `zenku:log`, clear ground with `zenku:venture`, or build something already decided with `zenku:raid`.

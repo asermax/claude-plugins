@@ -7,11 +7,11 @@ Load `zenku:codex`.
 
 A spike is **throwaway code that answers a question**. The question decides everything about it, so name the question first, and say what the spike has to show you for that to count as answered. Otherwise you get a demo you like rather than an answer you trust.
 
-## Work in the adventure's spike worktree
+## Work in the effort's spike worktree
 
-**An adventure owns one git worktree, on one branch that is never merged, and every spike under it works in there.** The first spike creates it. Each one after that finds it already standing.
+**An effort owns one git worktree, on one branch that is never merged, and every spike works in there.** The first spike creates it. Each one after that finds it already standing, including the spikes of a raid that follows the venture which cut it: the tree outlives the venture precisely so the build can still go and look.
 
-One per adventure rather than one per spike, because spikes compound. The second question usually needs what the first one fetched, cached, stubbed or measured, and a fresh checkout per spike orphans all of it: the new tree has the code but not the corpus, so the cheap question becomes an expensive one. Sharing the tree also means a later spike can be run against an earlier one to compare them.
+One per effort rather than one per spike, because spikes compound. The second question usually needs what the first one fetched, cached, stubbed or measured, and a fresh checkout per spike orphans all of it: the new tree has the code but not the corpus, so the cheap question becomes an expensive one. Sharing the tree also means a later spike can be run against an earlier one to compare them.
 
 Nothing else in the framework creates it. A spike written in the main tree either lands hardcoded throwaway code on a branch that gets merged, or forces a branch switch that takes the vault with it. A worktree avoids both: the main tree stays on the adventure's branch throughout, so the quest note stays writable while the spike runs.
 
@@ -35,6 +35,6 @@ Run it and hand it over. Their reaction is evidence, and where their reading of 
 
 Close the quest with `zenku:solve`. Its index line carries whatever the quest left behind, so **name what you added to the tree**: the script that reproduces this, the data it cached, the command that runs it. The worktree itself gets named once, by the first spike that creates it, and is then the same tree every later line refers to.
 
-**Leave it in place for as long as the adventure is open.** An answer in prose loses whatever nobody thought to write down, and the questions that come back later, *what exactly did we run* and *did we try it with the other adapter*, are answerable in seconds from a live checkout. It sits beside the main tree costing nothing but disk.
+**Leave it standing until the raid ends.** A venture does not strike it: the build that follows is exactly who needs to go and look. An answer in prose loses whatever nobody thought to write down, and the questions that come back later, *what exactly did we run* and *did we try it with the other adapter*, are answerable in seconds from a live checkout. It sits beside the main tree costing nothing but disk.
 
 **The trunk still never gets the code.** The branch stays unmerged. What gets built later is written fresh with the answer in hand, because the shortcuts that made this cheap are exactly the things that would have to be audited back out. Reference is not a first draft.

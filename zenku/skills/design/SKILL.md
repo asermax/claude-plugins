@@ -17,7 +17,7 @@ Work top to bottom. Each level is answerable only once the one above it is settl
 
 Use these words exactly and do not substitute near-synonyms. A **module** is anything with an interface and an implementation, at any size. Its **interface** is everything a caller must know to use it correctly — the signature, but also the invariants, the ordering constraints, the error modes. A **seam** is a place where behaviour can be changed without editing in that place; it is where an interface lives, and it is where a test attaches.
 
-**Go down until you hit something you cannot settle.** That is the stopping rule, and it is the same thing as a trial: shaping an adventure usually stops partway down level 1 or 2, because that is exactly where the trials surface. Building goes all the way to the bottom, because by then there are none left.
+**Go down until you hit something you cannot settle.** That is the stopping rule, and it is the same thing as a trial: shaping a venture usually stops partway down level 1 or 2, because that is exactly where the trials surface. Building goes all the way to the bottom, because by then there are none left.
 
 ## What the framework asserts, and nothing else
 

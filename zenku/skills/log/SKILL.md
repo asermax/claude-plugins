@@ -7,7 +7,7 @@ Load `zenku:codex`.
 
 This costs seconds and commits to nothing. Someone had a thought worth not losing; the whole job is getting it out of their head intact.
 
-**Write a quest by default.** One session's worth of something, whatever kind it is. If what they are describing is plainly too big and too foggy for that, say so in one line and offer to log it as an adventure instead — but do not shape it here, because shaping is `zenku:venture` and it is a session of its own.
+**Write a quest by default.** One session's worth of something, whatever kind it is. If what they are describing is plainly too big and too foggy for that, say so in one line and offer to log it as an adventure instead — but do not shape it here, because shaping is a session of its own.
 
 ## Writing it
 
@@ -29,4 +29,4 @@ Then write what they said, and stop.
 
 **Do not do it.** Log it and offer to go on.
 
-Say what you wrote and where. If it sounds like they meant to start on it now rather than shelve it, say they can run `zenku:venture` — that is theirs to invoke, not yours.
+Say what you wrote and where. If it sounds like they meant to start on it now rather than shelve it, say they can run `zenku:venture` to clear the ground, or `zenku:raid` if there is nothing to clear and it just needs building. Both are theirs to invoke, not yours.

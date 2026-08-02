@@ -1,7 +1,7 @@
 {
   "name": "zenku",
-  "version": "3.0.0",
-  "description": "An Obsidian-vault quest log: adventures that face their trials one quest at a time, a single dispatcher that decides whether to map the way or just build, and durable notes the project owns",
+  "version": "3.1.0",
+  "description": "An Obsidian-vault quest log: ventures that clear unknown ground one question at a time, raids that build what they settled, and durable notes the project owns",
   "author": {
     "name": "Agustin Carrasco"
   }

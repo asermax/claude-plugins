@@ -20,12 +20,14 @@ An **adventure** is too big and too foggy for that. It carries a **destination**
 
 Adventures come in two kinds, and that split is what keeps deciding and building apart:
 
-- A **venture** clears ground. Its destination is *knowing how to build the thing*, and it holds research, design and spike quests. Never a build quest.
-- A **raid** builds. Its destination is *the thing working*. It reads a finished venture's solved quests, reconciles them into one shape, slices that into build quests, and lands them one per session.
+- A **journey** clears ground. Its destination is *knowing how to build the thing*, and it holds research, design and spike quests. Never a build quest.
+- A **raid** builds. Its destination is *the thing working*. It reads a finished journey's solved quests, reconciles them into one shape, slices that into build quests, and lands them one per session.
 
-A venture is usually followed by a raid, and either can stand alone: a feature with no open questions is a raid nobody had to clear ground for.
+A journey is usually followed by a raid, and either can stand alone: a feature with no open questions is a raid nobody had to clear ground for.
 
 An adventure holds no design of its own. A decision lives in exactly one place, the quest that settled it, and the solved index points there rather than restating it. The whole shape is reconciled once, at the start of the raid, and that reconciliation becomes the build quests. The durable note comes last of all, written out of every quest's design at once, when there is something built to describe.
+
+Then the whole effort is **struck**: the journey, the raid and every quest under both are deleted, in one commit named after the effort. The quest log holds the work in flight and nothing else, which is what lets a session searching it trust what it finds, and git keeps everything it removes. The note is what survives.
 
 A **trial** is an ordeal you can sense coming but cannot yet phrase as a single quest. The test is whether you can state the question precisely *now*, not whether you can answer it: a sharp question you cannot act on yet is a blocked quest, while a vague sense that sync is going to be a problem is a trial. A trial graduates into a quest the moment it can be stated, and the quests **in reach** — open, unblocked, unclaimed — are what you choose from.
 
@@ -37,8 +39,8 @@ You type four of them:
 
 | Skill | Does |
 |---|---|
-| `zenku:venture` | Clear ground whose shape is not obvious yet, one question per session. Builds nothing. |
-| `zenku:raid` | Build the thing: reconcile what the venture settled, slice it, land a slice per session. |
+| `zenku:travel` | Clear ground whose shape is not obvious yet, one question per session. Builds nothing. |
+| `zenku:raid` | Build the thing: reconcile what the journey settled, slice it, land a slice per session. |
 | `zenku:init` | Seed a vault the project then owns; re-run to fill a gap or add a folder. |
 | `zenku:commit` | Group the working changes into conventional commits. |
 
@@ -55,6 +57,8 @@ The rest are primitives. The skills above reach them by name, and so can you:
 | `zenku:solve` | Close a quest out: the answer, its status, and what it unblocks. |
 | `zenku:build` | Build it with you, verify it, offer to commit. |
 | `zenku:lore` | Write or update a durable note, per the project's own charter. |
+| `zenku:loot` | Get everything worth keeping out of a session before it ends. |
+| `zenku:strike` | End an effort and clear it away: close out, loot, remove the worktree, delete the records. |
 
 `codex` is loaded rather than invoked: it carries the runtime-resolution contract every skill uses to find the project's vault and conventions.
 
@@ -66,8 +70,8 @@ The rest are primitives. The skills above reach them by name, and so can you:
 
 1. `zenku:init` — answer the interview, read what it wrote, change whatever you disagree with. It is yours now.
 2. `zenku:log` when something is worth not losing but you are not starting on it.
-3. `zenku:venture` when the shape is not clear yet, and it clears one question per session until it is.
-4. `zenku:raid` when it is, whether a venture cleared it or it was always obvious.
+3. `zenku:travel` when the shape is not clear yet, and it clears one question per session until it is.
+4. `zenku:raid` when it is, whether a journey cleared it or it was always obvious.
 
 ## Two kinds of writing
 
@@ -75,6 +79,6 @@ The rest are primitives. The skills above reach them by name, and so can you:
 
 **Lore** explains how a part works, in the present tense, and is maintained, not accumulated. Mechanism first, with the reasoning in a callout beside the thing it justifies. No requirements tables, no acceptance criteria, no traceability columns, no status ladders — those describe work being planned, and lore describes something that exists.
 
-The two meet at the design `zenku:design` settled: it is already mechanism-first prose with a diagram in it, so it becomes the durable page, minus the signatures the code now owns. A loose quest makes that move as it builds. A raid makes it once, at the very end, out of every quest's design at once, the venture's and its own together, so the page describes a thing that exists rather than a plan for one.
+The two meet at the design `zenku:design` settled: it is already mechanism-first prose with a diagram in it, so it becomes the durable page, minus the signatures the code now owns. A loose quest makes that move as it builds. A raid makes it once, at the very end, out of every quest's design at once, the journey's and its own together, so the page describes a thing that exists rather than a plan for one.
 
 A project that wants a standing-rules list, a decision register or anything else keeps one **as its own structure**. zenku names no such artifact, which is why it cannot impose one.

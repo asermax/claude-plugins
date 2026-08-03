@@ -15,7 +15,7 @@ New or changed behaviour gets new or updated automated coverage, and nothing exi
 
 **Write the lore, if this is a loose quest.** Load `zenku:lore`. A change to how something works that leaves no lore is half done, and the quest's design is most of the draft already.
 
-**Under a raid, do not.** The lore gets written once, at the raid's end, out of every quest's design at once, the venture's and the raid's together. A slice that documents itself as it lands produces one page per slice, each describing a part of a shape nobody has seen whole yet, and reconciling those afterwards costs more than writing the page once. Leave the detail on the quest and go on.
+**Under a raid, do not.** The lore gets written once, at the raid's end, out of every quest's design at once, the journey's and the raid's together. A slice that documents itself as it lands produces one page per slice, each describing a part of a shape nobody has seen whole yet, and reconciling those afterwards costs more than writing the page once. Leave the detail on the quest and go on.
 
 **Close the quest** with `zenku:solve`, if a quest record covers this. Building it is not finishing it: an unclosed quest still shows as in reach and still blocks whatever waited on it.
 

@@ -19,7 +19,9 @@ This folder is an Obsidian vault. Open `<<VAULT>>/` as the vault root.
 
 <<FOLDER_SPLIT>>
 
-`<<QUESTLOG>>/` holds records rather than notes, and the writing charter below does not apply to it: see its own index for what does. The distinction that matters is that a note explains how something *is*, while a record says what we did or what we intend to do. When a quest settles something durable, the explanation moves into a note; the quest stays where it is, as the record of how we found out.
+`<<QUESTLOG>>/` holds records rather than notes, and the writing charter below does not apply to it: see its own index for what does. The distinction that matters is that a note explains how something *is*, while a record says what we did or what we intend to do.
+
+The two also differ in how long they live. **A note is maintained; a record is struck** once the work it tracked is over, and git keeps it from there. So when a record settles something durable, the explanation moves into a note before the record goes, and **a note never links to a record** — that link dangles the moment the work ends.
 
 `_templates/` and `_bases/` hold no notes. The underscore is a sorting convention and nothing more: it floats them to the top of the file explorer. Obsidian gives it no meaning and neither folder is hidden.
 

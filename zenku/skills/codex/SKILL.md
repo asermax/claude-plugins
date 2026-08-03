@@ -18,14 +18,14 @@ An **adventure** is too big and too foggy for one session. It carries a **destin
 
 Adventures come in two kinds, and an adventure's `kind` says which. **Always write it.** A reader should not have to know a default to tell what they are looking at, and a missing field is indistinguishable from one somebody forgot.
 
-**Every record carries a `kind`, and the tag says which vocabulary applies.** An adventure's is `venture` or `raid`; a quest's is `research`, `design`, `spike` or `build`. One field name rather than two, because a reader should not have to remember which record type carries `kind` and which carries something else.
+**Every record carries a `kind`, and the tag says which vocabulary applies.** An adventure's is `journey` or `raid`; a quest's is `research`, `design`, `spike` or `build`. One field name rather than two, because a reader should not have to remember which record type carries `kind` and which carries something else.
 
-An *adventure* with no kind is read as a venture. That is a fallback for vaults that predate the field, not a style: when you meet one, fill it in rather than relying on it.
+An adventure with no kind is in **neither** the journeys nor the raids, which is how you find one: it is missing from both lists rather than defaulting into one. Fill it in when you meet it.
 
-- A **venture** clears ground. Its destination is knowing how to build the thing, and it holds research, design and spike quests. Never a build quest. `zenku:venture` runs it.
+- A **journey** clears ground. Its destination is knowing how to build the thing, and it holds research, design and spike quests. Never a build quest. `zenku:travel` runs it.
 - A **raid** builds. Its destination is the thing working, and it holds build quests almost exclusively. `zenku:raid` runs it.
 
-A venture is usually followed by a raid, which reads its solved quests, reconciles them into one shape and slices that into the build quests it then lands. Either can stand alone: ground worth clearing that nobody builds on is still cleared, and a feature with no open questions is a raid with no venture behind it.
+A journey is usually followed by a raid, which reads its solved quests, reconciles them into one shape and slices that into the build quests it then lands. Either can stand alone: ground worth clearing that nobody builds on is still cleared, and a feature with no open questions is a raid with no journey behind it.
 
 A **trial** is an ordeal you can sense standing between here and the destination but cannot yet phrase as a single quest. The test is whether you can state the question precisely *now*, not whether you can answer it: a sharp question you cannot act on yet is a blocked quest, a vague sense that sync is going to hurt is a trial. A trial *graduates* into a quest the moment it can be stated, and a quest is how a trial gets faced.
 
@@ -33,9 +33,23 @@ The quests **in reach** are the ones open, unblocked and unclaimed. They are wha
 
 Two rules go with this:
 
-**Find the path.** Decisions come before deliverables. The two kinds are what make this hold without anyone enforcing it: a venture cannot contain a build quest, so the pull to just build has nowhere to land until the ground is clear. Feeling that pull inside a venture is the signal you have reached the edge of what is known.
+**Find the path.** Decisions come before deliverables. The two kinds are what make this hold without anyone enforcing it: a journey cannot contain a build quest, so the pull to just build has nowhere to land until the ground is clear. Feeling that pull inside a journey is the signal you have reached the edge of what is known.
 
-**Keep the pace.** One quest per session, research excepted. A session that solves three quests has usually guessed at two of them. A venture's quests and a raid's are different sizes, which is why they do not share an adventure: an investigation can fill a session that three slices would also fill.
+**Keep the pace.** One quest per session, research excepted. A session that solves three quests has usually guessed at two of them. A journey's quests and a raid's are different sizes, which is why they do not share an adventure: an investigation can fill a session that three slices would also fill.
+
+## An effort ends by striking its records
+
+The **effort** is the journey, the raid that followed it, and every quest under both. When it ends, its records are **struck**: deleted, in one commit named after the effort. There is no archive folder and no archived status. **git is the archive.** `zenku:strike` owns this, and it is the only thing that deletes a record.
+
+An effort that ended reads exactly like one that is live to anything searching by name or content, which is most of what a session does before it decides anything. Emptying the folder is what keeps that search honest, and it is why a status alone is not enough: it hides a dead record from an index without hiding it from a search.
+
+Which puts two obligations on everything upstream of the ending:
+
+**Nothing outside the effort may depend on a record surviving.** Lore never links one. Before striking, check what links in from outside the effort and fix or drop those links, because a dangling link is the one cost git does not cover.
+
+**Whatever has to outlive the effort leaves through Loot first**, while the records are still there to read. For an effort that stopped short and built nothing, Loot is the *only* survivor, and that includes the condition that would reopen it.
+
+A record already on the trunk is kept by git the moment it is struck: `git log --diff-filter=D` finds the commit, `git show <sha>^:<path>` reads the record. One that never reached the trunk had a single session's life, and its output is the lore and the code, so there is nothing to archive.
 
 ## Finding the project
 
@@ -45,7 +59,7 @@ The vault's charter READMEs are the authority on structure. CLAUDE.md's `## The 
 
 Four exceptions, because the process is defined in terms of them, and a skill may rely on these existing:
 
-- The quest log's **status vocabulary**, the two **kind** vocabularies (`venture`/`raid` for an adventure, `research`/`design`/`spike`/`build` for a quest), and the **tag** that says which of the two a record is and therefore which vocabulary its kind comes from. These are process rather than structure: the dispatchers branch on them, so a project renaming one breaks the routing silently. A project that wants different words changes the framework, not just its vault.
+- The quest log's **status vocabulary**, the two **kind** vocabularies (`journey`/`raid` for an adventure, `research`/`design`/`spike`/`build` for a quest), and the **tag** that says which of the two a record is and therefore which vocabulary its kind comes from. These are process rather than structure: the dispatchers branch on them, so a project renaming one breaks the routing silently. A project that wants different words changes the framework, not just its vault.
 - An **adventure's structural sections**: its destination, its bearings, its trials, its solved index, what it rules out of scope, and how it ended.
 - A **quest's**: what it settles, its design, its answer — plus the four fields the routing runs on (`status`, `kind`, `adventure`, `blocked_by`).
 - Every folder's index is called **`README.md`**. Vault detection depends on it, and no resolution step can find a charter whose name it has to guess first.
@@ -59,7 +73,7 @@ Read the section names off the project's **templates**, and the field vocabulary
 | The folders | The charter's folder table | Cross-check the table against what is on disk. When they disagree, report both and ask which is right; **never create a folder to satisfy a stale row.** No charter at all → say you are inferring the shape from disk, and confirm before writing into a folder you inferred. |
 | A template | The folder's README, then the charter | Mirror the closest existing note in that folder and say you did. **Never fall back to a body carried in this plugin** — a plugin-side shape in a project's vault is indistinguishable from something the project chose, and that is the one failure this design exists to prevent. |
 | The commands | `**Run**` and `**Checks**` | Detect from the lockfile or manifest, propose what you found, and run nothing until it is confirmed. Never infer a package manager from a language. |
-| The branch | `**Branch**` | One branch per adventure. Spikes are separate and never a choice: one worktree, on a branch that is never merged, cut by the venture and **inherited by the raid that follows it**, which is what strikes it. See `zenku:spike`. |
+| The branch | `**Branch**` | One branch per adventure. Spikes are separate and never a choice: one worktree, on a branch that is never merged, cut by the journey and **inherited by the raid that follows it**, which is what strikes it. See `zenku:spike`. |
 | The trunk | `git symbolic-ref --short refs/remotes/origin/HEAD` | That errors on any clone nobody ran `git remote set-head` in, which is most of them, and means nothing is wrong. Then `git remote show origin`, then ask. **Never guess between `main` and `master`** by checking which exists — a repository can carry both. Resolve it each time and do not record it: it is a fact about the clone, and a stale copy in CLAUDE.md is worse than the lookup. |
 | The code roots | `**Code**` | Ask, before running anything destructive. Getting this wrong destroys work. |
 

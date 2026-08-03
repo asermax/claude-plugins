@@ -23,7 +23,7 @@ Answered or built → solved. No longer worth doing → dropped, with the line s
 
 Nothing else moves a quest into reach. The index reads that field directly instead of following a chain, so a closed quest left in a blocked_by list keeps its dependants invisible with no error anywhere. The order things actually happened survives in the solved index and in git, which is why the field empties instead of accumulating.
 
-**A loose quest stops here.** The rest is an adventure's bookkeeping.
+**A loose quest stops here.** Steps 4 and 5 are an adventure's bookkeeping, and what happens to the record afterwards belongs to whoever dispatched the session.
 
 ## 4. Gist it into the adventure's solved index
 
@@ -31,7 +31,7 @@ Follow the shape the index itself asks for. Two things the framework needs from 
 
 **Nothing copies up.** The reasoning and the shape stay on the quest, in one place, and the index carries only enough to decide whether to open it. An adventure that accumulates its quests' detail stops being readable at about the sixth one, which is the point where a session most needs to read it.
 
-Naming the artifact is what makes it findable later. Under a loose quest there is nothing to outlive, so dispose of the artifact here instead.
+Naming the artifact is what makes it findable later, and an adventure has later sessions to make it findable for.
 
 ## 5. Graduate what the answer made visible
 

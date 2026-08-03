@@ -5,7 +5,7 @@ description: Take one quest and see it through in a single session — claim it,
 
 Load `zenku:codex`.
 
-One session, one quest. This is the loop both `zenku:venture` and `zenku:raid` run, and it is the same loop whichever kind of adventure it sits under.
+One session, one quest. This is the loop both `zenku:travel` and `zenku:raid` run, and it is the same loop whichever kind of adventure it sits under.
 
 ## 1. Load the adventure, at low resolution
 
@@ -13,7 +13,7 @@ Its destination, its **bearings**, its trials, its solved index. Not every quest
 
 The bearings are the part to act on rather than skim. Read what they say to read before deciding anything, and take their warnings as settled instead of re-deriving them.
 
-A **raid** carries the venture it came from. Its bearings say so, and that venture's solved quests are where the reasoning behind the shape lives.
+A **raid** carries the journey it came from. Its bearings say so, and that journey's solved quests are where the reasoning behind the shape lives.
 
 A **loose quest** has no adventure at all. Read the quest and go on.
 

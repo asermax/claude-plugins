@@ -21,7 +21,7 @@ Then write what they said, and stop.
 
 **Write their thing, not your improvement of it.** This is the rule this skill breaks most easily. An entry that arrives back subtly better than what they said is one they have to read carefully to correct, which defeats the point of it taking seconds.
 
-**Check whether it is already there** before writing a second copy. Search by name and by content.
+**Check whether it is already there** before writing a second copy. Search the quest log by name and by content, **and the notes as well** — a finished effort leaves no records behind, so something already built shows up only as the note describing it.
 
 **One thing per entry.** Two things logged together get worked as one and half-finished as one.
 
@@ -29,4 +29,4 @@ Then write what they said, and stop.
 
 **Do not do it.** Log it and offer to go on.
 
-Say what you wrote and where. If it sounds like they meant to start on it now rather than shelve it, say they can run `zenku:venture` to clear the ground, or `zenku:raid` if there is nothing to clear and it just needs building. Both are theirs to invoke, not yours.
+Say what you wrote and where. If it sounds like they meant to start on it now rather than shelve it, say they can run `zenku:travel` to clear the ground, or `zenku:raid` if there is nothing to clear and it just needs building. Both are theirs to invoke, not yours.

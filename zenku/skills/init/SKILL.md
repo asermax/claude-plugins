@@ -75,4 +75,4 @@ Three columns, and nothing else:
 - **kept**: what already existed and was left alone.
 - **needs a decision**: anything you found inconsistent: a folder with no charter, a table row with no directory, a base whose tag nothing carries, a template for a kind nothing uses.
 
-Then the two sentences that matter: **everything under the vault is the project's now**; edit any template, add a folder, rewrite the charter, and the skills will follow it. And what to do next: write something down with `zenku:log`, clear ground with `zenku:venture`, or build something already decided with `zenku:raid`.
+Then the two sentences that matter: **everything under the vault is the project's now**; edit any template, add a folder, rewrite the charter, and the skills will follow it. And what to do next: write something down with `zenku:log`, clear ground with `zenku:travel`, or build something already decided with `zenku:raid`.

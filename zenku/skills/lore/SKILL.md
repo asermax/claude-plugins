@@ -31,6 +31,8 @@ The charter owns the shape. The framework asserts four things about the content:
 
 **No ceremony.** Every section explains something that exists. A section doing bookkeeping does not belong.
 
+**Never link a record.** A quest or an adventure is struck when its effort ends, so a link to one dangles as soon as the work finishes — and lore outlives the effort by design, so it cannot rest on anything that does not. Give the reason itself rather than where it was settled, which is what the callout rule asks for anyway; where the evidence was a spike, say what it measured.
+
 Two things worth writing that are easy to skip: **what is not built yet** — what is deliberately absent and what would ask for it, so an omission does not read as an oversight — and **a diagram whenever the subject has a shape**. A state machine, a data model, a sequence or a request's path all read faster drawn. Follow the charter's convention; where it names mermaid, do not draw in ASCII.
 
 ## 3. Describe the present

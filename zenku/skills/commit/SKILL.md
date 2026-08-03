@@ -21,6 +21,7 @@ Closely related work belongs together even when it spans patterns. Group by the 
 Two groupings are this framework's rather than the project's, and neither is visible from the paths:
 
 - **Quest log records commit apart from the code they are about.** A record has to stand on its own on the trunk; the code it describes may never get there.
+- **A struck effort is one commit of its own**, holding every deletion and nothing else. Those deletions are the effort's entry in the project's history and the only place its name survives, so the message says what shipped and points at the lore page. Never fold them in with the code they were about, and never split them across the journey and the raid: the effort ended once.
 - **Spike commits stay in the adventure's spike worktree**, on a branch that is never merged, so they never reach a group here at all.
 
 ## 3. Draft the messages

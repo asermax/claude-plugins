@@ -137,7 +137,7 @@ It **outlives the journey**. The raid that follows inherits it, because the buil
 - **Journeys** — ground being cleared. `![[quest-log.base#Journeys]]`
 - **Raids** — things being built. `![[quest-log.base#Raids]]`
 - **Claimed** — a session took it and has not come back. `![[quest-log.base#Claimed]]`
-- **Ended** — solved and dropped. `![[quest-log.base#Ended]]`
+- **Ended** — every terminal status: a quest solved or dropped, an adventure done or closed. `![[quest-log.base#Ended]]`
 
 Embed any of those under a heading of its own to have it on this page.
 

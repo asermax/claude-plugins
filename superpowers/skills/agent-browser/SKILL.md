@@ -24,9 +24,41 @@ The CLI serves skill content that always matches the installed version, so instr
 
 ## Visible browser inside herdr
 
-When a herdr session and the `official.browser` plugin are both present, prefer a pane-rendered browser the user can watch. The environment was probed at skill load — if the block below says `UNAVAILABLE`, skip this section; otherwise the commands are already resolved and ready to run in order:
+Render the browser in a herdr pane so the user can watch it. Run these in order.
 
-!`ROOT=$(herdr plugin list --plugin official.browser --json 2>/dev/null | jq -r '.result.plugins[0].plugin_root // empty'); if [ -z "${HERDR_ENV:-}" ] || [ -z "$ROOT" ]; then printf 'UNAVAILABLE — HERDR_ENV=%s, plugin_root=%s. Skip this section and use a normal session.\n' "${HERDR_ENV:-<unset>}" "${ROOT:-<none>}"; else printf 'HERDR_ENV=%s\nplugin_root=%s\n\n1. Open the pane (--placement also takes tab, zoomed, overlay); keep pane_id from the response:\n   herdr plugin pane open --plugin official.browser --entrypoint browser --placement split --direction right --no-focus\n\n2. List views, pick the one whose pane_id matches — never guess when several are listed:\n   bun run "%s/src/cli.ts" views\n\n3. Attach to that view (re-running connect returns the same endpoint), then pass --session herdr on every later command:\n   bun run "%s/src/cli.ts" connect --view <view_id>\n   agent-browser connect <cdp_http_url> --session herdr\n\n4. When done — detach, then close the pane:\n   agent-browser --session herdr close\n   herdr plugin pane close <pane_id>\n' "$HERDR_ENV" "$ROOT" "$ROOT" "$ROOT"; fi`
+Resolve the `official.browser` plugin root and substitute the printed path literally into the `bun run` commands below. Read it from the CLI rather than hardcoding it, because the directory name carries a content hash that changes when the plugin updates. A shell variable does not survive between commands, so do not try to carry it in one:
+
+```bash
+herdr plugin list --plugin official.browser --json | jq -r '.result.plugins[0].plugin_root'
+```
+
+Open the pane and keep `pane_id` from the response (`--placement` also takes `tab`, `zoomed`, `overlay`):
+
+```bash
+herdr plugin pane open --plugin official.browser --entrypoint browser --placement split --direction right --no-focus
+```
+
+List the views and pick the one whose `pane_id` matches. Never guess when several are listed:
+
+```bash
+bun run <plugin_root>/src/cli.ts views
+```
+
+Attach to that view, then pass `--session herdr` on every later command. Re-running `connect` returns the same endpoint:
+
+```bash
+bun run <plugin_root>/src/cli.ts connect --view <view_id>
+agent-browser connect <cdp_http_url> --session herdr
+```
+
+When done, detach before closing the pane:
+
+```bash
+agent-browser --session herdr close
+herdr plugin pane close <pane_id>
+```
+
+If a `herdr` command reports `protocol_mismatch`, the running server is older than the installed CLI. Tell the user and stop — restarting the server kills every pane process, including this session, so it is their call.
 
 ## Specialized skills
 

@@ -1,6 +1,6 @@
 ---
 name: sync-upstream
-description: Sync this plugin marketplace's skills, commands, and context from their upstream source repositories (superpowers, quint-code/haft, agentic-evolve, agent-browser). Use this skill whenever the user asks to "sync upstream", "pull upstream", "refresh skills from upstream", "update plugins from their source repos", or mentions wanting to pick up changes from `~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, or `~/workspace/random/agent-browser`. Trigger even when the user uses paraphrases like "let's see what's new upstream" or "pull the latest into the marketplace".
+description: Sync this plugin marketplace's skills, commands, and context from their upstream source repositories (superpowers, quint-code/haft, agentic-evolve, agent-browser, dmmulroy-skills). Use this skill whenever the user asks to "sync upstream", "pull upstream", "refresh skills from upstream", "update plugins from their source repos", or mentions wanting to pick up changes from `~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`, or `~/workspace/random/dmmulroy-skills`. Trigger even when the user uses paraphrases like "let's see what's new upstream" or "pull the latest into the marketplace".
 ---
 
 # Sync Upstream
@@ -11,6 +11,7 @@ This skill keeps the plugin marketplace in lockstep with its upstream sources wh
 - **haft** — `~/workspace/random/quint-code` (the local path still uses the old `quint-code` name; the project itself is now `haft`) — FPF reasoning methodology: the v8 skill catalog (`internal/cli/skill/h-*/SKILL.md`) and CLAUDE.md → PRINCIPLES.md context
 - **agentic-evolve** — `~/workspace/random/agentic-evolve` — evolve commands (master dispatcher + perf/size/ml subskills)
 - **agent-browser** — `~/workspace/random/agent-browser` — browser automation CLI skill (slim discovery stub)
+- **dmmulroy-skills** — `~/workspace/random/dmmulroy-skills` (clone of `github.com/dmmulroy/skills`) — the `bro` and `herdr` skills, mirrored into **superpowers**
 
 ## High-level flow
 
@@ -32,6 +33,7 @@ cd ~/workspace/random/superpowers && git pull origin main
 cd ~/workspace/random/quint-code && git pull origin main
 cd ~/workspace/random/agentic-evolve && git pull origin main
 cd ~/workspace/random/agent-browser && git pull origin main
+cd ~/workspace/random/dmmulroy-skills && git pull origin main
 ```
 
 The pull output reveals the old → new commit range and the touched files, which is what later steps key off.
@@ -53,6 +55,12 @@ These are the only paths to consider when comparing upstream against this plugin
 
 **From `~/workspace/random/agent-browser/skills/agent-browser/`:**
 - `SKILL.md` only. Upstream restructured this into a slim discovery stub that delegates to `agent-browser skills get core` at runtime, so any old `references/` or `templates/` directories under the plugin copy should be removed.
+
+**From `~/workspace/random/dmmulroy-skills/`:**
+- `bro/SKILL.md` → `superpowers/skills/bro/SKILL.md`
+- `herdr/SKILL.md` → `superpowers/skills/herdr/SKILL.md`
+
+That repo holds more skills than these two. Ignore the rest — the collection is opinionated toward Effect and Cloudflare TypeScript work, and it vendors its own copies of Matt Pocock's skills. Only add another one when the user asks for it by name.
 
 **Plugin-specific skills with no upstream — never touch these during sync:**
 - `using-live-documentation`, `self-maintaining-claude-md`, `using-antigravity`, `agent-communication`, `financial-summary`, `using-code-directives`, `mermaid-validation`, `show-markdown`
@@ -80,6 +88,7 @@ Plugin-side customizations to be aware of:
 
 - **All skills**: use the `superpowers:` namespace prefix for any cross-skill reference
 - **systematic-debugging**: removed references to skills not bundled here (`defense-in-depth`, `condition-based-waiting`, `verification-before-completion`)
+- **agent-browser**: local-only `## Visible browser inside herdr` section plus two extra `allowed-tools` entries — always a manual merge, never a copy
 
 Suggested format:
 
@@ -176,9 +185,33 @@ Upstream is now a discovery stub that calls `agent-browser skills get core` at r
 ```bash
 rm -rf ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/references \
        ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/templates
-cp ~/workspace/random/agent-browser/skills/agent-browser/SKILL.md \
-   ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/SKILL.md
 ```
+
+**This one is a manual merge, not a copy.** The plugin file carries a local-only `## Visible browser inside herdr` section that does not exist upstream, so a straight `cp` deletes it. Diff upstream against the plugin copy, port whatever upstream changed, and leave that section standing. Also keep `Bash(herdr plugin:*)` and `Bash(bun run:*)` in `allowed-tools` — the section needs both and upstream declares neither.
+
+```bash
+diff ~/workspace/random/agent-browser/skills/agent-browser/SKILL.md \
+     ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/SKILL.md
+```
+
+### Type 6 — `bro` and `herdr` (dmmulroy)
+
+Direct copy, verbatim. Neither skill references another skill, so the `superpowers:` prefix rule has nothing to apply to, and neither ships supporting files.
+
+```bash
+SRC=~/workspace/random/dmmulroy-skills
+DST=~/workspace/asermax/claude-plugins/superpowers/skills
+
+cp "$SRC/bro/SKILL.md" "$DST/bro/SKILL.md"
+cp "$SRC/herdr/SKILL.md" "$DST/herdr/SKILL.md"
+```
+
+Two things to leave alone:
+
+- **Upstream typos in the `herdr` description** ("terminl", "requies", "another skills"). Copy them as-is. Fixing them locally turns every future sync into a manual merge, and the description still routes correctly.
+- **`disable-model-invocation: true` on `bro`.** It is a restate-my-last-message command, so it must only ever fire when the user types `/superpowers:bro`.
+
+`herdr` overlaps with the "Visible browser inside herdr" section in `agent-browser`, but they do different jobs: `agent-browser` drives the `official.browser` plugin pane, `herdr` drives panes, tabs and sibling agents. Do not merge them or add cross-references between them.
 
 ### Manual-merge procedure (used by Type 1 when upstream changed)
 
@@ -208,6 +241,9 @@ Agentic-Evolve:
 
 Agent-Browser:
 - agent-browser SKILL.md synced
+
+Dmmulroy-Skills:
+- bro, herdr synced into superpowers (verbatim)
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied

@@ -7,10 +7,10 @@ description: Sync this plugin marketplace's skills, commands, and context from t
 
 This skill keeps the plugin marketplace in lockstep with its upstream sources while preserving plugin-specific customizations. The upstream repos and what we track from each:
 
-- **superpowers** — `~/workspace/random/superpowers` — core workflow skills (currently: `systematic-debugging`, which is mirrored into the **lesserpowers** plugin, not superpowers)
-- **haft** — `~/workspace/random/quint-code` (the local path still uses the old `quint-code` name; the project itself is now `haft`) — FPF reasoning methodology: the v8 skill catalog (`internal/cli/skill/h-*/SKILL.md`) and CLAUDE.md → PRINCIPLES.md context
-- **agentic-evolve** — `~/workspace/random/agentic-evolve` — evolve commands (master dispatcher + perf/size/ml subskills)
-- **agent-browser** — `~/workspace/random/agent-browser` — browser automation CLI skill (slim discovery stub)
+- **superpowers** — `~/workspace/random/superpowers` (clone of `github.com/obra/superpowers`) — core workflow skills (currently: `systematic-debugging`, which is mirrored into the **lesserpowers** plugin, not superpowers)
+- **haft** — `~/workspace/random/quint-code` (clone of `github.com/m0n0x41d/quint-code`; the local path still uses the old `quint-code` name, the project itself is now `haft`) — FPF reasoning methodology: the v8 skill catalog (`internal/cli/skill/h-*/SKILL.md`) and CLAUDE.md → PRINCIPLES.md context
+- **agentic-evolve** — `~/workspace/random/agentic-evolve` (clone of `github.com/ericksoa/agentic-evolve`) — evolve commands (master dispatcher + perf/size/ml subskills)
+- **agent-browser** — `~/workspace/random/agent-browser` (clone of `github.com/vercel-labs/agent-browser`) — browser automation CLI skill (slim discovery stub)
 - **dmmulroy-skills** — `~/workspace/random/dmmulroy-skills` (clone of `github.com/dmmulroy/skills`) — the `bro` and `herdr` skills, mirrored into **superpowers**
 - **plannotator** — `~/workspace/random/plannotator` (clone of `github.com/backnotprop/plannotator`) — the three Claude-flavoured skills under `apps/skills/claude/`, mirrored into **superpowers**
 

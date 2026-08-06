@@ -20,7 +20,7 @@ This is a personal collection of Claude Code plugins that provide workflow autom
 
 These live at `.claude/skills/<name>/SKILL.md` and trigger contextually based on natural-language requests when this is the working directory.
 
-- **sync-upstream**: Sync this marketplace's skills, commands, and context from their upstream source repos (`~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`, `~/workspace/random/dmmulroy-skills`). Preserves plugin customizations (namespace prefixes, removed cross-skill references) and asks before applying.
+- **sync-upstream**: Sync this marketplace's skills, commands, and context from their upstream source repos (`~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`, `~/workspace/random/dmmulroy-skills`, `~/workspace/random/plannotator`). Preserves plugin customizations (namespace prefixes, removed cross-skill references) and asks before applying.
 - **commit**: Create conventional commits with automatic semantic version bumps for both the marketplace (`.claude-plugin/marketplace.json`) and any affected plugin's `plugin.json`. Groups related files, derives scopes, proposes bumps with reasoning, and asks before each commit.
 
 ## Plugin Architecture
@@ -83,6 +83,9 @@ Curated development workflow skills for browser automation, documentation, and c
 *Browser Automation:*
 - **agent-browser**: Browser automation CLI for web testing, form filling, screenshots, and data extraction (synced from `~/workspace/random/agent-browser`)
 
+*Plan and Code Review:*
+- **plannotator-review** (`/superpowers:plannotator-review [pr-url]`), **plannotator-annotate** (`/superpowers:plannotator-annotate <file|url|folder>`), **plannotator-last** (`/superpowers:plannotator-last`): Open Plannotator's browser review UI — on the worktree diff or a PR, on a markdown/HTML file or folder, or on the last assistant message — then act on the annotations that come back. All three are manual-only (`disable-model-invocation: true`) and run the `plannotator` CLI at skill load via `!` preprocessing, so each blocks until the user closes the browser session. Synced verbatim from `~/workspace/random/plannotator` (`apps/skills/claude/`). The CLI is a separate install (`plannotator-bin` on AUR); without it on PATH the skills fail at load
+
 *Terminal Orchestration:*
 - **herdr**: Control the Herdr terminal multiplexer via its CLI — inspect and create workspaces/tabs/panes, start and prompt sibling coding agents, run background processes, read pane output, wait on state changes. Guards on `HERDR_ENV=1` and stops when unset. Synced verbatim from `~/workspace/random/dmmulroy-skills`
 
@@ -94,6 +97,7 @@ Curated development workflow skills for browser automation, documentation, and c
 - Upstream sources synced via the marketplace-level `sync-upstream` skill (see "Repo-level skills"):
   - `~/workspace/random/agent-browser` - Browser automation CLI
   - `~/workspace/random/dmmulroy-skills` - `bro` and `herdr` (clone of `github.com/dmmulroy/skills`; only those two are tracked)
+  - `~/workspace/random/plannotator` - the three `plannotator-*` skills (clone of `github.com/backnotprop/plannotator`; only `apps/skills/claude/` is tracked)
 - Shows high-level summary of changes before updating
 - Intelligently merges updates while preserving plugin-specific customizations
 - Skills are automatically available via Claude Code's skill system
@@ -340,7 +344,7 @@ Three things fall out of the split. **Find the path stops needing enforcement** 
 
 ### Superpowers / Lesserpowers Plugin Specifics
 
-`superpowers` and `lesserpowers` are sibling plugins. `superpowers` keeps the curated, most-used surface (agent-browser, herdr, bro, mermaid-validation, show-markdown, the three `using-` skills, plus the situation-state and process-directives commands); `lesserpowers` holds everything else that was split out (systematic-debugging, self-maintaining-claude-md, hunk-review, agent-communication, financial-summary, and the evolve commands). They have no cross-references — the split is clean.
+`superpowers` and `lesserpowers` are sibling plugins. `superpowers` keeps the curated, most-used surface (agent-browser, herdr, bro, the three `plannotator-*` skills, mermaid-validation, show-markdown, the three `using-` skills, plus the situation-state and process-directives commands); `lesserpowers` holds everything else that was split out (systematic-debugging, self-maintaining-claude-md, hunk-review, agent-communication, financial-summary, and the evolve commands). They have no cross-references — the split is clean.
 
 **Custom modifications:**
 - **superpowers skills**: Use `superpowers:` namespace prefix for any cross-skill reference
@@ -348,6 +352,7 @@ Three things fall out of the split. **Find the path stops needing enforcement** 
 - **systematic-debugging** (in lesserpowers): Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
 - **agent-browser** (in superpowers): Local-only "Visible browser inside herdr" section, not present upstream — preserve it on sync (manual merge, never a straight copy), along with the `Bash(herdr plugin:*)` and `Bash(bun run:*)` additions to `allowed-tools`. It is unconditional static prose: always render the browser in a herdr pane, resolve the `official.browser` plugin root from `herdr plugin list` at run time (the directory name carries a content hash), and stop and tell the user on `protocol_mismatch` rather than restarting the server, which would kill the session's own pane. It previously probed `HERDR_ENV` and the plugin root via `!`-preprocessing at skill load and skipped the section when either was missing; that branch is gone by request
 - **bro** and **herdr** (in superpowers): No modifications at all, including the typos in `herdr`'s description ("terminl", "requies") — a local fix would make every future sync a manual merge for no routing benefit
+- **plannotator-review**, **plannotator-annotate**, **plannotator-last** (in superpowers): No modifications. Keep `disable-model-invocation: true` (each one blocks on a browser session), keep `allowed-tools: Bash(plannotator:*)` (the `!` line is inert without it), and keep the `## Your task` branches verbatim — they encode the CLI's `approved`/`dismissed`/`annotated` output contract, so they are upstream's to change. Upstream also installs these into `~/.claude/skills/` via its own `install.sh`; run that installer with `--skip-skills` to avoid two copies competing for the same names
 - All skills use simplified plugin metadata format (name + description only)
 
 **Update workflow:**
@@ -356,6 +361,7 @@ Three things fall out of the split. **Find the path stops needing enforcement** 
   - `~/workspace/random/agentic-evolve` - evolve commands (synced into **lesserpowers**)
   - `~/workspace/random/agent-browser` - Browser automation CLI (synced into **superpowers**)
   - `~/workspace/random/dmmulroy-skills` - `bro`, `herdr` (synced into **superpowers**, verbatim). The repo ships other skills (Effect, Cloudflare, tech-spec, plus vendored copies of Matt Pocock's) — none are tracked; add one only on explicit request
+  - `~/workspace/random/plannotator` - `plannotator-review`, `plannotator-annotate`, `plannotator-last` from `apps/skills/claude/` (synced into **superpowers**, verbatim). Track the `claude/` copies, never `core/`: the core ones are agent-agnostic fallbacks that ask the agent to run the CLI, while the Claude copies use `!` preprocessing and `$ARGUMENTS`. The repo's `apps/skills/extra/` skills (compound, setup-goal, visual-explainer) are not tracked; add one only on explicit request
 - Pull latest changes from all repositories' `main` branch
 - Tracked skill from superpowers upstream: systematic-debugging → `lesserpowers/skills/`
 - hunk-review skill is NOT synced: it's a thin wrapper that uses Claude Code's `!`-preprocessing to inline the installed Hunk binary's SKILL.md at skill-load time (via `hunk skill path`). The upstream hunk binary owns the content, so the plugin file rarely needs touching.

@@ -23,8 +23,20 @@ The plugin includes the following skills:
 - **mermaid-validation**: Validate mermaid diagram syntax after writing mermaid code blocks
 - **show-markdown**: Render markdown content in the browser with styling
 
+### Plan and Code Review (Plannotator)
+
+All three are manual-only (`disable-model-invocation: true`) and require the `plannotator` CLI on PATH.
+
+- **plannotator-review** (`/superpowers:plannotator-review [pr-url]`): Open the browser code review UI for the current worktree or a pull request, then act on the feedback
+- **plannotator-annotate** (`/superpowers:plannotator-annotate <file|url|folder>`): Annotate a markdown file, HTML file, URL, or folder, then respond to the returned annotations
+- **plannotator-last** (`/superpowers:plannotator-last`): Annotate the latest rendered assistant message and revise it from the feedback
+
+### Terminal Orchestration
+- **herdr**: Control the Herdr terminal multiplexer — workspaces, tabs, panes, sibling agents, background processes
+
 ### Other
 - **using-antigravity**: Analyze images, videos, fetch web content, and search Google using Antigravity CLI
+- **bro** (`/superpowers:bro`): Restate the last message in plain language. Manual-only
 
 ## Commands
 

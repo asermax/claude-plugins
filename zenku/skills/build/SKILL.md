@@ -5,7 +5,7 @@ description: Build something already designed, together with the user, then veri
 
 Load `zenku:codex`.
 
-The decision is already made and the design is already agreed — `zenku:design` took it down to the types and signatures and the user signed off. What is left is writing it.
+The decision is already made and the design is already agreed — the user took it down to the types and signatures with `zenku:design`, and settled it. What is left is writing it.
 
 **Build it with the user, not for them.** Work in slices that each leave the thing working, and show each one as it lands. A slice that came out differently from the design is the most useful thing you will say all session: say it when it happens, while it is still cheap to go the other way.
 

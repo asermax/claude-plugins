@@ -107,4 +107,4 @@ A note carrying your assumptions is worse than a question: it is an assumption w
 
 **Show the words, then write them.** Draft it in the conversation, get it agreed, and only then put it in the file. Text that is already committed reads as settled, and it gets corrected far less often than it should.
 
-**Write only what was actually said.** No taxonomy, no scoring table, no threshold, no constraint nobody mentioned. Offer a framing of your own as yours, and let it be taken or left.
+**Write only what was actually said.** No taxonomy, no scoring table, no threshold, no constraint nobody mentioned, and no framing of your own. You supply the facts and the current state; the decisions, and how to frame them, are the user's — you know no better than they do. Help them explore when they ask, and even then the call is theirs.

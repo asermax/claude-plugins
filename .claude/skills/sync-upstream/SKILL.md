@@ -1,6 +1,6 @@
 ---
 name: sync-upstream
-description: Sync this plugin marketplace's skills, commands, and context from their upstream source repositories (superpowers, quint-code/haft, agentic-evolve, agent-browser, dmmulroy-skills, plannotator). Use this skill whenever the user asks to "sync upstream", "pull upstream", "refresh skills from upstream", "update plugins from their source repos", or mentions wanting to pick up changes from `~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`, `~/workspace/random/dmmulroy-skills`, or `~/workspace/random/plannotator`. Trigger even when the user uses paraphrases like "let's see what's new upstream" or "pull the latest into the marketplace".
+description: Sync this plugin marketplace's skills, commands, and context from their upstream source repositories (superpowers, quint-code/haft, agentic-evolve, agent-browser, dmmulroy-skills, plannotator, cursor-plugins). Use this skill whenever the user asks to "sync upstream", "pull upstream", "refresh skills from upstream", "update plugins from their source repos", or mentions wanting to pick up changes from `~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`, `~/workspace/random/dmmulroy-skills`, `~/workspace/random/plannotator`, or `~/workspace/random/cursor-plugins`. Trigger even when the user uses paraphrases like "let's see what's new upstream" or "pull the latest into the marketplace".
 ---
 
 # Sync Upstream
@@ -13,6 +13,7 @@ This skill keeps the plugin marketplace in lockstep with its upstream sources wh
 - **agent-browser** — `~/workspace/random/agent-browser` (clone of `github.com/vercel-labs/agent-browser`) — browser automation CLI skill (slim discovery stub)
 - **dmmulroy-skills** — `~/workspace/random/dmmulroy-skills` (clone of `github.com/dmmulroy/skills`) — the `bro` and `herdr` skills, mirrored into **superpowers**
 - **plannotator** — `~/workspace/random/plannotator` (clone of `github.com/backnotprop/plannotator`) — the three Claude-flavoured skills under `apps/skills/claude/`, mirrored into **superpowers**
+- **cursor-plugins** — `~/workspace/random/cursor-plugins` (clone of `github.com/cursor/plugins`) — the `unslop` skill from the `pstack` plugin, mirrored into **superpowers**
 
 ## High-level flow
 
@@ -36,6 +37,7 @@ cd ~/workspace/random/agentic-evolve && git pull origin main
 cd ~/workspace/random/agent-browser && git pull origin main
 cd ~/workspace/random/dmmulroy-skills && git pull origin main
 cd ~/workspace/random/plannotator && git pull origin main
+cd ~/workspace/random/cursor-plugins && git pull origin main
 ```
 
 The pull output reveals the old → new commit range and the touched files, which is what later steps key off.
@@ -70,6 +72,11 @@ That repo holds more skills than these two. Ignore the rest — the collection i
 - `plannotator-last/SKILL.md` → `superpowers/skills/plannotator-last/SKILL.md`
 
 Track the `apps/skills/claude/` copies, never `apps/skills/core/` — the core ones are the agent-agnostic fallbacks that tell the agent to run the CLI itself, while the Claude copies use `!` preprocessing and `$ARGUMENTS` so the CLI runs at skill load. The repo also ships `apps/skills/extra/` (`plannotator-compound`, `plannotator-setup-goal`, `plannotator-visual-explainer`), which upstream installs separately via `npx skills add`. They are not tracked; add one only on explicit request.
+
+**From `~/workspace/random/cursor-plugins/pstack/skills/`:**
+- `unslop/SKILL.md` → `superpowers/skills/unslop/SKILL.md`
+
+`cursor/plugins` is a monorepo of Cursor plugins, and `pstack` alone ships around forty skills (the `principle-*` family, `tdd`, `architect`, `why`, `swarm`, and more), plus other plugins at the repo root. Only `unslop` is tracked. Ignore everything else unless the user asks for a specific skill by name.
 
 **Plugin-specific skills with no upstream — never touch these during sync:**
 - `using-live-documentation`, `self-maintaining-claude-md`, `using-antigravity`, `agent-communication`, `financial-summary`, `using-code-directives`, `mermaid-validation`, `show-markdown`
@@ -243,6 +250,17 @@ Three things to leave alone:
 
 If upstream adds a fourth skill under `apps/skills/claude/`, report it and ask before tracking it — the tracked list is deliberate, not a glob.
 
+### Type 8 — `unslop` (cursor-plugins)
+
+Direct copy, verbatim. Single `SKILL.md`, no supporting files and no cross-skill references, so the `superpowers:` prefix rule has nothing to apply to.
+
+```bash
+cp ~/workspace/random/cursor-plugins/pstack/skills/unslop/SKILL.md \
+   ~/workspace/asermax/claude-plugins/superpowers/skills/unslop/SKILL.md
+```
+
+Leave the description alone. `Must always apply.` is upstream's wording and it is what makes the skill fire on every writing and editing task, which is the intent. Softening it locally would turn every future sync into a manual merge and would quietly narrow the routing.
+
 ### Manual-merge procedure (used by Type 1 when upstream changed)
 
 1. Read upstream version end-to-end.
@@ -277,6 +295,9 @@ Dmmulroy-Skills:
 
 Plannotator:
 - plannotator-review, plannotator-annotate, plannotator-last synced into superpowers (verbatim)
+
+Cursor-Plugins:
+- unslop synced into superpowers (verbatim)
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied

@@ -34,6 +34,9 @@ All three are manual-only (`disable-model-invocation: true`) and require the `pl
 ### Terminal Orchestration
 - **herdr**: Control the Herdr terminal multiplexer — workspaces, tabs, panes, sibling agents, background processes
 
+### Writing
+- **unslop**: Cut AI tells from any writing and put a voice back in — 31 named patterns with the fix for each, plus an "add soul" pass. Fires on every writing and editing task
+
 ### Other
 - **using-antigravity**: Analyze images, videos, fetch web content, and search Google using Antigravity CLI
 - **bro** (`/superpowers:bro`): Restate the last message in plain language. Manual-only

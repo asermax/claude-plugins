@@ -1,7 +1,7 @@
 {
   "name": "asermax-plugins",
   "metadata": {
-    "version": "3.12.1"
+    "version": "3.13.0"
   },
   "owner": {
     "name": "Agustin Carrasco"
@@ -59,6 +59,11 @@
         "repo": "asermax/annai"
       },
       "description": "Code review surface: agent skill generates a guided JSON view of a PR, local server renders it in the browser"
+    },
+    {
+      "name": "mahou",
+      "source": "./mahou",
+      "description": "Small, focused software engineering skills where the human makes every decision and the agent executes: a routing entrypoint, a learn loop that grows the toolbox, and a wiki of distilled technical knowledge"
     }
   ]
 }

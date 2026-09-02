@@ -74,7 +74,7 @@ That repo holds more skills than these two. Ignore the rest — the collection i
 Track the `apps/skills/claude/` copies, never `apps/skills/core/` — the core ones are the agent-agnostic fallbacks that tell the agent to run the CLI itself, while the Claude copies use `!` preprocessing and `$ARGUMENTS` so the CLI runs at skill load. The repo also ships `apps/skills/extra/` (`plannotator-compound`, `plannotator-setup-goal`, `plannotator-visual-explainer`), which upstream installs separately via `npx skills add`. They are not tracked; add one only on explicit request.
 
 **From `~/workspace/random/cursor-plugins/pstack/skills/`:**
-- `unslop/SKILL.md` → `superpowers/skills/unslop/SKILL.md`
+- `unslop/SKILL.md` → `superpowers/skills/unslop/SKILL.md` (manual merge — the plugin copy carries three locally added patterns)
 
 `cursor/plugins` is a monorepo of Cursor plugins, and `pstack` alone ships around forty skills (the `principle-*` family, `tdd`, `architect`, `why`, `swarm`, and more), plus other plugins at the repo root. Only `unslop` is tracked. Ignore everything else unless the user asks for a specific skill by name.
 
@@ -105,6 +105,7 @@ Plugin-side customizations to be aware of:
 - **All skills**: use the `superpowers:` namespace prefix for any cross-skill reference
 - **systematic-debugging**: removed references to skills not bundled here (`defense-in-depth`, `condition-based-waiting`, `verification-before-completion`)
 - **agent-browser**: local-only `## Visible browser inside herdr` section plus two extra `allowed-tools` entries — always a manual merge, never a copy
+- **unslop**: three locally added patterns at the end of `### Plain speech` (32, 33 and 34) — always a manual merge, never a copy
 
 Suggested format:
 
@@ -252,16 +253,26 @@ If upstream adds a fourth skill under `apps/skills/claude/`, report it and ask b
 
 ### Type 8 — `unslop` (cursor-plugins)
 
-Direct copy, verbatim. Single `SKILL.md`, no supporting files and no cross-skill references, so the `superpowers:` prefix rule has nothing to apply to.
+**This one is a manual merge, not a copy.** The plugin file ends with three locally added patterns that do not exist upstream, so a straight `cp` deletes them. Diff first, port whatever upstream changed, and leave the local patterns standing.
 
 ```bash
-cp ~/workspace/random/cursor-plugins/pstack/skills/unslop/SKILL.md \
-   ~/workspace/asermax/claude-plugins/superpowers/skills/unslop/SKILL.md
+diff ~/workspace/random/cursor-plugins/pstack/skills/unslop/SKILL.md \
+     ~/workspace/asermax/claude-plugins/superpowers/skills/unslop/SKILL.md
 ```
 
-Leave the description alone. `Must always apply.` is upstream's wording and it is what makes the skill fire on every writing and editing task, which is the intent. Softening it locally would turn every future sync into a manual merge and would quietly narrow the routing.
+The three local patterns sit at the end of the `### Plain speech` section:
 
-### Manual-merge procedure (used by Type 1 when upstream changed)
+- **32. Mannered prose** — metaphor used as a verb or whole phrase standing in for direct statement. Upstream's 26 covers metaphors used as nouns only, so this is an extension of it rather than a duplicate.
+- **33. Describing the message instead of writing it** — spans that refer to the text (its parts, their count, their order, that something is arriving) rather than to the subject, at any position in a sentence, plus headings that count items rather than naming them. Upstream has no equivalent.
+- **34. Restating what you just said** — a second pass over an idea at the same level of detail, adding nothing. Upstream's 16 covers one narrow instance of it (a bold lead restating its own line), so check whether upstream has widened 16 before assuming 34 is still needed.
+
+All three mirror the `# Writing style` section of the user's global `~/.claude/CLAUDE.md`. If upstream ever grows its own version of one, drop the local copy and keep upstream's, then tell the user so they can align that section.
+
+Numbering is the thing most likely to collide. The patterns are a single flat 1..N list across all sections, so if upstream adds items the local three must be renumbered to stay last. Two cross-references ride on that numbering and have to be repointed when the targets move: 32 refers to "the nouns in 26", and 34 refers to 16. Read the merged file end-to-end and check all of it.
+
+Everything else in the file is upstream's. Leave the description alone in particular: `Must always apply.` is what makes the skill fire on every writing and editing task, which is the intent, and softening it would quietly narrow the routing.
+
+### Manual-merge procedure (used by Types 1, 5 and 8 when upstream changed)
 
 1. Read upstream version end-to-end.
 2. Read plugin version end-to-end.
@@ -297,11 +308,13 @@ Plannotator:
 - plannotator-review, plannotator-annotate, plannotator-last synced into superpowers (verbatim)
 
 Cursor-Plugins:
-- unslop synced into superpowers (verbatim)
+- unslop merged into superpowers (local patterns preserved)
 
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied
 - systematic-debugging: references to non-bundled skills removed
+- agent-browser: "Visible browser inside herdr" section kept
+- unslop: local patterns 32, 33 and 34 kept
 ```
 
 ## Error handling

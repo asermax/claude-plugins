@@ -1,37 +1,66 @@
 ---
 name: learn
-description: Inspect the conversation so far, extract learnings, and propose new or iterated skills and wiki entries, split by global (the plugin) and local (.mahou) scope.
+description: The author's tool for growing the plugin from real sessions. Without arguments it reconstructs the session, gives a take on how it rubbed against the existing skills, and drafts what the user picks. With arguments it skips the reconstruction and works the user's ask from the current context. Produces new or iterated skills, agents, wiki entries and local .mahou files.
+argument-hint: [what to build from this session]
 disable-model-invocation: true
 ---
 
 Load mahou:basics first. Then read `.mahou/learn.md` if present.
 
-## Procedure
+Turns a session that worked into something reusable. The plugin grows this way, by keeping what the user just did by hand instead of designing a pipeline upfront.
 
-1. Reread the conversation. Collect everything before judging what it is:
-   - process that worked when followed by hand. Candidate for a new skill.
-   - friction with an existing skill. Candidate for an iteration.
-   - knowledge that surfaced: facts about tools, technologies, their gotchas. Candidate for a wiki entry.
-   - decisions the user repeated or restated more than once. Candidate for a standing rule in a local file.
-2. Classify each item. Process becomes a skill, new or iterated. Knowledge becomes a wiki entry.
-3. Scope each item. Global means useful in any project. Local means true only for this project.
-4. Order the proposals by confidence, then by impact, and present them one at a time, waiting for the user's call on each:
-   - a new skill: a full draft, following the checklist below.
-   - a skill iteration: the exact change and the reason.
-   - a wiki entry: the draft plus its line in the index at the right level.
-   - a local file: the draft and which skill it changes.
-5. Write each approved proposal to its place, as listed under Where things land.
+## Two modes
+
+Route on the arguments.
+
+- **No arguments.** Discovery. Follow `references/discover.md`. Reconstruct the session, summarize it back, give a take, and wait for the user to pick what to keep.
+- **Arguments given.** Directed. Follow `references/directed.md`. No summary and no take. The user has said what they want. Map the state their ask touches and work toward it.
+
+Both modes continue with Drafting once there is an item to draft.
+
+## Fidelity
+
+Anything produced here reproduces the patterns the session established exactly. The formats, the visualizations, the wording of a rule, the order of steps, and every correction the user made along the way are the specification. Do not adapt them, improve them, or generalize them into something the session did not do.
+
+Examples inside a skill or wiki entry are generic. They carry the shape the session used, with placeholders in place of the session's tickets, repositories and field names.
+
+## Drafting
+
+1. **Classify and scope each item before drafting it.** Process becomes a skill, new or iterated. Work a skill should hand to a subagent becomes an agent. Knowledge about a tool or technology becomes a wiki entry. A decision the user repeated for this project becomes a standing rule in a local file. Global means useful in any project; local means true only for this one. Restate the job the item does, which kind it is and where it lands. Read the skill, entry or index it would land in to check it is not already there; if it already says this, the finding becomes an iteration on whatever failed to read it. Draft only once the user confirms the shape.
+
+2. **Draft one item at a time**, ordered by confidence then by impact, waiting for the user's call on each. Never batch them into a single approve-everything question.
+
+   - A new skill: the full draft, following the new skill checklist.
+   - A skill iteration: the exact change and the reason it is needed.
+   - An agent: the full draft, plus the change to the skill that dispatches it.
+   - A wiki entry: the draft plus its line in the index at the right level.
+   - A local file: the draft and which skill it changes.
+
+3. **Write each approved item** to its place. Leave everything uncommitted.
 
 ## Where things land
 
-- A new skill: `skills/<name>/SKILL.md` in the plugin.
-- A wiki entry: `skills/wiki/references/<topic>/<entry>.md`, plus its line in that folder's `INDEX.md`.
-- A local file: `.mahou/<skill>.md`, or `.mahou/wiki/` for local entries, with the same index-per-level shape as the global store.
+| Finding | Lands as |
+|---|---|
+| Reusable process | `skills/<name>/SKILL.md` in the plugin |
+| Work a skill should hand to a subagent | `agents/<name>.md` in the plugin, dispatched by the skill that needs it |
+| Knowledge about a tool or technology | `skills/wiki/references/<topic>/<entry>.md`, plus its line in that folder's `INDEX.md` |
+| A design type that generalizes beyond the session it came from | `skills/design/references/types/<type>.md`, plus its row in the types table of mahou:design. A type specific to one change stays out |
+| A rule or fact true only for this project | `.mahou/<skill>.md`, or `.mahou/wiki/` with the same index-per-level shape as the global store |
 
 ## New skill checklist
 
 - A descriptive name. The magic vocabulary stays in mahou:basics and the README.
 - One job. Two jobs means proposing two skills.
-- A description precise enough to load when intended, and to let mahou:guide match goals to it.
+- A description precise enough to load when intended, and to let mahou:guide match goals to it. Descriptions that overlap an existing skill's are the main way routing degrades.
 - First lines of the body: load mahou:basics, then read `.mahou/<skill>.md` if present.
-- No decisions delegated to the agent. It maps the state and asks; the user settles.
+- No decisions delegated to the agent. It maps the state and asks; the user settles. A draft that contains "choose the best option" or "decide whether" is not ready.
+- Nothing committed as a side effect.
+
+## Removing or replacing a skill
+
+When an item replaces an existing skill, the replacement is not done until the old directory is removed and every reference to it is updated: the plugin README and every skill that names it. List those edits as part of the item.
+
+## Committing
+
+Propose, never commit. When the user accepts an item, write the files and stop. Version bumps belong to whatever commits the marketplace; never hand-edit a `plugin.json` version.

@@ -105,7 +105,7 @@ Plugin-side customizations to be aware of:
 - **All skills**: use the `superpowers:` namespace prefix for any cross-skill reference
 - **systematic-debugging**: removed references to skills not bundled here (`defense-in-depth`, `condition-based-waiting`, `verification-before-completion`)
 - **agent-browser**: local-only `## Visible browser inside herdr` section plus two extra `allowed-tools` entries — always a manual merge, never a copy
-- **unslop**: two locally added patterns at the end of `### Plain speech` (34 and 35) — always a manual merge, never a copy
+- **unslop**: two locally added patterns at the end of `### Plain speech` (34 and 35), plus a local frontmatter: no `disable-model-invocation` and a description scoped to document writing — always a manual merge, never a copy
 
 Suggested format:
 
@@ -269,7 +269,9 @@ Both mirror the `# Writing style` section of the user's global `~/.claude/CLAUDE
 
 Numbering is the thing most likely to collide. Upstream treats rule numbers as stable ids (removed rules leave gaps, they are never renumbered), so if upstream appends items the local two must be renumbered to stay last. One cross-reference rides on that numbering and has to be repointed when the target moves: 35 refers to 16. Read the merged file end-to-end and check all of it.
 
-Everything else in the file is upstream's, including `disable-model-invocation: true`. Upstream added that flag in 2026-08 and the user chose to follow it, so the skill is manual-only; do not remove the flag on sync, and leave the `Must always apply.` description alone as well.
+The frontmatter is local too. Upstream sets `disable-model-invocation: true` and describes the skill as `Must always apply.`; the plugin copy drops the flag and scopes the description to document writing (documentation, READMEs, design notes, specs, PR descriptions, and "when another skill asks for a writing pass"). The reason is mahou's `write-documentation`, which invokes `superpowers:unslop` by name as its writing pass: with the flag set the model cannot call it, so the pass silently stops happening. The scoped description keeps it off code, chat replies and short answers, which is what upstream's flag was protecting against. On sync, port any description wording upstream changes but keep the flag out and the scope in.
+
+Everything else in the file is upstream's.
 
 ### Manual-merge procedure (used by Types 1, 5 and 8 when upstream changed)
 
@@ -313,7 +315,7 @@ Cursor-Plugins:
 - All skills: superpowers: namespace prefix applied
 - systematic-debugging: references to non-bundled skills removed
 - agent-browser: "Visible browser inside herdr" section kept
-- unslop: local patterns 34 and 35 kept
+- unslop: local patterns 34 and 35 kept, model invocation kept on with the document-scoped description
 ```
 
 ## Error handling

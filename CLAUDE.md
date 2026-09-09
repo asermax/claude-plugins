@@ -90,7 +90,7 @@ Curated development workflow skills for browser automation, documentation, and c
 - **herdr**: Control the Herdr terminal multiplexer via its CLI — inspect and create workspaces/tabs/panes, start and prompt sibling coding agents, run background processes, read pane output, wait on state changes. Guards on `HERDR_ENV=1` and stops when unset. Synced verbatim from `~/workspace/random/dmmulroy-skills`
 
 *Writing:*
-- **unslop**: Strip AI tells from any writing and put a voice back in. Thirty-four named patterns across content, language, style, chatbot artifacts, filler, jargon and plain speech (em dashes, "not just X but Y", inline-header lists, abstract metaphor nouns, passive voice), each with the concrete fix, plus an "add soul" pass so the de-slopped text does not come out sterile. Synced from `~/workspace/random/cursor-plugins` (`pstack/skills/unslop/`) with three locally added patterns appended (32, 33 and 34, see "Custom modifications"). Its description reads `Must always apply.`, so it is meant to fire on every writing and editing task rather than on request
+- **unslop** (`/superpowers:unslop`): Strip AI tells from any writing. Named patterns across content, language, style, chatbot artifacts, filler, jargon and plain speech (em dashes, "not just X but Y", inline-header lists, abstract metaphor nouns, mannered prose, over-compression, passive voice), each with the concrete fix. Rule numbers are stable ids that other skills cite, so upstream leaves gaps where it removed a rule (1, 2, 4, 6, 21 are gone) rather than renumbering. Synced from `~/workspace/random/cursor-plugins` (`pstack/skills/unslop/`) with two locally added patterns appended (34 and 35, see "Custom modifications"). Upstream dropped the "add soul" pass and set `disable-model-invocation: true` in its density pass of 2026-08, and the plugin follows upstream on both, so despite the description still reading `Must always apply.` it only runs when typed
 
 *Other:*
 - **bro** (`/superpowers:bro`): Restate the last message in plain language, no jargon. Manual-only (`disable-model-invocation: true`). Synced verbatim from `~/workspace/random/dmmulroy-skills`
@@ -146,30 +146,27 @@ Secondary workflow skills and commands split out of `superpowers` to keep that p
 ### haft
 FPF (First Principles Framework) methodology for artifact-centric decision engineering. Successor to the previous `quint` plugin — upstream `quint-code` was renamed to `haft`, with the MCP binary renamed `quint-code` → `haft`. As of the upstream **v8 governance-substrate pivot**, haft's surface is a catalog of host-AI **skills** plus the MCP server — the standalone agent, TUI, desktop wrappers, and the old slash-`command` files were dropped. The reasoning kernel, artifact graph, FPF spec retrieval, and WorkCommission lifecycle are unchanged (no schema change); only the surface changed.
 
-**Skills (15-skill catalog, mirrored from `internal/cli/skill/h-*/SKILL.md`):**
+**Skills (12-skill catalog, mirrored from `internal/cli/skill/h-*/SKILL.md`):**
+
+Upstream **v9 ("source-native governance")** collapsed the v8 subroutines (`h-abduct`, `h-boundary-unpack`, `h-semio-review`) back inside the public skills and replaced `h-spec-cover` with `h-spec`. Every skill now carries a `when_to_use` frontmatter field next to its description. Upstream also ships a second copy of the catalog under `packages/haft-pi/skills/` for a different host; those differ from the `internal/cli/skill/` ones and are not tracked.
 
 *Auto-triggering* — fire when their description matches operator context:
-- `h-reason`: Umbrella entry point — full reasoning palette (framing, exploration, comparison, verification, notes, slideument patterns) in one skill. Manual `/h-reason` always works; auto-fires on broad "let's think this through" signals where no specialized skill matches sharply.
-- `h-frame`: Frame a problem (B.4.1 stabilize + problem typing + umbrella-word repair) before solutioning
-- `h-diagnose`: Diagnose a failure with parallel rival-hypothesis testing (one subagent per hypothesis, prevents anchoring)
-- `h-explore`: Generate distinct candidate variants with NQD diversity discipline
-- `h-compare`: Fair comparison with dim-wise parallel scoring + Pareto front (not a scalar winner)
+- `h-reason`: Source-first umbrella for FPF-aware reasoning. Manual `/h-reason` always works; auto-fires on broad "let's think this through" signals where no specialized skill matches sharply
+- `h-frame`: Shape an under-articulated problem without assuming a solution or forcing a project phase
+- `h-diagnose`: Diagnose a concrete failure with parallel rival-hypothesis testing (one subagent per hypothesis, prevents anchoring)
+- `h-explore`: Generate 3-5 genuinely distinct candidate approaches with each one's weakest link kept visible
+- `h-compare`: Fair comparison under an explicit characteristic space and parity basis, returning a non-dominated set rather than a scalar winner
+- `h-decide`: Route one direct, unambiguous operator request to bind a bounded choice as a DecisionRecord. **No longer manual-only as of v9** (`disable-model-invocation: false`): when effect, subject, selected option and scope are all unambiguous it binds without a confirmation round trip, otherwise it presents a Human Gate Brief and binds nothing. A typed `/h-decide` is a route hint, not an approval receipt
 - `h-verify`: Baseline → measure → evidence loop with drift detection
-- `h-status`: Read-only project FPF state dashboard
-- `h-onboard`: First-frame ceremony for projects new to haft
-- `h-spec-cover`: Spec-coverage check with blind/stale module triage
-- `h-note`: Lightweight micro-decision recording
+- `h-status`: Read-only project cockpit: problems, decisions, notes, evidence freshness, drift, commissions, spec lifecycle, module coverage
+- `h-spec`: Typed specification lifecycle and source-currentness repair (inspect SpecSections, draft or clarify carriers, classify semantic fanout)
+- `h-onboard`: Bootstrap haft for a repository, or review a project-profile declaration or relation change
+- `h-note`: Persist a non-binding fact, observation or caveat when the operator asks for it
 
 *Manual-only* (`disable-model-invocation: true`, Transformer Mandate — never auto-fired):
-- `h-decide`: Record a binding DecisionRecord with full DRR (problem frame, decision/contract, rationale, consequences)
-- `h-commission`: WorkCommission lifecycle — create commissions from active decisions
+- `h-commission`: WorkCommission lifecycle — grant bounded execution authority from an active DecisionRecord
 
-*Subroutines* (called from other skills or invoked explicitly for a specific FPF sub-discipline):
-- `h-abduct`: Pure B.5.2 abductive four-step (frame prompt → ≥3 rivals → filters → prime)
-- `h-boundary-unpack`: A.6.B L/A/D/E decomposition of boundary statements
-- `h-semio-review`: X-FANOUT-AUDIT — concept-rename / spec-consistency audit
-
-**Recommended workflow:** describe the problem (h-frame fires) → `/h-explore` → `/h-compare` → manual `/h-decide` → `/h-verify`. Routing reliability is testable via `haft check routing`.
+**Recommended workflow:** describe the problem (h-frame fires) → `/h-explore` → `/h-compare` → `/h-decide` → `/h-verify`. Upstream stresses these are independent entries, not phases: completing one does not imply another must follow. Routing reliability is testable via `haft check routing`.
 
 **MCP Server:**
 - Binary built on-demand via SessionStart hook (first use)
@@ -381,7 +378,7 @@ Small, single-job software engineering skills where the human makes every decisi
 - **systematic-debugging** (in lesserpowers): Removed reference to verification-before-completion skill (supporting techniques are now included as documentation)
 - **agent-browser** (in superpowers): Local-only "Visible browser inside herdr" section, not present upstream — preserve it on sync (manual merge, never a straight copy), along with the `Bash(herdr plugin:*)` and `Bash(bun run:*)` additions to `allowed-tools`. It is unconditional static prose: always render the browser in a herdr pane, resolve the `official.browser` plugin root from `herdr plugin list` at run time (the directory name carries a content hash), and stop and tell the user on `protocol_mismatch` rather than restarting the server, which would kill the session's own pane. It previously probed `HERDR_ENV` and the plugin root via `!`-preprocessing at skill load and skipped the section when either was missing; that branch is gone by request
 - **bro** and **herdr** (in superpowers): No modifications at all, including the typos in `herdr`'s description ("terminl", "requies") — a local fix would make every future sync a manual merge for no routing benefit
-- **unslop** (in superpowers): Three locally added patterns at the end of the `### Plain speech` section, not present upstream — preserve them on sync (manual merge, never a straight copy). **32. Mannered prose** covers metaphor used as a verb or whole phrase ("a dial worth turning", "earns its keep"), which upstream's 26 misses because it lists nouns only. **33. Describing the message instead of writing it** covers spans that refer to the text rather than the subject ("Two things to take into account:", "I should mention that...", "which brings us to the next point") at any position in a sentence, plus counting headings, which upstream does not cover at all. **34. Restating what you just said** covers a second pass over an idea at the same level of detail; upstream's 16 covers only the narrow case of a bold lead restating its own line. All three mirror the user's global CLAUDE.md `# Writing style` section, so they should move together. Everything else is unmodified. In particular the `Must always apply.` description stays — that phrasing is what makes it auto-fire on every writing task, which is the point of the skill; softening it would narrow the routing
+- **unslop** (in superpowers): Two locally added patterns at the end of the `### Plain speech` section, not present upstream — preserve them on sync (manual merge, never a straight copy). **34. Describing the message instead of writing it** covers spans that refer to the text rather than the subject ("Two things to take into account:", "I should mention that...", "which brings us to the next point") at any position in a sentence, plus counting headings, which upstream does not cover at all. **35. Restating what you just said** covers a second pass over an idea at the same level of detail; upstream's 16 covers only the narrow case of a bold lead restating its own line. Both mirror the user's global CLAUDE.md `# Writing style` section, so they should move together. A third local pattern, mannered prose, was dropped in the 2026-09 sync because upstream grew its own **32. Mannered prose** with the same intent (upstream's 33 is **Over-compression**, unrelated). Everything else is upstream's, including `disable-model-invocation: true`: the user chose to follow upstream there, so the skill is manual-only even though its description still says `Must always apply.`
 - **plannotator-review**, **plannotator-annotate**, **plannotator-last** (in superpowers): No modifications. Keep `disable-model-invocation: true` (each one blocks on a browser session), keep `allowed-tools: Bash(plannotator:*)` (the `!` line is inert without it), and keep the `## Your task` branches verbatim — they encode the CLI's `approved`/`dismissed`/`annotated` output contract, so they are upstream's to change. Upstream also installs these into `~/.claude/skills/` via its own `install.sh`; run that installer with `--skip-skills` to avoid two copies competing for the same names
 - All skills use simplified plugin metadata format (name + description only)
 
@@ -391,7 +388,7 @@ Small, single-job software engineering skills where the human makes every decisi
   - `~/workspace/random/agentic-evolve` - evolve commands (synced into **lesserpowers**)
   - `~/workspace/random/agent-browser` - Browser automation CLI (synced into **superpowers**)
   - `~/workspace/random/dmmulroy-skills` - `bro`, `herdr` (synced into **superpowers**, verbatim). The repo ships other skills (Effect, Cloudflare, tech-spec, plus vendored copies of Matt Pocock's) — none are tracked; add one only on explicit request
-  - `~/workspace/random/cursor-plugins` - `unslop` from `pstack/skills/` (synced into **superpowers**, plus three locally appended patterns). `cursor/plugins` is a monorepo and `pstack` alone ships ~40 skills (the `principle-*` family, `tdd`, `architect`, `why`, `swarm`); none of the rest are tracked, add one only on explicit request
+  - `~/workspace/random/cursor-plugins` - `unslop` from `pstack/skills/` (synced into **superpowers**, plus two locally appended patterns). `cursor/plugins` is a monorepo and `pstack` alone ships ~40 skills (the `principle-*` family, `tdd`, `architect`, `why`, `swarm`); none of the rest are tracked, add one only on explicit request
   - `~/workspace/random/plannotator` - `plannotator-review`, `plannotator-annotate`, `plannotator-last` from `apps/skills/claude/` (synced into **superpowers**, verbatim). Track the `claude/` copies, never `core/`: the core ones are agent-agnostic fallbacks that ask the agent to run the CLI, while the Claude copies use `!` preprocessing and `$ARGUMENTS`. The repo's `apps/skills/extra/` skills (compound, setup-goal, visual-explainer) are not tracked; add one only on explicit request
 - Pull latest changes from all repositories' `main` branch
 - Tracked skill from superpowers upstream: systematic-debugging → `lesserpowers/skills/`

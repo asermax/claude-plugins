@@ -1,7 +1,6 @@
 ---
 name: unslop
-description: Cut AI tells from any writing. Must always apply.
-disable-model-invocation: true
+description: Cut AI tells from prose meant to be read as a document. Use when writing or editing documentation, READMEs, design notes, wiki entries, specs, PR descriptions or similar long-form text, and when another skill asks for a writing pass. Do not apply to code, chat replies or short answers.
 ---
 
 # Unslop

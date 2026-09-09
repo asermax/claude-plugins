@@ -35,7 +35,7 @@ All three are manual-only (`disable-model-invocation: true`) and require the `pl
 - **herdr**: Control the Herdr terminal multiplexer — workspaces, tabs, panes, sibling agents, background processes
 
 ### Writing
-- **unslop** (`/superpowers:unslop`): Cut AI tells from any writing — named patterns with the fix for each, including two local additions (describing the message instead of writing it, restating what you just said). Manual-only since upstream's 2026-08 density pass
+- **unslop** (`/superpowers:unslop`): Cut AI tells from any writing — named patterns with the fix for each, including two local additions (describing the message instead of writing it, restating what you just said). Fires when writing documentation, READMEs, design notes, specs or PR descriptions, and when another skill asks for a writing pass; stays off code and chat replies
 
 ### Other
 - **using-antigravity**: Analyze images, videos, fetch web content, and search Google using Antigravity CLI

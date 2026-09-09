@@ -8,43 +8,33 @@ As of the **v8 governance-substrate pivot**, haft's surface is a catalog of host
 
 ## Skills
 
-Fifteen skills make up the FPF reasoning palette. Most auto-fire when their description matches your context; two are manual-only and three are subroutines called by other skills.
+Twelve skills make up the FPF reasoning palette (upstream **v9**). All but one auto-fire when their description matches your context; `h-commission` is manual-only. The v8 subroutines (`h-abduct`, `h-boundary-unpack`, `h-semio-review`) were folded back inside the public skills, and `h-spec-cover` became `h-spec`.
 
 ### Auto-triggering
 
 | Skill | What it does |
 |-------|--------------|
-| **h-reason** | Umbrella entry point — the full reasoning palette (framing, exploration, comparison, verification, notes, slideument patterns) in one skill. Manual `/h-reason` always works; auto-fires on broad "let's think this through" signals where no specialized skill matches sharply |
-| **h-frame** | Frame a problem (B.4.1 stabilize + problem typing + umbrella-word repair) before any solution is explored |
-| **h-diagnose** | Diagnose a failure with parallel rival-hypothesis testing (one subagent per hypothesis, prevents anchoring) |
-| **h-explore** | Generate distinct candidate variants with NQD diversity discipline |
-| **h-compare** | Fair comparison with dim-wise parallel scoring + Pareto front (not a scalar winner) |
+| **h-reason** | Source-first umbrella for FPF-aware reasoning. Manual `/h-reason` always works; auto-fires on broad "let's think this through" signals where no specialized skill matches sharply |
+| **h-frame** | Shape an under-articulated problem without assuming a solution or forcing a project phase |
+| **h-diagnose** | Diagnose a concrete failure with parallel rival-hypothesis testing (one subagent per hypothesis, prevents anchoring) |
+| **h-explore** | Generate 3-5 genuinely distinct candidate approaches, each with its weakest link kept visible |
+| **h-compare** | Fair comparison under an explicit characteristic space and parity basis, returning a non-dominated set rather than a scalar winner |
+| **h-decide** | Route one direct, unambiguous operator request to bind a bounded choice as a DecisionRecord. Binds without a round trip when effect, subject, option and scope are unambiguous; otherwise presents a Human Gate Brief and binds nothing |
 | **h-verify** | Baseline → measure → evidence loop with drift detection |
-| **h-status** | Read-only project FPF state dashboard |
-| **h-onboard** | First-frame ceremony for projects new to haft |
-| **h-spec-cover** | Spec-coverage check with blind/stale module triage |
-| **h-note** | Lightweight micro-decision recording |
+| **h-status** | Read-only project cockpit: problems, decisions, notes, evidence freshness, drift, commissions, spec lifecycle, module coverage |
+| **h-spec** | Typed specification lifecycle and source-currentness repair |
+| **h-onboard** | Bootstrap haft for a repository, or review a project-profile declaration or relation change |
+| **h-note** | Persist a non-binding fact, observation or caveat when asked |
 
 ### Manual-only (Transformer Mandate)
 
-These carry `disable-model-invocation: true` — binding artifacts come from the human principal, never auto-fired by the agent. Type them explicitly.
+Carries `disable-model-invocation: true` — execution authority comes from the human principal, never auto-fired by the agent. Type it explicitly.
 
 | Skill | What it does |
 |-------|--------------|
-| **h-decide** | Record a binding DecisionRecord with full DRR (problem frame, decision/contract, rationale, consequences) |
-| **h-commission** | WorkCommission lifecycle — create commissions from active decisions |
+| **h-commission** | WorkCommission lifecycle — grant bounded execution authority from an active DecisionRecord |
 
-### Subroutines
-
-Called from other skills or invoked explicitly when working a specific FPF sub-discipline.
-
-| Skill | What it does |
-|-------|--------------|
-| **h-abduct** | Pure B.5.2 abductive four-step (frame prompt → ≥3 rivals → filters → prime) |
-| **h-boundary-unpack** | A.6.B L/A/D/E decomposition of boundary statements |
-| **h-semio-review** | X-FANOUT-AUDIT — concept-rename / spec-consistency audit |
-
-**Recommended workflow:** describe the problem (h-frame fires) → `/h-explore` → `/h-compare` → manual `/h-decide` → `/h-verify`. Routing reliability is testable via `haft check routing`.
+**Recommended workflow:** describe the problem (h-frame fires) → `/h-explore` → `/h-compare` → `/h-decide` → `/h-verify`. These are independent entries, not phases: completing one does not imply another must follow. Routing reliability is testable via `haft check routing`.
 
 ## MCP Server
 

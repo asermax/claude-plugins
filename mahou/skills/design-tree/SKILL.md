@@ -37,18 +37,40 @@ The frontier is every question whose prerequisites are settled. Ask the whole fr
 Number questions across the whole session. Q7 in round two is the seventh question asked, not the seventh of that round.
 
 ```
-❓ **Q1** - **<title>**: <body. The situation, the options when there are options, and what each option implies.>
+❓ **Q1** - **<title>**: <body. The situation and what is undecided. No options.>
 
 ---
 
 ❓ **Q2** - **<title>**: <body>
 ```
 
-Ask in plain prose, never through the AskUserQuestion tool. A menu of options is you mapping the sides of the fork, and that biases the choice before the user makes it.
-
-No recommendations. If the user does not know how to answer, they will ask.
+Ask in plain prose, written straight into the reply. Never use a tool to ask, AskUserQuestion or any other: a tool cannot ask without options, and the options are what a question must not carry.
 
 Every question is a decision that changes the outcome if answered differently. Before asking, check that the answers lead to different outcomes. If they would change nothing, drop the question. Confirming an already settled decision is a valid question when the loading skill asks for that pass.
+
+## What a question carries
+
+A question states what is undecided and stops. It does not list the ways it could be answered. Once you write the options, the user chooses among yours instead of thinking about the problem, and the answers they would have found on their own never appear.
+
+The body carries the context the user needs to decide, and every piece of it is required when it exists:
+
+- What the decision is about.
+- Which earlier answers bear on it, and how. If Q3 settled that the value is derived at request time, a question about where it is stored says so.
+- Which other parts of the system the answer will change, whether they are already in the tree or not.
+- What the loading skill's source (a ticket, a document) says about it, when it says anything.
+
+The body carries nothing about which answers exist. Each of these proposes an answer and none belongs in a question:
+
+- A list of candidates, however even: "on the order, on the user, or in a separate table".
+- One candidate with a question mark. "Should we store it on the order?" proposes an answer; "where does it live?" does not.
+- A default the user did not set: "by default", "typically", "usually", "the standard approach".
+- A verdict: "I'd go with", "the obvious choice", "the simplest is", "probably", "it makes sense to", "we should".
+- What follows from one particular answer: "if it goes on the order, every read pays for it". Naming that the answer affects reads is context; working out the effect of one answer is a candidate.
+- A confirmation of something the user never settled. The confirmation form is for decisions they already made.
+
+Before sending a round, reread every question, check that the context is complete and cut anything from the second list. If the user does not know how to answer, they will ask.
+
+When the user asks for the options or for your opinion, give the facts and the current state that bear on the choice: what exists, what earlier decisions constrain it, what a candidate would have to satisfy. Enumerate candidates only when they ask for that, evenly, and give a verdict only when they ask for one explicitly, marked as yours.
 
 ## Facts
 

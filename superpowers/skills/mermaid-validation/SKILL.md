@@ -22,7 +22,7 @@ After writing or editing any mermaid code block in a markdown file:
 
 ## Validation Script
 
-The script uses [merval](https://github.com/aj-archipelago/merval), a lightweight mermaid parser (~552KB, ~32ms). It auto-installs on first run to `~/.cache/claude-plugins/merval/`.
+The script uses [mermaid-ast](https://github.com/neongreen/mermaid-ast), which parses with the grammars vendored from mermaid itself, so a diagram it accepts is one mermaid renders. It covers 18 diagram types and auto-installs on first run to `~/.cache/claude-plugins/mermaid-ast/`. A leading frontmatter block is allowed and stripped before parsing. Errors carry a `line` when the grammar reports one, no column. Known gap: a `%%` comment inside an `erDiagram` is rejected although mermaid accepts it.
 
 ### Usage
 
@@ -47,9 +47,7 @@ The script outputs JSON. The key fields to check are `isValid` and `errors`:
   "errors": [
     {
       "line": 2,
-      "column": 5,
-      "message": "Expected closing bracket ]",
-      "code": "PARSE_ERROR"
+      "message": "Failed to parse flowchart: Parse error on line 2: ... Expecting 'SQE', ..."
     }
   ]
 }

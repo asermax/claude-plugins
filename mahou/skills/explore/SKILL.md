@@ -29,8 +29,9 @@ The user builds the understanding. You bring facts on demand. You edit nothing, 
    - `mahou:code-scout` for where something is implemented, which parts are involved, or how the code behaves. One per repository the question touches, given the repository's absolute path and the question.
    - `mahou:docs-scout` for how something is meant to work, why a decision was made, or what a note commits someone to. Given the project's docs folder (resolved as `docs` says) and the question.
    - Both, in parallel, when the question has a code side and a documentation side.
+   - Neither, when the question is about a library, a tool or anything else outside the project's own code and docs. Scouts read the project. An external fact goes to a general-purpose subagent, or is settled by a direct trial: install the thing somewhere disposable, run it against the real input, read what it returns. A trial's result is a verified fact; a subagent's summary of documentation is not, and the answer says which it is.
 
-   Dispatch them in a single message so they run together. Read a file directly only when the user points at it, or when an earlier answer in the same session already located it. A `grep` you run yourself over the tree is not a substitute for a scout. It puts the whole search into this conversation and misses the other places the question touches.
+   Dispatch them in a single message so they run together. Read a file directly only when the user points at it, or when an earlier answer in the same session already located it. A `grep` you run yourself over the project's tree is not a substitute for a scout. It puts the whole search into this conversation and misses the other places the question touches.
 
 3. Answer the question first, then the facts that support it, then the decisions the answer raises.
    - Keep verified facts apart from what a source asserts.

@@ -105,7 +105,7 @@ Plugin-side customizations to be aware of:
 - **All skills**: use the `superpowers:` namespace prefix for any cross-skill reference
 - **systematic-debugging**: removed references to skills not bundled here (`defense-in-depth`, `condition-based-waiting`, `verification-before-completion`)
 - **agent-browser**: local-only `## Visible browser inside herdr` section plus two extra `allowed-tools` entries — always a manual merge, never a copy
-- **unslop**: two locally added patterns at the end of `### Plain speech` (34 and 35), plus a local frontmatter: no `disable-model-invocation` and a description scoped to document writing — always a manual merge, never a copy
+- **unslop**: two locally added patterns at the end of `### Plain speech` (34 and 35), a local `## How to scan` section between `## Process` and the patterns, plus a local frontmatter: no `disable-model-invocation` and a description scoped to document writing — always a manual merge, never a copy
 
 Suggested format:
 
@@ -267,7 +267,9 @@ The two local patterns sit at the end of the `### Plain speech` section, after u
 
 Both mirror the `# Writing style` section of the user's global `~/.claude/CLAUDE.md`. If upstream ever grows its own version of one, drop the local copy and keep upstream's, then tell the user so they can align that section. This already happened once: a local "Mannered prose" pattern was retired in 2026-09 when upstream added its own 32 with the same intent.
 
-Numbering is the thing most likely to collide. Upstream treats rule numbers as stable ids (removed rules leave gaps, they are never renumbered), so if upstream appends items the local two must be renumbered to stay last. One cross-reference rides on that numbering and has to be repointed when the target moves: 35 refers to 16. Read the merged file end-to-end and check all of it.
+A third local block sits between `## Process` and `## Patterns to detect and fix`: `## How to scan`. Upstream has no method section. The local one splits the rules into an inline set and four subagent sweeps (sonnet for punctuation, sentence shape and the meta rules, opus for the figurative rules), carries the prompt template the sweeps use, and makes the main agent verify every finding before rewriting. It refers to rules by number in its table, its inline list and its verification paragraph, so any upstream renumbering has to be applied there as well as to 34 and 35. If upstream ever adds a method section of its own, keep the local one and tell the user. The same section, with that file's own rule numbers, lives in the Filadd marketplace at `plugins/docs/skills/doc-writing/references/unslop.md`; a change here is a change there too.
+
+Numbering is the thing most likely to collide. Upstream treats rule numbers as stable ids (removed rules leave gaps, they are never renumbered), so if upstream appends items the local two must be renumbered to stay last. Cross-references ride on that numbering and have to be repointed when a target moves: 35 refers to 16, and `## How to scan` cites most of the catalog. Read the merged file end-to-end and check all of it.
 
 The frontmatter is local too. Upstream sets `disable-model-invocation: true` and describes the skill as `Must always apply.`; the plugin copy drops the flag and scopes the description to document writing (documentation, READMEs, design notes, specs, PR descriptions, and "when another skill asks for a writing pass"). The reason is mahou's `write-documentation`, which invokes `superpowers:unslop` by name as its writing pass: with the flag set the model cannot call it, so the pass silently stops happening. The scoped description keeps it off code, chat replies and short answers, which is what upstream's flag was protecting against. On sync, port any description wording upstream changes but keep the flag out and the scope in.
 

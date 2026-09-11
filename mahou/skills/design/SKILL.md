@@ -39,7 +39,7 @@ Open one branch at a time, in order, when the user says so.
 
 4. **Split when asked.** When the user wants the parts of a branch reasoned about separately, add a level, one sub-branch per part, and work them one at a time, each with its own prose, frontier and representation.
 
-5. **Render when settled.** Once every leaf is ✓, produce the branch's representation: the diagram, validated, then the prose under it that explains what the diagram does not show. Numbered steps in prose refer to the diagram's numbers. Show the tree with the branch settled and stop until the user opens the next one.
+5. **Render when settled.** Once every leaf is ✓, produce the branch's representation: the diagram, validated, or the prototype reconciled through mahou:prototype, then the prose under it that explains what the representation does not show. Numbered steps in prose refer to the diagram's numbers. Show the tree with the branch settled and stop until the user opens the next one.
 
 ### Types
 
@@ -50,6 +50,7 @@ Open one branch at a time, in order, when the user says so.
 | How a value is derived or a decision is made from an input | `references/types/rules.md` |
 | What a program is made of: its components, what crosses between them, its inputs and outputs | `references/types/component-architecture.md` |
 | What a component agrees with the rest of the system: its inputs and their sources, what it exposes, the value it hands on | `references/types/contract.md` |
+| What the user sees on a screen: placement, states, encodings, interactions | `references/types/ui.md` |
 
 A branch that fits none of these is worked out with the user. A type that turns out to generalize beyond this session is a candidate for mahou:learn to add to this table.
 

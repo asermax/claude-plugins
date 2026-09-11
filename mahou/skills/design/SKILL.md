@@ -1,6 +1,6 @@
 ---
 name: design
-description: Turns a settled problem definition into a system design, working a design tree one area at a time from data model to flows to rules, with the user settling every leaf and choosing how each area is represented, then hands the tree to mahou:write-documentation so the project's docs record it. Stays above endpoints, functions and files. Use after shape, before program design.
+description: Turns a settled problem definition into a system design. Works a design tree one area at a time, from data model to flows to rules, with the user settling every leaf and choosing how each area is represented. Hands the tree to mahou:write-documentation so the project's docs record it. Stays above endpoints, functions and files. Use after shape, before program design.
 argument-hint: <the settled shape tree, or where to find it>
 ---
 
@@ -16,7 +16,7 @@ Takes a definition the user has settled and designs the system that satisfies it
 
 2. List what has to be designed. Each item names what must be specified, not how. Order the list from abstract to concrete so each item builds on the previous one, typically data model, then how data moves, then the rules that produce it, then whatever the change adds on top. Do not propose representations yet.
 
-3. Wait for the user's corrections. Items that are implementation (a migration, a schema field list, a function) are dropped or moved into the item they serve. Items about prior artifacts (an earlier branch, a superseded document) are absorbed into the design rather than named. Verification is deferred to after program design.
+3. Wait for the user's corrections. Drop items that are implementation (a migration, a schema field list, a function), or move them into the item they serve. Absorb items about prior artifacts (an earlier branch, a superseded document) into the design rather than naming them. Defer verification to after program design.
 
 4. Build the tree. The root is "System design", each item is a branch, every branch pending. When the change contains several independent pieces, for instance two APIs or two features designed in one session, each piece is its own root with its own areas, worked one root at a time.
 
@@ -31,11 +31,11 @@ System design
 
 Open one branch at a time, in order, when the user says so.
 
-1. **Pick the type.** Check `references/types/` for a reference matching the branch (see Types). A reference says how the branch is usually split, what it needs to question and which representation has worked. It is a guide, not a rule: when the case needs a different split, different questions, another format or another diagram, work that out with the user. When no reference matches, ask the user how they want to split and represent the branch before opening it.
+1. **Pick the type.** Check `references/types/` for a reference matching the branch (see Types). A reference says how the branch is usually split, what it needs to question and which representation has worked. It is a guide, not a rule. When the case needs a different split, different questions, another format or another diagram, work that out with the user. When no reference matches, ask the user how they want to split and represent the branch before opening it.
 
 2. **State the branch as discussed so far**, in simple prose, before asking anything. The prose stands on its own: no references to the current implementation, no comparison with how things work today, no mention of prior artifacts, nothing that belongs to another branch. It may say what the thing is for, not the flows that use it.
 
-3. **Ask the frontier.** The reference lists what the branch needs to question. A question the earlier exploration or the shape tree already answered is asked anyway, as a confirmation, so the user sees the answer in its new context. The rest are asked as open questions. The representation is never part of this frontier. It is asked on its own, in the round after the branch's last content leaf settles, because a form can only be judged against content the user has already seen. That round proposes the reference's form when one fits, or asks which form when none does, and when the user wants to compare, renders the candidates side by side in the same round.
+3. **Ask the frontier.** The reference lists what the branch needs to question. A question the earlier exploration or the shape tree already answered is asked anyway, as a confirmation, so the user sees the answer in its new context. The rest are asked as open questions. The representation is never part of this frontier. It is asked on its own, in the round after the branch's last content leaf settles, because a form can only be judged against content the user has already seen. That round proposes the reference's form when one fits, or asks which form when none does. When the user wants to compare, render the candidates side by side in the same round.
 
 4. **Split when asked.** When the user wants the parts of a branch reasoned about separately, add a level, one sub-branch per part, and work them one at a time, each with its own prose, frontier and representation.
 
@@ -61,8 +61,8 @@ When the tree is complete, the project's docs record it, and mahou:write-documen
 
 2. **New notes.** The change may need one note or several. Propose the split, and the user settles it.
 
-Then run mahou:write-documentation once per note, giving it the tree. Each settled branch already carries its prose and its representation, so the draft is mostly a move; `write-documentation` fits it to the project's charter and templates, which this skill never reads.
+Then run mahou:write-documentation once per note, giving it the tree. Each settled branch already carries its prose and its representation, so drafting is mostly moving that text into the note; `write-documentation` fits it to the project's charter and templates, which this skill never reads.
 
 ## What this skill is not
 
-It does not choose endpoints, functions, files or test cases, does not write code, does not commit, and does not write into the docs folder itself. When the user decides that a piece of the change goes straight into a repository, that is their call and happens outside this skill.
+It does not choose endpoints, functions, files or test cases, does not write code, does not commit, and does not write into the docs folder itself. When the user decides that a piece of the change goes straight into a repository, that is their decision and happens outside this skill.

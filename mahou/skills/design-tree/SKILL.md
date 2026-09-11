@@ -6,7 +6,7 @@ user-invocable: false
 
 # Design tree
 
-A design tree is the record of a shared understanding built one question at a time. The user reads the tree, not the transcript. The skill that loads this one says what the root is, what the branches cover and what level the questions stay at. Everything below applies unchanged.
+A design tree is the record of a shared understanding built one question at a time. The user reads the tree, not the transcript. The skill that loads this one says what the root is, what the branches cover and what level the questions stay at.
 
 ## The tree
 
@@ -44,9 +44,9 @@ Number questions across the whole session. Q7 in round two is the seventh questi
 ❓ **Q2** - **<title>**: <body>
 ```
 
-Ask in plain prose, written straight into the reply. Never use a tool to ask, AskUserQuestion or any other: a tool cannot ask without options, and the options are what a question must not carry.
+Ask in plain prose, written straight into the reply. Never use a tool to ask, AskUserQuestion or any other. A tool cannot ask without options, and options are what a question must not carry.
 
-Every question is a decision that changes the outcome if answered differently. Before asking, check that the answers lead to different outcomes. If they would change nothing, drop the question. Confirming an already settled decision is a valid question when the loading skill asks for that pass.
+Every question is a decision that changes the outcome if answered differently. Before asking, check that different answers lead to different outcomes, and drop the question when they would not. Confirming an already settled decision is a valid question when the loading skill asks for that pass.
 
 ## What a question carries
 
@@ -89,7 +89,7 @@ An answer can do more than settle a leaf:
 - It can show that a branch mixes things the user wants apart. Add a level and split the leaves under the new parts.
 - It can invalidate a settled leaf. Change the mark back to ❔ and ask again with the new information.
 
-The tree grows during the questioning. It is not fixed at the first round.
+The tree grows during the questioning.
 
 An answer that departs from the source the work came from, such as a ticket or a document, is recorded as a decision with the departure named once.
 

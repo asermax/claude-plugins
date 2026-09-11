@@ -12,7 +12,7 @@ Defines the change once, so every skill that reasons about one agrees on what it
 
 Collect the absolute path of every repository the change touches. Use `git -C <repo-path>` for every git command and absolute paths for every read.
 
-**Never `cd`.** A foreground `cd` persists across Bash calls, so a later call, especially one of several sent in the same message, runs in whichever repository was entered last and returns its output under the wrong name. Nothing errors. The output looks plausible and carries the wrong repository's name.
+**Never `cd`.** A foreground `cd` persists across Bash calls, so a later call, especially one of several sent in the same message, runs in whichever repository was entered last and returns its output under the wrong name. Nothing errors, and the output looks plausible.
 
 ## Establish the base
 
@@ -22,13 +22,13 @@ The base is the commit you measure the change against. Report it, never assume i
 git -C <repo-path> rev-parse --abbrev-ref --symbolic-full-name @{u}
 ```
 
-Use the branch's upstream when it has one. When it does not, resolve the trunk: `git -C <repo-path> symbolic-ref --short refs/remotes/origin/HEAD` first, which errors on any clone nobody ran `git remote set-head` in and means nothing is wrong; then `git -C <repo-path> remote show origin`; then ask. **Never guess between `main` and `master`** by checking which exists, because a repository can carry both. Do not fall back to `HEAD~1`.
+Use the branch's upstream when it has one. When it does not, resolve the trunk. Try `git -C <repo-path> symbolic-ref --short refs/remotes/origin/HEAD` first. It errors on any clone where nobody ran `git remote set-head`, and that error means nothing is wrong. Then `git -C <repo-path> remote show origin`. Then ask. **Never guess between `main` and `master`** by checking which exists, because a repository can carry both. Do not fall back to `HEAD~1`.
 
 Two sources reviewing the same work against different bases produce findings you cannot compare. When more than one source is involved, report each one's base.
 
 ## Compose the diff
 
-A changeset has three parts, and you decide which are in scope rather than taking a default:
+A changeset is composed from these parts, and you decide which are in scope rather than taking a default:
 
 | Part | Command |
 |---|---|

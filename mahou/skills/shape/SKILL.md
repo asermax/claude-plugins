@@ -4,11 +4,11 @@ description: Finds the holes in a problem and solution definition and fills them
 argument-hint: <the problem and the decisions settled so far>
 ---
 
-Load mahou:basics first, then mahou:design-tree. Then read `.mahou/shape.md` if present. The tree, the rounds, the question format, the facts rule, how answers grow the tree and how the session ends all come from `design-tree` and apply here as written. This skill only says what the tree is about.
+Load mahou:basics first, then mahou:design-tree. Then read `.mahou/shape.md` if present. The tree, the rounds, the question format, the facts rule, how answers grow the tree and how the session ends all come from `design-tree` and apply here as written.
 
 # Shape
 
-Takes an idea the user has already explored and stress-tests its definition. The output is a design tree with every branch settled. The tree is the record of the shared understanding.
+Takes an idea the user has already explored and finds what its definition leaves undecided. The output is a design tree with every branch settled.
 
 ## The tree
 

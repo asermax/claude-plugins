@@ -13,7 +13,7 @@ Answers one question about a change that already exists: what else does it touch
 
 Load mahou:changeset for the repositories, the base, and the diff. Read the project's `CLAUDE.md` and the layout it describes, so you know which layers a change can travel through and which other repositories it can reach.
 
-## Step 1: Inventory the changed surface
+## Step 1: Inventory the changed elements
 
 List every element the change alters that something else can depend on:
 
@@ -40,7 +40,7 @@ Collapse findings that different tracers raised about the same user, and keep th
 
 ## Step 4: Report
 
-State the base and the diff composition in one line. Then the findings, ordered by reach, with the ones landing outside the change's own feature first.
+State the base and the diff composition in one line. Then the findings, ordered by reach, with the ones outside the change's own feature first.
 
 Give each one its file and line, what changes for whom, and its attribution. Do not list everything the change touched, and do not pad the report with the users you cleared.
 

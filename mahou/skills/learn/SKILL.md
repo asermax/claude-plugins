@@ -1,6 +1,6 @@
 ---
 name: learn
-description: The author's tool for growing the plugin from real sessions. Without arguments it reconstructs the session, gives a take on how it rubbed against the existing skills, and drafts what the user picks. With arguments it skips the reconstruction and works the user's ask from the current context. Produces new or iterated skills, agents, wiki entries and local .mahou files.
+description: The author's tool for growing the plugin from real sessions. Without arguments it reconstructs the session, gives a take on where it departed from the existing skills, and drafts what the user picks. With arguments it skips the reconstruction and works the user's ask from the current context. Produces new or iterated skills, agents, wiki entries and local .mahou files.
 argument-hint: [what to build from this session]
 disable-model-invocation: true
 ---

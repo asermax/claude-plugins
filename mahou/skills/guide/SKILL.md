@@ -19,4 +19,4 @@ Routes a goal to the skill that handles it. Performs no work of its own.
 
 ## The usual order
 
-When the goal is a piece of work rather than a single task, the skills form a line: mahou:explore builds the understanding, mahou:shape settles the decisions, mahou:design settles the system, the code gets written by hand or by another tool, then mahou:code-blast-radius, mahou:agentic-review and mahou:human-review look at it, and mahou:write-documentation records what got built. Say where in that line the goal sits when it helps the user pick, and route to that one stage only.
+When the goal is a piece of work rather than a single task, the skills form a line. mahou:explore builds the understanding, mahou:shape settles the decisions and mahou:design settles the system. The code gets written by hand or by another tool. Then mahou:code-blast-radius, mahou:agentic-review and mahou:human-review look at it, and mahou:write-documentation records what got built. Say where in that line the goal sits when it helps the user pick, and route to that one stage only.

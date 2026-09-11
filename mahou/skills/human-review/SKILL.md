@@ -8,7 +8,7 @@ Load mahou:basics first. Then read `.mahou/human-review.md` if present.
 
 # Human review
 
-The user's own reading of a change, verified and settled with them. Nothing is edited until they rule on it.
+Verifies the user's own reading of a change and settles it with them. Nothing is edited until they rule on it.
 
 When both review skills run, mahou:agentic-review goes first. It clears the mechanical findings so this pass spends attention on judgment instead.
 
@@ -16,7 +16,7 @@ The annotations come from the `plannotator` CLI, which is a separate install. Wh
 
 ## Step 1: Establish the changeset
 
-Load mahou:changeset. Two things depend on it: the repository paths you dispatch against, and the rule that tells you whether what an annotation flags was introduced by this change or predates it.
+Load mahou:changeset. It gives you the repository paths you dispatch against, and the rule that tells you whether what an annotation flags was introduced by this change or predates it.
 
 ## Step 2: Collect the annotations
 
@@ -32,7 +32,7 @@ Keep a map of repository to task so every result is attributed. Never poll. Comp
 
 ## Step 3: Work each repository as its annotations land
 
-Handle a repository the moment its result arrives. Never batch, and never hold a finished repository behind a slow one. The steps below run once per repository, start to finish, before you pick up the next.
+Handle a repository the moment its result arrives, start to finish, and never hold a finished one behind a slow one.
 
 ### Verify
 
@@ -40,7 +40,7 @@ Annotations are unverified input. They carry what the user wants, not always the
 
 Read the flagged lines before responding. Establish whether the change introduced what is flagged or whether it predates the change, which `changeset` covers. Then give each annotation a verdict, either Confirmed, Partly, Not a bug, or Intended, with the lines that settle it quoted.
 
-Report the base `plannotator` used alongside the changeset base. They can differ, and when they do the annotations cover less ground than they appear to.
+Report the base `plannotator` used alongside the changeset base. They can differ, and when they do the annotations cover a smaller diff than the changeset does.
 
 ### Present
 

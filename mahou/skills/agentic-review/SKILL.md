@@ -14,11 +14,11 @@ It does not look for correctness bugs. Those belong to the human pass, where som
 
 ## Fixing without asking
 
-`basics` says every decision belongs to the user and every choice goes back to them as a question. This skill is the exception. Four bounds keep the exception safe:
+`basics` says every decision belongs to the user and every choice goes back to them as a question. This skill is the exception, and it holds inside these bounds:
 
 - It edits only files the changeset already touches, and creates no new ones.
 - It fixes nothing that would change what the code is meant to do.
-- It leaves everything uncommitted, so the whole pass is one `git diff` from being thrown out wholesale.
+- It leaves everything uncommitted, so the user can read the whole pass with one `git diff` and discard it as a whole.
 - It reports every fix and every skip.
 
 A finding whose fix would break any of those becomes a skipped finding in the report, for the user to rule on.

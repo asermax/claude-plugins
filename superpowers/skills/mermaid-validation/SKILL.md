@@ -62,3 +62,9 @@ When the validator reports errors, use the line/column info and message to fix t
 - **Missing diagram type**: Every block must start with a type declaration (`flowchart TD`, `sequenceDiagram`, `classDiagram`, etc.)
 - **Subgraph/end mismatch**: Every `subgraph` needs a corresponding `end`
 - **Incorrect node reuse**: Once a node is defined with a shape, later references should use just the ID without redefining the shape
+
+## Rendering rules the validator cannot catch
+
+The parser accepts these, the renderer breaks them. Check them by eye after validation passes.
+
+- **Long lines inside a container are cut.** A flowchart node, a subgraph title, a note in a sequence or state diagram, a class box, an entity box: text in any of these is clipped when a line runs past about 24 characters. Break the text with `<br/>` at a word boundary before the 24th character, and again every 24 characters after that. Text that is not boxed is unaffected: edge labels, state transition labels and sequence messages wrap or extend on their own.

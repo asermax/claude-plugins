@@ -28,7 +28,7 @@ Leaves carry their own mark. A branch is settled only when every leaf under it i
 └─ <area>                                                    pending
 ```
 
-Show the whole tree before every round and once more at the end. When the tree is long and the work is going one branch at a time, show the branch being worked with its leaves and the rest of the tree collapsed to its branch lines and marks.
+When the loading skill works one branch at a time, show the whole tree once it is built. Show it again when a branch settles and the next one opens, and once more at the end. Before every other round, show the branch being worked with its leaves and the rest of the tree collapsed to its branch lines and marks. When the whole frontier is worked at once, show the whole tree before every round and once more at the end.
 
 ## Rounds
 
@@ -46,7 +46,9 @@ Number questions across the whole session. Q7 in round two is the seventh questi
 
 Ask in plain prose, written straight into the reply. Never use a tool to ask, AskUserQuestion or any other. A tool cannot ask without options, and options are what a question must not carry.
 
-Every question is a decision that changes the outcome if answered differently. Before asking, check that different answers lead to different outcomes, and drop the question when they would not. Confirming an already settled decision is a valid question when the loading skill asks for that pass.
+Every question is a decision that changes the outcome if answered differently. Before asking, check that different answers lead to different outcomes, and drop the question when they would not.
+
+State a decision the user already made, in an earlier round or before the tree existed, as a ✓ leaf, and never ask it again. The user corrects a leaf that is wrong; the corrected leaf goes back to ❔ and joins the next frontier.
 
 ## What a question carries
 
@@ -66,11 +68,19 @@ The body carries nothing about which answers exist. Each of these proposes an an
 - A default the user did not set: "by default", "typically", "usually", "the standard approach".
 - A verdict: "I'd go with", "the obvious choice", "the simplest is", "probably", "it makes sense to", "we should".
 - What follows from one particular answer: "if it goes on the order, every read pays for it". Naming that the answer affects reads is context; working out the effect of one answer is a candidate.
-- A confirmation of something the user never settled. The confirmation form is for decisions they already made.
+- A confirmation, "so it goes on the order?". A decision the user settled is a ✓ leaf, and one they never settled is asked open.
 
 Before sending a round, reread every question, check that the context is complete and cut anything from the second list. If the user does not know how to answer, they will ask.
 
 When the user asks for the options or for your opinion, give the facts and the current state that bear on the choice: what exists, what earlier decisions constrain it, what a candidate would have to satisfy. Enumerate candidates only when they ask for that, evenly, and give a verdict only when they ask for one explicitly, marked as yours.
+
+## Scope
+
+A question is about what the definition covers. A situation the definition does not mention is a hypothetical: a value that might be missing, a step that might fail, two requests arriving at once, a feature that might come later. A checklist in the loading skill or in a type reference may name such situations. The checklist says what to look for. It does not make each item a decision to ask.
+
+Never ask a hypothetical as a decision on its own. Raise it once per branch, in a single question that names the situations noticed and asks which of them the user wants to consider now. Not "what happens when X and Y are missing" but "do we consider that X and Y might be missing?". Naming situations is not naming answers. The options rule forbids candidates for a decision, not the subjects a decision could be about.
+
+Each situation the user picks becomes a ❔ leaf in the next frontier. Record each one they defer where the loading skill says, so that it is not raised again.
 
 ## Facts
 

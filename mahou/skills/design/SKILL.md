@@ -1,6 +1,6 @@
 ---
 name: design
-description: Turns a settled problem definition into a system design. Works a design tree one area at a time, from data model to flows to rules, with the user settling every leaf and choosing how each area is represented. Hands the tree to mahou:write-documentation so the project's docs record it. Stays above endpoints, functions and files. Use after shape, before program design.
+description: Turns a settled problem definition into a system design. Works a design tree one area at a time, from data model to flows to rules, with the user settling every leaf. Hands the tree to mahou:write-documentation so the project's docs record it. Stays above endpoints, functions and files. Use after shape, before program design.
 argument-hint: <the settled shape tree, or where to find it>
 ---
 
@@ -14,11 +14,7 @@ Takes a definition the user has settled and designs the system that satisfies it
 
 1. Read the settled shape tree. Do not read code unless the user asks a question that needs it; when they do, a `mahou:code-scout` keeps the reading out of the conversation.
 
-2. List what has to be designed. Each item names what must be specified, not how. Order the list from abstract to concrete so each item builds on the previous one, typically data model, then how data moves, then the rules that produce it, then whatever the change adds on top. Do not propose representations yet.
-
-3. Wait for the user's corrections. Drop items that are implementation (a migration, a schema field list, a function), or move them into the item they serve. Absorb items about prior artifacts (an earlier branch, a superseded document) into the design rather than naming them. Defer verification to after program design.
-
-4. Build the tree. The root is "System design", each item is a branch, every branch pending. When the change contains several independent pieces, for instance two APIs or two features designed in one session, each piece is its own root with its own areas, worked one root at a time.
+2. List what has to be designed, as the tree. The root is "System design", each item is a pending branch, and each item names what must be specified, not how. Order the branches from abstract to concrete so each one builds on the previous, typically data model, then how data moves, then the rules that produce it, then whatever the change adds on top. Do not propose representations yet. When the change contains several independent pieces, for instance two APIs or two features designed in one session, each piece is its own root with its own areas, worked one root at a time.
 
 ```
 System design
@@ -27,19 +23,21 @@ System design
 └─ 3 <area>                                                            pending
 ```
 
+3. Wait for the user's corrections. Drop items that are implementation (a migration, a schema field list, a function), or move them into the item they serve. Absorb items about prior artifacts (an earlier branch, a superseded document) into the design rather than naming them. Defer verification to after program design. Open the first branch in the reply to the approval.
+
 ## Working a branch
 
-Open one branch at a time, in order, when the user says so.
+Open one branch at a time, in order. The first opens with the tree's approval. Each later one opens when the user approves the previous branch's rendering.
 
-1. **Pick the type.** Check `references/types/` for a reference matching the branch (see Types). A reference says how the branch is usually split, what it needs to question and which representation has worked. It is a guide, not a rule. When the case needs a different split, different questions, another format or another diagram, work that out with the user. When no reference matches, ask the user how they want to split and represent the branch before opening it.
+1. **Pick the type.** Check `references/types/` for a reference matching the branch (see Types). A reference says how the branch is usually split, what it needs to question and which representation has worked. It is a guide, not a rule. When the case needs a different split, different questions, another format or another diagram, work that out with the user. When no reference matches, propose a split in the opening statement and let the corrections settle it.
 
-2. **State the branch as discussed so far**, in simple prose, before asking anything. The prose stands on its own: no references to the current implementation, no comparison with how things work today, no mention of prior artifacts, nothing that belongs to another branch. It may say what the thing is for, not the flows that use it.
+2. **State the branch as settled so far.** Every decision that explore, the shape tree or an earlier branch already made about this branch goes in as a ✓ leaf, and the prose under the branch states those decisions in simple terms. The prose stands on its own: no references to the current implementation, no comparison with how things work today, no mention of prior artifacts, nothing that belongs to another branch. It may say what the thing is for, not the flows that use it. Ask the user to correct what is wrong and stop. A corrected leaf goes back to ❔.
 
-3. **Ask the frontier.** The reference lists what the branch needs to question. A question the earlier exploration or the shape tree already answered is asked anyway, as a confirmation, so the user sees the answer in its new context. The rest are asked as open questions. The representation is never part of this frontier. It is asked on its own, in the round after the branch's last content leaf settles, because a form can only be judged against content the user has already seen. That round proposes the reference's form when one fits, or asks which form when none does. When the user wants to compare, render the candidates side by side in the same round.
+3. **Ask the frontier.** It goes in the reply after the confirmation. The reference lists what the branch needs to question; what is still open among those becomes the frontier. A situation the definition does not mention is a hypothetical and follows the Scope section of `design-tree`: raised in one question, opened only when the user picks it. Record a deferred situation as a ✓ leaf under the branch, reading "not considered: <situation>". Do not ask about the representation.
 
 4. **Split when asked.** When the user wants the parts of a branch reasoned about separately, add a level, one sub-branch per part, and work them one at a time, each with its own prose, frontier and representation.
 
-5. **Render when settled.** Once every leaf is ✓, produce the branch's representation: the diagram, validated, or the prototype reconciled through mahou:prototype, then the prose under it that explains what the representation does not show. Numbered steps in prose refer to the diagram's numbers. Show the tree with the branch settled and stop until the user opens the next one.
+5. **Render when settled.** Once every leaf is ✓, produce the branch's representation in the reference's form when one matches: the diagram, validated, or the prototype reconciled through mahou:prototype. The user asks for a different form when they want one, and when they want to compare, render the candidates side by side. When no reference matches, ask which form before rendering. The prose under the representation is the opening statement extended with the new leaves, not a new draft, and explains what the representation does not show. Numbered steps in prose refer to the diagram's numbers. Show the whole tree with the branch settled and stop. Open the next branch when the user approves.
 
 ### Types
 

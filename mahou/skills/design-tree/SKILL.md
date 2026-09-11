@@ -88,6 +88,7 @@ An answer can do more than settle a leaf:
 - It can reveal an area the tree does not have yet. Add a branch for it, put its open decisions under it as ❔ leaves, and ask them in the next frontier.
 - It can show that a branch mixes things the user wants apart. Add a level and split the leaves under the new parts.
 - It can invalidate a settled leaf. Change the mark back to ❔ and ask again with the new information.
+- It can reopen a settled branch, by adding a leaf under it or widening what it covers. The branch's mark goes back to open, its settled leaves keep their ✓, and the new leaves are asked in the next frontier. There is no separate mark for a reopened branch.
 
 The tree grows during the questioning.
 

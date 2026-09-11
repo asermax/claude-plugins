@@ -1,6 +1,6 @@
 ---
 name: human-review
-description: Collects the user's own annotations on a change through the plannotator CLI, verifies each against the code, and settles every finding with them before anything is edited.
+description: Collects the user's own annotations on a change, verifies each against the code, and settles every finding with them before anything is edited.
 disable-model-invocation: true
 ---
 
@@ -11,8 +11,6 @@ Load mahou:basics first. Then read `.mahou/human-review.md` if present.
 Verifies the user's own reading of a change and settles it with them. Nothing is edited until they rule on it.
 
 When both review skills run, mahou:agentic-review goes first. It clears the mechanical findings so this pass spends attention on judgment instead.
-
-The annotations come from the `plannotator` CLI, which is a separate install. When it is not on the PATH, say so and stop.
 
 ## Step 1: Establish the changeset
 

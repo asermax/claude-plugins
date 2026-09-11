@@ -28,7 +28,7 @@ Process, in the order work moves through them:
 - `mahou:design`. Designs the system for a settled definition, one area at a time as a design tree (data model, data flow, rules, extensible), then hands the tree to `write-documentation`. Above endpoints, functions and files.
 - `mahou:code-blast-radius`. Traces what an already-written change reaches, one tracer per changed element, and reports only where behavior changes for someone.
 - `mahou:agentic-review`. Typed only. Runs five facet reviewers per repository (reuse, simplification, efficiency, altitude, conventions from the wiki), fixes what they find inside the change's own scope, up to three rounds. The one skill that edits without asking, and it leaves everything uncommitted.
-- `mahou:human-review`. Typed only. Collects your `plannotator` annotations, verifies each against the code, and settles every finding with you before anything is edited.
+- `mahou:human-review`. Typed only. Collects your annotations on the change, verifies each against the code, and settles every finding with you before anything is edited.
 - `mahou:write-documentation`. Writes or updates a note in the project's `docs/`, following the project's own charter and templates. An overview first, then the sections from the project's template that the subject needs, reasoning in callouts beside the mechanism, present tense, a diagram whenever the subject has a shape.
 - `mahou:commit-changes`. Typed only. Conventional commits, grouped by logical change, grouping confirmed with you before anything is committed. Never pushes.
 

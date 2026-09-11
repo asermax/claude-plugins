@@ -35,7 +35,7 @@ Open one branch at a time, in order, when the user says so.
 
 2. **State the branch as discussed so far**, in simple prose, before asking anything. The prose stands on its own: no references to the current implementation, no comparison with how things work today, no mention of prior artifacts, nothing that belongs to another branch. It may say what the thing is for, not the flows that use it.
 
-3. **Ask the frontier.** The reference lists what the branch needs to question. A question the earlier exploration or the shape tree already answered is asked anyway, as a confirmation, so the user sees the answer in its new context. The rest are asked as open questions. The representation is the one the reference proposes by default, adapted when the case calls for it, or the one the user proposes; it is asked only when none of these applies.
+3. **Ask the frontier.** The reference lists what the branch needs to question. A question the earlier exploration or the shape tree already answered is asked anyway, as a confirmation, so the user sees the answer in its new context. The rest are asked as open questions. The representation is never part of this frontier. It is asked on its own, in the round after the branch's last content leaf settles, because a form can only be judged against content the user has already seen. That round proposes the reference's form when one fits, or asks which form when none does, and when the user wants to compare, renders the candidates side by side in the same round.
 
 4. **Split when asked.** When the user wants the parts of a branch reasoned about separately, add a level, one sub-branch per part, and work them one at a time, each with its own prose, frontier and representation.
 
@@ -48,6 +48,8 @@ Open one branch at a time, in order, when the user says so.
 | What is stored: new entities, fields, their shape and meaning | `references/types/data-model.md` |
 | How a value moves between components: who produces it, who carries it, who persists it | `references/types/data-flow.md` |
 | How a value is derived or a decision is made from an input | `references/types/rules.md` |
+| What a program is made of: its components, what crosses between them, its inputs and outputs | `references/types/component-architecture.md` |
+| What a component agrees with the rest of the system: its inputs and their sources, what it exposes, the value it hands on | `references/types/contract.md` |
 
 A branch that fits none of these is worked out with the user. A type that turns out to generalize beyond this session is a candidate for mahou:learn to add to this table.
 

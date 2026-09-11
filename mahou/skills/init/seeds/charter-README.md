@@ -50,7 +50,7 @@ Three callout kinds, and they mean different things:
 
 **A note is not a decision record.** There is no requirements table, no acceptance criteria, no user story, no status ladder. Those describe work being planned; a note describes something that exists.
 
-**A note describes the present.** No "used to", no "previously", no "no longer". An alternative that was rejected is *considered and not chosen, because…*, a standing reason, not a history of the argument.
+**A note describes the present.** No "used to", no "previously", no "no longer". An alternative that was rejected is *considered and not chosen, because…*, a standing reason, not a history of the argument. A note describes the system, not the state of its construction: no section on what is built, pending or planned.
 
 Create a note from `_templates/note.md`. Then **link it from at least one existing note** and add its row to its folder's index: a note nothing links to does not get read.
 

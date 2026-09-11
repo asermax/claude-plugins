@@ -84,10 +84,6 @@ When the part has a surface others call. A table of **what each member answers a
 
 When a concrete choice a reader would otherwise get wrong matters: a configuration key, a storage format, an ordering constraint, an exact formula. Code appears only where the code is the insight, two to four lines, never a block.
 
-## ⏩ What is not built yet
-
-What is deliberately absent, and what would ask for it. Keeps the next person from reading an omission as an oversight.
-
 ## ℹ️ Sources
 
 External links only, and only when one shaped the design. Other notes are linked inline where they are relevant, never collected here.

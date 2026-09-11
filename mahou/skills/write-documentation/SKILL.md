@@ -34,8 +34,6 @@ The charter owns the shape. The content rules are the framework's:
 
 **A diagram whenever the subject has a shape.** A state machine, a data model, a sequence or a request's path all read faster drawn. Follow the charter's convention; where it names mermaid, do not draw in ASCII, and validate every diagram with superpowers:mermaid-validation before the draft is shown.
 
-**What is not built yet** is easy to skip and worth writing: what is deliberately absent and what would ask for it, so an omission does not read as an oversight.
-
 ## 3. Describe the present
 
 No "used to", no "previously", no "no longer", no "replaced by". A rejected alternative is *considered and not chosen, because…*, a standing reason, not a history of the argument.

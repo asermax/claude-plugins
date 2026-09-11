@@ -50,7 +50,7 @@ Change nothing yet. Never apply the obvious ones unasked. Never argue a finding 
 
 ### Apply what the user approves
 
-Before writing code, read the project's `CLAUDE.md` and `.mahou/basics.md` when present, and consult mahou:wiki for the technologies the fix touches. Follow the conventions of the repository you are in.
+Before writing code, read the project's `CLAUDE.md` and `.mahou/basics.md` when present, and read the wiki entries for the technologies the fix touches. Follow the conventions of the repository you are in.
 
 Run that repository's linters and tests afterwards, scoped to the files you touched rather than the whole tree. A blanket formatter run reformats unrelated files and drags them into the change.
 

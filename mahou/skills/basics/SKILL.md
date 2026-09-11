@@ -33,7 +33,9 @@ This holds in every repository, whatever the language.
 
 ## The wiki
 
-Knowledge about technologies and tools, their gotchas and their patterns, lives in mahou:wiki, indexed one level per folder so entries load on demand. It is the standard a change is measured against for conventions, mahou:learn writes it, and any skill that is about to design, choose or debug with a technology consults it first.
+Knowledge about technologies and tools, their gotchas and their patterns, lives in mahou:wiki, indexed one level per folder so entries load on demand. Load it now and read its root indexes, global and local, so that you know which topics have entries when they come up in conversation. Read an entry only when the skill you are running says so, or when the user asks for a check against the conventions for a technology. Do not bring an entry's conventions into a question the user has not asked; when a topic with an entry comes up in a decision, say the entry exists and offer to read it.
+
+The wiki is the standard the conventions reviewer measures a change against. mahou:learn writes it.
 
 ## The project's docs
 

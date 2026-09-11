@@ -25,7 +25,7 @@ A finding whose fix would break any of those becomes a skipped finding in the re
 
 ## Step 1: Establish the changeset
 
-Load mahou:changeset for the repositories, the base, and the diff. Load mahou:wiki and follow its indexes to the entries about the technologies the diff touches; the conventions facet reviews against them and every fix has to follow them, together with the project's `CLAUDE.md` and `.mahou/basics.md` when present.
+Load mahou:changeset for the repositories, the base, and the diff. Follow the wiki indexes to the entries about the technologies the diff touches; the conventions facet reviews against them and every fix has to follow them, together with the project's `CLAUDE.md` and `.mahou/basics.md` when present.
 
 ## Step 2: Dispatch the facet reviewers
 

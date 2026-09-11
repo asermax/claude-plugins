@@ -3,7 +3,7 @@ name: wiki
 description: Consult distilled knowledge about technologies, tools, and their gotchas before designing, choosing, or debugging with them. Reads the indexes first and loads only matching entries.
 ---
 
-Load mahou:basics first. Then read `.mahou/wiki/INDEX.md` if present.
+mahou:basics loads this skill, so every mahou skill has its indexes. When invoked on its own, load mahou:basics first.
 
 ## Sources
 
@@ -13,7 +13,7 @@ Load mahou:basics first. Then read `.mahou/wiki/INDEX.md` if present.
 ## Procedure
 
 1. Read both root indexes. Each index covers its own level only: the folders and files sitting next to it. Open nothing else yet.
-2. Follow the folders relevant to the question into their indexes, descending one level at a time.
+2. When a skill or the user asks for a lookup, follow the folders relevant to the question into their indexes, descending one level at a time.
 3. Read only the entries that answer the question.
 4. Report what the entries say, with their verified date. When an entry is old enough that the knowledge may have moved, verify against current documentation before relying on it, and say you did.
 5. Nothing matches. Say so and move on. The gap gets filled through mahou:learn, not mid-task.

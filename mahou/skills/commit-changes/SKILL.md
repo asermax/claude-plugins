@@ -40,6 +40,8 @@ Footers other than `BREAKING CHANGE: <description>` follow the git trailer forma
 
 4. **Commit each approved group.** Stage only that group's files with `git add <file>...`, then commit with the agreed message. Never `git add -A` or `git add .`; an untracked file the user did not mention is not part of any group until they say so.
 
+   A file whose changes belong to two groups is split by hunk, and the plan says so: the file appears under both groups with a word on which change goes where. To stage one side, write the file's diff to a temporary patch with `git diff <file> > /tmp/<name>.diff`, delete the hunks that belong to the other group while keeping the diff header, and apply it with `git apply --cached /tmp/<name>.diff`. Once that group is committed, the hunks left in the working tree are what `git add <file>` stages for the other. `git add -p` is interactive and does not run here.
+
 ## Message rules
 
 - Description in the imperative, present tense: "add", not "added" or "adding". Short, no trailing period.

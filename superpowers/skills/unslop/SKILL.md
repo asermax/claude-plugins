@@ -9,59 +9,49 @@ Edit text to remove AI patterns.
 
 ## Process
 
-1. Scan for the patterns below.
-2. Rewrite. Preserve meaning, match intended tone.
-3. Self-audit: "What makes this obviously AI generated?" Fix remaining tells.
+1. Run a round: one opus agent, every rule below, the documents in the pass.
+2. Verify each finding, then rewrite. Preserve meaning, match intended tone.
+3. Repeat with a fresh agent until a round finds nothing, up to five rounds.
 
 ## How to scan
 
-One read with every rule in mind finds the tells that are words, such as a dash, a listed term or a bold sentence, and misses the ones that are relations between a sentence and its neighbours. Split the scan by what each rule needs, then check every finding yourself before rewriting anything.
+One agent per round, on opus, holding every rule and reading the documents in the pass. It reports findings, you verify them and rewrite, and the next round gets a fresh agent on the rewritten text. Five rounds at most, and the pass ends early on a round that finds nothing.
 
-### Inline
+A fresh agent each round is the point. An agent that has seen its own last report defends it, repeats what you rejected, and stops looking for what it missed.
 
-Rules 3, 5, 7 to 13, 17 to 20, 22 to 25 and 31 are phrase-detectable. Find them yourself in one read, or with a grep for the listed words, the dashes and the curly quotes. A subagent finds nothing more here.
+The author cannot run this pass alone, whatever the rules say. Whoever wrote a sentence already decided it earns its place, and that is the judgement the rules ask for.
 
-### Sweeps
-
-The remaining rules go to one subagent per group, all dispatched in a single message so they run together. Each agent gets the prompt below with its group filled in, and nothing else. Agents write nothing. When the text is a draft not yet on disk, save it to a temporary file first so it does not travel through the dispatch message.
-
-| Group | Rules | Model | Reads by | Question at each step |
-|---|---|---|---|---|
-| Punctuation and weight | 14, 15, 16, 33 | sonnet | paragraph | Does a colon join two clauses that could stand as sentences? Is a whole sentence, or a phrase mid-sentence, in bold? Are there dropped articles, verbless fragments or arrows? |
-| Sentence shape | 28, 29, 30 | sonnet | sentence | Does the reader have to backtrack? Is there an "is/are + participle" with a nameable actor? Does an adverb prop up a weak verb? |
-| Meta | 34, 35 | sonnet | paragraph | Does any span refer to the text instead of the subject, or count items about to be listed? Does a sentence repeat its neighbour at the same level of detail? |
-| Figurative | 26, 27, 32 | opus | sentence | Is there a metaphor, idiom, personification, superlative or antithesis where a literal phrase exists? |
-
-The sentence-shape prompt carries two exclusions, because the sweep over-reports without them: an adjectival participle ("the bullets that are missing", "before a change is done") is not a passive under 29, and an adverb that changes the truth of the sentence ("skip it silently", "usually already") stays.
+Agents write nothing. When the text is a draft not yet on disk, save it to a temporary file first so it does not travel through the dispatch message. When the pass covers several documents, one agent takes all of them in the same round, since a sentence that repeats what another document already says is only visible with both open.
 
 ### Prompt
 
 ```
-You are doing an editing pass on a document. Read the file <path>. Do not edit
-it. Do not read anything else.
+You are doing an editing pass. Read <the file or files>. Do not edit anything.
+Do not read anything else.
 
-Apply ONLY the rules below. Go through the document one <paragraph|sentence> at
-a time. At each one, ask this question before moving on: <the group's question>.
-Report nothing that is not one of these rules.
+Apply ONLY the rules below. Read every sentence, and at each one ask what the
+reader does differently because of it. Flag the sentence when the answer is
+nothing, when it is the answer an earlier sentence already gave, or when it
+breaks one of the rules. Report nothing that is not one of these rules.
 
 RULES:
-<the verbatim text of every rule in the group, number included>
+<every rule under Patterns to detect and fix, verbatim, numbers included>
 
-<the group's exclusions, when it has any>
+EXCLUSIONS: an adjectival participle ("the bullets that are missing", "before a
+change is done") is not a passive under 29, and an adverb that changes
+the truth of the sentence ("skip it silently", "usually already") stays.
 
 OUTPUT: one line per finding, in this format:
-L<line> | rule <n> | "<exact quoted span>" | <proposed rewrite>
-Say nothing about a <paragraph|sentence> with no finding. End with a line
-TOTAL: <n>. Nothing else. No preamble, no summary.
+<file>:<line> | rule <n> | "<exact quoted span>" | <proposed rewrite>
+Say nothing about a sentence with no finding. End with a line TOTAL: <n>.
+Nothing else. No preamble, no summary.
 ```
 
-### Check the findings
+### Between rounds
 
-Every line an agent returns is a claim, not an edit. For each one, reread the span where it sits and confirm three things: that it is an instance of the rule cited (a literal phrase is not 32, a count of items about to be listed is 34 and not 32, an adjectival participle is not 29), that the proposed rewrite keeps every fact and the document's tone, and that no other agent already reported the same span. Drop what fails, collapse the duplicates, and only then rewrite. The figurative sweep needs this most: it finds every real instance and also flags literal phrases and misfiles counts. Finish with the self-audit from the process above.
+Every line is a claim, not an edit. For each one, reread the span and confirm that it is an instance of the rule cited, that the rewrite keeps every fact and the tone, and that the wording it replaces is not the house form the surrounding documents already use. Drop what fails, apply the rest, then start the next round.
 
-### When to skip the sweeps
-
-Under about twenty lines, or for a PR description, scan inline and go straight to the self-audit. The four sweeps cost roughly 200k tokens on an 80-line document.
+Stop when a round returns `TOTAL: 0` or after the fifth, and report how many rounds ran and what the last one found.
 
 ## Patterns to detect and fix
 

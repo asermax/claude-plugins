@@ -141,9 +141,17 @@ Use `AskUserQuestion` with options:
 - Split groups (separate into more commits)
 - Exclude files (don't commit yet)
 
+### 3b. Decide where the version bumps go
+
+**One group.** The bump belongs in that commit, as step 4 describes.
+
+**Several groups.** No content commit carries a version change. Bump once, in a commit of its own, after every content commit has landed. Work out each affected scope's bump from all the groups together and take the highest one: a minor anywhere makes that scope's bump minor. The message is `chore(marketplace): bump <scope> to <version>` when one scope moves, or `chore(marketplace): bump versions` when several do, with every scope's move in the body.
+
+A version that moves once per commit tells a consumer nothing: three commits landing together produce three versions nobody installed separately, and the intermediate ones describe a state that never shipped.
+
 ### 4. Process each commit group
 
-For each group, run steps a–h sequentially.
+For each group, run steps a–h sequentially. With several groups, steps c, d, e and f happen once at the end instead, in the bump commit that 3b describes, and each content commit stages only its own files.
 
 #### a. Determine affected scopes
 

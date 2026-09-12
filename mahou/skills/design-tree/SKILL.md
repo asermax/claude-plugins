@@ -86,7 +86,7 @@ Each situation the user picks becomes a ❔ leaf in the next frontier. Record ea
 
 Never look up a fact on your own initiative. When a question needs a fact you do not have, say inside the question that you lack that context and offer to search for it. The user decides whether the lookup happens.
 
-When the user asks for a check, run it, then report the result before the next round's tree, labelled by the question it unblocks. When the result contradicts a claim the user made or a decision already settled, say so in the first sentence.
+When the user asks for a check, run it, then report the result before the next round's tree, labelled by the question it unblocks. A fact about a library, a tool or anything else outside the project goes to a `mahou:researcher`, with the requirements taken from the branch being worked. A fact about the project's own code or docs goes to a scout. When the result contradicts a claim the user made or a decision already settled, say so in the first sentence.
 
 ## Answers
 

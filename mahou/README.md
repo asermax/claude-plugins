@@ -54,6 +54,7 @@ Dispatched by skills, never called directly. Every one writes findings and edits
 - `reuse-reviewer`, `simplification-reviewer`, `efficiency-reviewer`, `altitude-reviewer`, `conventions-reviewer`: one angle each, dispatched by `agentic-review`. The conventions reviewer reads the wiki entries for the technologies the diff touches and cites them.
 - `usage-tracer`: one changed element, every repository in scope, dispatched by `code-blast-radius`.
 - `code-scout`, `docs-scout`: one question against one repository or the project's docs folder, dispatched by `explore` and `design`.
+- `researcher`: one question about a library, tool or platform outside the project, answered with facts and sources and no recommendation, dispatched by `explore`, `design` and `program-architecture`.
 - `documentation-reviewer`: one draft against the project's charter and template, dispatched by `write-documentation`.
 
 ## The project's docs

@@ -1,6 +1,6 @@
 ---
 name: design
-description: Turns a settled problem definition into a system design. Works a design tree one area at a time, from data model to flows to rules, with the user settling every leaf. Hands the tree to mahou:write-documentation so the project's docs record it. Stays above endpoints, functions and files. Use after shape, before program design.
+description: Turns a settled problem definition into a system design. Works a design tree one area at a time, from data model to flows to rules, with the user settling every leaf. Hands the tree to mahou:write-documentation so the project's docs record it. Stays above endpoints, functions and files. Use after shape, before mahou:program-architecture.
 argument-hint: <the settled shape tree, or where to find it>
 ---
 
@@ -8,7 +8,7 @@ Load mahou:basics first, then mahou:design-tree and mahou:docs. Then read `.maho
 
 # Design
 
-Takes a definition the user has settled and designs the system that satisfies it: what is stored, how it moves, what rules apply, and whatever else the change needs. The level is system design. Endpoints, function names, files, migrations and test cases belong to program design and are not decided here. The output is a settled design tree, each branch carrying its prose and its representation, handed to mahou:write-documentation to be recorded.
+Takes a definition the user has settled and designs the system that satisfies it: what is stored, how it moves, what rules apply, and whatever else the change needs. The level is system design. What a program needs decided before it can be written, from its package layout to the contract of each part, belongs to mahou:program-architecture. Function signatures, file lists, migrations and test cases belong to the code itself. The output is a settled design tree, each branch carrying its prose and its representation, handed to mahou:write-documentation to be recorded.
 
 ## Opening
 
@@ -23,7 +23,7 @@ System design
 └─ 3 <area>                                                            pending
 ```
 
-3. Wait for the user's corrections. Drop items that are implementation (a migration, a schema field list, a function), or move them into the item they serve. Absorb items about prior artifacts (an earlier branch, a superseded document) into the design rather than naming them. Defer verification to after program design. Open the first branch in the reply to the approval.
+3. Wait for the user's corrections. Drop items that are implementation (a migration, a schema field list, a function), or move them into the item they serve. Absorb items about prior artifacts (an earlier branch, a superseded document) into the design rather than naming them. Defer verification to after the program is designed. Open the first branch in the reply to the approval.
 
 ## Working a branch
 

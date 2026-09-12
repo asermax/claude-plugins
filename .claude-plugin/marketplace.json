@@ -63,7 +63,7 @@
     {
       "name": "mahou",
       "source": "./mahou",
-      "description": "Small, single-job software engineering skills where the human makes every decision and the agent executes: explore, shape, design, blast radius, agentic and human review, documentation into the project's docs folder, and a wiki of distilled technical knowledge"
+      "description": "Small, single-job software engineering skills where the human makes every decision and the agent executes: explore, shape, design, program architecture, blast radius, agentic and human review, documentation into the project's docs folder, and a wiki of distilled technical knowledge"
     }
   ]
 }

@@ -9,21 +9,23 @@ Edit text to remove AI patterns.
 
 ## Process
 
-1. Run a round: one opus agent, every rule below, the documents in the pass.
+1. Run a first round: one opus agent, every rule below, the documents in the pass.
 2. Verify each finding, then rewrite. Preserve meaning, match intended tone.
-3. Repeat with a fresh agent until a round finds nothing, up to five rounds.
+3. Run a second round: a fresh agent, the rewritten documents, and the first round's applied report. It checks every applied fix is still in place and flags anything that changed back; verify and re-apply what really slipped, and the pass ends.
 
 ## How to scan
 
-One agent per round, on opus, holding every rule and reading the documents in the pass. It reports findings, you verify them and rewrite, and the next round gets a fresh agent on the rewritten text. Five rounds at most, and the pass ends early on a round that finds nothing.
+The pass is two rounds: the first finds, the second guards what the first fixed.
 
-A fresh agent each round is the point. An agent that has seen its own last report defends it, repeats what you rejected, and stops looking for what it missed.
+A fresh agent each round is the point. An agent that has seen its own last report defends the report, repeats what you rejected, and stops looking for what it missed. The second round's agent sees the first round's report on purpose. Its job is not to re-litigate the findings but to verify they survived.
 
 The author cannot run this pass alone, whatever the rules say. Whoever wrote a sentence already decided it earns its place, and that is the judgement the rules ask for.
 
 Agents write nothing. When the text is a draft not yet on disk, save it to a temporary file first so it does not travel through the dispatch message. When the pass covers several documents, one agent takes all of them in the same round, since a sentence that repeats what another document already says is only visible with both open.
 
-### Prompt
+### Prompts
+
+The first round:
 
 ```
 You are doing an editing pass. Read <the file or files>. Do not edit anything.
@@ -32,7 +34,7 @@ Do not read anything else.
 Apply ONLY the rules below. Read every sentence, and at each one ask what the
 reader does differently because of it. Flag the sentence when the answer is
 nothing, when it is the answer an earlier sentence already gave, or when it
-breaks one of the rules. Report nothing that is not one of these rules.
+breaks one of the rules. Report only what one of these rules covers.
 
 RULES:
 <every rule under Patterns to detect and fix, verbatim, numbers included>
@@ -43,15 +45,31 @@ the truth of the sentence ("skip it silently", "usually already") stays.
 
 OUTPUT: one line per finding, in this format:
 <file>:<line> | rule <n> | "<exact quoted span>" | <proposed rewrite>
-Say nothing about a sentence with no finding. End with a line TOTAL: <n>.
+Only sentences with a finding get a line. End with a line TOTAL: <n>.
 Nothing else. No preamble, no summary.
+```
+
+The second round:
+
+```
+You are verifying an editing pass. Read <the file or files> and the report
+below. Do not edit anything. Do not read anything else.
+
+For every finding in the report, check the rewritten text still carries its
+fix: the pattern the finding cited is gone and the rewrite kept every fact.
+Report only findings whose fix is gone or undone, in this format:
+<file>:<line> | rule <n> | "<exact quoted span>"
+End with a line TOTAL: <n>. Nothing else. No preamble, no summary.
+
+REPORT:
+<the applied findings from the first round, verbatim>
 ```
 
 ### Between rounds
 
-Every line is a claim, not an edit. For each one, reread the span and confirm that it is an instance of the rule cited, that the rewrite keeps every fact and the tone, and that the wording it replaces is not the house form the surrounding documents already use. Drop what fails, apply the rest, then start the next round.
+Every line is a claim, not an edit. For each one, reread the span and confirm that it is an instance of the rule cited, that the rewrite keeps every fact and the tone, and that the wording it replaces is not the house form the surrounding documents already use. Drop what fails, apply the rest, then run the second round.
 
-Stop when a round returns `TOTAL: 0` or after the fifth, and report how many rounds ran and what the last one found.
+The second round's lines are claims too. Reread each and confirm the fix really is gone or undone before re-applying. When the pass ends, report what both rounds found and what the second round caught slipping back.
 
 ## Patterns to detect and fix
 
@@ -108,3 +126,4 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 34. **Describing the message instead of writing it.** Some words refer to the subject. Others refer to the text itself: how many parts it has, what order they come in, that something is about to arrive, that you are about to say it. The second kind carries no information, because the thing being announced arrives in the very next words anyway. Delete it. Then confirm the deletion by checking that every fact survived. These spans sit anywhere in a sentence, not only in front of a colon. At the front: "Two things to take into account:" and "One thing worth doing now:" and "Processing X, the next step is:". Mid-sentence: "the config is fine, but there is one thing worth flagging here". Inside a clause: "I should mention that the build fails on ARM" becomes "the build fails on ARM". Trailing: "which brings us to the next point" just goes. Same rule for headings: name what is in the section ("Issues found", "Considerations"), do not count it or trail it ("Two things to consider", "What follows"). A count also goes stale the moment an item is added or removed.
 35. **Restating what you just said.** A second pass over the same idea, in different words at the same level of detail, telling a reader who understood the first pass nothing new. "That is the thing being deleted" after already naming what to delete. "In other words", "put differently", "that is to say" followed by a paraphrase rather than a sharpening. A closing sentence that recaps the paragraph above it, or an opening sentence and a closing sentence that state the same thesis around a body that already made it. Ask what the reader can do or know after the second version that they could not after the first. If the answer is nothing, cut it. Keep a restatement only when it adds precision, gives a concrete example, or translates a term the first version assumed the reader knew. 16 is one narrow instance of this, a bold lead that restates its own line.
 36. **Pronoun referent overload.** The same pronoun standing for two different things in one sentence, or a relative pronoun dropped where the wrong attachment is the easier parse. "The counts alone do not show a sentence appearing twice, a unit whose text also appears inside the unit before it, or any text it says was left behind": the first "it" is the unit, the second is the tool from the sentence before, and "any text it says was left behind" dropped its "that", so "it says" reads as the verb until "was" breaks the parse. Name the referent, or restore the "that": "inside the previous unit", "any text the tool says was left behind". 28's backtrack test finds the sentence, but splitting cannot repair it: a short sentence can still make the reader resolve one word twice.
+37. **Negation where a positive fits.** Double negatives ("not uncommon", "not unlike", "nothing prevents") make the reader invert twice to recover a plain fact, and "not about" framing ("the question is not about X", "this is not a matter of Y") says what something is not while leaving what it is unstated. State the fact: "not uncommon" becomes "common", "not unlike" becomes "like", "the question is not about X" becomes naming what the question is about. A single honest negative stays ("the item does not fail").

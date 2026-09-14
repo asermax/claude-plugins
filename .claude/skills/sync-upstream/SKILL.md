@@ -74,7 +74,7 @@ That repo holds more skills than these two. Ignore the rest — the collection i
 Track the `apps/skills/claude/` copies, never `apps/skills/core/` — the core ones are the agent-agnostic fallbacks that tell the agent to run the CLI itself, while the Claude copies use `!` preprocessing and `$ARGUMENTS` so the CLI runs at skill load. The repo also ships `apps/skills/extra/` (`plannotator-compound`, `plannotator-setup-goal`, `plannotator-visual-explainer`), which upstream installs separately via `npx skills add`. They are not tracked; add one only on explicit request.
 
 **From `~/workspace/random/cursor-plugins/pstack/skills/`:**
-- `unslop/SKILL.md` → `superpowers/skills/unslop/SKILL.md` (manual merge — the plugin copy carries three locally added patterns and a local method)
+- `unslop/SKILL.md` → `superpowers/skills/unslop/SKILL.md` (manual merge — the plugin copy carries four locally added patterns and a local method)
 
 `cursor/plugins` is a monorepo of Cursor plugins, and `pstack` alone ships around forty skills (the `principle-*` family, `tdd`, `architect`, `why`, `swarm`, and more), plus other plugins at the repo root. Only `unslop` is tracked. Ignore everything else unless the user asks for a specific skill by name.
 
@@ -105,7 +105,7 @@ Plugin-side customizations to be aware of:
 - **All skills**: use the `superpowers:` namespace prefix for any cross-skill reference
 - **systematic-debugging**: removed references to skills not bundled here (`defense-in-depth`, `condition-based-waiting`, `verification-before-completion`)
 - **agent-browser**: local-only `## Visible browser inside herdr` section plus two extra `allowed-tools` entries — always a manual merge, never a copy
-- **unslop**: three locally added patterns at the end of `### Plain speech` (34, 35 and 36), a locally rewritten `## Process`, a local `## How to scan` section between it and the patterns, plus a local frontmatter: no `disable-model-invocation` and a description scoped to document writing — always a manual merge, never a copy
+- **unslop**: four locally added patterns at the end of `### Plain speech` (34, 35, 36 and 37), a locally rewritten `## Process` and `## How to scan` (a two-round pass: the first round finds, the second verifies the first's fixes survived), a local `### Prompts` with a scan template and a verification template, plus a local frontmatter: no `disable-model-invocation` and a description scoped to document writing — always a manual merge, never a copy
 
 Suggested format:
 

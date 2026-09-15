@@ -70,7 +70,7 @@ Before joining, generate your identity based on context:
 **Context**: Your working directory or project
 - Use `pwd` to get current directory
 - Or derive from CLAUDE.md or git remote
-- Examples: "filadd/scheduler-api", "myproject/docs", "/home/user/repos/backend"
+- Examples: "acme/scheduler-api", "myproject/docs", "/home/user/repos/backend"
 
 **Presentation**: Brief description of what you manage
 - 1-2 sentences
@@ -142,7 +142,7 @@ Output if messages available:
       "type": "message",
       "sender": {
         "name": "backend-agent",
-        "context": "filadd/scheduler-api",
+        "context": "acme/scheduler-api",
         "presentation": "I manage the backend..."
       },
       "content": "I just updated the API schema, heads up!"
@@ -200,12 +200,12 @@ Output:
   "data": {
     "agent": {
       "name": "frontend-agent",
-      "context": "filadd/web-ui"
+      "context": "acme/web-ui"
     },
     "members": {
       "backend-agent": {
         "name": "backend-agent",
-        "context": "filadd/scheduler-api",
+        "context": "acme/scheduler-api",
         "presentation": "I manage the backend API...",
         "joined_at": "2025-11-29T12:00:00Z"
       },
@@ -334,7 +334,7 @@ When an agent leaves:
   "type": "leave",
   "sender": {
     "name": "backend-agent",
-    "context": "filadd/scheduler-api",
+    "context": "acme/scheduler-api",
     "presentation": "I manage the backend API..."
   },
   "content": ""
@@ -354,7 +354,7 @@ Broadcast messages from other agents:
   "type": "message",
   "sender": {
     "name": "backend-agent",
-    "context": "filadd/scheduler-api",
+    "context": "acme/scheduler-api",
     "presentation": "I manage the backend API..."
   },
   "content": "Just pushed changes to the auth module"
@@ -389,7 +389,7 @@ If you encounter file permission errors, check that your user has access to the 
 ```bash
 # Join chat
 scripts/agent.py --name "backend-agent" \
-                 --context "filadd/scheduler-api" \
+                 --context "acme/scheduler-api" \
                  --presentation "I manage the backend API. Working on new scheduling endpoint."
 
 # Do work
@@ -412,7 +412,7 @@ scripts/chat.py --agent backend-agent ask "Great! Let me know if you need any ch
 ```bash
 # Join chat
 scripts/agent.py --name "frontend-agent" \
-                 --context "filadd/web-ui" \
+                 --context "acme/web-ui" \
                  --presentation "I manage the web UI. Working on schedule creation form."
 
 # Wait for backend's message

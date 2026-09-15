@@ -39,7 +39,7 @@ Entry points and tooling:
 - `mahou:guide`. Takes your goal in plain words and activates the matching skill.
 - `mahou:init`. Typed only. Seeds a `docs/` folder the project then owns: a charter, one folder per kind of note with its index, a note template, and a `## Docs` block in `CLAUDE.md`. Never overwrites; re-run it to add a folder.
 - `mahou:wiki`. Distilled knowledge about technologies, tools, and their gotchas, indexed for progressive discovery.
-- `mahou:learn`. Typed only. The author's tool. Reconstructs a session (or takes your ask directly), and proposes new or iterated skills, agents, wiki entries and local files.
+- `mahou:learn`. Typed only. The author's tool. Collects the points where a session generated friction (or takes your ask directly), and proposes new or iterated skills, agents, wiki entries and local files.
 
 Loaded by other skills, never typed:
 
@@ -84,7 +84,7 @@ Local wins over global when the two conflict, and whether `.mahou/` is committed
 
 ## Growing the toolbox
 
-`mahou:learn` reads a conversation and proposes, ordered by confidence then impact: new skills, iterations on existing ones, agents, wiki entries, and local files. The skills above were brought in from real sessions rather than designed upfront, and the same loop grows them further.
+`mahou:learn` reads a conversation for the points where the user had to steer it (a format change, a request outside the running flow, a correction of something the agent produced) and proposes, ordered by confidence then impact: new skills, iterations on existing ones, agents, wiki entries, and local files. The skills above were brought in from real sessions rather than designed upfront, and the same loop grows them further.
 
 ## Installation
 

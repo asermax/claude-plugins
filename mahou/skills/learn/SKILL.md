@@ -1,19 +1,19 @@
 ---
 name: learn
-description: The author's tool for growing the plugin from real sessions. Without arguments it reconstructs the session, gives a take on where it departed from the existing skills, and drafts what the user picks. With arguments it skips the reconstruction and works the user's ask from the current context. Produces new or iterated skills, agents, wiki entries and local .mahou files.
+description: The author's tool for growing the plugin from real sessions. Without arguments it collects the points where the session generated friction or changed the behavior of the flow that was running, gives a take on each, and drafts what the user picks. With arguments it works the user's ask directly from the current context. Produces new or iterated skills, agents, wiki entries and local .mahou files.
 argument-hint: [what to build from this session]
 disable-model-invocation: true
 ---
 
 Load mahou:basics first. Then read `.mahou/learn.md` if present.
 
-Turns a session that worked into something reusable. The plugin grows this way, by keeping what the user just did by hand instead of designing a pipeline upfront.
+Turns a session's friction into something reusable. The plugin grows this way, by keeping the corrections the user just made by hand instead of designing a pipeline upfront.
 
 ## Two modes
 
 Route on the arguments.
 
-- **No arguments.** Discovery. Follow `references/discover.md`. Reconstruct the session, summarize it back, give a take, and wait for the user to pick what to keep.
+- **No arguments.** Discovery. Follow `references/discover.md`. Collect the friction points, report each with a take, and wait for the user to pick what to keep.
 - **Arguments given.** Directed. Follow `references/directed.md`. No summary and no take. The user has said what they want. Map the state their ask touches and work toward it.
 
 Both modes continue with Drafting once there is an item to draft.

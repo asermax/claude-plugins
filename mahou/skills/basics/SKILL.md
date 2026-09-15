@@ -44,3 +44,7 @@ Projects mahou runs in keep their own documentation in a folder they own, usuall
 ## The local layer
 
 A project can change how a skill behaves in a `.mahou/` folder at its root: `.mahou/basics.md` for standing rules, `.mahou/<skill>.md` for one skill, `.mahou/wiki/` for local knowledge. Every skill reads its own file when present, and local wins over global when the two conflict.
+
+## Reporting to the user
+
+When a skill hands the user a report, such as findings, an investigation's answer, or a summary of a change, it loads mahou:report. That skill carries the shape a report should take: what comes first, when to diagram, how to separate fact from claim, and the unslop rules to hold while writing it.

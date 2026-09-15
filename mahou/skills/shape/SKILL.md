@@ -33,6 +33,8 @@ Problem: <one line>
 
 3. When every leaf of the branch is ✓, show the whole tree and stop. Open the next branch when the user approves.
 
+4. When the user drops a branch or leaf outright, mid-round or before it's even opened, fold it into Out of scope instead of `design-tree`'s default of removing it with no trace: a ✓ leaf reading "<name> — <what was raised and excluded>", the same format any other exclusion there already uses. This applies whether the branch had settled leaves or was still pending.
+
 ## What a question is here
 
 Questions are about behavior: what is captured, when it is replaced, who sees it, what happens on failure. Not about endpoints, columns, functions or files. If two answers lead to the same behavior with different code, the question is implementation and is not asked.

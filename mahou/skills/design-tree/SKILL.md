@@ -99,6 +99,7 @@ An answer can do more than settle a leaf:
 - It can show that a branch mixes things the user wants apart. Add a level and split the leaves under the new parts.
 - It can invalidate a settled leaf. Change the mark back to ❔ and ask again with the new information.
 - It can reopen a settled branch, by adding a leaf under it or widening what it covers. The branch's mark goes back to open, its settled leaves keep their ✓, and the new leaves are asked in the next frontier. There is no separate mark for a reopened branch.
+- It can drop a branch or leaf outright. Remove it from the tree. Nothing takes its place by default. A loading skill that wants a trace of what was dropped says so itself.
 
 The tree grows during the questioning.
 

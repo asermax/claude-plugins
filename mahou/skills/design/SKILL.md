@@ -44,6 +44,7 @@ Open one branch at a time, in order. The first opens with the tree's approval. E
 | The branch is about | Reference |
 |---|---|
 | What is stored: new entities, fields, their shape and meaning | `references/types/data-model.md` |
+| The shape of a structured value that a schema validates, not a table: a JSON column's content, a payload crossing systems, a tool's arguments, a step's config | `references/types/schema.md` |
 | How a value moves between components: who produces it, who carries it, who persists it | `references/types/data-flow.md` |
 | How a value is derived or a decision is made from an input | `references/types/rules.md` |
 | What a program is made of: its components, what crosses between them, its inputs and outputs | `references/types/component-architecture.md` |

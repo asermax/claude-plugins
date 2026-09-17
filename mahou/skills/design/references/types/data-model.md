@@ -6,7 +6,7 @@ A branch about what is stored: a new entity, new fields on an existing one, or a
 
 The entities and fields the change adds or alters: type, nullability, the shape of the value when it is structured, what each key means, when the field is empty, and how new entities relate to existing ones. Who owns the shape when the storage does not validate it. What each field is for, in one sentence.
 
-It does not cover how a value gets there, who reads it or what happens when the owning record is copied or updated, those are data flows. It does not cover migrations, ORM declarations or the schemas of the services that carry the value, those are program design.
+It does not cover how a value gets there, who reads it or what happens when the owning record is copied or updated, those are data flows. It does not cover migrations, ORM declarations or the schemas of the services that carry the value, those are program architecture. The shape of a JSON value inside a column, when a schema rather than the table validates it, is a schema branch.
 
 ## What it needs to question
 

@@ -1,7 +1,6 @@
 ---
 name: agentic-review
-description: Refines the code in a change before a human reads it. Runs five facet reviewers per repository, fixes what they find inside the change's own scope, and repeats for up to three rounds.
-disable-model-invocation: true
+description: Refines the code in a change before a human reads it. Runs five facet reviewers per repository, fixes what they find inside the change's own scope, and repeats for up to three rounds. Typed by the user, or invoked by mahou:implement once a repository's code lands.
 ---
 
 Load mahou:basics first. Then read `.mahou/agentic-review.md` if present.

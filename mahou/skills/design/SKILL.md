@@ -8,7 +8,7 @@ Load mahou:basics first, then mahou:design-tree and mahou:docs. Then read `.maho
 
 # Design
 
-Takes a definition the user has settled and designs the system that satisfies it: what is stored, how it moves, what rules apply, and whatever else the change needs. The level is system design. What a program needs decided before it can be written, from its package layout to the contract of each part, belongs to mahou:program-architecture. Function signatures, file lists, migrations and test cases belong to the code itself. The output is a settled design tree, each branch carrying its prose and its representation, handed to mahou:write-documentation to be recorded.
+Takes a definition the user has settled and designs the system that satisfies it: what is stored, how it moves, what rules apply, and whatever else the change needs. The level is system design. What a program needs decided before it can be written, from its package layout to the contract of each part, belongs to mahou:program-architecture. Function signatures, file lists and migrations belong to the code itself. The test cases and manual validations that prove the design belong to mahou:test-design. The output is a settled design tree, each branch carrying its prose and its representation, handed to mahou:write-documentation to be recorded.
 
 ## Opening
 

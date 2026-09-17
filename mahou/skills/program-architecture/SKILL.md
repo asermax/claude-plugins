@@ -20,6 +20,8 @@ The decisions it leaves alone are the ones the code itself carries. Function sig
 
 A leaf that could be answered differently, and would change what a reader of the finished program sees, belongs here. A leaf the design, the language or a library already answers is not a leaf.
 
+The proof of the program, its test cases and manual validations, is not designed here either. mahou:test-design derives it from the settled design once this tree is complete.
+
 ## Opening
 
 1. Read the settled design, or the notes that record it. A `mahou:docs-scout` reads the notes so they stay out of this conversation.

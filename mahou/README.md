@@ -17,7 +17,7 @@ Four commitments, mirrored in `mahou:basics`:
 
 Not sure which skill fits? Describe the goal in plain words to `mahou:guide` and it routes you to the right skill. Know the skill you want? Name it directly.
 
-A piece of work usually runs through the skills in this order: `explore` to build the understanding, `shape` to settle the decisions, `design` to settle the system, then the code gets written, then `code-blast-radius`, `agentic-review` and `human-review` look at it, `write-documentation` records what got built, and `commit-changes` lands it. Each stage is its own skill and you start each one yourself.
+A piece of work usually runs through the skills in this order: `explore` to build the understanding, `shape` to settle the decisions, `design` and `program-architecture` to settle the system and the program, `test-design` to settle what proves it, `implement` to get it written (or you write it yourself), `validate` to see it working, then `code-blast-radius`, `agentic-review` and `human-review` look at it, `write-documentation` records what got built, and `commit-changes` lands it. Each stage is its own skill and you start each one yourself.
 
 ## Skills
 
@@ -25,11 +25,14 @@ Process, in the order work moves through them:
 
 - `mahou:explore`. User-guided investigation. Reads only the context you give it, states the problem back, then answers one question at a time through scouts, so the reading stays out of your context. Writes nothing.
 - `mahou:shape`. Settles the open decisions in a problem definition by working a design tree in rounds of questions until every branch is settled. Behavior and decisions only, never implementation.
-- `mahou:design`. Designs the system for a settled definition, one area at a time as a design tree (data model, data flow, rules, component architecture, contract, UI, extensible), then hands the tree to `write-documentation`. Above endpoints, functions and files.
+- `mahou:design`. Designs the system for a settled definition, one area at a time as a design tree (data model, schema, data flow, rules, component architecture, contract, UI, extensible), then hands the tree to `write-documentation`. Above endpoints, functions and files.
 - `mahou:program-architecture`. Turns a settled design into the architecture of the program that implements it, as a design tree (package layout, control flow, then a contract per part), extending `mahou:design` and reusing its types. Below the system, above function signatures, file lists and tests.
 - `mahou:spike`. Answers a design question by building the smallest working version of the real thing and running it against reality. Throwaway code that never merges; the answered question and the findings are the product.
+- `mahou:test-design`. Turns a settled design into the test cases and manual validations that prove it, before any code exists, with the Classification Tree Method: one tree per repository, entry points or flows as roots, classifications, partitions, then a combination matrix whose rows are marked test, manual or both. You settle every level.
+- `mahou:implement`. Gets a designed and test-designed change written by one subagent per repository, each briefed with the tasks, the design notes, its matrix rows, the repository rules and the report shape. Relays results and flags as decisions, then runs `agentic-review` per repository and `validate` one repository at a time. Moves tasks through whatever tracker the project declares. Writes no code and pushes nothing.
+- `mahou:validate`. Runs the manual rows against the running system, through a browser or over HTTP, with before and after state as evidence, and leaves an HTML report. Fixes nothing; every failure comes back as a decision.
 - `mahou:code-blast-radius`. Traces what an already-written change reaches, one tracer per changed element, and reports only where behavior changes for someone.
-- `mahou:agentic-review`. Typed only. Runs five facet reviewers per repository (reuse, simplification, efficiency, altitude, conventions from the wiki), fixes what they find inside the change's own scope, up to three rounds. The one skill that edits without asking, and it leaves everything uncommitted.
+- `mahou:agentic-review`. Typed, or invoked by `implement`. Runs five facet reviewers per repository (reuse, simplification, efficiency, altitude, conventions from the wiki), fixes what they find inside the change's own scope, up to three rounds. The one skill that edits without asking, and it leaves everything uncommitted.
 - `mahou:human-review`. Typed only. Collects your annotations on the change, verifies each against the code, and settles every finding with you before anything is edited.
 - `mahou:write-documentation`. Writes or updates a note in the project's `docs/`, following the project's own charter and templates. An overview first, then the sections from the project's template that the subject needs, reasoning in callouts beside the mechanism, present tense, a diagram whenever the subject has a shape.
 - `mahou:commit-changes`. Typed only. Conventional commits, grouped by logical change, grouping confirmed with you before anything is committed. Never pushes.

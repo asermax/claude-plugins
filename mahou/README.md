@@ -17,7 +17,7 @@ Four commitments, mirrored in `mahou:basics`:
 
 Not sure which skill fits? Describe the goal in plain words to `mahou:guide` and it routes you to the right skill. Know the skill you want? Name it directly.
 
-A piece of work usually runs through the skills in this order: `explore` to build the understanding, `shape` to settle the decisions, `design` and `program-architecture` to settle the system and the program, `test-design` to settle what proves it, `implement` to get it written (or you write it yourself), `validate` to see it working, then `code-blast-radius`, `agentic-review` and `human-review` look at it, `write-documentation` records what got built, and `commit-changes` lands it. Each stage is its own skill and you start each one yourself.
+A piece of work usually runs through the skills in this order: `explore` to build the understanding, `shape` to settle the decisions, `design` and `program-architecture` to settle the system and the program, `test-design` to settle what proves it, `implement` to get it written (or you write it yourself), `validate` to see it working, then `code-blast-radius`, `agentic-review` and `human-review` look at it, `write-documentation` records what got built, and `commit-changes` lands it. When the change spans repositories, `release-check` says what breaks in which deploy order and `land` takes it through the merges in the safe order. Each stage is its own skill and you start each one yourself.
 
 ## Skills
 
@@ -25,10 +25,10 @@ Process, in the order work moves through them:
 
 - `mahou:explore`. User-guided investigation. Reads only the context you give it, states the problem back, then answers one question at a time through scouts, so the reading stays out of your context. Writes nothing.
 - `mahou:shape`. Settles the open decisions in a problem definition by working a design tree in rounds of questions until every branch is settled. Behavior and decisions only, never implementation.
-- `mahou:design`. Designs the system for a settled definition, one area at a time as a design tree (data model, schema, data flow, rules, component architecture, contract, UI, extensible), then hands the tree to `write-documentation`. Above endpoints, functions and files.
+- `mahou:design`. Designs the system for a settled definition, one area at a time as a design tree (data model, schema, data flow, rules, lifecycle, component architecture, contract, UI, extensible), then hands the tree to `write-documentation`. Above endpoints, functions and files.
 - `mahou:program-architecture`. Turns a settled design into the architecture of the program that implements it, as a design tree (package layout, control flow, then a contract per part), extending `mahou:design` and reusing its types. Below the system, above function signatures, file lists and tests.
-- `mahou:spike`. Answers a design question by building the smallest working version of the real thing and running it against reality. Throwaway code that never merges; the answered question and the findings are the product.
-- `mahou:test-design`. Turns a settled design into the test cases and manual validations that prove it, before any code exists, with the Classification Tree Method: one tree per repository, entry points or flows as roots, classifications, partitions, then a combination matrix whose rows are marked test, manual or both. You settle every level.
+- `mahou:spike`. Answers a design question by building the smallest working version of the real thing and running it against reality. Throwaway code that never merges; the answered question and the findings are the product, and both live in the change's scratch folder.
+- `mahou:test-design`. Turns a settled design into the test cases and manual validations that prove it, before any code exists, with the Classification Tree Method: one tree per repository, entry points or flows as roots, classifications, partitions, then a combination matrix whose rows are marked test, manual or both. You settle every level. The settled trees and matrices are written to the change's scratch folder for `implement` to read across sessions.
 - `mahou:implement`. Gets a designed and test-designed change written by one subagent per repository, each briefed with the tasks, the design notes, its matrix rows, the repository rules and the report shape. Relays results and flags as decisions, then runs `agentic-review` per repository and `validate` one repository at a time. Moves tasks through whatever tracker the project declares. Writes no code and pushes nothing.
 - `mahou:validate`. Runs the manual rows against the running system, through a browser or over HTTP, with before and after state as evidence, and leaves an HTML report. Fixes nothing; every failure comes back as a decision.
 - `mahou:code-blast-radius`. Traces what an already-written change reaches, one tracer per changed element, and reports only where behavior changes for someone.
@@ -36,6 +36,8 @@ Process, in the order work moves through them:
 - `mahou:human-review`. Typed only. Collects your annotations on the change, verifies each against the code, and settles every finding with you before anything is edited.
 - `mahou:write-documentation`. Writes or updates a note in the project's `docs/`, following the project's own charter and templates. An overview first, then the sections from the project's template that the subject needs, reasoning in callouts beside the mechanism, present tense, a diagram whenever the subject has a shape.
 - `mahou:commit-changes`. Typed only. Conventional commits, grouped by logical change, grouping confirmed with you before anything is committed. Never pushes.
+- `mahou:release-check`. Says what breaks when the repositories of a change are released in a given order, and gives the order that breaks nothing. Finds the service boundaries from the diff and from you, including services the change does not touch, dispatches one `compat-checker` per boundary and `code-blast-radius` alongside, and reports the findings and the release order. Changes nothing.
+- `mahou:land`. Takes a written, reviewed change from its branches to merged pull requests, in the order that keeps production safe. Runs `release-check`, opens every pull request, watches them in parallel with one loop each (a review is reported and waits for you, `rebase` when behind, stop on a failed check, record on merge), then walks the confirmed order, watching each merge's CI run and stopping for your production confirmation before the next. Never merges a pull request; the release follows each project's own process.
 
 Entry points and tooling:
 
@@ -44,12 +46,18 @@ Entry points and tooling:
 - `mahou:wiki`. Distilled knowledge about technologies, tools, and their gotchas, indexed for progressive discovery.
 - `mahou:learn`. Typed only. The author's tool. Collects the points where a session generated friction (or takes your ask directly), and proposes new or iterated skills, agents, wiki entries and local files.
 
+Asked for by name:
+
+- `mahou:create-pull-request`. Opens a pull request from one branch, detecting its base from commit distance and writing the title and body from every commit on the branch. Waits for your confirmation before creating anything.
+- `mahou:rebase`. Brings a branch up to date with its base, resolves, verifies against the suite, and reports what moved. Never pushes.
+
 Loaded by other skills, never typed:
 
-- `mahou:basics`. Philosophy, rules, the local layer.
+- `mahou:basics`. Philosophy, rules, the scratch convention, the local layer.
 - `mahou:docs`. How to find the project's docs folder, what its structure is made of, and the rule that the charter wins. Loaded by `write-documentation`, `explore`, `design`, `init` and the two docs agents.
 - `mahou:design-tree`. The tree format, the frontier, the question and answer rules.
 - `mahou:changeset`. Which repositories, which base, which diff, and the rule separating what a change introduced from what predates it.
+- `mahou:lookup`. Where a fact comes from: the routing between the scouts and the researcher, the rule for facts outside the project, and how a verified fact is told apart from an asserted one. Loaded by `explore` and `design-tree`.
 - `mahou:prototype`. Shows a screen element as an interactive HTML prototype and iterates it with you, round by round. Loaded by `explore` when a question is about what something looks like, and by `design` for a UI branch.
 
 ## Agents
@@ -58,8 +66,9 @@ Dispatched by skills, never called directly. Every one writes findings and edits
 
 - `reuse-reviewer`, `simplification-reviewer`, `efficiency-reviewer`, `altitude-reviewer`, `conventions-reviewer`: one angle each, dispatched by `agentic-review`. The conventions reviewer reads the wiki entries for the technologies the diff touches and cites them.
 - `usage-tracer`: one changed element, every repository in scope, dispatched by `code-blast-radius`.
-- `code-scout`, `docs-scout`: one question against one repository or the project's docs folder, dispatched by `explore` and `design`.
-- `researcher`: one question about a library, tool or platform outside the project, answered with facts and sources and no recommendation, dispatched by `explore`, `design` and `program-architecture`.
+- `code-scout`, `docs-scout`: one question against one repository or the project's docs folder, dispatched through `mahou:lookup` by `explore` and `design-tree`.
+- `researcher`: one question about a library, tool or platform outside the project, answered with facts and sources and no recommendation, dispatched through `mahou:lookup`.
+- `compat-checker`: one service boundary, testing the new side against the deployed other side in both directions, dispatched by `release-check`.
 - `documentation-reviewer`: one draft against the project's charter and template, dispatched by `write-documentation`.
 
 ## The project's docs
@@ -79,6 +88,8 @@ The plugin is the global store: skills live in `skills/`, wiki entries in `skill
 - `.mahou/wiki/` for local wiki entries, with the same index-per-level shape.
 
 Local wins over global when the two conflict, and whether `.mahou/` is committed is each project's call.
+
+Separately, `.scratch/<change-slug>/` at the project's root holds the artifacts a skill produces for you and keeps between rounds: design handoffs, prototypes, drafts. It is meant to be gitignored; throwaways still go to `/tmp`.
 
 ## Dependencies
 

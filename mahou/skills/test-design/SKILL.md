@@ -50,7 +50,7 @@ A row is dropped, never silently, when no realistic input reaches it. Examples o
 
 ## Ending
 
-When every tree is settled, show them together with, per tree, the row range, the count of test rows and the manual picks, and list the implementation tasks the trees surfaced. mahou:implement takes the trees as input; mahou:validate runs the manual rows.
+When every tree is settled, show them together with, per tree, the row range, the count of test rows and the manual picks, and list the implementation tasks the trees surfaced. Write each settled tree with its matrix to the change's scratch folder, at `test-design/<repo>.md`, so the trees survive the session. mahou:implement takes the trees as input; mahou:validate runs the manual rows.
 
 ## What this skill is not
 

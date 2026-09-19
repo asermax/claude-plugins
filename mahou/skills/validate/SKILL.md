@@ -53,7 +53,7 @@ When a change touches both, load both and run each row against its surface. Foll
 
 Validation produces a report artifact on disk and a summary in the reply that points at it. The artifact is not optional.
 
-One HTML file per run, at `/tmp/<change>-<surface>-report/index.html`, with every asset in the same folder referenced by relative path. Self-contained, no external resources. Build it as the rows run, not at the end, so a run that stops half way still leaves what it saw.
+One HTML file per run, in the change's scratch folder at `reports/<surface>/index.html`, per the convention in mahou:basics, with every asset in the same folder referenced by relative path. Self-contained, no external resources. Build it as the rows run, not at the end, so a run that stops half way still leaves what it saw.
 
 In order:
 

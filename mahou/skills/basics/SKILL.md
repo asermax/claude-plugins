@@ -31,6 +31,12 @@ Comments never go inside a structure definition. Object and array literals, payl
 
 This holds in every repository, whatever the language.
 
+## Scratch folder
+
+Every artifact a skill produces for the user and keeps between rounds goes under `.scratch/<change-slug>/` in the project's root, never under `/tmp`: a design handoff, a prototype, a draft, a research file. One directory named after the current change, holding the files the skill writes: `handoff.md`, `design.md`, `research.md`, a `prototypes/` folder, a `reports/` folder, a `test-design/` folder, a `spikes/` folder, whatever the skill defines. A skill that reopens a file reopens it from there, so the folder survives compaction, restarts and the next day. Throwaway files that are not to be reused, such as a diagram written only to validate it, may still use `/tmp`.
+
+Skills say "the change's scratch folder" and name only the path inside it.
+
 ## The wiki
 
 Knowledge about technologies and tools, their gotchas and their patterns, lives in mahou:wiki, indexed one level per folder so entries load on demand. Load it now and read its root indexes, global and local, so that you know which topics have entries when they come up in conversation. Read an entry only when the skill you are running says so, or when the user asks for a check against the conventions for a technology. Do not bring an entry's conventions into a question the user has not asked; when a topic with an entry comes up in a decision, say the entry exists and offer to read it.

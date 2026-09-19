@@ -34,6 +34,16 @@ The charter owns the shape. The content rules are the framework's:
 
 **A diagram whenever the subject has a shape.** A state machine, a data model, a sequence or a request's path all read faster drawn. Follow the charter's convention; where it names mermaid, do not draw in ASCII, and validate every diagram with superpowers:mermaid-validation before the draft is shown.
 
+**Strip the working session out of the note.** The tree or code a note comes from may name projects, tools, repositories and the current implementation; the note gets shared, so the draft drops them. In the draft:
+
+- Name roles, not products, when the design is generic: "the assistant" rather than a product's name, unless the design is that product's alone.
+- Name another note or tool only when the design depends on it, and then as a link at the point of dependency.
+- No component, library or package names.
+- No description of the current implementation or of what a repository still lacks; those descriptions belong to tasks.
+- No sentences about who owns a piece of work.
+- Never describe the prototype's controls or its file.
+- Cut any sentence that compares the design with how things work today.
+
 ## 3. Describe the present
 
 No "used to", no "previously", no "no longer", no "replaced by". A rejected alternative is *considered and not chosen, because…*, a standing reason, not a history of the argument.

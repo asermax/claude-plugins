@@ -35,9 +35,9 @@ Open one branch at a time, in order. The first opens with the tree's approval. E
 
 3. **Ask the frontier.** It goes in the reply after the confirmation. The reference lists what the branch needs to question; what is still open among those becomes the frontier. A situation the definition does not mention is a hypothetical and follows the Scope section of `design-tree`: raised in one question, opened only when the user picks it. Record a deferred situation as a ✓ leaf under the branch, reading "not considered: <situation>". Do not ask about the representation.
 
-4. **Split when asked.** When the user wants the parts of a branch reasoned about separately, add a level, one sub-branch per part, and work them one at a time, each with its own prose, frontier and representation.
+4. **Split when asked.** When the user wants the parts of a branch reasoned about separately, add a level, one sub-branch per part, and work them one at a time, each with its own prose, frontier and representation. When the parts describe one thing, the user may ask for them to render as one representation and one section once the user has settled them all; the sub-branches keep their own leaves in the tree.
 
-5. **Render when settled.** Once every leaf is ✓, produce the branch's representation in the reference's form when one matches: the diagram, validated, or the prototype reconciled through mahou:prototype. The user asks for a different form when they want one, and when they want to compare, render the candidates side by side. When no reference matches, ask which form before rendering. The prose under the representation is the opening statement extended with the new leaves, not a new draft, and explains what the representation does not show. Numbered steps in prose refer to the diagram's numbers. Show the whole tree with the branch settled and stop. Open the next branch when the user approves.
+5. **Render when settled.** Once every leaf is ✓, produce the branch's representation in the reference's form when one matches: the diagram, validated, or the prototype reconciled through mahou:prototype. The user asks for a different form when they want one, and when they want to compare, render the candidates side by side. When no reference matches, ask which form before rendering. The prose under the representation is the opening statement extended with the new leaves, not a new draft, and explains what the representation does not show. Numbered steps in prose refer to the diagram's numbers. When another note or an earlier branch already settles a behaviour, reference it in one sentence and do not draw it again; the representation shows only what this branch adds. Show the whole tree with the branch settled and stop. Open the next branch when the user approves.
 
 ### Types
 
@@ -47,6 +47,7 @@ Open one branch at a time, in order. The first opens with the tree's approval. E
 | The shape of a structured value that a schema validates, not a table: a JSON column's content, a payload crossing systems, a tool's arguments, a step's config | `references/types/schema.md` |
 | How a value moves between components: who produces it, who carries it, who persists it | `references/types/data-flow.md` |
 | How a value is derived or a decision is made from an input | `references/types/rules.md` |
+| The states one thing passes through, what moves it between them and what each state shows | `references/types/lifecycle.md` |
 | What a program is made of: its components, what crosses between them, its inputs and outputs | `references/types/component-architecture.md` |
 | What a component agrees with the rest of the system: its inputs and their sources, what it exposes, the value it hands on | `references/types/contract.md` |
 | What the user sees on a screen: placement, states, encodings, interactions | `references/types/ui.md` |

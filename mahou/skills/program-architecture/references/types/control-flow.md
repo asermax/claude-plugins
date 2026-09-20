@@ -20,7 +20,7 @@ It does not cover how any one step reaches its result, which is a rules branch, 
 
 ## Representation
 
-A top-to-bottom flowchart from the entry node to the terminal nodes. A repeated step is a subgraph. An edge that ends the run early is dotted and labelled with what went wrong. Then prose walking the diagram, covering what it cannot show: which order is required, what each failure kind does, and what the outcome means.
+A top-to-bottom flowchart from the entry node to the terminal nodes, when one actor's steps are the subject. When several actors interact and the interactions are not linear, a flowchart is hard to follow and a sequence diagram is the form instead: the actors as participants, each interaction a message, `alt` blocks for the branches. A repeated step is a subgraph in the flowchart and a `loop` block in the sequence diagram. An edge that ends the run early is dotted and labelled with what went wrong. Then prose walking the diagram, covering what it cannot show: which order is required, what each failure kind does, and what the outcome means.
 
 ```mermaid
 flowchart TD
@@ -36,6 +36,25 @@ flowchart TD
     done -->|No| ok(["Exit 0"])
     a -. error .-> abort(["Print the error, exit 1"])
     b -. error .-> abort
+```
+
+For a many-actor flow, the sequence shape:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Caller
+    participant S as Service
+    participant Q as Queue
+    C->>S: submit (input)
+    S->>Q: enqueue (id)
+    alt the queue is free
+        Q->>S: accept now
+    else the queue is busy
+        Q->>Q: hold the id
+        Q->>S: accept when free
+    end
+    S-->>C: the outcome
 ```
 
 The prose states which steps had to be in that order and which happen to be, since the diagram shows only that they are.

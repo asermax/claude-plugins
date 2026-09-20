@@ -62,7 +62,7 @@ When the tree is complete, the project's docs record it, and mahou:write-documen
 
 2. **New notes.** The change may need one note or several. Propose the split, and the user settles it.
 
-Then run mahou:write-documentation once per note, giving it the tree. Each settled branch already carries its prose and its representation, so drafting is mostly moving that text into the note; `write-documentation` fits it to the project's charter and templates, which this skill never reads.
+Then run mahou:write-documentation once, giving it the tree and every settled amendment, so the pass weighs the whole documentation rather than one note at a time. Each settled branch already carries its prose and its representation, so drafting is mostly moving that text into the note; `write-documentation` fits it to the project's charter and templates, which this skill never reads.
 
 ## What this skill is not
 

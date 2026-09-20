@@ -48,6 +48,12 @@ The design is settled, so read the code whenever a partition, an expectation or 
 
 A row is dropped, never silently, when no realistic input reaches it. Examples of the kind of reason, not a list: two systems sharing the same schema cannot produce a validation error between them; a value that only a hidden record carries cannot appear in a response; a state the flow cannot re-enter cannot be observed. State the reason in one line under the branch, so the row is not proposed again.
 
+## Recording the design back
+
+Questioning a tree settles more than tests: a member the design missed, a mechanism renamed mid-round, a gap the partitions exposed. Collect every amendment the trees produced, from what was read during the work; when the set is incomplete, say so. The user settles each one: amend the note, or carry it as an open decision.
+
+Then run mahou:write-documentation once, handing it every settled amendment together, so it weighs how the changes affect the whole documentation rather than only the pieces the trees touched. An amendment landed during test-design follows the recording discipline the design itself followed: the text is shown before it lands, and unsloped with the note it joins.
+
 ## Ending
 
 When every tree is settled, show them together with, per tree, the row range, the count of test rows and the manual picks, and list the implementation tasks the trees surfaced. Write each settled tree with its matrix to the change's scratch folder, at `test-design/<repo>.md`, so the trees survive the session. mahou:implement takes the trees as input; mahou:validate runs the manual rows.

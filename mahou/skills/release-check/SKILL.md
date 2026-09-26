@@ -55,7 +55,7 @@ Report, in this order:
 - the boundaries checked, and which ones came from the user rather than the diff
 - the findings, each with the boundary, the direction, the file and line on each side, and the attribution
 - the release order, with the reason for each position
-- the periods inside one repository when old and new code run together, such as migrations against pods still on the old code, for the user to decide on
+- the periods inside one repository when old and new code run together, such as migrations against instances still running the old code, for the user to decide on
 
 Repositories with no dependency between them can release in any order; say so.
 

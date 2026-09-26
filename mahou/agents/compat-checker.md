@@ -23,7 +23,7 @@ Checks one boundary between a caller and a callee and reports which version pair
 
    - New callee, deployed caller. Does the caller's schema still accept what the callee now returns, and does the callee still accept what the caller sends? Check how strict the caller's models are. The deployed version of a union that gained a member on the branch rejects that member; a payload model that ignores unknown fields tolerates a new one.
    - New caller, deployed callee. Does the deployed callee accept the new request, and does the new caller accept the old response?
-   - Migrations on the changed side against its own pods still running the deployed code, during the rollout.
+   - Migrations on the changed side against its own instances still running the deployed code, during the rollout.
    - A caller that keeps running an old build against the new callee.
 
 4. For each break, name the request or response, the field, the file and line on both sides, and what fails: a validation error, a wrong route, a missing key. Read both versions of the lines; do not infer from names.

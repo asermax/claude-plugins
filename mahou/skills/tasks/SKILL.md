@@ -13,7 +13,7 @@ Takes a design the user has settled and produces the tasks that implement it, in
 
 Read `.mahou/implement.md`. The project names its task tracker there, the tool that reaches it, and the states a task moves through. When that file is absent, ask the user which tracker holds the backlog and how to reach it, for example an MCP server, a CLI, or a file path. Whatever the mechanism, the skill works through it and never invents a second source of truth.
 
-Tell the user the project has no tracker and write no tasks; mahou:implement works without one.
+When the user says the project has no tracker, say so and write no tasks; mahou:implement works without one.
 
 ## Deriving the tasks
 

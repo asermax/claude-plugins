@@ -51,6 +51,7 @@ Open one branch at a time, in order. The first opens with the tree's approval. E
 | What a program is made of: its components, what crosses between them, its inputs and outputs | `references/types/component-architecture.md` |
 | What a component agrees with the rest of the system: its inputs and their sources, what it exposes, the value it hands on | `references/types/contract.md` |
 | What the user sees on a screen: placement, states, encodings, interactions | `references/types/ui.md` |
+| How the constructs of a source map to what a value carries: which part each becomes and in what form | `references/types/mapping.md` |
 
 A branch that fits none of these is worked out with the user. A type that turns out to generalize beyond this session is a candidate for mahou:learn to add to this table.
 

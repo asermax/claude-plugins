@@ -44,6 +44,7 @@ As `design` describes it, against its types table extended with the rows below. 
 |---|---|
 | How the code is distributed, published and run | `references/types/package-layout.md` |
 | What the program does in order, and what it returns | `references/types/control-flow.md` |
+| Which parts one request passes through, and where a value it carries enters and lands | `references/types/callstack.md` |
 
 A branch that fits no row in either table is worked out with the user, as in `design`.
 

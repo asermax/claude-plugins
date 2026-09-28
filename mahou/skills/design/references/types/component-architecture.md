@@ -6,7 +6,7 @@ A branch about what a program is made of: the components a run passes through, w
 
 The components, named, each with one responsibility stated so that a reader knows which component a later question belongs to. The inputs the program takes and the outputs it produces. What crosses from one component to the next, by name, at the level of "parsed diagrams and parse failures", never a type. The order components run in and whether that order is required or incidental. What is pluggable, and where the plugged-in pieces come from.
 
-It does not cover the shape of anything that crosses between components, that is a contract branch, and it does not cover how any one component derives its result, that is a rules or data-flow branch. Function, module and file names are program design.
+It does not cover the shape of anything that crosses between components; that is a contract branch. How a component derives its result is a rules or data-flow branch. Function, module and file names are program design.
 
 ## What it needs to question
 

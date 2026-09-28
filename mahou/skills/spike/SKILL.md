@@ -7,15 +7,15 @@ Load mahou:basics first. Then read `.mahou/spike.md` if present.
 
 # Spike
 
-A spike is code written to answer a question. The answer is the product; the code is not. It is built small, run against reality, and thrown away. It is never merged, never the starting point of the real implementation, which gets built clean once the question is settled.
+A spike is code written to answer a question. The answer is the product; the code is not. You build it small, run it against reality, and throw it away. It never merges, never the starting point of the real implementation, which gets built clean once the question is settled.
 
 ## The process
 
 1. **Name the question.** One design question that reading and asking cannot settle: whether an approach holds, what shape something should take, what actually happens when the real thing runs. A question a document or a scout can answer does not need a spike.
 
-2. **Build the smallest working version of the real thing.** It works, against real inputs, under real conditions. A mock answers nothing. Build it as small as the question allows, and build only what the question asks about. Build it in the change's scratch folder, at `spikes/<question-slug>/`, so nothing of it touches a repository.
+2. **Build the smallest working version of the real thing.** It works, against real inputs, under real conditions. A mock answers nothing. Build only what the question asks about. Build it in the change's scratch folder, at `spikes/<question-slug>/`, so nothing of it touches a repository.
 
-3. **Run it against reality and observe.** Whatever can tell you the answer is the reactor: real data, a real run, a person reacting, another agent attempting the task. You choose the reactor for the spike; it is not prescribed. What actually happens is the result, and the gap between that and what was expected is usually the finding.
+3. **Run it against reality and observe.** Whatever can tell you the answer is the reactor: real data, a real run, a person reacting, another agent attempting the task. You choose the reactor for the spike; it is not prescribed. What happens is the result, and the gap between that and what was expected is usually the finding.
 
 4. **Iterate in rounds under a strategy.** A round changes something and produces an outcome; the outcome settles a decision or sharpens the question, and the next round builds on what settled. Load the strategy for changing things from `references/strategies/` and pick it per spike:
 
@@ -26,8 +26,8 @@ A spike is code written to answer a question. The answer is the product; the cod
 
    A spike may invent its own strategy; when one works, it is a candidate for mahou:learn to add here.
 
-5. **Stop when the question is answered.** Record the answer and the findings in the spike's folder. Every surprise along the way is input to the design that follows. The artifacts stay as reference material for whoever builds the real thing.
+5. **Stop when the question is answered.** Record the answer and the findings in the spike's folder. Every surprise is input to the design that follows. The artifacts stay as reference material for whoever builds the real thing.
 
 ## What a spike never does
 
-It never decides for the user. The spike brings the outcome; the design decisions it raises go back as questions. It never grows a second question. A new question is a new spike. And it never becomes the implementation. Extracting the real thing from spike code keeps every shortcut the throwaway allowed.
+It never decides for the user. The spike brings the outcome; the design decisions it raises go back as questions. It never grows a second question. A new question is a new spike. Extracting the real thing from spike code keeps every shortcut the throwaway allowed.

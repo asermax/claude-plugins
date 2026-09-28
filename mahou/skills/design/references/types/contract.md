@@ -1,12 +1,12 @@
 # Contract
 
-A branch about what a component agrees with the rest of the system: what it is given, what it exposes for others to call or register, and what it hands on. Any process has a contract; the branch splits into the parts the component actually has, and a component with no interface or no output simply lacks that part.
+A branch about what a component agrees with the rest of the system: what it is given, what it exposes for others to call or register, and what it hands on. Any process has a contract; the branch splits into the parts the component has, and a component with no interface or no output lacks that part.
 
 ## What it covers
 
 Inputs: each value the component is given, where it comes from, whether it is required, what its default is, and how several sources of the same value combine. Interface: each member others call or register through, what question it answers and who asks it. Outputs: the value the component hands on, its parts, what each carries, which are optional and what absent means, and who validates it.
 
-It does not cover how the component derives its output from its inputs, that is a rules branch, nor how a value moves through several components, that is a data flow. It does not cover storage: a value that is persisted is a data model. Type names, function signatures and file formats are program design, except where a format is itself the decision, such as the file a configuration is read from.
+It does not cover how the component derives its output from its inputs; that is a rules branch. A value moving through several components is a data flow. It does not cover storage: a value that is persisted is a data model. Type names, function signatures and file formats are program design, except where a format is itself the decision, such as the file a configuration is read from.
 
 ## What it needs to question
 
@@ -26,7 +26,7 @@ Outputs:
 
 - The parts of the value and what each carries.
 - Which parts are optional and what an absent part means, as opposed to an empty one.
-- Whether the value is passed as produced or transformed on the way, and whether it has to survive a boundary, a process, a file, a network, that constrains its shape.
+- Whether the value is passed as produced or transformed on the way. Whether it has to cross a boundary, such as a process, a file, or a network, which constrains its shape.
 - Who validates it, the producer or the consumer, and what an invalid value does.
 
 ## Representation

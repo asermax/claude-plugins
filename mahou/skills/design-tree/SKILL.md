@@ -74,6 +74,10 @@ Before sending a round, reread every question, check that the context is complet
 
 When the user asks for the options or for your opinion, give the facts and the current state that bear on the choice: what exists, what earlier decisions constrain it, what a candidate would have to satisfy. Enumerate candidates only when they ask for that, evenly, and give a verdict only when they ask for one explicitly, marked as yours.
 
+## When the user does not follow a question
+
+When the user says they do not understand a question, or asks what it means, restate it before asking again, following `references/explaining.md`. The restatement replaces the question's body; the question keeps its number.
+
 ## Scope
 
 A question is about what the definition covers. A situation the definition does not mention is a hypothetical: a value that might be missing, a step that might fail, two requests arriving at once, a feature that might come later. A checklist in the loading skill or in a type reference may name such situations. The checklist says what to look for. It does not make each item a decision to ask.

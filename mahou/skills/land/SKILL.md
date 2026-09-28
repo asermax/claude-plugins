@@ -24,7 +24,7 @@ Report every PR URL.
 
 Start one background loop per PR that polls at a fixed interval and exits on the first of these:
 
-- a review arrived with unresolved threads, or findings in its body
+- an unresolved review thread appeared, or the review body has a finding without a thread
 - the branch fell behind its base
 - a check failed
 - the PR was merged
@@ -37,7 +37,7 @@ plus the review threads through the GraphQL API (`gh api graphql`, the `reviewTh
 
 When a loop exits, handle that PR and start its loop again:
 
-- **Review.** Report the findings and threads verbatim and stop. The user settles what each one means: they answer it in GitHub, or they tell you what to change, and the fixes, commits, pushes and thread resolutions follow their word.
+- **Review.** Run mahou:address-pr-review on that PR. It settles the findings with the user, applies what they approve, commits, pushes and resolves the threads.
 - **Behind its base.** Run mahou:rebase, which never pushes. Report what moved and push once the user confirms.
 - **Failed check.** Report the check with its URL and stop for the user.
 - **Merged.** Record it.

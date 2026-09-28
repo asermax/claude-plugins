@@ -1,6 +1,6 @@
 ---
 name: agentic-review
-description: Refines the code in a change before a human reads it. Runs five facet reviewers per repository, fixes what they find inside the change's own scope, and repeats for up to three rounds. Typed by the user, or invoked by mahou:implement once a repository's code lands.
+description: Refines the code in a change before a human reads it. Runs four facet reviewers and one conventions reviewer per wiki entry and per project rule file on each repository, fixes what they find inside the change's own scope, and repeats for up to three rounds. Typed by the user, or invoked by mahou:implement once a repository's code lands.
 ---
 
 Load mahou:basics first. Then read `.mahou/agentic-review.md` if present.
@@ -24,11 +24,13 @@ A finding whose fix would break any of those becomes a skipped finding in the re
 
 ## Step 1: Establish the changeset
 
-Load mahou:changeset for the repositories, the base, and the diff. Follow the wiki indexes to the entries about the technologies the diff touches; the conventions facet reviews against them and every fix has to follow them, together with the project's `CLAUDE.md` and `.mahou/basics.md` when present.
+Load mahou:changeset for the repositories, the base, and the diff.
+
+Then settle the conventions list, the sources the conventions reviewers check the change against. When the caller passes one, use it as given. When it does not, follow the wiki indexes, global and local, to the entries about the technologies the diff touches, and add the project's `CLAUDE.md` and `.mahou/basics.md` when present. Open every source on the list. Every fix has to follow them.
 
 ## Step 2: Dispatch the facet reviewers
 
-Five per repository, one per facet, all in a single message so they run together.
+Per repository, one reviewer per facet and one conventions reviewer per source on the list, all in a single message so they run together.
 
 | Facet | Agent | Looks for |
 |---|---|---|
@@ -36,9 +38,9 @@ Five per repository, one per facet, all in a single message so they run together
 | Simplification | `mahou:simplification-reviewer` | redundant or derivable state, copy-paste with variation, deep nesting, dead code left behind |
 | Efficiency | `mahou:efficiency-reviewer` | redundant computation, repeated I/O, independent work run sequentially, closures pinning large scopes |
 | Altitude | `mahou:altitude-reviewer` | special cases layered on shared infrastructure where the mechanism underneath should generalize instead |
-| Conventions | `mahou:conventions-reviewer` | departures from the wiki entries and the project's standing rules the change touches |
+| Conventions | `mahou:conventions-reviewer`, one per source | departures from the one wiki entry or rule file it is given |
 
-Give each one the repository's absolute path, the base, the diff, and the path to write its findings to. Give the conventions reviewer the path of the project's `CLAUDE.md` as well; it loads mahou:wiki itself.
+Give each one the repository's absolute path, the base, the diff, and the path to write its findings to. Give each conventions reviewer the path of its source as well, and a findings path of its own.
 
 Reviewers write findings to that file and return the path and a count. Nothing comes back in the message body, which truncates long reports and costs a round trip to recover.
 

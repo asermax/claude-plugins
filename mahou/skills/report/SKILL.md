@@ -31,3 +31,7 @@ An investigation touches more than it needs to report. Cut what does not serve t
 ## Structure by what the reader needs, not by where it came from
 
 When several searches, agents, or rounds feed one report, organize it around the questions they answer, not around which one produced which piece. "Agent 1 found X, agent 2 found Y" tells the reader about the work, not about the answer.
+
+## Name what you refer to
+
+Refer to code, rows, questions and items by their name or by what they do, not by a bare pointer. Write "the delete button in the student editor removes by the sorted index", not ":120"; write "the collision question", not "Q4". A line number, row id or question number on its own makes the reader stop and look it up before the sentence means anything. A `file:line` reference can follow the name as a pointer to the place, but it never stands in for the name.

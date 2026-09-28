@@ -1,6 +1,6 @@
 ---
 name: validate
-description: Runs a change's manual validation rows against the running system and leaves an evidence report. Takes the manual rows from mahou:test-design, or the scenarios the user names when there is no test design, drives each one through a browser or over HTTP, records what it observed with before and after state, and reports every failure as a decision without fixing anything. Use after the tests are green, before human-review, or whenever the user asks to see a change working.
+description: Runs a change's manual validation rows against the running system and leaves an evidence report. Takes the manual rows from mahou:test-design, or the scenarios the user names when there is no test design, drives each one through a browser, over HTTP, or on an Android device, records what it observed with before and after state, and reports every failure as a decision without fixing anything. Use after the tests are green, before human-review, or whenever the user asks to see a change working.
 argument-hint: <the manual rows or scenarios, the change under validation and the repositories it touches>
 ---
 
@@ -44,8 +44,9 @@ Load the reference for the surface under validation:
 
 - [references/browser.md](references/browser.md) for a surface a person drives in a browser.
 - [references/http.md](references/http.md) for an API driven with `curl`.
+- [references/android.md](references/android.md) for a mobile app driven on an Android device or emulator.
 
-When a change touches both, load both and run each row against its surface. Follow each row's setup, perform its steps, observe, and record PASS or FAIL with the evidence the reference names. Every row runs, in id order; a failing row is recorded and the run continues.
+When a change touches more than one surface, load each reference and run each row against its surface. Follow each row's setup, perform its steps, observe, and record PASS or FAIL with the evidence the reference names. Every row runs, in id order; a failing row is recorded and the run continues.
 
 **Fix nothing during validation.** A failure comes back to the user as a decision, with its evidence. When a failure blocks later rows, say which rows it blocks and ask before skipping them.
 

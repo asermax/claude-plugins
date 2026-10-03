@@ -1,15 +1,14 @@
 ---
 name: commit-changes
-description: Commits the changes in the repository as conventional commits, grouping related files and confirming the grouping with the user before anything is committed.
+description: Commits the changes in the repository as conventional commits, grouping related files and confirming the grouping with the user before anything is committed. Use when the user asks to commit, or when another mahou skill reaches its commit step.
 allowed-tools: Read, Bash, Glob, Grep
-disable-model-invocation: true
 ---
 
 Load mahou:basics first. Then read `.mahou/commit-changes.md` if present.
 
 # Commit changes
 
-Commits the changes done to this repository using conventional commits (https://www.conventionalcommits.org/en/v1.0.0/). This is the one skill whose job is committing, so the user typing it is the consent `basics` asks for. Pushing is not part of the job.
+Commits the changes done to this repository using conventional commits (https://www.conventionalcommits.org/en/v1.0.0/). This is the one skill whose job is committing, so the user asking for it, or a skill reaching a commit step the user approved, is the consent `basics` asks for. Pushing is not part of the job.
 
 ## Message format
 

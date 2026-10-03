@@ -72,9 +72,9 @@ Run the repository's linters and tests afterwards, scoped to the files you touch
 
 ## Step 7: Land
 
-No further question. The user approved the findings; the commit procedure asks about the grouping; nothing else needs consent.
+No further question. The user approved the findings; mahou:commit-changes asks about the grouping; nothing else needs consent.
 
-1. Commit following `${CLAUDE_PLUGIN_ROOT}/skills/commit-changes/SKILL.md`, read and followed as written. mahou:commit-changes is typed only, so it cannot be invoked from here; its procedure owns the grouping and the message format all the same.
+1. Invoke mahou:commit-changes. It owns the grouping and the message format.
 2. Push the branch.
 3. Resolve every thread the user ruled on, applied or declined, by its `id` from Step 3:
 

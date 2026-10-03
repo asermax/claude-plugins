@@ -6,7 +6,7 @@ A branch about how the constructs of one source map to what a value carries: whi
 
 Every construct of the source the definition names, the part of the value each one becomes, and the form it takes there. The constructs that produce nothing, and the ones whose treatment is deferred. Where one construct nested inside another changes what the outer one becomes.
 
-It does not cover the code that performs the conversion, that is program architecture. It does not cover the keys and types of the value, that is a schema.
+It does not cover the code that performs the conversion, that is program design. It does not cover the keys and types of the value, that is a schema.
 
 ## What it needs to question
 

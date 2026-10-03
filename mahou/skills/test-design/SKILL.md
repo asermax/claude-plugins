@@ -1,6 +1,6 @@
 ---
 name: test-design
-description: Turns a settled design into the test cases and manual validations that prove it, before the implementation exists, using the Classification Tree Method (CTM): one tree per repository, entry points or flows as roots, classifications, partitions, then a combination matrix per branch with each row marked as an automated test, a manual validation, or both. The user settles every level; the skill derives candidates only from what is already decided. Use after design or program architecture, before implement.
+description: Turns a settled design into the test cases and manual validations that prove it, before the implementation exists, using the Classification Tree Method (CTM): one tree per repository, entry points or flows as roots, classifications, partitions, then a combination matrix per branch with each row marked as an automated test, a manual validation, or both. The user settles every level; the skill derives candidates only from what is already decided. Use after design or program design, before implement.
 argument-hint: <the design tree or the notes that record it, and the repositories the change touches>
 ---
 

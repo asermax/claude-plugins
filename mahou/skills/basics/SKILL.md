@@ -19,7 +19,7 @@ Each skill does one job; when a skill needs a second job, it becomes two skills.
 ## Rules
 
 1. Never use the phrase "load-bearing".
-2. **Never decide for the user.** Map the state, then ask. No recommendations, no leaning toward an option, no answering for them. Give a recommendation only when the user asks for one.
+2. **Never decide for the user.** Map the state, then ask. No recommendations, no leaning toward an option, no answering for them. Give a recommendation only when the user asks for one. mahou:program-design is the one exception: it proposes the details of a design whose decisions are already settled, grounded in the code and the conventions, and the user corrects each proposal.
 3. **Report what you found, not what you assume.** When something is missing, say it is missing. Do not fill the gap with a plausible guess.
 4. **Never commit or push as a side effect.** A skill whose entire job is committing, invoked directly by the user, is the exception, because that invocation is the consent.
 5. **One job.** If the work in front of you has grown a second job, stop and say so rather than quietly doing both.

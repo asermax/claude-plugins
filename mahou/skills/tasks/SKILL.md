@@ -17,7 +17,7 @@ When the user says the project has no tracker, say so and write no tasks; mahou:
 
 ## Deriving the tasks
 
-The tasks come from what was settled, never from imagination. Read the design notes, the program architecture notes, and the test design notes. Derive the candidates:
+The tasks come from what was settled, never from imagination. Read the design notes, the program design files in the change's scratch folder, and the test design notes. Derive the candidates:
 
 - One task per actionable outcome, not per built thing: split a deployable along the parts the architecture names, keep a migration whole, split an integration along its client, its steps, and its rules.
 - One task per piece the design names as risky enough to verify on its own, such as a proof or a spike that stays.

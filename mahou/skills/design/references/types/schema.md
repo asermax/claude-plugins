@@ -6,7 +6,7 @@ A branch about the shape of a structured value that a schema validates rather th
 
 The keys of the value, the type of each, which are optional and what absent means, and the variants when the value is a union. Which schema owns the shape and where it runs: the producer, the consumer, or both with the same rules. What each key is for, in one sentence. When the same shape has a name at each hop, which name each system uses for it.
 
-It does not cover the table or column that holds the value, that is a data model. It does not cover how the value moves between systems, that is a data flow. It does not cover Pydantic models, zod schemas or type names, those are program architecture.
+It does not cover the table or column that holds the value, that is a data model. It does not cover how the value moves between systems, that is a data flow. It does not cover Pydantic models, zod schemas or type names, those are program design.
 
 ## What it needs to question
 

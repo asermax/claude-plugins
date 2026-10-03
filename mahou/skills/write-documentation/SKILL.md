@@ -32,12 +32,14 @@ The charter owns the shape. The content rules are the framework's:
 
 **Every section explains something that exists.** A section that only introduces, summarizes or lists what other sections hold does not belong.
 
-**A diagram whenever the subject has a shape.** A state machine, a data model, a sequence or a request's path all read faster drawn. Follow the charter's convention; where it names mermaid, do not draw in ASCII, and validate every diagram with superpowers:mermaid-validation before the draft is shown.
+**A diagram whenever the subject has a shape.** A state machine, a data model, a sequence or a request's path all read faster drawn. Follow the charter's convention; where it names mermaid, do not draw in ASCII, and validate every diagram with superpowers:mermaid-validation before the draft is shown. Place each diagram next to the prose it illustrates.
+
+**An attachment sits where the prose refers to it.** A prototype, an image or an exported drawing goes where the charter puts attachments, linked at the point the prose needs it, with a caption that names what it shows. The note keeps no local or scratch path to the file.
 
 **Strip the working session out of the note.** The tree or code a note comes from may name projects, tools, repositories and the current implementation; the note gets shared, so the draft drops them. In the draft:
 
 - Name roles, not products, when the design is generic: "the assistant" rather than a product's name, unless the design is that product's alone.
-- Name another note or tool only when the design depends on it, and then as a link at the point of dependency.
+- Name another note or tool only when the design depends on it, and then as a link at the point of dependency, never collected in a list at the end.
 - No component, library or package names.
 - No description of the current implementation or of what a repository still lacks; those descriptions belong to tasks.
 - No sentences about who owns a piece of work.
@@ -55,6 +57,8 @@ This matters most when updating, which is most of the time. Change only what act
 Run superpowers:unslop over the draft. It governs the prose; where it disagrees with the charter or the template about form, the charter wins. The known case is emoji heading prefixes, which unslop removes and the seeded template requires; the same holds for callout syntax and for bold on domain terms the charter asks for. Then dispatch a `mahou:documentation-reviewer` with the draft, the charter, the folder README and the template, and apply what it reports: those are departures from rules the project wrote for itself, so applying them is not a decision. Anything it reports that turns on the content rather than the form goes to the user as a question.
 
 Then show the whole draft in the conversation and wait. Nothing lands in a file the user has not seen.
+
+**How a draft is shown.** Plain markdown in the reply, never quoted, never as a code block, never in the browser. One paragraph of prose first: what changes and why. Then, per note, a bold line with the note's path, and for each edit one line of prose naming where it lands ("Replace the last sentence of <section>:", "New section before <section>:", "Append to <section>:", "<table>, <row>, <column>:"), with the section names as they read in the note, followed by the edit itself exactly as it will read in the file, headings and mermaid blocks included. A horizontal rule separates notes. A new note is shown whole under its path line with no location lines. The location lines are the only prose between edits; everything else after the opening paragraph is draft.
 
 ## 5. Land it in its index
 

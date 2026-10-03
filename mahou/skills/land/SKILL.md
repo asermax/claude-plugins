@@ -14,6 +14,8 @@ Coordinates the plugin's skills into one process, from open branches to merged p
 
 Run mahou:release-check on the repositories in scope. Present its release order and wait until the user confirms it or changes it.
 
+A change can break no boundary when it touches one repository and changes no request, response, schema or event that crosses a service boundary. When both hold, say so with the facts that show it, propose skipping mahou:release-check, and give the one-step order. The user confirms the skip and the order together, or asks for the check.
+
 ## Step 2: Open the pull requests
 
 Run mahou:create-pull-request once per repository, all together.
@@ -58,6 +60,15 @@ Walk the confirmed order. The release follows each project's own process once it
    Report the jobs, their conclusions, and the tag when the run publishes one. A failed job stops everything until the user decides.
 3. Stop. The next repository starts when the user confirms this one works in production.
 
-## Step 5: Report
+## Step 5: Clean up the local checkout
+
+Once every repository has merged and the user has confirmed the last one, clean up each repository's local checkout:
+
+1. Switch to the base branch its pull request merged into, and pull it.
+2. Delete the merged local branch with `git -C <repo-path> branch -d <branch>`. `-d` refuses a branch that is not merged. When git refuses, report it and do not force-delete the branch.
+
+Report the branch each repository is on and its new head.
+
+## Step 6: Report
 
 One line per repository: PR, merge, the CI result, and the tag when the project's automation published one. Then stop.

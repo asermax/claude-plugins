@@ -17,6 +17,8 @@ Complexity the diff adds: state that is redundant or derivable from something el
 
 Name the simpler form that does the same job. A finding that says code is complex without naming what replaces it is not a finding.
 
+Propose extracting logic into a helper only when the code uses that logic in more than one place.
+
 ## Scope
 
 Only the diff you were given. Do not flag code the change did not touch, and do not flag correctness bugs, which the human pass owns.

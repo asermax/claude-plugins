@@ -6,7 +6,7 @@ user-invocable: false
 
 # Design tree
 
-A design tree is the record of a shared understanding built one question at a time. The user reads the tree, not the transcript. The skill that loads this one says what the root is, what the branches cover and what level the questions stay at.
+A design tree is the record of a shared understanding built one question at a time. The user reads the tree, not the transcript. The skill that loads this one says what the root is, what the branches cover and what level the questions stay at. Load superpowers:unslop when the tree starts and hold its rules in everything the session writes: leaves, the prose under each branch, questions and reports. When that skill is not installed, say so and continue.
 
 ## The tree
 
@@ -70,9 +70,16 @@ The body carries nothing about which answers exist. Each of these proposes an an
 - What follows from one particular answer: "if it goes on the order, every read pays for it". Naming that the answer affects reads is context; working out the effect of one answer is a candidate.
 - A confirmation, "so it goes on the order?". A decision the user settled is a ✓ leaf, and one they never settled is asked open.
 
-Before sending a round, reread every question, check that the context is complete and cut anything from the second list. If the user does not know how to answer, they will ask.
+Before sending a round, reread every question. Check that each question's context is complete and that the question follows the unslop rules, and cut anything from the second list. If the user does not know how to answer, they will ask.
 
 When the user asks for the options or for your opinion, give the facts and the current state that bear on the choice: what exists, what earlier decisions constrain it, what a candidate would have to satisfy. Enumerate candidates only when they ask for that, evenly, and give a verdict only when they ask for one explicitly, marked as yours.
+
+## How a question reads
+
+When the user has to read a question twice to parse it, they spend the round working out what it asks instead of deciding.
+
+- The title names the thing being decided in plain words: the field, the record, the step. "What the handler does with the record's `<field>`", not "The `<thing>` the record keeps after a `<operation>`". A title built from the mechanism makes the user reconstruct what the title refers to.
+- The body first says what the thing is: what the field holds, where its value comes from, why that value and the new one can differ. Then what is undecided, then why it matters.
 
 ## When the user does not follow a question
 

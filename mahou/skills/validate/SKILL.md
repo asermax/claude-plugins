@@ -30,7 +30,11 @@ Everything runs against the local system only. Never against a production databa
 
 ## Mutating data to reach a row
 
-When the existing data does not reach the code path a row exercises, mutate the local data to make it reachable. The discipline:
+When the existing data does not reach the code path a row exercises, mutate the local data to make it reachable.
+
+Some rows need an error the system does not produce on its own, such as an upstream that is down, an error response or a request that hangs. Force that failure on the local system. Mutate data for it only as the last resort, when no seeded data, configuration or input reaches the path. The discipline below applies to a forced failure too: record what you changed, restore it before the run is declared complete, and report the pair.
+
+The discipline:
 
 - **Capture the original value first**, with a read that prints what you are about to overwrite, before any mutating write. The revert depends on it.
 - **Pair every mutation with a revert** that restores the captured value verbatim, and run the revert before the run is declared complete.

@@ -26,6 +26,8 @@ cd {absolute-repo-path} && plannotator review
 
 Backgrounding is what keeps that `cd` safe, because it never changes the session's working directory. Address repositories everywhere else the way `changeset` says.
 
+When a review times out before the user submits, start it again with the same command and tell the user the review restarted.
+
 Keep a map of repository to task so every result is attributed. Never poll. Completions arrive on their own.
 
 ## Step 3: Work each repository as its annotations land

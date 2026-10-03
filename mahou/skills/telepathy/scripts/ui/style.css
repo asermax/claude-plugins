@@ -1,0 +1,447 @@
+:root {
+  --bg: #fbfbfa;
+  --panel: #f1f0ee;
+  --text: #25231f;
+  --muted: #817c73;
+  --border: #dedbd5;
+  --user: #3f9d63;
+  --agent: #8a84d6;
+  --accent: #c7832b;
+  --code: #efede9;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1b19;
+    --panel: #242320;
+    --text: #e8e5df;
+    --muted: #97918a;
+    --border: #3a3834;
+    --code: #2b2a27;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.6 system-ui, sans-serif;
+}
+
+/* The layout is a fixed wrapper, not body itself: browser extensions inject
+   their own elements into body, which a grid on body turns into rows sharing
+   the height, and which a full-height wrapper in the flow pushes below the
+   window, scrolling the page. */
+#app {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+}
+
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  overflow: auto;
+}
+
+#sidebar header {
+  padding: 1rem 1rem 0.5rem;
+}
+
+#sidebar h1 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.connection {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.connection::before {
+  content: "";
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 0.05rem;
+}
+
+.connection.online::before {
+  background: var(--user);
+}
+
+.connection.offline {
+  color: #c0483d;
+}
+
+.connection.offline::before {
+  background: #c0483d;
+}
+
+#files {
+  flex: 1;
+  padding: 0.5rem 0;
+}
+
+.folder {
+  padding: 0.4rem 1rem 0.1rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.file {
+  display: block;
+  width: 100%;
+  padding: 0.25rem 1rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.file.nested {
+  padding-left: 1.75rem;
+}
+
+.file:hover {
+  background: var(--border);
+}
+
+.file.active {
+  background: var(--border);
+  font-weight: 600;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 1.5rem 3rem 6rem;
+}
+
+#file-header h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.1rem;
+}
+
+
+#content {
+  max-width: 52rem;
+}
+
+#content:has(> iframe) {
+  display: flex;
+  flex: 1;
+  max-width: none;
+}
+
+.block {
+  position: relative;
+  margin: 0 0 0.2rem calc(var(--depth, 0) * 1.5rem);
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+}
+
+/* Only blocks the user wrote or edited carry a mark: most of the page is the
+   agent's, so the exceptions are what the eye needs to find. */
+.block.mine {
+  background: color-mix(in srgb, var(--user) 9%, transparent);
+}
+
+.block:not(.editor, .merge):hover {
+  background: color-mix(in srgb, var(--border) 45%, transparent);
+}
+
+.block.mine:hover {
+  background: color-mix(in srgb, var(--user) 16%, transparent);
+}
+
+.block .content {
+  cursor: text;
+}
+
+.block .content > :first-child {
+  margin-top: 0;
+}
+
+.block .content > :last-child {
+  margin-bottom: 0;
+}
+
+.block .content ul,
+.block .content ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.block .content pre {
+  padding: 0.75rem;
+  overflow: auto;
+  background: var(--code);
+  border-radius: 4px;
+}
+
+.block .content code {
+  background: var(--code);
+  padding: 0 0.2em;
+  border-radius: 3px;
+}
+
+.block .content pre code {
+  padding: 0;
+  background: none;
+}
+
+.block .content pre.mermaid {
+  background: none;
+  text-align: center;
+}
+
+.block .content table {
+  border-collapse: collapse;
+}
+
+.block .content th,
+.block .content td {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+}
+
+.block .content blockquote {
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+}
+
+/* Centred on the block's first line of body text: the block's top padding plus
+   half the gap between the 24px line box and the button. */
+.callout {
+  --tone: #5b8fd6;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--tone);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--tone) 10%, transparent);
+}
+
+.callout[data-type="tip"],
+.callout[data-type="success"] {
+  --tone: var(--user);
+}
+
+.callout[data-type="warning"],
+.callout[data-type="question"] {
+  --tone: var(--accent);
+}
+
+.callout[data-type="danger"],
+.callout[data-type="error"] {
+  --tone: #c0483d;
+}
+
+.callout[data-type="working"] {
+  --tone: var(--agent);
+}
+
+.callout-title {
+  font-weight: 600;
+}
+
+.callout-title + * {
+  margin-top: 0.25rem;
+}
+
+.callout > :last-child {
+  margin-bottom: 0;
+}
+
+.callout[data-type="working"] .callout-title::before {
+  content: "";
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.5rem;
+  border: 2px solid var(--tone);
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: -0.05rem;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.add {
+  position: absolute;
+  left: -2rem;
+  top: calc(0.35rem + (24px - 1.4rem) / 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.block:hover .add,
+.add:focus {
+  opacity: 1;
+}
+
+.add:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.empty {
+  padding: 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+/* The editor keeps the block's box, padding and font, so entering edit mode
+   swaps rendered text for its source without the block moving. */
+.block.editor {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.editor textarea {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  resize: none;
+  overflow: hidden;
+}
+
+.merge textarea {
+  width: 100%;
+  min-height: 2.2rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: inherit;
+  font: 14px/1.5 ui-monospace, monospace;
+  resize: none;
+  overflow: hidden;
+}
+
+.note {
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.merge {
+  padding: 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.merge p {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+}
+
+.hunk {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.side {
+  border-left: 3px solid;
+  padding-left: 0.5rem;
+}
+
+.side h4 {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.side pre {
+  margin: 0.2rem 0 0;
+  white-space: pre-wrap;
+  font: 13px/1.5 ui-monospace, monospace;
+}
+
+.side.agent {
+  border-color: var(--agent);
+}
+
+.side.yours {
+  border-color: var(--user);
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.merge button {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.merge button.chosen {
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+iframe {
+  flex: 1;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: white;
+}

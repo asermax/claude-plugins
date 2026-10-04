@@ -50,7 +50,8 @@ When the screen has a prototype, copy the mockup from it: the same parts, the sa
 - **Notes are free text.** A short sentence with an arrow to the spot it describes. Never a sticky note, since sticky notes are the user's messages.
 - **Arrows point at an element's centre**, so they follow when the element moves. An arrow points at a specific spot only when it means that spot: a button, an option, a row.
 - Text is black, arrow labels included.
-- **Group with an `area`, never a frame.** A `mock` shape of kind `area`, sized around the shapes it groups and sent to the back.
+- **Box the parts of one thing with an `area`, never a frame.** When several separate shapes are parts of the same thing, such as the variants of one part or the screens of one sequence, draw a `mock` shape of kind `area` around them. Send it to the back. Shapes that only sit near each other get no area.
+- **Group what moves together.** Each element, or each set of elements that belong together, is one tldraw group with its title, made with `editor.groupShapes`. Group no further than the smallest set that is one cohesive thing. Elements joined by arrows can share a group, such as the steps of one flow. An element that stands on its own gets its own group, even when an arrow joins it to another element. Arrows between two groups stay outside both, so they stay attached at each end when either group moves.
 
 ## Working with the user
 

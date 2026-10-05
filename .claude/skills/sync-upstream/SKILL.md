@@ -105,7 +105,7 @@ Plugin-side customizations to be aware of:
 - **All skills**: use the `superpowers:` namespace prefix for any cross-skill reference
 - **systematic-debugging**: removed references to skills not bundled here (`defense-in-depth`, `condition-based-waiting`, `verification-before-completion`)
 - **agent-browser**: local-only `## Visible browser inside herdr` section plus two extra `allowed-tools` entries — always a manual merge, never a copy
-- **unslop**: four locally added patterns at the end of `### Plain speech` (34, 35, 36 and 37), a locally rewritten `## Process` and `## How to scan` (a two-round pass: the first round finds, the second verifies the first's fixes survived), a local `### Prompts` with a scan template and a verification template, plus a local frontmatter: no `disable-model-invocation` and a description scoped to document writing — always a manual merge, never a copy
+- **unslop**: six locally added patterns at the end of `### Plain speech` (34 to 39), local sentences added to upstream's 16 (slogan lead-ins) and 32 (artifacts that talk), a locally rewritten `## Process` and `## How to scan` (a two-round pass: the first round finds, the second verifies the first's fixes survived), a local `### Prompts` with a scan template and a verification template, plus a local frontmatter: no `disable-model-invocation` and a description scoped to document writing — always a manual merge, never a copy
 
 Suggested format:
 
@@ -253,24 +253,29 @@ If upstream adds a fourth skill under `apps/skills/claude/`, report it and ask b
 
 ### Type 8 — `unslop` (cursor-plugins)
 
-**This one is a manual merge, not a copy.** The plugin file carries three patterns, a method and a frontmatter that do not exist upstream, so a straight `cp` deletes all of them. Diff first, port whatever upstream changed, and leave the local blocks standing.
+**This one is a manual merge, not a copy.** The plugin file carries six patterns, two extended upstream rules, a method and a frontmatter that do not exist upstream, so a straight `cp` deletes all of them. Diff first, port whatever upstream changed, and leave the local blocks standing.
 
 ```bash
 diff ~/workspace/random/cursor-plugins/pstack/skills/unslop/SKILL.md \
      ~/workspace/asermax/claude-plugins/superpowers/skills/unslop/SKILL.md
 ```
 
-The three local patterns sit at the end of the `### Plain speech` section, after upstream's own 32 (Mannered prose) and 33 (Over-compression):
+The six local patterns sit at the end of the `### Plain speech` section, after upstream's own 32 (Mannered prose) and 33 (Over-compression):
 
 - **34. Describing the message instead of writing it** — spans that refer to the text (its parts, their count, their order, that something is arriving) rather than to the subject, at any position in a sentence, plus headings that count items rather than naming them. Upstream has no equivalent.
 - **35. Restating what you just said** — a second pass over an idea at the same level of detail, adding nothing. Upstream's 16 covers one narrow instance of it (a bold lead restating its own line), so check whether upstream has widened 16 before assuming 35 is still needed.
 - **36. Pronoun referent overload** — the same pronoun standing for two different things in one sentence, or a dropped relative pronoun whose wrong attachment is the easier parse; fixed by naming the referent or restoring the "that". Upstream's 28 has the backtrack test that finds these sentences but its split-the-sentence fix cannot repair them, so check whether upstream has widened 28 before assuming 36 is still needed.
+- **37. Negation where a positive fits** — double negatives and "not about" framing; state the fact instead.
+- **38. Actions turned into nouns** — an event written as a noun phrase hung on a weak verb; write the clause with its actor and its verb.
+- **39. "What" clauses that withhold the content** — a clause such as "what a thing is" or "what flows" that points at information without giving it; replace it with the content or an example. Upstream has no equivalent.
 
-All three mirror the `# Writing style` section of the user's global `~/.claude/CLAUDE.md`, so they should move together. If upstream ever grows its own version of one, drop the local copy and keep upstream's, then tell the user so they can align that section. This already happened once: a local "Mannered prose" pattern was retired in 2026-09 when upstream added its own 32 with the same intent.
+Two upstream rules carry a local sentence. 16 adds that a slogan lead-in ("**Shapes say what a thing is.**") falls outside its exemption for bold lead-ins, and 32 adds artifacts that talk (a shape, label or test that "says" or "shows" something to state a rule) next to personified code. When upstream rewrites either rule, take upstream's wording and add the local sentence back; when upstream's wording already covers it, drop the local sentence and tell the user.
+
+34, 35, 36 and 38 mirror the `# Writing style` section of the user's global `~/.claude/CLAUDE.md`, so they should move together. If upstream ever grows its own version of one, drop the local copy and keep upstream's, then tell the user so they can align that section. This already happened once: a local "Mannered prose" pattern was retired in 2026-09 when upstream added its own 32 with the same intent.
 
 Two more local blocks sit above the patterns. `## Process` is rewritten: upstream's three steps are scan, rewrite and self-audit, while the local one runs rounds, each one a fresh opus agent over every document in the pass, verified and applied before the next starts. `## How to scan` follows it and has no upstream counterpart at all; it carries the round loop, the agent prompt and the between-rounds verification. An earlier local version of that section split the rules into an inline set and four subagent sweeps; it was replaced in 2026-09 because the sweeps asked about surface features and missed the sentences that restate or justify. If upstream ever adds a method section of its own, keep the local one and tell the user. The three local patterns, with that marketplace's own numbering, live in the Filadd marketplace's `plugins/docs/skills/unslop/SKILL.md` (its 30, 31 and 32 mirror the local 34, 35 and 36); a rule change here is a change there too. The two method blocks live in `plugins/docs/skills/doc-writing/SKILL.md` under `## Unslop Pass`; that copy repeats full-scan rounds until one finds nothing, where the local one runs two rounds and makes the second a verification of the first, so the methods differ and a change to one is a decision about the other.
 
-Numbering is the thing most likely to collide. Upstream treats rule numbers as stable ids (removed rules leave gaps, they are never renumbered), so if upstream appends items the local three must be renumbered to stay last. Cross-references ride on that numbering and have to be repointed when a target moves: 35 refers to 16, 36 refers to 28, and `## How to scan` names the passive rule in its exclusions. Read the merged file end-to-end and check all of it.
+Numbering is the thing most likely to collide. Upstream treats rule numbers as stable ids (removed rules leave gaps, they are never renumbered), so if upstream appends items the local patterns must be renumbered to stay last. Cross-references ride on that numbering and have to be repointed when a target moves: 35 refers to 16, 36 refers to 28, and `## How to scan` names the passive rule in its exclusions. Read the merged file end-to-end and check all of it.
 
 The frontmatter is local too. Upstream sets `disable-model-invocation: true` and describes the skill as `Must always apply.`; the plugin copy drops the flag and scopes the description to document writing (documentation, READMEs, design notes, specs, PR descriptions, and "when another skill asks for a writing pass"). The reason is mahou's `write-documentation`, which invokes `superpowers:unslop` by name as its writing pass: with the flag set the model cannot call it, so the pass silently stops happening. The scoped description keeps it off code, chat replies and short answers, which is what upstream's flag was protecting against. On sync, port any description wording upstream changes but keep the flag out and the scope in.
 
@@ -318,7 +323,7 @@ Cursor-Plugins:
 - All skills: superpowers: namespace prefix applied
 - systematic-debugging: references to non-bundled skills removed
 - agent-browser: "Visible browser inside herdr" section kept
-- unslop: local patterns 34, 35 and 36 kept, local `## Process` and `## How to scan` kept, model invocation kept on with the document-scoped description
+- unslop: local patterns 34 to 39 kept, local sentences in 16 and 32 kept, local `## Process` and `## How to scan` kept, model invocation kept on with the document-scoped description
 ```
 
 ## Error handling

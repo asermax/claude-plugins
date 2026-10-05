@@ -1,9 +1,9 @@
 ---
-name: sync-experimental-dev
-description: Sync the mahou plugin with the Filadd marketplace's experimental-dev plugin in both directions, plus the few dev and docs skills that pair with mahou or superpowers ones. The two plugins share a base but diverge on purpose, so the skill lists what can move each way, waits for the user to pick, and ports each item generalized for the side it lands on. Use when the user asks to "sync with experimental-dev", "sync mahou with filadd", "bring the filadd changes over" or "port this back to filadd".
+name: sync-to-filadd
+description: Sync the mahou plugin with the Filadd marketplace's experimental-dev plugin in both directions, plus the few dev and docs skills that pair with mahou or superpowers ones. The two plugins share a base but diverge on purpose, so the skill lists what can move each way, waits for the user to pick, and ports each item generalized for the side it lands on. Use when the user asks to "sync to filadd", "sync with experimental-dev", "sync mahou with filadd", "bring the filadd changes over" or "port this back to filadd".
 ---
 
-# Sync experimental-dev
+# Sync to Filadd
 
 mahou and experimental-dev grew from the same skills. Each side keeps changing, and a change that is not tied to one side's project is worth having on the other.
 
@@ -23,11 +23,11 @@ mahou also never recommends. A sentence such as "recommend running design first"
 
 ## Step 1: Find what changed
 
-Read the date under Last synced at the end of this file. Then list each side's commits since that date:
+Read the date under Last synced at the end of this file. Then list each side's commits since the start of that day. A bare date makes git count from the current time of day on that date, which drops the commits made earlier that day:
 
 ```bash
-git -C ~/workspace/asermax/claude-plugins log --since=<date> --format='%h %ad %s' --date=short -- mahou superpowers/skills/unslop
-git -C ~/workspace/filadd/cc-plugin-marketplace log --since=<date> --format='%h %ad %s' --date=short -- plugins/experimental-dev plugins/dev/skills/commit-changes plugins/dev/skills/create-pull-request plugins/dev/skills/validate-feature plugins/docs
+git -C ~/workspace/asermax/claude-plugins log --since='<date> 00:00' --format='%h %ad %s' --date=short -- mahou superpowers/skills/unslop
+git -C ~/workspace/filadd/cc-plugin-marketplace log --since='<date> 00:00' --format='%h %ad %s' --date=short -- plugins/experimental-dev plugins/dev/skills/commit-changes plugins/dev/skills/create-pull-request plugins/dev/skills/validate-feature plugins/docs
 ```
 
 Include uncommitted changes on both sides (`git status --short`). Then diff every paired file (see Pairs) and write the diffs to `/tmp` so you can read them in parts. Most of each diff is the substitution table applied. Read each commit's own diff (`git show <sha> -- <path>`) to tell a real change from a substitution.
@@ -47,7 +47,7 @@ Renamed pairs:
 | `agents/code-scout.md`, `agents/docs-scout.md` | `dev/agents/repo-scout.md`, `dev/agents/doc-scout.md` |
 | `agents/conventions-reviewer.md` | `experimental-dev/agents/standards-reviewer.md` |
 | `agents/documentation-reviewer.md` | `docs/agents/design-doc-validator.md` |
-| `superpowers/skills/unslop/` rules 34 to 38 | `docs/skills/unslop/` rules 30 to 33 (34 is Filadd's 30, 35 is 31, 36 is 32, 38 is 33; Filadd has no 37) |
+| `superpowers/skills/unslop/` rules 16, 32 and 34 to 39 | `docs/skills/unslop/` rules 15, 29 and 30 to 34 (16 is Filadd's 15, 32 is 29, 34 is 30, 35 is 31, 36 is 32, 38 is 33, 39 is 34; Filadd has no 37) |
 
 `program-design/references/representations/` exists on both sides in one format (What it covers, What to check before proposing, Representation, When it fits), and the files present on both sides are byte-identical: they name no skill from either plugin, so they sync as whole files. `standards.md` is per side (dev-standards guides against wiki entries and rule files), and `package-layout.md` is mahou's only. A new representation that applies to both sides is written in the same plugin-neutral way and copied to both.
 

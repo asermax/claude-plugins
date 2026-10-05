@@ -1,6 +1,6 @@
 ---
 name: sync-upstream
-description: Sync this plugin marketplace's skills, commands, and context from their upstream source repositories (superpowers, quint-code/haft, agentic-evolve, agent-browser, dmmulroy-skills, plannotator, cursor-plugins). Use this skill whenever the user asks to "sync upstream", "pull upstream", "refresh skills from upstream", "update plugins from their source repos", or mentions wanting to pick up changes from `~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`, `~/workspace/random/dmmulroy-skills`, `~/workspace/random/plannotator`, or `~/workspace/random/cursor-plugins`. Trigger even when the user uses paraphrases like "let's see what's new upstream" or "pull the latest into the marketplace".
+description: Sync this plugin marketplace's skills, commands, and context from their upstream source repositories (superpowers, quint-code/haft, agentic-evolve, agent-browser, dmmulroy-skills, cursor-plugins). Use this skill whenever the user asks to "sync upstream", "pull upstream", "refresh skills from upstream", "update plugins from their source repos", or mentions wanting to pick up changes from `~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`, `~/workspace/random/dmmulroy-skills`, or `~/workspace/random/cursor-plugins`. Trigger even when the user uses paraphrases like "let's see what's new upstream" or "pull the latest into the marketplace".
 ---
 
 # Sync Upstream
@@ -12,7 +12,6 @@ This skill keeps the plugin marketplace in lockstep with its upstream sources wh
 - **agentic-evolve** — `~/workspace/random/agentic-evolve` (clone of `github.com/ericksoa/agentic-evolve`) — evolve commands (master dispatcher + perf/size/ml subskills)
 - **agent-browser** — `~/workspace/random/agent-browser` (clone of `github.com/vercel-labs/agent-browser`) — browser automation CLI skill (slim discovery stub)
 - **dmmulroy-skills** — `~/workspace/random/dmmulroy-skills` (clone of `github.com/dmmulroy/skills`) — the `bro` and `herdr` skills, mirrored into **superpowers**
-- **plannotator** — `~/workspace/random/plannotator` (clone of `github.com/backnotprop/plannotator`) — the three Claude-flavoured skills under `apps/skills/claude/`, mirrored into **superpowers**
 - **cursor-plugins** — `~/workspace/random/cursor-plugins` (clone of `github.com/cursor/plugins`) — the `unslop` skill from the `pstack` plugin, mirrored into **superpowers**
 
 ## High-level flow
@@ -36,7 +35,6 @@ cd ~/workspace/random/quint-code && git pull origin main
 cd ~/workspace/random/agentic-evolve && git pull origin main
 cd ~/workspace/random/agent-browser && git pull origin main
 cd ~/workspace/random/dmmulroy-skills && git pull origin main
-cd ~/workspace/random/plannotator && git pull origin main
 cd ~/workspace/random/cursor-plugins && git pull origin main
 ```
 
@@ -65,13 +63,6 @@ These are the only paths to consider when comparing upstream against this plugin
 - `herdr/SKILL.md` → `superpowers/skills/herdr/SKILL.md`
 
 That repo holds more skills than these two. Ignore the rest — the collection is opinionated toward Effect and Cloudflare TypeScript work, and it vendors its own copies of Matt Pocock's skills. Only add another one when the user asks for it by name.
-
-**From `~/workspace/random/plannotator/apps/skills/claude/`:**
-- `plannotator-review/SKILL.md` → `superpowers/skills/plannotator-review/SKILL.md`
-- `plannotator-annotate/SKILL.md` → `superpowers/skills/plannotator-annotate/SKILL.md`
-- `plannotator-last/SKILL.md` → `superpowers/skills/plannotator-last/SKILL.md`
-
-Track the `apps/skills/claude/` copies, never `apps/skills/core/` — the core ones are the agent-agnostic fallbacks that tell the agent to run the CLI itself, while the Claude copies use `!` preprocessing and `$ARGUMENTS` so the CLI runs at skill load. The repo also ships `apps/skills/extra/` (`plannotator-compound`, `plannotator-setup-goal`, `plannotator-visual-explainer`), which upstream installs separately via `npx skills add`. They are not tracked; add one only on explicit request.
 
 **From `~/workspace/random/cursor-plugins/pstack/skills/`:**
 - `unslop/SKILL.md` → `superpowers/skills/unslop/SKILL.md` (manual merge — the plugin copy carries four locally added patterns and a local method)
@@ -230,28 +221,7 @@ Two things to leave alone:
 
 `herdr` overlaps with the "Visible browser inside herdr" section in `agent-browser`, but they do different jobs: `agent-browser` drives the `official.browser` plugin pane, `herdr` drives panes, tabs and sibling agents. Do not merge them or add cross-references between them.
 
-### Type 7 — `plannotator-*` (plannotator)
-
-Direct copy, verbatim. Each skill is a single `SKILL.md` with no supporting files and no cross-skill references.
-
-```bash
-SRC=~/workspace/random/plannotator/apps/skills/claude
-DST=~/workspace/asermax/claude-plugins/superpowers/skills
-
-for s in plannotator-review plannotator-annotate plannotator-last; do
-  cp "$SRC/$s/SKILL.md" "$DST/$s/SKILL.md"
-done
-```
-
-Three things to leave alone:
-
-- **`disable-model-invocation: true` on all three.** Each one opens a browser UI and blocks until the user closes it, so it must only ever fire from an explicit `/superpowers:plannotator-*`.
-- **`allowed-tools: Bash(plannotator:*)`.** The `!` preprocessing runs the CLI at skill load, and the skill is inert without that entry.
-- **The `## Your task` output-handling cases.** They mirror the CLI's JSON contract (`approved` / `dismissed` / `annotated`), so they change when the CLI changes. Copy them as-is rather than editing for style.
-
-If upstream adds a fourth skill under `apps/skills/claude/`, report it and ask before tracking it — the tracked list is deliberate, not a glob.
-
-### Type 8 — `unslop` (cursor-plugins)
+### Type 7 — `unslop` (cursor-plugins)
 
 **This one is a manual merge, not a copy.** The plugin file carries six patterns, two extended upstream rules, a method and a frontmatter that do not exist upstream, so a straight `cp` deletes all of them. Diff first, port whatever upstream changed, and leave the local blocks standing.
 
@@ -281,7 +251,7 @@ The frontmatter is local too. Upstream sets `disable-model-invocation: true` and
 
 Everything else in the file is upstream's.
 
-### Manual-merge procedure (used by Types 1, 5 and 8 when upstream changed)
+### Manual-merge procedure (used by Types 1, 5 and 7 when upstream changed)
 
 1. Read upstream version end-to-end.
 2. Read plugin version end-to-end.
@@ -312,9 +282,6 @@ Agent-Browser:
 
 Dmmulroy-Skills:
 - bro, herdr synced into superpowers (verbatim)
-
-Plannotator:
-- plannotator-review, plannotator-annotate, plannotator-last synced into superpowers (verbatim)
 
 Cursor-Plugins:
 - unslop merged into superpowers (local patterns preserved)

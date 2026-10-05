@@ -19,7 +19,7 @@ declare module 'tldraw' {
 type MockShape = TLShape<typeof MOCK_TYPE>
 
 export interface MockDefinition<P extends object = Record<string, never>> {
-  width: number
+  width?: number
   // A shape's data is merged over these, so a shape passes only what differs
   defaults: P
   render: (props: P) => ReactNode
@@ -31,8 +31,9 @@ const BUILT_IN: Record<string, MockDefinition<any>> = {
     defaults: { title: '', caption: '' },
     render: ({ title, caption }) => <Cylinder title={title} caption={caption} />,
   },
-  // A labelled region around the shapes that belong together; drawn behind them, it does not move them along like a frame
-  area: { width: 800, defaults: { label: '' }, render: ({ label }) => <Area label={label} /> },
+  // A labelled region around the shapes that belong together; drawn behind them, it does not move them along like a frame.
+  // It has no natural width, so its border and label keep their size at any area size
+  area: { defaults: { label: '' }, render: ({ label }) => <Area label={label} /> },
   // The legend's sample of a screen
   'blank-screen': { width: 560, defaults: {}, render: () => <Browser app="…">{null}</Browser> },
 }
@@ -58,7 +59,8 @@ export class MockShapeUtil extends BaseBoxShapeUtil<MockShape> {
   component(shape: MockShape) {
     const definition = definitionOf(shape.props.kind)
 
-    // Content is laid out at the mockup's natural width and scaled to the shape, so a large mockup and a thumbnail share one layout
+    // Content is laid out at the mockup's natural width and scaled to the shape, so a large mockup and a thumbnail share one
+    // layout; a mockup with no natural width is laid out at the shape's own size
     const scale = shape.props.w / (definition?.width ?? shape.props.w)
 
     return (

@@ -49,7 +49,7 @@ Renamed pairs:
 | `agents/documentation-reviewer.md` | `docs/agents/design-doc-validator.md` |
 | `superpowers/skills/unslop/` rules 16, 32 and 34 to 39 | `docs/skills/unslop/` rules 15, 29 and 30 to 34 (16 is Filadd's 15, 32 is 29, 34 is 30, 35 is 31, 36 is 32, 38 is 33, 39 is 34; Filadd has no 37) |
 
-`program-design/references/representations/` exists on both sides in one format (What it covers, What to check before proposing, Representation, When it fits), and the files present on both sides are byte-identical: they name no skill from either plugin, so they sync as whole files. `standards.md` is per side (dev-standards guides against wiki entries and rule files), and `package-layout.md` is mahou's only. A new representation that applies to both sides is written in the same plugin-neutral way and copied to both.
+`program-design/references/representations/` exists on both sides in one format (What it covers, What to check before proposing, Representation, When it fits), and the files present on both sides name no skill from either plugin, so they sync as whole files. The exception is one line each in Filadd's `callstack.md`, `component-tree.md`, `derivation-ledger.md` and `interfaces.md` under What to check before proposing, which names a `dev-standards` guide (`endpoints`, `components`, `common`) or the `gateway` repository; those lines stay Filadd-only, and the rest of each file stays identical. `standards.md` is per side (dev-standards guides against wiki entries and rule files), and `package-layout.md` is mahou's only. A new representation that applies to both sides is written in the same plugin-neutral way and copied to both.
 
 ## Substitution table
 
@@ -83,6 +83,8 @@ Leave these as they are unless the user asks:
 - mahou's `basics` carries "Never use the phrase 'load-bearing'".
 - Filadd-only: `validate-pitch`, `update-pitch-context`, `scope-tasks`, `shape-up-entities`, the Notion link handling in `explore`, the `Depends-on:` trailers and `release-repo` in `land`.
 - mahou-only: `telepathy`, `tasks`, `init`, `wiki`, `docs`.
+- `create-scopes` and `validate-pitch`'s out-of-scope list are Filadd-only (Shape Up scopes on the Board, and a skill mahou does not have).
+- `design-with-canvas` ends in `design`'s Recording section on the mahou side and its Documentation section on the Filadd side.
 
 When a new divergence is settled during a sync, add it here.
 
@@ -114,4 +116,4 @@ Set the date under Last synced to today. Commit nothing and bump no version on e
 
 ## Last synced
 
-2026-10-04
+2026-10-10

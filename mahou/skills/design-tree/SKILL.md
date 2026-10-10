@@ -89,7 +89,7 @@ When the user says they do not understand a question, or asks what it means, res
 
 A question is about what the definition covers. A situation the definition does not mention is a hypothetical: a value that might be missing, a step that might fail, two requests arriving at once, a feature that might come later. A checklist in the loading skill or in a type reference may name such situations. The checklist says what to look for. It does not make each item a decision to ask.
 
-Never ask a hypothetical as a decision on its own. Raise it once per branch, in a single question that names the situations noticed and asks which of them the user wants to consider now. Not "what happens when X and Y are missing" but "do we consider that X and Y might be missing?". Naming situations is not naming answers. The options rule forbids candidates for a decision, not the subjects a decision could be about.
+Never ask a hypothetical as a decision on its own. Ask a hypotheticals question only when you noticed a situation that would change what the branch defines. Ask it at most once per branch, as a single question that names the situations and asks which of them the user wants to consider now. Not "what happens when X and Y are missing" but "do we consider that X and Y might be missing?". Naming situations is not naming answers. The options rule forbids candidates for a decision, not the subjects a decision could be about.
 
 Each situation the user picks becomes a ❔ leaf in the next frontier. Record each one they defer where the loading skill says, so that it is not raised again.
 

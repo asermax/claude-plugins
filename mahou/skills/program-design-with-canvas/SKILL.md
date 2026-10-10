@@ -1,0 +1,31 @@
+---
+name: program-design-with-canvas
+description: Runs the program-design skill on a canvas. Each part of a branch (screen layout, component tree, state) is drawn on the canvas for the user to correct, while the record file keeps the text representation. Use when the user wants to work a program design on a canvas.
+argument-hint: <the scope or change to program-design>
+---
+
+Load mahou:program-design first, then mahou:canvas. Then read `.mahou/program-design-with-canvas.md` if present.
+
+# Program design with canvas
+
+`program-design` and the skills it loads keep their opening, tree, branch order, parts, standards, record and ending.
+
+The document is `canvas/<name>.tldr.json` in the change's scratch folder, named after what the program design covers, such as `settings-screen.tldr.json`. The record stays `program-design/<root>.md`. Each time a part settles on the canvas, write it into the record in the text representation from `program-design`'s references.
+
+## The canvas
+
+- **The tree goes at the top**, in monospace text, with `design-tree`'s marks. Update it whenever you propose a part or the user settles one.
+- **Each part gets its own `area`**, labelled `<root> · <branch> · <n> <part> · <status>`, with the status `proposed` or `settled`. A new part goes under the previous one. A settled part stays on the canvas.
+- **Draw each part as its reference under `references/representations/` describes.** Work out a part with no canvas reference with the user before drawing it.
+
+Each canvas reference describes how to draw one of `program-design`'s representations, and has the same file name as that representation's reference under `program-design/references/representations/`:
+
+| The part | `program-design` reference | Canvas reference |
+|---|---|---|
+| Screen layout | `screen-layout.md` | `references/representations/screen-layout.md` |
+| Component tree | `component-tree.md` | `references/representations/component-tree.md` |
+| State, as a derivation ledger | `derivation-ledger.md` | `references/representations/derivation-ledger.md` |
+
+## Mockups
+
+The canvas references use the mockups in this skill's `mockups/` folder: `screen-wireframe`, `component-cards`, `state-card` and `hook-card`. Before drawing a part, copy the mockups it uses into the canvas folder's `mockups/`, unless they are already there. Each file's props are its `data`.

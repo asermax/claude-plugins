@@ -28,7 +28,7 @@ Because it proposes, every proposal is grounded. Read the repositories being des
 
 5. **Map what the source defers.** Walk the source and list, flat and unordered, what it leaves for program design to specify. The user drops or absorbs items they consider implementation noise and adds what the source does not name.
 
-6. **Propose the roots and their branches.** A root is a repository. A branch is a surface inside it: one screen; one entry point, an endpoint, a job, an event handler, a command; or one package, when the change creates, splits or changes how a package is built or shipped. Propose the order the roots are worked in and where the first one starts. The user corrects the map and settles it before any branch opens.
+6. **Propose the roots and their branches.** A root is a repository. When one surface's code is split between a host app and a library it builds on, such as a screen placed in an app and built from a shared UI library, propose the two repositories as one root. In the module list, mark the repository of each file. A branch is a surface inside it: one screen; one entry point, an endpoint, a job, an event handler, a command; or one package, when the change creates, splits or changes how a package is built or shipped. Propose the order the roots are worked in and where the first one starts. The user corrects the map and settles it before any branch opens.
 
 ```
 Program design
@@ -94,7 +94,7 @@ Each reference says what the part covers, what to read before proposing it, the 
 
 ## The record
 
-One markdown file per root, named after the repository, in the change's scratch folder at `program-design/<repo>.md`. A file opens with the repository, what it covers and what it leaves out. Then one section per branch, in the order they settled, each holding that branch's parts in the order they were worked. The root's standards close the file. A file names the other roots' files where a contract crosses between them. Edit a reopened branch in place. Address annotations the user leaves on a file one by one, reporting each change against its annotation.
+One markdown file per root, named after the repository, or after the surface when the root spans several repositories, in the change's scratch folder at `program-design/<root>.md`. A file opens with the repository, what it covers and what it leaves out. Then one section per branch, in the order they settled, each holding that branch's parts in the order they were worked. The root's standards close the file. A file names the other roots' files where a contract crosses between them. Edit a reopened branch in place. Address annotations the user leaves on a file one by one, reporting each change against its annotation.
 
 ## Ending
 

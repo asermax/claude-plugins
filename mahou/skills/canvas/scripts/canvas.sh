@@ -2,7 +2,7 @@
 # Runs a tldraw canvas over one document, <folder>/<name>.tldr.json.
 #
 #   canvas.sh start   <document>  install on first run, start the server detached, print its URL
-#   canvas.sh watch   <document>  start if needed, then print one line per "Send to Claude" click
+#   canvas.sh watch   <document>  start if needed, then print one line per "Send to Claude" click or voice message
 #   canvas.sh export  <document>  write <folder>/<name>.svg from the open document
 #   canvas.sh texts   <document>  print every canvas text and arrow label, one per line
 #   canvas.sh migrate <document>  bring a document saved by an older version of the app to the current format

@@ -1,8 +1,10 @@
-import type { ReactNode } from 'react'
+import { useSyncExternalStore, type ReactNode } from 'react'
 import { BaseBoxShapeUtil, HTMLContainer, type JsonObject, type TLShape } from 'tldraw'
 import { Area } from './kit/Area'
 import { Browser } from './kit/Browser'
 import { Cylinder } from './kit/Cylinder'
+import { Mermaid } from './kit/Mermaid'
+import { mockupOf, mockupsVersion, subscribeToMockups } from './mockups'
 import { MOCK_TYPE, mockShapeProps } from './schema'
 
 declare module 'tldraw' {
@@ -34,18 +36,30 @@ const BUILT_IN: Record<string, MockDefinition<any>> = {
   // A labelled region around the shapes that belong together; drawn behind them, it does not move them along like a frame.
   // It has no natural width, so its border and label keep their size at any area size
   area: { defaults: { label: '' }, render: ({ label }) => <Area label={label} /> },
+  // A mermaid diagram from its source text, drawn at the shape's own size and scaled to fit it
+  mermaid: { defaults: { source: '' }, render: ({ source }) => <Mermaid source={source} /> },
   // The legend's sample of a screen
   'blank-screen': { width: 560, defaults: {}, render: () => <Browser app="…">{null}</Browser> },
 }
 
-// Each file in the folder's mockups/ exports one `mockup`, and its file name is the kind
-const MOCKS: Record<string, MockDefinition<any>> = Object.fromEntries(
-  Object.entries(import.meta.glob<{ mockup?: MockDefinition<any> }>('@mockups/*.tsx', { eager: true }))
-    .filter(([, module]) => module.mockup != null)
-    .map(([path, module]) => [path.replace(/^.*\/|\.tsx$/g, ''), module.mockup!]),
-)
+const definitionOf = (kind: string): MockDefinition<any> | undefined => mockupOf(kind) ?? BUILT_IN[kind]
 
-const definitionOf = (kind: string): MockDefinition<any> | undefined => MOCKS[kind] ?? BUILT_IN[kind]
+// Subscribes to the mockup registry, so editing a mockup file redraws its shapes without reloading the page
+const MockContent = ({ shape }: { shape: MockShape }) => {
+  useSyncExternalStore(subscribeToMockups, mockupsVersion)
+
+  const definition = definitionOf(shape.props.kind)
+
+  // Content is laid out at the mockup's natural width and scaled to the shape, so a large mockup and a thumbnail share one
+  // layout; a mockup with no natural width is laid out at the shape's own size
+  const scale = shape.props.w / (definition?.width ?? shape.props.w)
+
+  return (
+    <div style={{ position: 'relative', width: shape.props.w / scale, height: shape.props.h / scale, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+      {definition == null ? <span>unknown mockup: {shape.props.kind}</span> : definition.render({ ...definition.defaults, ...shape.props.data })}
+    </div>
+  )
+}
 
 export class MockShapeUtil extends BaseBoxShapeUtil<MockShape> {
   static override type = MOCK_TYPE
@@ -57,17 +71,9 @@ export class MockShapeUtil extends BaseBoxShapeUtil<MockShape> {
   }
 
   component(shape: MockShape) {
-    const definition = definitionOf(shape.props.kind)
-
-    // Content is laid out at the mockup's natural width and scaled to the shape, so a large mockup and a thumbnail share one
-    // layout; a mockup with no natural width is laid out at the shape's own size
-    const scale = shape.props.w / (definition?.width ?? shape.props.w)
-
     return (
       <HTMLContainer id={shape.id} style={{ pointerEvents: 'none' }}>
-        <div style={{ position: 'relative', width: shape.props.w / scale, height: shape.props.h / scale, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-          {definition == null ? <span>unknown mockup: {shape.props.kind}</span> : definition.render({ ...definition.defaults, ...shape.props.data })}
-        </div>
+        <MockContent shape={shape} />
       </HTMLContainer>
     )
   }

@@ -35,10 +35,9 @@ const listeners = new Set<ServerResponse>()
 const canvasApi = (): Plugin => ({
   name: 'canvas-api',
   configureServer(server) {
-    // Vite watches only the app, so a mockup added while the canvas runs would stay out of the mockup glob.
-    // tldraw keeps the shape util it mounted with, so a hot update never reaches the canvas and every tab reloads instead
+    // Vite watches only the app, so the folder's mockups/ is added to the watcher. Adding, changing or removing a mockup then
+    // re-runs src/mockups.ts through hot reload, which swaps the definitions without reloading the page
     server.watcher.add(MOCKUPS_DIR)
-    server.watcher.on('all', (_event, path) => path.startsWith(MOCKUPS_DIR) && server.ws.send({ type: 'full-reload' }))
 
     // Every open tab, the user's and Claude's, edits this one room, which keeps the document on disk current
     const room = new TLSocketRoom({ schema, initialSnapshot: readDocument(DOC_PATH)?.room, onDataChange: () => scheduleSave() })
@@ -84,13 +83,20 @@ const canvasApi = (): Plugin => ({
       res.end(SVG_PATH)
     })
 
-    server.middlewares.use('/api/notify', (_req, res) => {
+    server.middlewares.use('/api/notify', async (req, res) => {
       // Whoever reacts to the click reads the document from disk
       if (saveTimer != null) {
         save()
       }
 
-      listeners.forEach((listener) => listener.write('data: click\n\n'))
+      // A voice message arrives as { message, selected }; the watch prints one line per event, so its newlines are flattened
+      const body = await readBody(req)
+      const { message, selected = [] } = body === '' ? {} : (JSON.parse(body) as { message?: string; selected?: { id: string; kind: string; text: string }[] })
+      const flat = (value: string) => value.replace(/\s+/g, ' ').trim()
+      const selection = selected.map(({ id, kind, text }) => (text === '' ? `${id} (${kind})` : `${id} (${kind}: "${flat(text)}")`)).join(', ')
+      const event = message == null ? 'click' : `voice: ${flat(message)}${selection === '' ? '' : ` | selected: ${selection}`}`
+
+      listeners.forEach((listener) => listener.write(`data: ${event}\n\n`))
       res.end('ok')
     })
 

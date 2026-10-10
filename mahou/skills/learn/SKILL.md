@@ -22,7 +22,7 @@ Both modes continue with Drafting once there is an item to draft.
 
 Anything produced here reproduces the patterns the session established exactly. The formats, the visualizations, the wording of a rule, the order of steps, and every correction the user made along the way are the specification. Do not adapt them, improve them, or generalize them into something the session did not do.
 
-Examples inside a skill or wiki entry are generic. They carry the shape the session used, with placeholders in place of the session's tickets, repositories and field names.
+Examples inside a skill or wiki entry are generic. They carry the shape the session used, with placeholders in place of the session's tickets, repositories and field names. A code example in a wiki entry names its components, hooks, endpoints and fields after a generic resource, such as `ResourceActionButton` or `useResourceAction`, never after the session's feature.
 
 ## Drafting
 

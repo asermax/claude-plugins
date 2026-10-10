@@ -48,6 +48,7 @@ Open one branch at a time, in order. The first opens with the tree's approval. E
 | How a value moves between components: who produces it, who carries it, who persists it | `references/types/data-flow.md` |
 | How a value is derived or a decision is made from an input | `references/types/rules.md` |
 | The states one thing passes through, what moves it between them and what each state shows | `references/types/lifecycle.md` |
+| Work the system does on its own after time passes: a scheduled job that picks records and acts on them, a wait that ends with the system acting | `references/types/scheduled-process.md` |
 | What a program is made of: its components, what crosses between them, its inputs and outputs | `references/types/component-architecture.md` |
 | What a component agrees with the rest of the system: its inputs and their sources, what it exposes, the value it hands on | `references/types/contract.md` |
 | What the user sees on a screen: placement, states, encodings, interactions | `references/types/ui.md` |

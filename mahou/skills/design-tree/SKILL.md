@@ -50,6 +50,8 @@ Every question is a decision that changes the outcome if answered differently. B
 
 State a decision the user already made, in an earlier round or before the tree existed, as a ✓ leaf, and never ask it again. The user corrects a leaf that is wrong; the corrected leaf goes back to ❔ and joins the next frontier.
 
+When an open decision has only one plausible answer, because it follows from decisions the tree already settled or from how the code works today, it stays a ❔ leaf in the tree like any other question, and it is asked as a proposal: the round states the answer and the decision or the behaviour it follows from, and asks the user to confirm or correct it. The leaf becomes ✓ with the answer the user confirms or gives. A decision that more than one answer could reasonably settle is asked open.
+
 ## What a question carries
 
 A question states what is undecided and stops. It does not list the ways it could be answered. Once you write the options, the user chooses among yours instead of thinking about the problem, and the answers they would have found on their own never appear.

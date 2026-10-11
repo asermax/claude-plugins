@@ -4,11 +4,11 @@ description: Turns a settled system design, or a change proposed in the conversa
 argument-hint: <the design notes or the proposed change, or where to find them>
 ---
 
-Load mahou:basics first, then mahou:design-tree and mahou:docs. Then read `.mahou/program-design.md` if present. From `design-tree` this skill takes the tree: its format, its marks, and how the tree records a settled decision as a leaf. It does not take that skill's question mechanics. There are no numbered rounds here and no questions that withhold a preference. This skill proposes, the user corrects, and the tree records what they settled. Diagrams are validated with superpowers:mermaid-validation before they are shown; when that skill is not installed, say so and show the diagram unvalidated.
+Load mahou:basics first, then mahou:design-tree and mahou:docs. Then read `.mahou/program-design.md` if present. From `design-tree` this skill takes the tree: its format, its marks, and how the tree records a settled decision as a leaf. It does not take that skill's question mechanics. There are no numbered rounds here and no questions that withhold a preference. This skill proposes, the user corrects, and the tree records what they settled. Diagrams are validated with superpowers:mermaid before they are shown; when that skill is not installed, say so and show the diagram unvalidated.
 
 # Program design
 
-Takes a change whose decisions are settled and specifies how it lands in the code: which packages, screens, components, values, call paths, interfaces and files change, in which repository, under which conventions. The design already made the decisions, so the proposals here work through the details and check that they do not drift from what the design expects. That is why this skill is the one exception to the rule in `basics` against recommending: a proposal grounded in the code and the conventions is a fact for the user to correct, not a choice made for them.
+Takes a change whose decisions are settled and specifies how it lands in the code: which packages, screens, components, values, call paths, interfaces and files change, in which repository, under which conventions. The design already made the decisions, so the proposals here work through the details and check that they do not drift from what the design expects. That is why this skill proposes, against the rule in `basics` against recommending: a proposal grounded in the code and the conventions is a fact for the user to correct, not a choice made for them.
 
 ## The level
 

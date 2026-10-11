@@ -35,6 +35,15 @@ Each branch is an `area` labelled `<id> <root> · <status>`, inside its tree's a
 - **Dropped rows get a grey line under the matrix**, `Dropped: <reason>`.
 - **A branch with one row** draws its root and that row, with no classifications.
 
+## Questions
+
+A question goes inside the branch it is about, beside the classification, partition or row it discusses. A question about a root goes beside its card on the map. The branch's Claude note goes under the questions.
+
+- **A question is a card with a violet border and no fill**, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question. The card has no fill so it differs from the filled violet classification boxes.
+- **Follow-ups stay inside the base question's card**, one at a time, until the question closes. The card holds, top to bottom: the base question, a summary box, one Claude note, and the current follow-up as a card of its own.
+- **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question has settled. Rewrite it each round; never add a line per answer.
+- **When the question closes**, delete the card, redraw the branch with what it settled, and update the record.
+
 ## Messages from Claude
 
-Write what you would say in the chat as one Claude note at the top of the canvas: how to read the drawing, the open questions, and the implementation tasks the trees surfaced. Replace its text each round.
+Everything you would say in the chat goes on the canvas, as a Claude note: a grey dashed rectangle labelled `Claude`, in the branch, tree or question it is about. One note at the top of the canvas says how to read the drawing and lists the implementation tasks the trees surfaced. Keep one Claude note per place and replace its text each round.

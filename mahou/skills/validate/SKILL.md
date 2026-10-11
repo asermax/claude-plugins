@@ -34,6 +34,8 @@ When the existing data does not reach the code path a row exercises, mutate the 
 
 Some rows need an error the system does not produce on its own, such as an upstream that is down, an error response or a request that hangs. Force that failure on the local system. Mutate data for it only as the last resort, when no seeded data, configuration or input reaches the path. The discipline below applies to a forced failure too: record what you changed, restore it before the run is declared complete, and report the pair.
 
+A temporary code change can force the failure when no input or configuration reaches it. Make the smallest change that produces the error, run the row, then restore the file with `git checkout -- <file>` and confirm with `git status` that it is clean before the next row. Run it while nothing else is running on the system, because the change reloads the server that runs the code. Record the change and its restore in the report like any other mutation.
+
 The discipline:
 
 - **Capture the original value first**, with a read that prints what you are about to overwrite, before any mutating write. The revert depends on it.
@@ -41,6 +43,8 @@ The discipline:
 - Keep the mutation as small as possible: one field on one record.
 - Resetting a flow's state between rows follows the same pattern. A flow that only advances one way at the API level may need a direct write to return to an earlier step; capture, mutate, revert.
 - Every mutate and revert pair goes at the top of the report, so the user can audit it.
+
+When no real input has what a row needs, such as a page with every element the row combines, build a synthetic input, the smallest artifact that has those elements and looks like the real thing. Keep it in the change's scratch folder and serve it locally, behind a tunnel when the system under test runs remotely and must reach it. Say in the row which parts of the expected outcome it could not cover.
 
 ## Running the rows
 

@@ -28,6 +28,12 @@ A spike is code written to answer a question. The answer is the product; the cod
 
 5. **Stop when the question is answered.** Record the answer and the findings in the spike's folder. Every surprise is input to the design that follows. The artifacts stay as reference material for whoever builds the real thing.
 
+## Processes and secrets
+
+- Stop only the processes the spike started, by the process id recorded when starting each one. Never `pkill`, `killall` or a kill by pattern: other work on the machine may be running the same program.
+- Read secrets from the files that hold them. Never print them or write them into code, logs or findings.
+- When the spike needs a credential only the user can create, ask for it. The user writes it to a file in the change's scratch folder with a `!` command, so the value never enters the conversation, and the spike deletes that file when it finishes.
+
 ## What a spike never does
 
 It never decides for the user. The spike brings the outcome; the design decisions it raises go back as questions. It never grows a second question. A new question is a new spike. Extracting the real thing from spike code keeps every shortcut the throwaway allowed.

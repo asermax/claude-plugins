@@ -20,12 +20,12 @@ A canvas is one document, `<name>.tldr.json`, in a folder a loading skill names 
 
 `scripts/canvas.sh` runs the app over one document. Pass it the document's path:
 
-- `start` installs the app on first run, starts the server detached and prints the URL to give the user. One server runs at a time: starting another document stops the server for the first, whose document is already on disk. It refuses a document saved in an older format and names the `migrate` command.
+- `start` installs the app on first run, starts a detached server for the document on the first free port from 5190 and prints the URL to give the user. A document that already has a server gets its URL back. Each document has its own server, so several canvases run at once, in one project or in several; `CANVAS_PORT` picks the port instead. It refuses a document saved in an older format and names the `migrate` command.
 - `watch` prints one line per event: `click` for each "Send to Claude" click, and `voice: <message>` for each voice message, with the shapes selected when it was sent.
 - `export` writes `<name>.svg`.
 - `texts` prints every canvas text and arrow label, one per line.
 - `migrate` brings an older document to the current format, keeping the original as `<name>.tldr.json.bak`. Run it with the server stopped. When it warns that a mockup received a variant string, rewrite that mockup to read its props from `data`.
-- `stop` stops the server.
+- `stop` stops the document's own server and leaves every other canvas running.
 
 Edits to the app under `scripts/app/` reach the running canvas only after a restart, because `start` copies the app into the cache. Run `stop` and then `start`, and reload the open tabs.
 
@@ -36,6 +36,8 @@ Draw in steps the user can follow. A script's changes reach the other tabs toget
 - An area goes first, before what it holds.
 - After the first element, each new element is followed right away by the arrow that joins it to what is already drawn, then by that arrow's label if it has one.
 - A note goes right after the element it describes, and its arrow right after the note.
+
+Draw a large batch in one script instead, without `canvas.step`, when a change creates or redraws many shapes at once, such as every tree rebuilt from a revised record. Stepping through hundreds of shapes makes the user wait for a drawing they will read only once it is finished.
 
 Check every change with a screenshot, saved under a new file name each time, since reading a path you read before can show the earlier image.
 
@@ -55,7 +57,7 @@ When the screen has a prototype, copy the mockup from it: the same parts, the sa
 - **Notes are free text.** A short sentence with an arrow to the spot it describes. Never a sticky note, since sticky notes are the user's messages.
 - **Arrows point at an element's centre**, so they follow when the element moves. An arrow points at a specific spot only when it means that spot: a button, an option, a row.
 - **To point at a spot inside a mock**, such as one card in a mockup that draws several, give that element an attribute that names it. Read the element's bounds in the page, convert its corner or edge to a page point with `editor.screenToPage`, and bind the arrow's end to the mock with that point as a `normalizedAnchor`, `isPrecise: true` and `isExact: true`. Without `isExact` the arrow stops at the mock's outer edge.
-- Text is black, arrow labels included.
+- Text is black, arrow labels included, and written in tldraw's default font, the hand font (`font: 'draw'`): prose, notes, labels and cards alike. Use the monospace font only where the loading skill asks for it, such as a tree of leaves.
 - **Draw each kind of part with its own shape.** Draw each of the system's own modules as a rectangle, coloured by the deployable it belongs to. Draw a store as a cylinder, titled with the product that holds the data, such as `<provider> Postgres`, and captioned with the data it holds. Draw an external service as a cloud, the client as an ellipse, and a platform or a deployable as an `area` around its parts.
 - **Label each arrow with the payload or the action it carries**, and with the binding, protocol or credential it goes through when that matters.
 - **Lay a flow out left to right.** Put whoever starts it on the left, stores in a column of their own next to the modules that write them, and external services along the far edge. Draw a process as a vertical column of numbered steps, each with the store or service it reaches on the same row, so its arrow runs straight across.
@@ -64,6 +66,8 @@ When the screen has a prototype, copy the mockup from it: the same parts, the sa
 - **When notes around one diagram would send arrows across it**, centre the diagram and place each note on the side nearest the element it points at, stacked in the same order as their targets so no two arrows cross. When arrows or notes still overlap, add space between the elements or above them and move the notes there.
 - **Box the parts of one thing with an `area`, never a frame.** When several separate shapes are parts of the same thing, such as the variants of one part or the screens of one sequence, draw a `mock` shape of kind `area` around them. Send it to the back. Shapes that only sit near each other get no area.
 - **Resize an area whenever what it holds grows or moves**, so it keeps a margin around its contents.
+- **Set `growY: 0` whenever a script sets a geo shape's `h`.** tldraw keeps the `growY` it computed for the earlier size, and the shape stays taller than what it holds. To stack shapes inside a geo shape under its label, read the label's height first: the height of the shape's `.tl-rich-text` element divided by the zoom level.
+- **Delete the arrows of the shapes you delete.** An arrow bound to a deleted shape stays on the canvas where it was drawn. After deleting shapes, delete every arrow with fewer than two bindings.
 - **Group what moves together.** Each element, or each set of elements that belong together, is one tldraw group with its title, made with `editor.groupShapes`. Group no further than the smallest set that is one cohesive thing. Elements joined by arrows can share a group, such as the steps of one flow. An element that stands on its own gets its own group, even when an arrow joins it to another element. Arrows between two groups stay outside both, so they stay attached at each end when either group moves.
 
 ## Working with the user
@@ -80,6 +84,10 @@ When the screen has a prototype, copy the mockup from it: the same parts, the sa
 
 1. **Unslop the texts.** Collect the output of `canvas.sh texts` and the explanatory texts written inside the mockups the document uses into a file in the change's scratch folder, and run superpowers:unslop over it. When that skill is not installed, say so and continue. Apply the findings that survive verification to the canvas and the mockups.
 2. **Export.** Run `canvas.sh export`. The loading skill places the SVG where it needs the image.
+
+## Ending
+
+When the loading skill's work is done, or the user moves on to other work, stop the canvas: run `canvas.sh stop` on the document, stop the monitor running `canvas.sh watch`, and close your `agent-browser` tab.
 
 ## What this skill is not
 

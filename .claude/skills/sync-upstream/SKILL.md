@@ -70,7 +70,7 @@ That repo holds more skills than these two. Ignore the rest — the collection i
 `cursor/plugins` is a monorepo of Cursor plugins, and `pstack` alone ships around forty skills (the `principle-*` family, `tdd`, `architect`, `why`, `swarm`, and more), plus other plugins at the repo root. Only `unslop` is tracked. Ignore everything else unless the user asks for a specific skill by name.
 
 **Plugin-specific skills with no upstream — never touch these during sync:**
-- `using-live-documentation`, `self-maintaining-claude-md`, `using-antigravity`, `agent-communication`, `financial-summary`, `using-code-directives`, `mermaid-validation`, `show-markdown`
+- `using-live-documentation`, `self-maintaining-claude-md`, `using-antigravity`, `agent-communication`, `financial-summary`, `using-code-directives`, `mermaid`, `show-markdown`
 
 ## Step 3 — Identify what actually changed
 

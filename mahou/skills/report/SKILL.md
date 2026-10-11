@@ -18,7 +18,7 @@ State the answer or the conclusion first. The investigation, the searches, the r
 
 ## Diagram what reads clearer as a picture
 
-A flow across components, a relationship, a structure with several parts reads clearer as a diagram than as prose. Validate every diagram with `superpowers:mermaid-validation` before it is shown; when that skill is not installed, say so and show the diagram unvalidated.
+A flow across components, a relationship, a structure with several parts reads clearer as a diagram than as prose. Validate every diagram with `superpowers:mermaid` before it is shown; when that skill is not installed, say so and show the diagram unvalidated.
 
 ## Separate what is verified from what is claimed
 

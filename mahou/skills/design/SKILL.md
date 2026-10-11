@@ -4,7 +4,7 @@ description: Turns a settled problem definition into a system design. Works a de
 argument-hint: <the settled shape tree, or where to find it>
 ---
 
-Load mahou:basics first, then mahou:design-tree and mahou:docs. Then read `.mahou/design.md` if present. The tree, the rounds, the question format, the facts rule and how answers grow the tree come from `design-tree` and apply here as written. Diagrams are validated with superpowers:mermaid-validation before they are shown; when that skill is not installed, say so and show the diagram unvalidated.
+Load mahou:basics first, then mahou:design-tree and mahou:docs. Then read `.mahou/design.md` if present. The tree, the rounds, the question format, the facts rule and how answers grow the tree come from `design-tree` and apply here as written. Diagrams are validated with superpowers:mermaid before they are shown; when that skill is not installed, say so and show the diagram unvalidated.
 
 # Design
 

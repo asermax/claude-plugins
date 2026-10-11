@@ -32,7 +32,7 @@ The charter owns the shape. The content rules are the framework's:
 
 **Every section explains something that exists.** A section that only introduces, summarizes or lists what other sections hold does not belong.
 
-**A diagram whenever the subject has a shape.** A state machine, a data model, a sequence or a request's path all read faster drawn. Follow the charter's convention; where it names mermaid, do not draw in ASCII, and validate every diagram with superpowers:mermaid-validation before the draft is shown. Place each diagram next to the prose it illustrates.
+**A diagram whenever the subject has a shape.** A state machine, a data model, a sequence or a request's path all read faster drawn. Follow the charter's convention; where it names mermaid, do not draw in ASCII, and validate every diagram with superpowers:mermaid before the draft is shown. Place each diagram next to the prose it illustrates.
 
 **An attachment sits where the prose refers to it.** A prototype, an image or an exported drawing goes where the charter puts attachments, linked at the point the prose needs it, with a caption that names what it shows. The note keeps no local or scratch path to the file.
 

@@ -19,4 +19,4 @@ Dispatch the routes in a single message so they run together. Read a file direct
 
 ## Reporting
 
-Keep verified facts apart from what a source asserts. When a fact contradicts a decision the user already made, or a claim they brought, say so plainly in the first sentence instead of working around it. When a diagram helps explain the answer, validate it with superpowers:mermaid-validation before showing it; when that skill is not installed, say so and show the diagram unvalidated.
+Keep verified facts apart from what a source asserts. When a fact contradicts a decision the user already made, or a claim they brought, say so plainly in the first sentence instead of working around it. When a diagram helps explain the answer, validate it with superpowers:mermaid before showing it; when that skill is not installed, say so and show the diagram unvalidated.

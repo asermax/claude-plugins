@@ -1,9 +1,9 @@
 ---
-name: sync-to-filadd
-description: Sync the mahou plugin with the Filadd marketplace's experimental-dev plugin in both directions, plus the few dev and docs skills that pair with mahou or superpowers ones. The two plugins share a base but diverge on purpose, so the skill lists what can move each way, waits for the user to pick, and ports each item generalized for the side it lands on. Use when the user asks to "sync to filadd", "sync with experimental-dev", "sync mahou with filadd", "bring the filadd changes over" or "port this back to filadd".
+name: sync-with-filadd
+description: Sync the mahou plugin with the Filadd marketplace's experimental-dev plugin in both directions, plus the few dev and docs skills that pair with mahou or superpowers ones. The two plugins share a base but diverge on purpose, so the skill lists what can move each way, waits for the user to pick, and ports each item generalized for the side it lands on. Use when the user asks to "sync with filadd", "sync to filadd", "sync with experimental-dev", "sync mahou with filadd", "bring the filadd changes over" or "port this back to filadd".
 ---
 
-# Sync to Filadd
+# Sync with Filadd
 
 mahou and experimental-dev grew from the same skills. Each side keeps changing, and a change that is not tied to one side's project is worth having on the other.
 
@@ -119,4 +119,4 @@ Set the date under Last synced to today. Commit nothing and bump no version on e
 
 ## Last synced
 
-2026-10-10
+2026-10-11

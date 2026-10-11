@@ -9,7 +9,7 @@ This is a personal collection of Claude Code plugins that provide workflow autom
 ## Repository Structure
 
 - **Root level**: Marketplace configuration (`.claude-plugin/marketplace.json`)
-- **`.claude/skills/`**: Marketplace-level skills available when working inside this repo (currently `sync-upstream`, `sync-to-filadd`, `commit`). These are scoped to maintaining the marketplace itself, not shipped to plugin consumers.
+- **`.claude/skills/`**: Marketplace-level skills available when working inside this repo (currently `sync-upstream`, `sync-with-filadd`, `commit`). These are scoped to maintaining the marketplace itself, not shipped to plugin consumers.
 - **Plugin directories**: Each subdirectory (`aur/`, `superpowers/`, `lesserpowers/`, `beads/`, `haft/`) is a separate plugin
   - `.claude-plugin/plugin.json`: Plugin metadata
   - `commands/`: Slash command definitions (`.md` files)
@@ -21,7 +21,7 @@ This is a personal collection of Claude Code plugins that provide workflow autom
 These live at `.claude/skills/<name>/SKILL.md` and trigger contextually based on natural-language requests when this is the working directory.
 
 - **sync-upstream**: Sync this marketplace's skills, commands, and context from their upstream source repos (`~/workspace/random/superpowers`, `~/workspace/random/quint-code`, `~/workspace/random/agentic-evolve`, `~/workspace/random/agent-browser`, `~/workspace/random/dmmulroy-skills`, `~/workspace/random/cursor-plugins`). Preserves plugin customizations (namespace prefixes, removed cross-skill references) and asks before applying.
-- **sync-to-filadd**: Sync mahou with the Filadd marketplace's `experimental-dev` plugin in both directions (plus the `dev` and `docs` skills that pair with mahou or superpowers ones). Lists the candidates by direction, waits for the user to pick, and ports each item rewritten for the side it lands on through a substitution table. Renamed from `sync-experimental-dev` 2026-10-04. Commits nothing on either side.
+- **sync-with-filadd**: Sync mahou with the Filadd marketplace's `experimental-dev` plugin in both directions (plus the `dev` and `docs` skills that pair with mahou or superpowers ones). Lists the candidates by direction, waits for the user to pick, and ports each item rewritten for the side it lands on through a substitution table. Renamed from `sync-experimental-dev` 2026-10-04 and from `sync-to-filadd` 2026-10-11, since it syncs both ways. Commits nothing on either side.
 - **commit**: Create conventional commits with automatic semantic version bumps for both the marketplace (`.claude-plugin/marketplace.json`) and any affected plugin's `plugin.json`. Groups related files, derives scopes, proposes bumps with reasoning, and asks before each commit.
 
 ## Plugin Architecture

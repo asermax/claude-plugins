@@ -22,13 +22,20 @@ Each top-level branch is an `area` labelled `<n> <title> · <status>`.
 - **Prose is plain paragraphs, all of them the same width**, 1160 units, under the representation they describe.
 - When a branch's sub-branches make it much taller than the others, lay its sub-branch sections side by side under its leaves.
 
+For a branch whose type has a canvas reference under `references/types/`, read both the type in `design` and the canvas reference: draw the canvas as the canvas reference describes, and write `design.md` and the final documentation in the type's own form. A type with no canvas reference is drawn in its own form. Each canvas reference has the same file name as the type it adapts.
+
+| The branch is about | `design` type | Canvas reference |
+|---|---|---|
+| What a component agrees with the rest of the system | `contract.md` | `references/types/contract.md` |
+| How a value moves between components | `data-flow.md` | `references/types/data-flow.md` |
+
 Lay the branches out in tree order, read down each column and then across. Use three columns, split where the tallest column stays as short as possible, and make each branch as wide as its column.
 
-The opening tree goes on the canvas as the branch areas, each one pending, with no leaves yet. A branch's opening statement goes on the canvas as its leaves and its prose. When a branch settles, draw its representation and prose in its section and ask the user to approve it there.
+The opening tree goes on the canvas as the branch areas, each one pending, with no leaves yet. Above the areas, a Claude note says in one line per branch what that branch settles. A branch's opening statement goes on the canvas as its leaves and its prose. When a branch settles, draw its representation and prose in its section and ask the user to approve it there.
 
 ## Questions
 
-Questions go in the open branch, at the top of its right side, above its write-up.
+Questions go in the open branch, on its right side, under its write-up. The branch's Claude note goes under the questions.
 
 - **A question is a violet card**: a rectangle with violet border and fill, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question. Add a diagram, drawn with tldraw shapes, when the question is about where something runs, in what order or across which boundary.
 - **Follow-ups stay inside the base question's card**, one at a time, until the question branch closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Claude note, and the current follow-up as a violet card of its own.

@@ -25,6 +25,11 @@ Each canvas reference describes how to draw one of `program-design`'s representa
 | Screen layout | `screen-layout.md` | `references/representations/screen-layout.md` |
 | Component tree | `component-tree.md` | `references/representations/component-tree.md` |
 | State, as a derivation ledger | `derivation-ledger.md` | `references/representations/derivation-ledger.md` |
+| Package layout | `package-layout.md` | `references/representations/package-layout.md` |
+| Interfaces | `interfaces.md` | `references/representations/interfaces.md` |
+| Callstack | `callstack.md` | `references/representations/callstack.md` |
+| Module list | `module-list.md` | `references/representations/module-list.md` |
+| Standards | `standards.md` | `references/representations/standards.md` |
 
 ## Mockups
 

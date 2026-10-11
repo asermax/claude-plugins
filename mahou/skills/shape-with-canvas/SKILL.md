@@ -24,13 +24,13 @@ The root goes at the top of the canvas as a title, `Problem: <one line>`. Each t
 
 Lay the branches out in tree order, read down each column and then across. Use three columns, split where the tallest column stays as short as possible, and make each branch as wide as its column.
 
-The opening tree goes on the canvas as the branch areas, each one pending, with the ✓ leaves the user brought under their areas and no prose yet. When a branch opens, its statement of what is settled goes on the canvas as its prose. When a branch settles, ask the user to approve it there.
+The opening tree goes on the canvas as the branch areas, each one pending, with the ✓ leaves the user brought under their areas and no prose yet. Above the areas, a Claude note says in one line per branch what that branch settles. When a branch opens, its statement of what is settled goes on the canvas as its prose. When a branch settles, ask the user to approve it there.
 
 A dropped branch or leaf folds into Out of scope as `shape` says: delete the branch's area or the leaf, and add the ✓ leaf to Out of scope.
 
 ## Questions
 
-Questions go in the open branch, at the top of its right side, above its prose.
+Questions go in the open branch, on its right side, under its prose. The branch's Claude note goes under the questions.
 
 - **A question is a violet card**: a rectangle with violet border and fill, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question. Add a diagram, drawn with tldraw shapes, when the question is about the order things happen in, who sees what, or which part of the definition a situation touches.
 - **Follow-ups stay inside the base question's card**, one at a time, until the question branch closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Claude note, and the current follow-up as a violet card of its own.

@@ -38,3 +38,5 @@ flowchart TD
 ```
 
 The prose does not restate every box. It states the matching rules, the meaning of each terminal outcome for the caller, and the guarantee the rule gives, for instance that a malformed input can never break the flow that calls it.
+
+Colour the flowchart with superpowers:mermaid's palette: steps green, decisions blue, an outcome that drops or fails red, what gets stored orange.

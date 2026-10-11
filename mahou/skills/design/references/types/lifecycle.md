@@ -31,3 +31,5 @@ stateDiagram-v2
     note right of Pending : <what it shows>
     note right of Done : <what it shows>
 ```
+
+Colour each state by what it means for whoever reads it, with `classDef`: a waiting state amber, a working state blue, a done state green, a failed state red. Keep `;` out of notes and transition labels.

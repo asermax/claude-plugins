@@ -47,3 +47,5 @@ sequenceDiagram
 ```
 
 The prose for a path names the steps by number, states what happens when the input is absent, and describes the fallback. It does not compare the path with how the request works today, and it does not describe the other paths.
+
+Style the participants and nodes with superpowers:mermaid's palette.

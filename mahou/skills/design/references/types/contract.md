@@ -54,42 +54,24 @@ flowchart TD
     D -->|No| E(("Missing, the run fails"))
 ```
 
-Interface: a table of what each member answers and who asks, the same form the note template uses for what a part exposes.
-
-| Member | Answers | Who asks |
-|---|---|---|
-| Register a worker | Its name and what it accepts | The loader, when it calls a plug-in |
-
-Outputs: a class diagram, one class per part of the value, then prose per part. A class diagram rather than an entity diagram because nothing is stored: there is no nullability comment to carry and no table to name.
+Interface and outputs: one flowchart per member, captioned `<member> · <when it is called>`. The caller and the component sit at the two ends. The call is a solid arrow from the caller, through a braces box holding what the call sends, to the component. The return is a dashed arrow labelled `returns` from the component, through a braces box holding what comes back, to the caller. A member that returns nothing has no return arrow. Each braces box lists its interface's name, then one line per field with its type, then in parentheses what the values mean. A value nested in another gets its own braces box, joined to its parent by a plain line. Style each flowchart with superpowers:mermaid's palette.
 
 ```mermaid
-classDiagram
-    class Output {
-        +string source
-        +Item[] items
-        +Failure[] failures
-    }
-    class Item {
-        +string id
-        +string kind
-        +Payload payload
-        +Provenance provenance
-    }
-    class Failure {
-        +string id
-        +string stage
-        +string message
-        +Provenance provenance
-    }
-    class Provenance {
-        +string source
-        +int startLine
-        +int endLine
-    }
-    Output "1" *-- "0..*" Item
-    Output "1" *-- "0..*" Failure
-    Item --> Provenance
-    Failure --> Provenance
+flowchart LR
+  caller@{ shape: rect, label: "Caller" } -->|"create"| inp@{ shape: braces, label: "CreateParams
+  resourceId: string
+  (the row the caller just wrote)" }
+  inp --> comp@{ shape: subproc, label: "Component" }
+  comp -.-> out@{ shape: braces, label: "Instance
+  id: string
+  (stored on the row)" }
+  out -.->|"returns"| caller
+  classDef worker fill:#dbeafe,stroke:#2563eb
+  classDef flow fill:#dcfce7,stroke:#16a34a
+  classDef payload fill:#fef3c7,stroke:#d97706
+  class caller worker
+  class comp flow
+  class inp,out payload
 ```
 
-The prose for each part states what the table or diagram cannot: what a value means, when it is absent, who validates it and what a failed validation does to the caller.
+The prose for each member states what the diagram cannot: when the member is called, what an absent field means, who validates the value and what an invalid one does to the caller.

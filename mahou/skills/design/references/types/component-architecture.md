@@ -46,3 +46,5 @@ flowchart LR
 The prose under the diagram does not restate the arrows. It says what each component is responsible for, what it refuses to do, and which other branch or note holds its detail. A component whose detail is not designed yet is still named here, with its responsibility, so that the later branch has a place to attach.
 
 The runner or main program is the container subgraph, not a box: drawing it as a box turns every component into a spoke around it and hides the order.
+
+Draw each component, store and outside service with its kind's shape and colour from superpowers:mermaid's palette, so the diagram reads without a legend.

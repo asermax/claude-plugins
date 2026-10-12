@@ -1,6 +1,6 @@
 # Discovery mode
 
-Used when `learn` is invoked without arguments.
+Used when the user asks for nothing specific, or asks what the session, or a part of it, has to teach. In a mixed ask, it covers only the part of the session the ask points at.
 
 1. **Scan the conversation for friction.** Read it end to end before judging any part of it. Then collect only the points where the flow's behavior changed. Most of these are the user's own interventions: a request to change the format of an output, a request for something outside the flow, a correction of something the agent had put together or researched, a reversal of an earlier decision, anything the user had to ask for more than once. Where the agent itself redid an output or retracted a reading, that counts too. The stretches where the flow ran without the user steering it are evidence the skills worked, not findings. Where the conversation has been compacted, work from what remains and say so: friction a compaction dropped is gone, and a plausible reconstruction of it is a guess.
 

@@ -46,7 +46,7 @@ Entry points and tooling:
 - `mahou:guide`. Takes your goal in plain words and activates the matching skill.
 - `mahou:init`. Typed only. Seeds a `docs/` folder the project then owns: a charter, one folder per kind of note with its index, a note template, and a `## Docs` block in `CLAUDE.md`. Never overwrites; re-run it to add a folder.
 - `mahou:wiki`. Distilled knowledge about technologies, tools, and their gotchas, indexed for progressive discovery.
-- `mahou:learn`. Typed only. The author's tool. Collects the points where a session generated friction (or takes your ask directly), and proposes new or iterated skills, agents, wiki entries and local files.
+- `mahou:learn`. Typed only. The author's tool. Collects the points where a session generated friction, takes your ask directly, or both, and proposes new or iterated skills, agents, wiki entries and local files.
 
 Asked for by name:
 

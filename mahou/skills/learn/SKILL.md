@@ -1,6 +1,6 @@
 ---
 name: learn
-description: The author's tool for growing the plugin from real sessions. Without arguments it collects the points where the session generated friction or changed the behavior of the flow that was running, gives a take on each, and drafts what the user picks. With arguments it works the user's ask directly from the current context. Produces new or iterated skills, agents, wiki entries and local .mahou files.
+description: The author's tool for growing the plugin from real sessions. When the user asks what the session has to teach, it collects the points where the session generated friction or changed the behavior of the flow that was running, gives a take on each, and drafts what the user picks. When the user names what to build, it works that ask directly from the current context. A mixed ask gets both. Produces new or iterated skills, agents, wiki entries and local .mahou files.
 argument-hint: [what to build from this session]
 disable-model-invocation: true
 ---
@@ -9,14 +9,15 @@ Load mahou:basics first. Then read `.mahou/learn.md` if present.
 
 Turns a session's friction into something reusable. The plugin grows this way, by keeping the corrections the user just made by hand instead of designing a pipeline upfront.
 
-## Two modes
+## Modes
 
-Route on the arguments.
+Pick the mode from what the user asks.
 
-- **No arguments.** Discovery. Follow `references/discover.md`. Collect the friction points, report each with a take, and wait for the user to pick what to keep.
-- **Arguments given.** Directed. Follow `references/directed.md`. No summary and no take. The user has said what they want. Map the state their ask touches and work toward it.
+- **Discovery.** Follow `references/discover.md` when the user asks for nothing specific, or asks what the session, or a part of it, has to teach.
+- **Directed.** Follow `references/directed.md` when the user names what to build.
+- **Mixed.** When the user names some items and also asks what else there is, work the named items as directed and run discovery over the part of the session the ask points at.
 
-Both modes continue with Drafting once there is an item to draft.
+Before starting, tell the user which mode you are following. For a mixed ask, list the items you work as directed and the part of the session discovery covers. Every mode continues with Drafting once there is an item to draft.
 
 ## Fidelity
 

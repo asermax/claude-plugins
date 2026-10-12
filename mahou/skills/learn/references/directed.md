@@ -1,6 +1,6 @@
 # Directed mode
 
-Used when `learn` is invoked with arguments. The user has already decided what the session should become. Do not summarize the session and do not give a take.
+Used when the user names what to build, alone or as the named part of a mixed ask. The user has already decided what those items should become. Do not summarize the session and do not give a take on them.
 
 1. **Map the state the ask touches.** Read the skills, agents, wiki entries and local files the ask names or would change, and find every reference to them across the plugin. Report what exists, what references what, and what the ask would leave dangling.
 

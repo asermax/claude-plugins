@@ -90,7 +90,7 @@ python ${CLAUDE_PLUGIN_ROOT}/skills/show-markdown/scripts/display.py /path/to/fi
 ## Technical Details
 
 - **Markdown Parser**: marked.js (https://cdn.jsdelivr.net/npm/marked/marked.min.js)
-- **Diagram Rendering**: mermaid.js (https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js)
+- **Diagram Rendering**: pele (https://cdn.jsdelivr.net/npm/pele/dist/pele.global.js), which renders mermaid syntax to SVG
 - **Syntax Highlighting**: highlight.js (https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js)
 - **Browser**: Opens via `xdg-open` (respects system default)
 - **Temp Files**: Created using Python's `tempfile.mkstemp`
@@ -151,7 +151,7 @@ Supported diagram types:
 - Entity relationship diagrams (`erDiagram`)
 - Gantt charts (`gantt`)
 - Pie charts (`pie`)
-- And more (see [Mermaid documentation](https://mermaid.js.org/))
+- And every other diagram type built into Mermaid 12.1.0 (see [pele compatibility](https://pele.run/compatibility))
 
 **Click-to-zoom**: Click on any rendered diagram to open it in a larger modal view. Press Escape or click the backdrop to close.
 
@@ -161,4 +161,4 @@ Supported diagram types:
 - The temp file remains for the browser session
 - No manual cleanup required - temp files are managed by the system
 - Works best on Linux systems with `xdg-open` installed
-- Mermaid diagrams automatically adapt to light/dark mode based on system preference
+- Mermaid diagrams take their colours from the page palette, so they follow light/dark mode without re-rendering

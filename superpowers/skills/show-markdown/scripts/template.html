@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pele/dist/pele.global.js"></script>
     <style>
         :root {
             --bg-color: #ffffff;
@@ -24,6 +24,8 @@
             --quote-color: #57606a;
             --table-border: #d0d7de;
             --table-header-bg: #f6f8fa;
+            --diagram-surface: #ffffff;
+            --diagram-surface-alt: #eaeef2;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -38,6 +40,8 @@
                 --quote-color: #8b949e;
                 --table-border: #30363d;
                 --table-header-bg: #161b22;
+                --diagram-surface: #0d1117;
+                --diagram-surface-alt: #21262d;
             }
         }
 
@@ -218,6 +222,18 @@
             justify-content: center;
         }
 
+        /* Pele colours diagrams through CSS variables, so they follow the page's light and dark palettes */
+        .pele {
+            --pele-bg: var(--code-bg);
+            --pele-fg: var(--text-color);
+            --pele-muted: var(--quote-color);
+            --pele-line: var(--text-color);
+            --pele-surface: var(--diagram-surface);
+            --pele-surface-alt: var(--diagram-surface-alt);
+            --pele-border: var(--border-color);
+            --pele-accent: var(--link-color);
+        }
+
         /* Native dialog modal styling */
         #mermaid-dialog {
             border: none;
@@ -297,20 +313,13 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>
-        // Initialize mermaid with theme detection
-        mermaid.initialize({
-            startOnLoad: false,
-            theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
-            securityLevel: 'loose',
-        });
-
         // Custom renderer for mermaid code blocks
         const renderer = {
             code({ text, lang }) {
                 if (lang === 'mermaid') {
-                    const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+                    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     return `<div class="mermaid-container" onclick="openMermaidZoom(this)">
-                        <pre class="mermaid" id="${id}">${text}</pre>
+                        <div class="mermaid">${escaped}</div>
                     </div>`;
                 }
 
@@ -355,8 +364,10 @@
         const markdownContent = {{MARKDOWN_CONTENT}};
         document.getElementById('content').innerHTML = marked.parse(markdownContent);
 
-        // Render mermaid diagrams
-        mermaid.run();
+        // mount() reads the diagram source from the element's text, and shows an error in place instead of throwing
+        document.querySelectorAll('.mermaid').forEach((element) => {
+            pele.mount(element, element.textContent);
+        });
 
         // Highlight code blocks
         hljs.highlightAll();

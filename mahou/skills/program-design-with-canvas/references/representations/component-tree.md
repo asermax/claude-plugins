@@ -7,7 +7,7 @@
 One `component-cards` mock. Each component is a card inside the card of the component that renders it. Each tree root starts a column, and roots that belong together, such as the components that host the same element, share one.
 
 - **Colour each card by the component's kind:** `host` for a component of the host app that only renders the new ones, `provider` for one that holds state and renders nothing of its own, `scope` for one that adds values for everything inside it, `dialog`, `view` for one of the views a parent switches between, `part` for a piece of a view, and `button`.
-- **Tag each card with its repository and with whether the change adds the component or touches it.** A new card has a solid border, a touched card a dashed one.
+- **Tag each card with its repository and with whether the change adds the component, touches it, or leaves it unchanged.** A new card has a solid border, a touched card a dashed one, and an unchanged card a dotted grey one. Draw an unchanged card only when it renders a card the change adds or touches.
 - **A card with `row`** lays its children side by side, for views that replace each other.
 - **The legend under the cards** lists every colour.
 

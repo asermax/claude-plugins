@@ -8,7 +8,8 @@ One `state-card` mock per component, in the same columns as the component tree, 
 
 - **A line is `name := expression`**, with a comment under it when the expression does not say something the reader needs, and a tag on the right naming where the value comes from. The tags are `prop`, `context`, `query meta`, `cookie`, `local`, `form`, `server`, `browser` and `computed` on a component; a hook adds `arg` for its arguments and `env` for a build variable. Every line that derives from the lines above it is `computed`.
 - **Lines go in the order they appear in the code:** props first, then context, query meta and cookies, then local and form state, then server queries and mutations, then browser reads, then computed values. A value comes before any line that uses it.
-- **The last line says what the component renders or what the hook returns**, tagged `returns`, with no name and no `:=`. Write it as plain text in the same style as the other lines, never as code or JSX: "Nothing when `<value>` is missing. Otherwise a `<Button>` with `<props>`, calling `<value>` on click." Put the conditions of what renders in this line, never in a computed value that only feeds it.
+- **Only add variables when necessary.** If a value is used once, inline it where it is used, in the `returns` line or in an argument. Hooks and functions build the return value directly on the `return`, never step by step or through separate variables. Components do the same in the JSX: a value the JSX can use directly goes there instead of in a separate variable, such as a field destructured from a query's data.
+- **The last line says what the component renders or what the hook returns**, tagged `returns`, with no name and no `:=`, in the same style as the other lines. For a component, write it as a tree of the elements the component renders, never as code, JSX or prose: one element per line, `├─` and `└─` before its children, and `←` before the props the element passes, each as a name or as `<prop> ← <where its value comes from>`. A condition goes on its own line under the element it shows or hides. Put the conditions of what renders in this line, never in a computed value that only feeds it.
 - **A hook card** starts with what the hook does in one line, then its arguments, what it reads, what it computes and what it returns.
 
 Join the cards with arrows. Label an arrow between two component cards with what crosses between them, such as a callback with its arguments or the props one card hands the other. Join each hook to every component or hook that calls it with a grey dashed arrow and no label, and place the hook card next to its caller's card.
@@ -26,7 +27,7 @@ Write each proposal and each point that the design leaves unsettled as a free-te
       ['<configurationId>', '"<configuration>"', 'prop', 'set by <Host>'],
       ['<buttonProps>', 'every other prop', 'prop', 'passed straight to Button'],
       ['<start>', 'use<Start>({ <configurationId> })', 'context', 'null without a provider'],
-      ['returns', 'Nothing when <start> is missing. Otherwise a Button with <buttonProps>, calling <start> on click.', 'returns', null],
+      ['returns', 'nothing while <start> is missing; otherwise\nButton ← ...<buttonProps>, onClick: <start>', 'returns', null],
     ],
   },
 }

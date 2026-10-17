@@ -17,7 +17,7 @@ interface Node {
   name: string
   kind: Kind
   repo: string
-  change: 'new' | 'touched'
+  change: 'new' | 'touched' | 'unchanged'
   row?: boolean
   children?: Node[]
 }
@@ -36,7 +36,7 @@ const Card = ({ node, inRow = false }: { node: Node; inRow?: boolean }) => {
   const { color, fill, label } = KINDS[node.kind]
 
   return (
-    <div data-card={node.name} style={{ border: `2px ${node.change === 'new' ? 'solid' : 'dashed'} ${color}`, background: fill, borderRadius: node.kind === 'button' ? 22 : 12, padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6, flex: inRow ? 1 : undefined }}>
+    <div data-card={node.name} style={{ border: `2px ${node.change === 'new' ? 'solid' : node.change === 'touched' ? 'dashed' : 'dotted'} ${node.change === 'unchanged' ? '#ced4da' : color}`, background: fill, borderRadius: node.kind === 'button' ? 22 : 12, padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6, flex: inRow ? 1 : undefined }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
         <b style={{ fontSize: 15 }}>{node.name}</b>
         <Tag text={label} color={color} />
@@ -72,7 +72,7 @@ export const mockup: MockDefinition<Props> = {
         {(Object.keys(KINDS) as Kind[]).map((kind) => (
           <Tag key={kind} text={KINDS[kind].label} color={KINDS[kind].color} />
         ))}
-        <span style={{ color: MUTED }}>A card sits inside the component that renders it. Solid border: new. Dashed border: touched.</span>
+        <span style={{ color: MUTED }}>A card sits inside the component that renders it. Solid border: new. Dashed border: touched. Dotted grey: unchanged, shown only because it renders a new or touched card.</span>
       </div>
     </div>
   ),

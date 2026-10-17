@@ -65,7 +65,7 @@ The body carries the context the user needs to decide, and every piece of it is 
 
 The body carries nothing about which answers exist. Each of these proposes an answer and none belongs in a question:
 
-- A list of candidates, however even: "on the order, on the user, or in a separate table".
+- A list of candidates, however even: "on the order, on the user, or in a separate table". Reference points from outside the tree, such as what another tool does, are context and not candidates (see How a question reads).
 - One candidate with a question mark. "Should we store it on the order?" proposes an answer; "where does it live?" does not.
 - A default the user did not set: "by default", "typically", "usually", "the standard approach".
 - A verdict: "I'd go with", "the obvious choice", "the simplest is", "probably", "it makes sense to", "we should".
@@ -83,9 +83,16 @@ When the user has to read a question twice to parse it, they spend the round wor
 - The title names the thing being decided in plain words: the field, the record, the step. "What the handler does with the record's `<field>`", not "The `<thing>` the record keeps after a `<operation>`". A title built from the mechanism makes the user reconstruct what the title refers to.
 - The body first says what the thing is: what the field holds, where its value comes from, why that value and the new one can differ. Then what is undecided, then why it matters.
 
-## When the user does not follow a question
+Give the user the context they need to decide, beyond the facts. Use these when the question calls for them:
 
-When the user says they do not understand a question, or asks what it means, restate it before asking again, following `references/explaining.md`. The restatement replaces the question's body; the question keeps its number.
+- Start from a concrete case: one input, what the system produces from it today, and what it would produce under the decision. Use the project's own data when the session has it.
+- Give reference points from outside the tree: what comparable tools or libraries do with the same thing, or examples of what the answer could be about. "PostHog keeps console output inside the recording" is a reference point; "should we keep it inside the recording?" is a candidate. The question itself still offers no candidates.
+- Compare a finding with the leaves the tree already settled. Say which leaves it agrees with and which it contradicts, instead of describing it on its own.
+- Name what breaks or is lost, and for whom, rather than the rule that causes it.
+- Say what a term means the first time the question uses it.
+- Use a representation when prose makes the user hold several parts at once. Use a diagram for where something runs, in what order, or across which boundary. Use a table when findings compare several things on the same points. Use a worked example with real values. In text, diagrams are mermaid through superpowers:mermaid and tables are markdown. The loading skill names what else its medium offers.
+
+When the user says they do not understand a question, or asks what it means, restate it with the concrete case, reference points and representations listed above, starting from what the user can see rather than from the mechanism. The restatement replaces the question's body, keeps the question's number, and stays open.
 
 ## Scope
 
@@ -117,6 +124,18 @@ An answer can do more than settle a leaf:
 The tree grows during the questioning.
 
 An answer that departs from the source the work came from, such as a ticket or a document, is recorded as a decision with the departure named once.
+
+## Merging
+
+The user may ask to merge parts of the tree that turn out to be one decision or one area.
+
+### Questions
+
+Two open questions that one answer would settle become one. The merged question keeps the lower number, its title names what both decide, and its body carries the context of both. Remove the other question's leaf and do not reuse its number. The merged question's leaf records the merge, for instance "❔ Q3 <what is undecided> (Q5 merged)". A merged question that waits on a lookup waits on every lookup the two had.
+
+### Branches
+
+A branch whose decisions another branch already settled folds into the receiving branch. Its settled leaves that the receiving branch does not hold yet move there, its open decisions become questions there, and the receiving branch goes back to open if it was settled. The folded branch stays in the tree as one line, marked "merged into <n>", with a leaf saying where its content went. Keeping it there leaves the numbers of the other branches unchanged.
 
 ## Ending
 

@@ -13,7 +13,7 @@ You are given the repository's absolute path, the base, the diff, and a path to 
 
 ## What to flag
 
-Complexity the diff adds: state that is redundant or derivable from something else, copy-paste with slight variation, deep nesting, dead code left behind.
+Complexity the diff adds: state that is redundant or derivable from something else, copy-paste with slight variation, deep nesting, dead code left behind, and defensive code for a case the code cannot reach, such as a ref that protects a value that never changes.
 
 Name the simpler form that does the same job. A finding that says code is complex without naming what replaces it is not a finding.
 

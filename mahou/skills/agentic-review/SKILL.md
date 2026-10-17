@@ -52,6 +52,8 @@ Read every findings file. Collapse findings that different facets raised about t
 
 Skip a finding when its fix would change intended behavior, reach outside the bounds above, or when you judge it a false positive. Record the skip and its reason. Never argue with it.
 
+Then read every comment the diff adds, yourself, against the project's comments rule: a wiki entry, the project's `CLAUDE.md` or a rule file in the repository. The reviewers do not flag comments. Remove or rewrite every comment the rule does not allow. When the project states no comments rule, say so and leave the comments as they are.
+
 Run the repository's linters and tests afterwards, scoped to the files you touched rather than the whole tree. The project's `CLAUDE.md` usually names the commands; when it does not, detect them from the lockfile or manifest and say which you ran.
 
 ## Step 4: Round again, up to three times

@@ -77,7 +77,7 @@ Later references use the bare id.
 | A durable job or a workflow | `subproc` | green |
 | A background job, a scheduled task | `st-rect` | green |
 | A shared piece several components use: a library, a set of rules | `hex` | amber |
-| An interface or a payload crossing a boundary | `braces` | amber |
+| An interface or a payload crossing a boundary | `braces` | amber outline (`payload`) |
 | A store: a database, a table, stored state, a warehouse you query | `cyl` | orange |
 | An external service: a SaaS, a third-party API | `cloud` | violet |
 | A decision | `diam` | blue |
@@ -98,7 +98,10 @@ classDef amber fill:#fef3c7,stroke:#d97706,color:#1f2937
 classDef orange fill:#ffedd5,stroke:#ea580c,color:#1f2937
 classDef violet fill:#ede9fe,stroke:#7c3aed,color:#1f2937
 classDef red fill:#fee2e2,stroke:#dc2626,color:#1f2937
+classDef payload stroke:#d97706
 ```
+
+A class with a fill sets dark text, because the fill stays light when the page turns dark and pele's dark theme would otherwise draw light text on it. `braces` draws no fill, so its text sits on the page background and has to follow the theme: it takes `payload`, an amber outline with no fill and no text colour.
 
 A state diagram takes the same colours through `classDef`; see [state-diagram.md](state-diagram.md).
 

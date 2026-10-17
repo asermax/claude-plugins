@@ -54,4 +54,4 @@ sequenceDiagram
   Use a different translucent colour per phase; an alpha of about 0.15 to 0.25 keeps the messages readable. `rect` blocks can nest.
 - **Use `autonumber`** when the prose refers to steps by number.
 - **Declare participants in the order they should appear** so message lines cross as little as possible.
-- **Keep messages plain text.** Braces and `<br/>` in a message break some renderers; see the rendering rules in `SKILL.md`.
+- **Break long notes with `<br/>`.** Notes do not wrap; see the rendering rules in `SKILL.md`.

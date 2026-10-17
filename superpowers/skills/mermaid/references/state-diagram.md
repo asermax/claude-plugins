@@ -20,7 +20,7 @@ The lifecycle of an entity: how an order, a payment, a subscription or a job mov
   ```
 - **Choice, fork and join**: `state c <<choice>>` for a branch, `state f <<fork>>` and `state j <<join>>` for parallel paths.
 - **Notes**: `note right of StateName : text`.
-- **Colour**: `classDef` and `class` work as in a flowchart: `classDef red fill:#fee2e2,stroke:#dc2626` and `class Cancelled red`.
+- **Colour**: `classDef` and `class` work as in a flowchart: `classDef red fill:#fee2e2,stroke:#dc2626,color:#1f2937` and `class Cancelled red`.
 
 ## Worked example
 
@@ -43,8 +43,8 @@ stateDiagram-v2
 
     note right of Submitted : Holds the payment flow
 
-    classDef green fill:#dcfce7,stroke:#16a34a
-    classDef red fill:#fee2e2,stroke:#dc2626
+    classDef green fill:#dcfce7,stroke:#16a34a,color:#1f2937
+    classDef red fill:#fee2e2,stroke:#dc2626,color:#1f2937
 
     class Fulfilled green
     class Cancelled red

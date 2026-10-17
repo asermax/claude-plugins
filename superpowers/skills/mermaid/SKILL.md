@@ -1,6 +1,6 @@
 ---
 name: mermaid
-description: Loaded to choose, write, style and validate mermaid diagrams (flowcharts, sequence, state, ER and class diagrams). Carries a chart-selection table, one reference per chart type with a default shape and colour palette, the common syntax rules, a bundled validator and the rendering rules the validator cannot catch. Use whenever you generate, write or edit a mermaid code block, and validate every diagram before showing it, even one that looks correct.
+description: Loaded to choose, write, style and validate mermaid diagrams (flowcharts, sequence, state, ER and class diagrams). Diagrams are drawn with pele (pele.run), which reads mermaid syntax. Carries a chart-selection table, one reference per chart type with a default shape and colour palette, the common syntax rules, a bundled pele validator and renderer, and the rendering rules the validator cannot catch. Use whenever you generate, write or edit a mermaid code block, and validate every diagram before showing it, even one that looks correct.
 ---
 
 # Mermaid Diagrams
@@ -39,12 +39,12 @@ When two charts fit, such as a flow that could be a `flowchart` or a `sequenceDi
 
 ## Validation (mandatory)
 
-Mermaid's syntax is strict, and an invalid diagram renders as a broken code block with no warning. Validate every diagram before you show it. Write the diagram to a temp file and feed the file to the validator; do not pass a multi-line diagram as an inline shell string, because shell quoting breaks it and the validator reports errors that are not in the diagram.
+Diagrams are drawn with [pele](https://pele.run), a renderer that reads mermaid syntax with its own layout engine and visual style. Its syntax is strict, and an invalid diagram renders as an error box instead of a drawing. Validate every diagram before you show it. Write the diagram to a temp file and feed the file to the validator; do not pass a multi-line diagram as an inline shell string, because shell quoting breaks it and the validator reports errors that are not in the diagram.
 
 1. **Write** the raw diagram body (the text between the ` ```mermaid ` fences, without the fences) to a temp file with the `Write` tool, such as `/tmp/diagram.mmd`.
-2. **Run** the validator, which reads the diagram from stdin:
+2. **Run** the validator, which reads the diagram from stdin and, given an output path, also renders it to a PNG:
    ```bash
-   bash ${CLAUDE_PLUGIN_ROOT}/skills/mermaid/scripts/validate-mermaid.sh < /tmp/diagram.mmd
+   bash ${CLAUDE_PLUGIN_ROOT}/skills/mermaid/scripts/validate-mermaid.sh /tmp/diagram.png < /tmp/diagram.mmd
    ```
 3. **Read the result.** The script prints JSON; check `isValid` and `errors[]`:
    ```json
@@ -53,30 +53,19 @@ Mermaid's syntax is strict, and an invalid diagram renders as a broken code bloc
      "diagramType": "flowchart",
      "errors": [
        {
-         "line": 2,
-         "message": "Failed to parse flowchart: Parse error on line 2: ... Expecting 'SQE', ..."
+         "code": "syntax",
+         "line": 3,
+         "column": 1,
+         "message": "Parse error on line 3: ^ Expecting 'SQE', 'UNICODE_TEXT', 'TEXT', 'TAGSTART', got '$end'"
        }
      ]
    }
    ```
-   Exit codes: `0` valid, `1` invalid, `2` setup error.
+   `code` is one of `syntax`, `semantic`, `unsupported-diagram` and `limit`. Exit codes: `0` valid, `1` invalid, `2` setup error.
 4. If the diagram is invalid, **fix** it using the `line` and `message` of each error, then run the validator again until `isValid` is `true`.
-5. **Render** the valid diagram and look at the image before you show the diagram. A diagram that parses can still draw wrong (see Rendering rules the validator cannot catch):
-   ```bash
-   npx -y -p @mermaid-js/mermaid-cli mmdc -i /tmp/diagram.mmd -o /tmp/diagram.png
-   ```
-   If mmdc reports that it cannot find `chrome-headless-shell`, install one and point mmdc at it:
-   ```bash
-   npx -y puppeteer browsers install chrome-headless-shell
-   export PUPPETEER_EXECUTABLE_PATH=$(ls -d ~/.cache/puppeteer/chrome-headless-shell/*/chrome-headless-shell-linux64/chrome-headless-shell | tail -1)
-   ```
-   The installer fetches the newest version, and mmdc rejects any version other than its own unless `PUPPETEER_EXECUTABLE_PATH` points at a browser. Open `/tmp/diagram.png` with the `Read` tool. Check for clipped text, stray nodes or states, and a layout far wider or taller than the page.
+5. **Look** at the rendered `/tmp/diagram.png` with the `Read` tool before you show the diagram. A diagram that parses can still draw wrong (see Rendering rules the validator cannot catch). Check for stray nodes or states, overlapping text, and a layout far wider or taller than the page.
 
-The script parses with [mermaid-ast](https://github.com/neongreen/mermaid-ast), which runs the grammars vendored from mermaid itself, so a diagram it accepts is one mermaid parses. It covers 18 diagram types and installs itself on first run into `~/.cache/claude-plugins/mermaid-ast/`. The script accepts a leading frontmatter block and strips it before parsing. An error carries a `line` when the grammar reports one, and never a column.
-
-### Validator limitations
-
-- **ER diagrams**: the validator rejects a `%%` comment inside an `erDiagram`, although mermaid accepts it. Leave comments out of ER diagrams.
+The script calls pele's own `render()`, so a diagram it accepts is one every pele renderer draws, and the PNG is pele's SVG rasterized with resvg using pele's default light theme. It installs both packages on first run into `~/.cache/claude-plugins/pele/`. Frontmatter and `%%{init}%%` directives are passed to pele, which reads them.
 
 ### Fixing common errors
 
@@ -91,8 +80,8 @@ The script parses with [mermaid-ast](https://github.com/neongreen/mermaid-ast), 
 
 The parser accepts these, and the renderer draws them wrong. Check for them in the rendered image after validation passes.
 
-- **Long lines inside a container are cut.** A flowchart node, a subgraph title, a note in a sequence or state diagram, a class box, an entity box: the renderer clips any line in these that runs past about 24 characters. Break the text with `<br/>` at a word boundary before the 24th character, and again every 24 characters after that. Text outside a box is unaffected: edge labels, state transition labels and sequence messages wrap or extend on their own.
-- **Curly braces and `<br/>` in sequence messages break some renderers.** A sequenceDiagram message carrying `{id}`-style braces or a `<br/>` tag parses, so the validator passes it, but some renderers (Obsidian's, observed) fail at the first such message and report the parse error on a later line. Keep sequence messages plain text, and put text that must be split into a note. `<br/>` inside flowchart node labels and sequence notes renders correctly, and so do commas, slashes and parentheses in messages.
+- **Notes do not wrap.** Pele wraps long text in flowchart nodes, subgraph titles and boxes on its own, but a note in a sequence or state diagram stays on one line and spills past the lifelines or the diagram. Break a long note with `<br/>` at a word boundary.
 - **A `;` inside state-diagram text ends the statement.** In a note or a transition label, the text after a `;` renders as stray states. Use a comma instead.
 - **Markdown inside an `@{ shape, label }` label renders as plain text.** Leave markdown out of expanded-shape labels.
-- **Mermaid ignores a subgraph's `direction` when edges cross its border.** Set the layout direction on the whole flowchart (`flowchart LR` or `flowchart TD`). When a flowchart grows too wide in one direction, redraw it in the other.
+- **Labels are plain SVG text.** Line breaks, bold and italic render; any other HTML in a label does not. `click` statements that open links work, and JavaScript callbacks are ignored.
+- **Mermaid themes do not apply.** `theme` and `themeVariables` in an `%%{init}%%` directive change nothing, because pele colours a diagram with CSS variables set by the page it is drawn in. Colours set with `classDef`, `style` and `linkStyle` do apply, and stay fixed when the page switches between light and dark.

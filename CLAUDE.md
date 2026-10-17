@@ -78,7 +78,7 @@ Curated development workflow skills for browser automation, documentation, and c
 - **using-antigravity**: Analyze images, videos, fetch web content, and search Google using the Antigravity CLI
 
 *Diagrams and Rendering:*
-- **mermaid**: Choose, write, style and validate mermaid diagrams: a chart-selection table, one reference per chart type with a default shape and colour palette, and a bundled mermaid-ast validator that installs itself on first run
+- **mermaid**: Choose, write, style and validate mermaid diagrams: a chart-selection table, one reference per chart type with a default shape and colour palette, and a bundled validator that installs itself on first run. Diagrams are drawn with [pele](https://pele.run) (Obsidian's mermaid renderer, own layout engine, colours through CSS variables): the validator calls pele's `render()` and, given an output path, rasterizes the SVG to a PNG with resvg, so no headless browser is needed. `show-markdown`, mahou's `telepathy` and the canvas `mermaid` shape render with pele as well, each mapping its own page palette onto the `--pele-*` variables. The palette's `classDef`s carry a dark `color` because a fixed light fill would otherwise get the dark theme's light text
 - **show-markdown**: Render markdown content in the browser with styling
 
 *Browser Automation:*

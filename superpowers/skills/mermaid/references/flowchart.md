@@ -36,13 +36,13 @@ flowchart LR
     Courses --> DB
     Courses -.-> Mail
 
-    classDef grey fill:#f3f4f6,stroke:#4b5563
-    classDef blue fill:#dbeafe,stroke:#2563eb
-    classDef green fill:#dcfce7,stroke:#16a34a
-    classDef amber fill:#fef3c7,stroke:#d97706
-    classDef orange fill:#ffedd5,stroke:#ea580c
-    classDef violet fill:#ede9fe,stroke:#7c3aed
-    classDef red fill:#fee2e2,stroke:#dc2626
+    classDef grey fill:#f3f4f6,stroke:#4b5563,color:#1f2937
+    classDef blue fill:#dbeafe,stroke:#2563eb,color:#1f2937
+    classDef green fill:#dcfce7,stroke:#16a34a,color:#1f2937
+    classDef amber fill:#fef3c7,stroke:#d97706,color:#1f2937
+    classDef orange fill:#ffedd5,stroke:#ea580c,color:#1f2937
+    classDef violet fill:#ede9fe,stroke:#7c3aed,color:#1f2937
+    classDef red fill:#fee2e2,stroke:#dc2626,color:#1f2937
 
     class User grey
     class Gateway,Auth blue
@@ -65,7 +65,7 @@ Declare an expanded shape on the node's first use, with the label inside the bra
 DB@{ shape: cyl, label: "Database<br/>of the service" }
 ```
 
-Later references use the bare id. The 24-character line rule from `SKILL.md` applies to the label.
+Later references use the bare id.
 
 ### Which shape and colour for each element
 
@@ -91,13 +91,13 @@ A service's boundary is a `subgraph`, and its storage sits outside the subgraph.
 Copy this block into the diagram and assign each node with `class <ids> <colour>`. Declare only the colours the diagram uses.
 
 ```
-classDef grey fill:#f3f4f6,stroke:#4b5563
-classDef blue fill:#dbeafe,stroke:#2563eb
-classDef green fill:#dcfce7,stroke:#16a34a
-classDef amber fill:#fef3c7,stroke:#d97706
-classDef orange fill:#ffedd5,stroke:#ea580c
-classDef violet fill:#ede9fe,stroke:#7c3aed
-classDef red fill:#fee2e2,stroke:#dc2626
+classDef grey fill:#f3f4f6,stroke:#4b5563,color:#1f2937
+classDef blue fill:#dbeafe,stroke:#2563eb,color:#1f2937
+classDef green fill:#dcfce7,stroke:#16a34a,color:#1f2937
+classDef amber fill:#fef3c7,stroke:#d97706,color:#1f2937
+classDef orange fill:#ffedd5,stroke:#ea580c,color:#1f2937
+classDef violet fill:#ede9fe,stroke:#7c3aed,color:#1f2937
+classDef red fill:#fee2e2,stroke:#dc2626,color:#1f2937
 ```
 
 A state diagram takes the same colours through `classDef`; see [state-diagram.md](state-diagram.md).
@@ -109,5 +109,5 @@ A state diagram takes the same colours through `classDef`; see [state-diagram.md
 - **Highlight a path**: colour edges by their declaration order (0-indexed): `linkStyle 0,1,4 stroke:#2563eb,stroke-width:3px`. `linkStyle default` styles every edge.
 - **Use `subgraph` to group** by service, layer or repository. It is the main way to show architecture boundaries in a flow.
 - **Line breaks** inside labels: `A["Line one<br/>Line two"]`.
-- **Match the direction to the content**: `LR` reads as a pipeline, `TD` as a decision tree. Set it on the whole flowchart, not on a subgraph.
+- **Match the direction to the content**: `LR` reads as a pipeline, `TD` as a decision tree. A subgraph can set its own `direction`, and keeps it when edges cross its border.
 - **Keep edges from crossing where the layout allows.** When edges cross, try reordering the nodes or restructuring the diagram; some diagrams cross anyway.

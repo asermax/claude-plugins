@@ -1,59 +1,90 @@
 #!/usr/bin/env bash
-# Validates mermaid diagram syntax with mermaid-ast, which runs mermaid's own grammars.
-# Usage: echo "flowchart TD; A-->B" | bash validate-mermaid.sh
+# Validates a mermaid diagram with pele (https://pele.run), the renderer every diagram is drawn with,
+# and optionally rasterizes pele's SVG to a PNG so the drawing can be looked at.
+# Usage: bash validate-mermaid.sh [output.png] < diagram.mmd
 #
-# Accepts raw mermaid content from stdin (without ```mermaid fences). A leading
-# frontmatter block (--- yaml ---) is allowed and stripped before parsing.
+# Accepts raw mermaid content from stdin (without ```mermaid fences). Frontmatter and
+# %%{init}%% directives are handled by pele itself.
 # Outputs JSON with validation results.
 # Exit code: 0 = valid, 1 = invalid, 2 = setup error
 
 set -euo pipefail
 
-CACHE_DIR="${MERMAID_VALIDATION_CACHE:-${HOME}/.cache/claude-plugins/mermaid-ast}"
+CACHE_DIR="${MERMAID_VALIDATION_CACHE:-${HOME}/.cache/claude-plugins/pele}"
 
-if [ ! -d "$CACHE_DIR/node_modules/mermaid-ast" ]; then
-  echo "Installing mermaid-ast (one-time setup)..." >&2
+if [ ! -d "$CACHE_DIR/node_modules/pele" ] || [ ! -d "$CACHE_DIR/node_modules/@resvg/resvg-js" ]; then
+  echo "Installing pele and resvg (one-time setup)..." >&2
   mkdir -p "$CACHE_DIR"
-  [ -f "$CACHE_DIR/package.json" ] || echo '{"name":"mermaid-validation-cache","private":true}' > "$CACHE_DIR/package.json"
+  [ -f "$CACHE_DIR/package.json" ] || echo '{"name":"pele-validation-cache","private":true,"type":"module"}' > "$CACHE_DIR/package.json"
 
-  if ! npm install --prefix "$CACHE_DIR" mermaid-ast --silent 2>/dev/null; then
-    echo '{"error": "Failed to install mermaid-ast. Ensure npm and node are available."}' >&2
+  if ! npm install --prefix "$CACHE_DIR" pele @resvg/resvg-js --silent 2>/dev/null; then
+    echo '{"error": "Failed to install pele. Ensure npm and node are available."}' >&2
     exit 2
   fi
 fi
 
-node --input-type=module -e "
-import { readFileSync } from 'node:fs'
-import { pathToFileURL } from 'node:url'
+OUTPUT="${1:+$(realpath -m "$1")}"
 
-// mermaid-ast is ESM-only with an exports map, so resolve its entry from package.json.
-const pkgDir = process.argv[1] + '/node_modules/mermaid-ast/'
-const exportsRoot = JSON.parse(readFileSync(pkgDir + 'package.json', 'utf8')).exports['.']
-const entry = typeof exportsRoot === 'string' ? exportsRoot : (exportsRoot.import ?? exportsRoot.default)
-const { parseAsync, detectDiagramType } = await import(pathToFileURL(pkgDir + entry))
+# node resolves bare imports from the working directory's node_modules
+cd "$CACHE_DIR"
+
+node --input-type=module -e "
+import { writeFileSync } from 'node:fs'
+import { render, detectType } from 'pele'
+import { Resvg } from '@resvg/resvg-js'
+
+const output = process.argv[1]
+
+// resvg does not evaluate CSS custom properties, so every var() is replaced by the default
+// value pele declares for it on the root element before rasterizing.
+const resolveVariables = (svg) => {
+  const values = {}
+
+  for (const [, name, value] of svg.matchAll(/(--_[a-z]+):var\(--pele-[a-z-]+,([^)]+)\)/g)) {
+    values[name] = value
+  }
+
+  return svg
+    .replace(/var\((--_[a-z]+)\)/g, (match, name) => values[name] ?? match)
+    .replace(/var\(--pele-[a-z-]+,([^)]+)\)/g, '\$1')
+}
 
 let data = ''
 process.stdin.setEncoding('utf8')
 process.stdin.on('data', (chunk) => { data += chunk })
-process.stdin.on('end', async () => {
-  const body = data.replace(/^\s*---\n[\s\S]*?\n---\n/, '').trim()
+process.stdin.on('end', () => {
+  const body = data.trim()
 
   if (!body) {
     console.log(JSON.stringify({ isValid: false, errors: [{ message: 'Empty input' }] }))
     process.exit(1)
   }
 
-  const diagramType = detectDiagramType(body)
+  const diagramType = detectType(body)
 
   try {
-    await parseAsync(body)
-    console.log(JSON.stringify({ isValid: true, diagramType, errors: [] }, null, 2))
+    const { svg, width, height } = render(body, { responsive: false })
+
+    if (output) {
+      const png = new Resvg(resolveVariables(svg), {
+        background: '#ffffff',
+        fitTo: { mode: 'zoom', value: 2 },
+        font: { loadSystemFonts: true, defaultFontFamily: 'sans-serif' },
+      }).render().asPng()
+      writeFileSync(output, png)
+    }
+
+    console.log(JSON.stringify({ isValid: true, diagramType, width, height, ...(output && { png: output }), errors: [] }, null, 2))
     process.exit(0)
   } catch (error) {
-    const message = String(error?.message ?? error).split('\n').filter(Boolean).join(' ')
-    const line = error?.hash?.loc?.first_line ?? error?.hash?.line ?? (message.match(/line (\d+)/)?.[1] && Number(message.match(/line (\d+)/)[1]))
-    console.log(JSON.stringify({ isValid: false, diagramType, errors: [{ ...(line != null && { line }), message }] }, null, 2))
+    if (error?.name !== 'PeleError') {
+      throw error
+    }
+
+    const { code, line, column } = error
+    const message = String(error.message).split('\n').filter(Boolean).join(' ')
+    console.log(JSON.stringify({ isValid: false, diagramType, errors: [{ code, ...(line > 0 && { line, column }), message }] }, null, 2))
     process.exit(1)
   }
 })
-" "$CACHE_DIR"
+" "$OUTPUT"

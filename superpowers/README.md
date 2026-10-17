@@ -20,7 +20,7 @@ The plugin includes the following skills:
 - **agent-browser**: Browser automation CLI for web testing, form filling, screenshots, and data extraction
 
 ### Diagrams and Rendering
-- **mermaid**: Choose, write, style and validate mermaid diagrams, with a chart-selection table, a default shape and colour palette, and a bundled validator
+- **mermaid**: Choose, write, style and validate mermaid diagrams, with a chart-selection table, a default shape and colour palette, and a bundled validator that renders with [pele](https://pele.run)
 - **show-markdown**: Render markdown content in the browser with styling
 
 ### Terminal Orchestration

@@ -23,10 +23,11 @@ The tree uses `design-tree`'s marks: `pending`, `open`, `settled`. Show the whol
 One tree per repository the change touches, worked from the repository the others depend on outward: the one that owns the data first, then the ones that consume it, then the one a person uses. When the order is not evident from the design, ask.
 
 - On a service, a root is an entry point whose behaviour the change touches: an endpoint, a job, an event handler, a command, any way into the code. List the candidates from the design and, when code exists, from the diff, with what the change does in each, and let the user drop the ones the change does not reach. An entry point the change only crosses without altering its outcome is not a root; say why when the user asks.
-  - A data migration has no root of its own. It is validated through the read entry point that exposes its result, as partitions of that root's classifications, upgrade and downgrade both.
+  - A data migration has no root and no classification of its own. The other rows assume it ran. One manual row, outside the classifications, checks that its upgrade and its downgrade work.
   - A piece that runs only inside another entry point, such as a processor that executes during a read, is a classification of that entry point's branch, not a root.
 - On a user-facing surface, a root is a main flow the change touches, including returning to a screen the user already completed when the change stores something there. The tree for such a surface covers each state a screen can show and each action that moves between them, so it is more exhaustive than a service's.
-- When two roots reach the same code the change adds, read the code to find which root reaches the added code on the usual path, and let the user confirm. The usual root carries the full matrix. The other root's branch covers only what that root's path adds, such as the states the root starts from. The branch title states that scope. Under that branch, list each classification the usual root already covers, with the rows that cover the classification, so none is hidden.
+- On a user-facing surface, each placement of a flow, such as the same dialog opened from two parts of a page, is its own root. Each placement gets rows for every state and action the other placements cover.
+- On a service, when two roots reach the same code the change adds, read the code to find which root reaches the added code on the usual path, and let the user confirm. The usual root carries the full matrix. The other root's branch covers only what that root's path adds, such as the states the root starts from. The branch title states that scope. Under that branch, list each classification the usual root already covers, with the rows that cover the classification, so none is hidden.
 
 ## Working a branch
 
@@ -39,7 +40,7 @@ Open one branch at a time, each on the approval of the previous.
 2. **Partitions.** One list per classification, each partition with its expected effect when the design fixes it. Two partitions that the code treats identically are one partition. When every input takes the code down the same path, the root is one row. A partition the design does not decide is asked, not filled in.
 3. **Matrix.** One row per case. A row picks one partition per classification. Every partition appears in at least one row, and the pairs of partitions that interact appear together. Columns: the row id, a one-sentence summary of what the test does (not the test's function name), one column per classification, the expected outcome, and the kind: `test` for an automated test through the entry point at the level the repository's conventions name, `manual` for a validation by hand against the running system, or both. Some rows need environment preparation: a seeded record, a configuration, a variant of an input. A setup column names it. The skill builds the matrix and proposes the manual picks; the user adjusts rows and settles the picks.
 
-Pick the manual checks from the test rows: a picked row's kind becomes `test + manual`, and its expected outcome adds what the check observes by hand. On a service they always include the most common flows and the most common error cases. A row is `manual` alone only when no automated test can check it. Schema rejections are not manual picks. Migration rows are manual only. On a surface whose repository has no test runner, every row is manual; whether it has one is a fact read from the repository, surfaced when the tree for it opens.
+Pick the manual checks from the test rows: a picked row's kind becomes `test + manual`, and its expected outcome adds what the check observes by hand. On a service they always include the most common flows and the most common error cases. A row is `manual` alone only when no automated test can check it. Schema rejections are not manual picks. On a surface whose repository has no test runner, every row is manual; whether it has one is a fact read from the repository, surfaced when the tree for it opens.
 
 ## Facts
 
@@ -47,7 +48,7 @@ The design is settled, so read the code whenever a partition, an expectation or 
 
 ## Dropping rows
 
-A row is dropped, never silently, when no realistic input reaches it. Examples of the kind of reason, not a list: two systems sharing the same schema cannot produce a validation error between them; a value that only a hidden record carries cannot appear in a response; a state the flow cannot re-enter cannot be observed. State the reason in one line under the branch, so the row is not proposed again.
+A row is dropped, never silently, when no realistic input reaches it. Examples of the kind of reason, not a list: two systems sharing the same schema cannot produce a validation error between them; a malformed response from another of our services is a programming error, unless the design makes one side validate the response's shape; input that the request type cannot carry, such as a field the request does not declare, never reaches the code; a value that only a hidden record carries cannot appear in a response; a state the flow cannot re-enter cannot be observed. State the reason in one line under the branch, so the row is not proposed again.
 
 ## Recording the design back
 

@@ -18,7 +18,7 @@ The candidate roots go on the canvas as a map of the system, under a title namin
 
 - **Each tree is an `area`**, labelled with its letter, its repository or deployable, and what it is to the rest of the system, such as `B <service>/: what a client calls`. Lay the areas out in the order work flows through them, whoever starts it on the left; put the tree that every other one imports along the bottom.
 - **Each candidate root is a blue card** inside its tree's area. Its first line is an empty checkbox, `☐`, for the user to tick, then the root's id and its entry point; its second line is `e.g. <scenario>`, one or two scenarios through that entry point, an error case among them.
-- **A candidate that is not a root is a grey dashed card** with the reason, such as a piece that runs only inside another entry point, or a migration validated through a read.
+- **A candidate that is not a root is a grey dashed card** with the reason, such as a piece that runs only inside another entry point, or a migration, checked by one manual row.
 - **Arrows join the cards that hand work to each other**, each labelled with the action one card asks of the other, such as `create` or `start`.
 
 Tell the user to tick or cross out cards with sticky notes or by voice.

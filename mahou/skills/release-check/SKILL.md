@@ -31,11 +31,15 @@ A boundary is a caller and callee pair where at least one side is in the change.
 - The diff. A request the change sends to or accepts from another service names that service. Read the URLs, clients and payload types the diff touches, and list every service on the other end.
 - The user. Present the candidates you found and ask for the boundaries you could not see: which services call the ones in the change, and which they call, including the ones the change does not touch. Do not guess a boundary; a service that talks to the changed one and is not listed goes untested, and that is the pair that breaks in production.
 
+A repository in the change that other repositories install as a package, such as a shared component library, has its consumers as boundaries too. List every export the change modifies, existing ones included, and every repository that installs the package; ask the user for the consumers you cannot find. Check that each peer range the package declares resolves to a published version that has everything the package imports from that peer. Check that every consumer declares each new peer.
+
 Mark the boundaries whose caller keeps running an old build after a release, such as a mobile app or a distributed CLI. On those, the old caller against the new callee lasts hours or weeks, not the minutes a deploy takes.
 
 ## Step 3: Check every boundary in parallel
 
 Dispatch one `compat-checker` per boundary, and mahou:code-blast-radius on the whole change, all in a single message. Spawn the checkers as plain subagents.
+
+For a package, dispatch one `usage-tracer` per modified export in the same message, across the consumers from Step 2.
 
 Give each checker the caller and callee repositories with absolute paths, which of the two is in the change, the base and branch tip of each changed side, the deployed version of each side, and whether the caller keeps running an old build. Each checker tests both directions and the migrations of the changed side, and reports only the pairs that break, with the lines that prove each one.
 

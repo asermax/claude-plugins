@@ -66,9 +66,9 @@ flowchart LR
   id: string
   (stored on the row)" }
   out -.->|"returns"| caller
-  classDef worker fill:#dbeafe,stroke:#2563eb
-  classDef flow fill:#dcfce7,stroke:#16a34a
-  classDef payload fill:#fef3c7,stroke:#d97706
+  classDef worker fill:#dbeafe,stroke:#2563eb,color:#1f2937
+  classDef flow fill:#dcfce7,stroke:#16a34a,color:#1f2937
+  classDef payload stroke:#d97706
   class caller worker
   class comp flow
   class inp,out payload

@@ -32,6 +32,8 @@ A flow that needs no session skips this.
 
 Every row leaves visual evidence in the report artifact `validate` requires. Prefer a recording of the whole row when the loaded `agent-browser` content exposes one; otherwise a screenshot at each meaningful moment, named after the row and the moment (`A1-01-before-submit.png`): the screen before the action, the action, the result, the state after. Under the visuals, the request the surface sent on the decisive action, from the network activity the tool exposes, and the stored state read back afterwards through the API. Both trimmed to what proves the row.
 
+Against a local setup, a state that lasts only as long as a request ends in milliseconds, such as a trigger that shows a loading state or a view that shows a sending message. Capture it with the network slowed down. After the page loads, connect to the page through the DevTools endpoint that `agent-browser get cdp-url` returns, and send `Network.enable` and `Network.emulateNetworkConditions` with a latency of a few seconds. The emulated latency delays the response to the page, not the request. The server stores the record as soon as the request leaves, and the page stays in the pending state until the delayed response arrives.
+
 Confirm the final state through the accessibility tree or the DOM, not visual inspection alone.
 
 ## When the failure is behind the surface

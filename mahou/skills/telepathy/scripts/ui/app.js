@@ -1,9 +1,5 @@
 import MarkdownIt from "https://esm.sh/markdown-it@14";
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-
-const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+import { render as renderDiagram } from "https://esm.sh/pele@1";
 
 const md = new MarkdownIt({ linkify: true, breaks: true });
 const defaultFence = md.renderer.rules.fence;
@@ -482,11 +478,17 @@ const render = () => {
 
   rerendering = false;
 
-  const pending = [...elements.content.querySelectorAll("pre.mermaid:not([data-processed])")];
+  // render() rather than mount(): a re-render drops these nodes, and mount() would leave a resize observer on each one
+  elements.content.querySelectorAll("pre.mermaid:not([data-processed])").forEach((node) => {
+    node.dataset.processed = "true";
 
-  if (pending.length > 0) {
-    mermaid.run({ nodes: pending }).catch(() => undefined);
-  }
+    try {
+      node.innerHTML = renderDiagram(node.textContent, { fontFamily: getComputedStyle(document.body).fontFamily }).svg;
+    } catch (error) {
+      node.textContent = error.message;
+      node.classList.add("mermaid-error");
+    }
+  });
 };
 
 const renderHtml = () => {

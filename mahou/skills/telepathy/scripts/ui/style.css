@@ -213,6 +213,24 @@ main {
   text-align: center;
 }
 
+.block .content pre.mermaid-error {
+  color: #d14d41;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+/* Pele colours diagrams through CSS variables, so they follow the page's light and dark palettes */
+.pele {
+  --pele-bg: var(--bg);
+  --pele-fg: var(--text);
+  --pele-muted: var(--muted);
+  --pele-line: var(--text);
+  --pele-surface: var(--panel);
+  --pele-surface-alt: var(--code);
+  --pele-border: var(--border);
+  --pele-accent: var(--accent);
+}
+
 .block .content table {
   border-collapse: collapse;
 }

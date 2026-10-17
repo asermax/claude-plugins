@@ -15,25 +15,35 @@ It does not cover what is inside a file, which the interfaces and the other part
 
 ## Representation
 
-Paths in a fenced block, grouped by directory, each marked `new`, `touched` or `deleted`, with the reason on the same line when the path alone does not say it.
+A file tree in a fenced block, one per repository, with the folders the change lands in as they look after the change. Label each file that the change adds, changes or deletes as `new`, `touched` or `deleted`. When the path alone does not explain the change, put the reason on the same line. Leave the files and folders around them unlabelled, for context. Show only the name of a folder that the change does not enter.
 
 ```
-<feature>/components/NewComponent/
-├── NewComponent.<ext>                   new
-├── NewChildComponent.<ext>              new
-└── index.<ext>                          new, exports the component only
-<feature>/components/ParentComponent.<ext>           touched
-<shared>/<domain>/sharedRule.<ext>       new
+<library>/src/
+├── components/
+│   ├── NewComponent/
+│   │   ├── NewComponent.<ext>           new
+│   │   ├── NewChildComponent.<ext>      new
+│   │   └── index.<ext>                  new       exports the component only
+│   ├── ParentComponent.<ext>            touched
+│   └── OtherComponent/
+├── <domain>/
+│   └── sharedRule.<ext>                 new
+└── index.<ext>
 <manifest>                               touched   new dependency
 ```
 
 The same form on a service:
 
 ```
-<app>/schemas/thing.<ext>                touched   new field on two schemas
-<app>/endpoints/thing.<ext>              touched   one more filter on the list endpoint
-<app>/services/thing.<ext>               touched   new branch in the resolver
-<app>/repositories/thing.<ext>           unchanged, the filter already flows through
+<app>/
+├── endpoints/
+│   └── thing.<ext>                      touched   one more filter on the list endpoint
+├── repositories/
+│   └── thing.<ext>                      unchanged, the filter already flows through
+├── schemas/
+│   └── thing.<ext>                      touched   new field on two schemas
+└── services/
+    └── thing.<ext>                      touched   new branch in the resolver
 <tests>/endpoints/thing_list.<ext>       touched
 ```
 

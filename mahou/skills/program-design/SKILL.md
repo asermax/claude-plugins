@@ -14,7 +14,9 @@ Takes a change whose decisions are settled and specifies how it lands in the cod
 
 Every part rests on the code and follows the conventions, and every part is a representation of the code, never the code itself. No function bodies, no declarations in the language's syntax, no snippet that would compile. A shape is a JSON Schema, a call path is a callstack, a value is a line in a derivation ledger, a file is a path in the module list. When a part cannot be stated without writing code, the part is too low; say so and lift it.
 
-Because it proposes, every proposal is grounded. Read the repositories being designed against, the wiki entries for the technologies they use, the project's `CLAUDE.md` and `.mahou/basics.md` when present, and state the fact a proposal rests on whenever that fact is what makes it right. A proposal with nothing behind it is a guess, and the user cannot tell the two apart.
+Because it proposes, ground every proposal in the code and in the conventions you read for the proposal's root. With each proposal, cite the code or the convention it follows. A proposal with nothing behind it is a guess, and the user cannot tell the two apart.
+
+Some parts carry complex logic or solve a problem other code already solves, such as reading a standard format or running a well-known algorithm. Before proposing one, look for existing code that does the job. Look first at the project's own code: a package or service of its own, or a library one of its repositories already depends on. Then look at maintained libraries. For each candidate, say where the project already uses it, how actively it is maintained, its size and its license. Propose the project's own solution or a library it already uses over a new dependency, and a library over hand-written code. The user picks.
 
 ## Opening
 
@@ -22,7 +24,7 @@ Because it proposes, every proposal is grounded. Read the repositories being des
 
 2. **Name the source.** The design notes when the change has them. Otherwise the change proposed in the conversation, which the user confirms as the source. A change that needs a data model, a new flow or a cross-repository contract and has no design notes has not been designed yet: say that mahou:design has not run, and ask whether to run it first.
 
-3. **Load the context.** Read the source, the conventions above, and the research or references the user names. A `mahou:docs-scout` reads the notes so they stay out of this conversation. Then read the repositories around what the change touches: the packages, screens, endpoints, services, schemas and types it names, their callers, and the tests that cover them. This reading is what the proposals are made of.
+3. **Load the context.** Read the source and the research or references the user names. A `mahou:docs-scout` reads the notes so they stay out of this conversation. Then read the repositories around what the change touches: the packages, screens, endpoints, services, schemas and types it names, their callers, and the tests that cover them. This reading is what the proposals are made of.
 
 4. **State the open points.** Whether the source is current and what is in and out of scope. Wait for the answers.
 
@@ -39,6 +41,8 @@ Program design
 ```
 
 ## Working a root
+
+When a root opens, read the wiki entries for the technologies the root uses and the project's rules that govern it (its `CLAUDE.md`, `.mahou/basics.md` and any rule file the project keeps), before proposing the root's first part. List what you read in the message that proposes the first part.
 
 Branches change as the work goes. The user renames, merges, splits or drops them, and a settled branch that reopens goes back to open, as `design-tree` states.
 
@@ -67,7 +71,7 @@ An entry point branch, in order:
 2. The interfaces and the module list, rendered together, with a class diagram when stored fields change.
 3. The critical behaviour, one part per decision the entry point makes that is not mechanical, as a derivation ledger, a control flow, or as prose. Business rules in a service method, what an absent value resolves to, which side of a boundary enforces what.
 
-A branch that fits none of these orders is worked out with the user before it starts. When the rendering of a screen element is what is undecided, hand that part to mahou:prototype and record what the prototype settled. When no representation in the catalogue fits a part, say so rather than forcing one.
+The orders list the parts a branch can have. Work only the parts that settle something for this branch. When the branch opens, say which parts it skips and why. A branch that only adds a field to an existing schema needs only its interfaces and module list, with no callstack. A branch that fits none of these orders is worked out with the user before it starts. When the rendering of a screen element is what is undecided, hand that part to mahou:prototype and record what the prototype settled. When no representation in the catalogue fits a part, say so rather than forcing one.
 
 **Flag departures from the source.** When a settled part contradicts the design notes or the confirmed change, say so in the first sentence and name what the source would have to say instead. Record the departure as a decision, and carry it to the ending.
 

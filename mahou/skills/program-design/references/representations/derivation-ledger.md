@@ -13,10 +13,13 @@ It does not cover the shape of the values, which is the interfaces, nor the orde
 - Read where each value comes from today: the request, the store, the upstream service, the configuration, the props.
 - Find the functions the repository already has for the rules the change needs, so a line reuses one rather than inventing it.
 - Check the standards for where state lives on that layer, such as what a screen keeps locally and what it reads from the server.
+- Read what the wiki and the project's rules say about extracting variables and logic. By default the ledger names no value used once only to feed a condition and no helper used in one place.
 
 ## Representation
 
 A flat list in a fenced block, one value per line, grouped under the component, service or module that owns it. The left of a line is the name, `:=` and the expression that produces it, written as a call or an access, never as code. The right of a line tags where the value comes from, in the vocabulary of the layer: on a screen, `server`, `form`, `local`, `prop`; in a service, `request`, `upstream`, `database`, `config`. Those are examples; a branch names provenance in whatever words its layer uses and keeps one word per kind of source. Leave the tag off a value that derives from the lines above it. Where the expression does not show something the reader needs, a rule applied twice or a unit conversion, a comment on the line says it.
+
+A component's group ends with a `returns` line that says what the component renders, as a tree: one element per line, `├─` and `└─` before its children, and `←` before the props the element passes, each as a name or as `<prop> ← <where its value comes from>`. A condition goes on its own line under the element it shows or hides. Never write it as code, JSX or prose.
 
 ```
 ParentComponent                                                        touched
@@ -32,6 +35,10 @@ ChildComponent                                                         new
   rightGrouped     := sharedRule(sum(thing.items, by index[itemKey]), reference)
                                                   # same rule, once per side
   state            := any difference != 0 ? mismatch : match
+  returns            <Panel> ← state
+                     ├─ <LeftSide> ← leftGrouped
+                     └─ <RightSide> ← rightGrouped
+                          shown while rightGrouped is not empty
 ```
 
 The same form on a service, with that layer's tags:

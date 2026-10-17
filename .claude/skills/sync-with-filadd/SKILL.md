@@ -87,7 +87,7 @@ Leave these as they are unless the user asks:
 - mahou-only: `telepathy`, `tasks`, `init`, `wiki`, `docs`.
 - `create-scopes` and `validate-pitch`'s out-of-scope list are Filadd-only (Shape Up scopes on the Board, and a skill mahou does not have).
 - `design-with-canvas` ends in `design`'s Recording section on the mahou side and its Documentation section on the Filadd side.
-- When syncing `superpowers:mermaid` to `filadd-experimental-dev:mermaid`, keep Filadd's Notion shape whitelist (`scripts/notion-shapes.txt`), its check in `scripts/validate-mermaid.mjs`, the "Shapes Notion renders" section of `references/flowchart.md` and the Notion fix in `SKILL.md`. superpowers carries none of them. superpowers' validator reads stdin, renders with pele and writes a PNG when given a path, while Filadd's takes a file path and parses for Notion's mermaid, so the validation steps and the rendering rules differ too.
+- When syncing `superpowers:mermaid` to `filadd-experimental-dev:mermaid`, keep Filadd's Notion shape whitelist (`scripts/notion-shapes.txt`), its check in `scripts/validate-mermaid.mjs`, the "Shapes Notion renders" section of `references/flowchart.md` and the Notion fix in `SKILL.md`. superpowers carries none of them. Both validators render with pele and write a PNG when given a path, but superpowers' reads stdin and Filadd's takes a file path, so the validation steps differ. Filadd's rendering rules also keep the ones about Notion's mermaid renderer, marked by renderer, because its documents still render in Notion.
 
 When a new divergence is settled during a sync, add it here.
 
@@ -119,4 +119,4 @@ Set the date under Last synced to today. Commit nothing and bump no version on e
 
 ## Last synced
 
-2026-10-11
+2026-10-17

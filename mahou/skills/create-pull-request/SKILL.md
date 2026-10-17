@@ -22,14 +22,11 @@ The branch comes from the argument, or from `git -C <repo-path> branch --show-cu
 
 ## Step 2: Find the base branch
 
-Fetch first. Then compare the branch against every remote ref except `HEAD` and its own tracking ref:
-
 ```
-git -C <repo-path> fetch origin --prune
-git -C <repo-path> rev-list --left-right --count origin/<candidate>...HEAD
+bash ${CLAUDE_PLUGIN_ROOT}/skills/changeset/scripts/find-base-branch.sh <repo-path>
 ```
 
-The base is the branch with the fewest commits ahead of HEAD, the one this branch was most likely forked from. Distance ties or an unclear picture go to the user with the numbers; never guess between `main` and `master`. State the base you settled on and its ahead/behind counts.
+The script fetches, compares the branch against every remote ref except `HEAD` and its own remote copy, and returns as JSON the `base_branch` with the fewest commits ahead of HEAD, the one this branch was most likely forked from, plus its `ahead` and `behind` counts. Distance ties or an unclear picture go to the user with the numbers; never guess between `main` and `master`. State the base you settled on and its ahead/behind counts.
 
 ## Step 3: Analyze every commit on the branch
 

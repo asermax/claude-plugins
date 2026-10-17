@@ -19,10 +19,10 @@ Collect the absolute path of every repository the change touches. Use `git -C <r
 The base is the commit you measure the change against. Report it, never assume it silently.
 
 ```
-git -C <repo-path> rev-parse --abbrev-ref --symbolic-full-name @{u}
+bash ${CLAUDE_PLUGIN_ROOT}/skills/changeset/scripts/find-base-branch.sh <repo-path>
 ```
 
-Use the branch's upstream when it has one. When it does not, resolve the trunk. Try `git -C <repo-path> symbolic-ref --short refs/remotes/origin/HEAD` first. It errors on any clone where nobody ran `git remote set-head`, and that error means nothing is wrong. Then `git -C <repo-path> remote show origin`. Then ask. **Never guess between `main` and `master`** by checking which exists, because a repository can carry both. Do not fall back to `HEAD~1`.
+The script fetches and returns, as JSON, the remote branch that the current branch has the fewest commits ahead of. That remote branch is the one the current branch was cut from. It skips the branch's own remote copy. Use its `base_branch` as `origin/<base_branch>`. Do not take the base from `origin/HEAD`, because it can point at a trunk the work did not branch from. When the script errors or returns a branch you cannot account for, ask. **Never guess between `main` and `master`** by checking which exists, because a repository can carry both. Do not fall back to `HEAD~1`.
 
 Two sources reviewing the same work against different bases produce findings you cannot compare. When more than one source is involved, report each one's base.
 

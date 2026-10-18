@@ -50,6 +50,8 @@ Every question is a decision that changes the outcome if answered differently. B
 
 State a decision the user already made, in an earlier round or before the tree existed, as a ✓ leaf, and never ask it again. The user corrects a leaf that is wrong; the corrected leaf goes back to ❔ and joins the next frontier.
 
+Before the first round, read the files that `status.md` lists in the change's scratch folder, such as the exploration's decision log and canvas, the prototypes and the earlier trees, unless they are already in context. A decision that any of these files shows becomes a ✓ leaf, including a decision that only a prototype shows. Write on the leaf which file the decision came from. Make your questions informed on topics that are not covered so far, avoid repeating questions that were already answered in previous artifacts.
+
 When an open decision has only one plausible answer, because it follows from decisions the tree already settled or from how the code works today, it stays a ❔ leaf in the tree like any other question, and it is asked as a proposal: the round states the answer and the decision or the behaviour it follows from, and asks the user to confirm or correct it. The leaf becomes ✓ with the answer the user confirms or gives. A decision that more than one answer could reasonably settle is asked open.
 
 ## What a question carries

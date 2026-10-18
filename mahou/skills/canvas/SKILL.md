@@ -45,28 +45,27 @@ Check every change with a screenshot, saved under a new file name each time, sin
 
 The helpers load with the page, so they are back after agent-browser relaunches its browser and you reopen the tab. Each helper takes a shape name and builds the shape id from it with `id(name)`, so one name reaches the same shape through every helper. Each helper that creates a shape runs as one `step`, so the user sees it arrive, and takes an optional `pause`.
 
+The helpers keep the layout with one rule. A shape belongs to the lowest area of its column whose top edge is above the shape's top edge. When a shape's height changes, the shapes under it in the same area move by the same amount. The shape's area grows or shrinks to keep a 40-unit margin under the area's lowest shape. When an area's height changes, the areas under it in the column move, each with its shapes. Place a new shape under the last one in its area, and the helpers grow the area and move the areas under it.
+
 | Helper | What it does |
 |---|---|
 | `id(name)` | The shape id for a name. |
 | `bounds(name)` | The shape's page bounds. |
+| `plain(name)` | Reads the shape's text back as plain text, with its line breaks. Use it to edit a text in place instead of keeping a copy of the text in a script. |
 | `area(name, { x, y, w, h, label }, pause?)` | Creates an `area` with its label and sends it to the back. |
-| `text(name, { x, y, w, text, mono?, size? }, pause?)` | Creates a text of a fixed width, in the hand font or in monospace with `mono: true`. |
-| `card(name, { x, y, w, text, color?, dash?, fill?, mono? }, pause?)` | Creates a rectangle holding a text, violet with a semi fill by default. Use it for a question card, a summary box (`color: 'grey', fill: 'solid'`) or a monospace table (`mono: true`). |
-| `note(name, { x, y, w, text }, pause?)` | Creates a Claude note, a grey dashed `card` labelled "Claude". The helper adds the label, so `text` holds only the message. |
-| `plain(name)` | Reads the shape's text back as plain text, lines included. Use it to edit a text in place instead of keeping its copy in a script. |
-| `fit(name)` | Zooms to a card or a note and sets its height to fit the text, because tldraw measures a text only after drawing it on screen. Returns the height, or `null` when the text isn't drawn. |
-| `fitMock(name)` | Zooms to a `mock` shape and sets its height to the `data-root` element's height, scaled from the mockup's natural width to the shape's width. Returns the height, or `null` when the mockup has no natural width or its root isn't drawn. |
-| `fitArea(name, pad?)` | Resizes an area so its bottom edge sits `pad` below the lowest shape whose top edge is inside the area. Moves the areas below it as `grow` does. Run it after a shape inside the area grew, such as a log that got a new line. |
-| `grow(name, h, gap?)` | Resizes an area and moves the areas below it in the same column, each with the shapes inside it. |
-| `followUp(name, { summary, note, question?, below? })` | Fills a card with its follow-up under the card's own text: a summary box, a Claude note and, when given, the next question as a card. Grows the card, moves the shapes named in `below` by as much, and replaces the parts of an earlier follow-up. |
+| `text(name, { x, y, w, text, mono?, size? }, pause?)` | Creates a text of a fixed width, in the hand font or in monospace with `mono: true`. With a name that exists, replaces the text, and moves or widens it when `x`, `y` or `w` are given. |
+| `card(name, { x, y, w, text, color?, dash?, fill?, mono? }, pause?)` | Creates a rectangle holding a text and fits its height to the text. The rectangle is violet with a semi fill by default. Use it for a question card, a summary box (`color: 'grey', fill: 'solid'`) or a monospace table (`mono: true`). With a name that exists, replaces the text and fits the height to it again. |
+| `note(name, { x, y, w, text }, pause?)` | Creates or updates a Claude note, a grey dashed `card` labelled "Claude". The helper adds the label, so `text` holds only the message. |
+| `followUp(name, { summary, note, question? })` | Fills a card with its follow-up under the card's own text: a summary box, a Claude note and, when given, the next question as a card. Replaces the parts of an earlier follow-up. The parts move with the card. |
+| `fit(name)` | Zooms to the shape and sets its height from what it holds: a card or a note from its text and its follow-up, a `mock` from its `data-root` element scaled from the mockup's natural width, an `area` from its lowest shape. Returns the height, or `null` when the shape isn't drawn. |
+| `resize(name, { h?, w? })` | Sets a shape's height or width. A new width on an area widens every area of its column and moves the shapes right of the column by the change in width. |
 
 For example, a question with its follow-up in an open area:
 
 ```js
 await canvas.card('q4', { x, y, w: 1160, text: '❓ Q4 · <title>\n\n<body>' })
-await canvas.fit('q4')
-await canvas.followUp('q4', { summary: 'Summary · Q4 so far\n\n<settled and findings>', note: '<how the answer was read>', below: ['q5', 'n2'] })
-canvas.grow('a2', canvas.bounds('n2').maxY - canvas.bounds('a2').y + 40)
+await canvas.followUp('q4', { summary: 'Summary · Q4 so far\n\n<settled and findings>', note: '<how the answer was read>' })
+await canvas.note('n2', { text: '<the next reading>' })
 ```
 
 A session that needs more than these writes its own helpers as scripts in the canvas folder, loads them into the tab, and loads them again after a relaunch.
@@ -79,7 +78,7 @@ Keep them low fidelity: the hand font, sketched borders, and grey bars for text 
 
 When the screen has a prototype, copy the mockup from it: the same parts, the same states and the same copy, translated into the language the canvas is written in. A state that is its own view in the prototype is its own mockup on the canvas.
 
-- **Size a mock to its content** when the content's height depends on its data. Give the mockup's root element a `data-root` attribute, and lay it out from the top with no bottom edge. Zoom your tab to the shape, and once the shape has rendered, set the shape's `h` to the root's `offsetHeight` times the shape's width over the mockup's natural width. The canvas renders only the shapes on screen, so a shape measured off screen has no root element. Its `h` then drops to a few units while its content still draws at full size, and every arrow bound to the shape ends at its top edge. `fitMock(name)` does all of this.
+- **Size a mock to its content** when the content's height depends on its data. Give the mockup's root element a `data-root` attribute, and lay it out from the top with no bottom edge. Zoom your tab to the shape, and once the shape has rendered, set the shape's `h` to the root's `offsetHeight` times the shape's width over the mockup's natural width. The canvas renders only the shapes on screen, so a shape measured off screen has no root element. Its `h` then drops to a few units while its content still draws at full size, and every arrow bound to the shape ends at its top edge. `fit(name)` does all of this.
 - **A shape's `data` holds only JSON.** An `undefined` anywhere inside it fails validation and crashes every open tab; write `null` instead.
 
 ## Drawing
@@ -109,7 +108,6 @@ When the screen has a prototype, copy the mockup from it: the same parts, the sa
 - **A sticky note on the canvas is a message from the user.** When you give the user the URL, tell them to put a sticky note on the shape they want changed, or to draw an arrow from the note to it. `window.canvas.notes()` returns each note with its targets: the shapes an arrow joins it to, else the shapes it sits on, smallest first. Act on each note, and once it is handled, delete it together with its `arrows` and tell the user.
 - **"Send to Claude", or Ctrl+. (Cmd+. on a Mac), notifies that a batch of edits is ready.** The document is already saved. While the canvas is open, keep `canvas.sh watch` running under a monitor that notifies you on every line it prints; each line is a click. A background command that reports only when it exits never tells you about a click, and you never read the user's notes. Do not react to the user's edits between clicks. When the monitor expires, start it again.
 - **The mic button, or holding Ctrl+, (Cmd+, on a Mac), sends a voice message.** The user holds it while talking and releases it to send; the browser's speech recognition turns the speech into text, in the browser's language unless the URL carries `?lang=<code>`. The watch prints it as `voice: <message>`, followed by ` | selected: <id> (<type>: "<text>"), …` when the user had shapes selected as they released it, and the document is saved first, as with a click. The selected shapes are what the message's "this" or "here" refers to. Treat it as a message from the user in the chat: answer it, and read the canvas for any notes it refers to.
-- **Grow areas with `canvas.grow`.** When an area grows or shrinks, the areas under it move together with the shapes inside them. `grow` collects those shapes before the resize. A script that collects them after the resize also moves the grown area's own shapes that now overlap the area below.
 
 ## Export
 

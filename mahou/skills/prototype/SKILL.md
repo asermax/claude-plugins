@@ -19,6 +19,10 @@ The file shows the element inside enough of its surroundings for the user to jud
 
 Example data is one fixed set, used by every alternative and every state, so the user compares the design and not the data.
 
+The screen shows only what the product would show. Put text that explains the prototype or the design to the reader in the text above the controls or in an alternative's line. Examples are who sees an element and what a control is for.
+
+A new prototype starts from the prototypes already settled for the same product in the change's `prototypes/` folder. It reuses their header, menus, titles, components and badges as they are, and changes only what the new element needs. When a subagent builds it, the subagent's prompt names those files as the base.
+
 ## States and interactions
 
 The prototype is interactive from the first file:

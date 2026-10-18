@@ -52,9 +52,11 @@ The helpers load with the page, so they are back after agent-browser relaunches 
 | `area(name, { x, y, w, h, label }, pause?)` | Creates an `area` with its label and sends it to the back. |
 | `text(name, { x, y, w, text, mono?, size? }, pause?)` | Creates a text of a fixed width, in the hand font or in monospace with `mono: true`. |
 | `card(name, { x, y, w, text, color?, dash?, fill?, mono? }, pause?)` | Creates a rectangle holding a text, violet with a semi fill by default. Use it for a question card, a summary box (`color: 'grey', fill: 'solid'`) or a monospace table (`mono: true`). |
-| `note(name, { x, y, w, text }, pause?)` | Creates a Claude note, a grey dashed `card` whose text opens with "Claude". |
+| `note(name, { x, y, w, text }, pause?)` | Creates a Claude note, a grey dashed `card` labelled "Claude". The helper adds the label, so `text` holds only the message. |
 | `plain(name)` | Reads the shape's text back as plain text, lines included. Use it to edit a text in place instead of keeping its copy in a script. |
 | `fit(name)` | Zooms to a card or a note and sets its height to fit the text, because tldraw measures a text only after drawing it on screen. Returns the height, or `null` when the text isn't drawn. |
+| `fitMock(name)` | Zooms to a `mock` shape and sets its height to the `data-root` element's height, scaled from the mockup's natural width to the shape's width. Returns the height, or `null` when the mockup has no natural width or its root isn't drawn. |
+| `fitArea(name, pad?)` | Resizes an area so its bottom edge sits `pad` below the lowest shape whose top edge is inside the area. Moves the areas below it as `grow` does. Run it after a shape inside the area grew, such as a log that got a new line. |
 | `grow(name, h, gap?)` | Resizes an area and moves the areas below it in the same column, each with the shapes inside it. |
 | `followUp(name, { summary, note, question?, below? })` | Fills a card with its follow-up under the card's own text: a summary box, a Claude note and, when given, the next question as a card. Grows the card, moves the shapes named in `below` by as much, and replaces the parts of an earlier follow-up. |
 
@@ -77,7 +79,7 @@ Keep them low fidelity: the hand font, sketched borders, and grey bars for text 
 
 When the screen has a prototype, copy the mockup from it: the same parts, the same states and the same copy, translated into the language the canvas is written in. A state that is its own view in the prototype is its own mockup on the canvas.
 
-- **Size a mock to its content** when the content's height depends on its data. Give the mockup's root element a `data-root` attribute, and lay it out from the top with no bottom edge. Zoom your tab to the shape, and once the shape has rendered, set the shape's `h` to the root's `offsetHeight` times the shape's width over the mockup's natural width. The canvas renders only the shapes on screen, so a shape measured off screen has no root element. Its `h` then drops to a few units while its content still draws at full size, and every arrow bound to the shape ends at its top edge.
+- **Size a mock to its content** when the content's height depends on its data. Give the mockup's root element a `data-root` attribute, and lay it out from the top with no bottom edge. Zoom your tab to the shape, and once the shape has rendered, set the shape's `h` to the root's `offsetHeight` times the shape's width over the mockup's natural width. The canvas renders only the shapes on screen, so a shape measured off screen has no root element. Its `h` then drops to a few units while its content still draws at full size, and every arrow bound to the shape ends at its top edge. `fitMock(name)` does all of this.
 - **A shape's `data` holds only JSON.** An `undefined` anywhere inside it fails validation and crashes every open tab; write `null` instead.
 
 ## Drawing

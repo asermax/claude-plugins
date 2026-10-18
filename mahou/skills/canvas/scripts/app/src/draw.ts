@@ -1,4 +1,5 @@
 import { createShapeId, toRichText, type Editor, type TLDefaultColorStyle, type TLShape, type VecLike } from 'tldraw'
+import { definitionOf } from './MockShape'
 import { stepOf } from './step'
 
 type Place = { x: number; y: number; w: number }
@@ -189,5 +190,46 @@ export const drawOf = (editor: Editor) => {
     }
   }
 
-  return { id, bounds, area, text, card, note, plain, fit, grow, followUp }
+  // A mock draws its kind at the mockup's natural width and scales it to the shape, so its height follows the root
+  // element's height at that scale; the root exists only once the shape is drawn on screen
+  const fitMock = async (name: string) => {
+    const shape = editor.getShape(id(name))!
+    const { kind, w } = shape.props as { kind: string; w: number }
+    const width = definitionOf(kind)?.width
+
+    editor.zoomToBounds(bounds(name), { immediate: true, inset: 80 })
+    await nextFrame()
+    await nextFrame()
+
+    const root = document.querySelector<HTMLElement>(`[data-shape-id="${id(name)}"] [data-root]`)
+
+    if (root == null || width == null) {
+      return null
+    }
+
+    const h = (root.offsetHeight * w) / width
+
+    editor.updateShape({ id: shape.id, type: 'mock', props: { h } })
+
+    return h
+  }
+
+  // A shape that grew past the area's bottom still has its top edge inside it, so the top edge decides what the area holds
+  const fitArea = (name: string, pad = 40) => {
+    const outer = bounds(name)
+
+    const held = editor
+      .getCurrentPageShapes()
+      .filter((shape) => shape.parentId === editor.getCurrentPageId() && shape.id !== id(name) && !isArea(shape))
+      .map((shape) => editor.getShapePageBounds(shape)!)
+      .filter((inner) => inner.x >= outer.x - 1 && inner.maxX <= outer.maxX + 1 && inner.y >= outer.y && inner.y <= outer.maxY)
+
+    if (held.length === 0) {
+      return
+    }
+
+    grow(name, Math.max(...held.map((inner) => inner.maxY)) - outer.y + pad)
+  }
+
+  return { id, bounds, area, text, card, note, plain, fit, fitMock, fitArea, grow, followUp }
 }

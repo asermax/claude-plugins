@@ -42,7 +42,7 @@ const BUILT_IN: Record<string, MockDefinition<any>> = {
   'blank-screen': { width: 560, defaults: {}, render: () => <Browser app="…">{null}</Browser> },
 }
 
-const definitionOf = (kind: string): MockDefinition<any> | undefined => mockupOf(kind) ?? BUILT_IN[kind]
+export const definitionOf = (kind: string): MockDefinition<any> | undefined => mockupOf(kind) ?? BUILT_IN[kind]
 
 // Subscribes to the mockup registry, so editing a mockup file redraws its shapes without reloading the page
 const MockContent = ({ shape }: { shape: MockShape }) => {

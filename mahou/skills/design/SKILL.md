@@ -62,7 +62,7 @@ When the tree is complete, the project's docs record it, and mahou:write-documen
 
 1. **Existing notes the change touches.** List them from what was read during the work, with what each would need. When the set is unknown or incomplete, say so and offer a `mahou:docs-scout` to find them. The user settles each one: update it, add the minimum and point to the new note, or skip it.
 
-2. **New notes.** The change may need one note or several. Propose the split, and the user settles it.
+2. **New notes.** The change may need one note or several. Propose the split, and the user settles it. Split by flow or part of the system, and keep everything about one flow or part in its note: its screens, its states, the client's local state for it and its rules. A branch about one concern across flows, such as the screens or the client's local state, has its content split into the notes of the flows it belongs to.
 
 Then run mahou:write-documentation once, giving it the tree and every settled amendment, so the pass weighs the whole documentation rather than one note at a time. Each settled branch already carries its prose and its representation, so drafting is mostly moving that text into the note; `write-documentation` fits it to the project's charter and templates, which this skill never reads.
 

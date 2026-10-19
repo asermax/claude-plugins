@@ -7,4 +7,5 @@
 - [`modal`](modal/INDEX.md): calling Modal functions from outside its Python client
 - [`node`](node/INDEX.md): running and distributing a Node program
 - [`tanstack-query`](tanstack-query/INDEX.md): reaching an API through TanStack Query from React
+- [`tanstack-start`](tanstack-start/INDEX.md): building and deploying a TanStack Start app
 - [`testing`](testing/INDEX.md): how test runners are built and what they expose

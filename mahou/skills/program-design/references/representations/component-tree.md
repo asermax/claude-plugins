@@ -26,6 +26,22 @@ ParentComponent                          touched
 
 Under it, one short paragraph per marked component: what it renders, what state it owns, and why it exists rather than staying inline, in the terms of the standards that govern the repository.
 
+A component can expose slots: places where the component that renders it puts its own content. List each slot as a child line written `<slot>`, unmarked. Where the branch defines the component, its slots are empty. Where another component uses the component, the used component's line is unmarked, and each slot line holds as children the components that the using component puts in that slot.
+
+```
+SharedComponent                          new
+├── <header>
+└── ItemRow                              new
+    └── <actions>
+
+ScreenComponent                          new
+└── SharedComponent
+    ├── <header>
+    │   └── ScreenForm                   new
+    └── <actions>
+        └── ScreenActionButton           new
+```
+
 ## When it fits
 
 A branch whose change is a composition: a component added, moved, split or given a child. It follows the screen layout and precedes the state and the interfaces, so the split settles before any prop is named. It does not fit a branch that only changes what an existing component computes; the derivation ledger carries that alone.

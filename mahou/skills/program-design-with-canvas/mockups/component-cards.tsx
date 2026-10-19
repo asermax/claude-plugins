@@ -1,7 +1,7 @@
 import type { MockDefinition } from '@canvas/MockShape'
 import { HAND, INK, MUTED, PAPER } from '@canvas/kit/theme'
 
-type Kind = 'host' | 'provider' | 'scope' | 'dialog' | 'view' | 'part' | 'button'
+type Kind = 'host' | 'provider' | 'scope' | 'dialog' | 'view' | 'part' | 'button' | 'slot'
 
 const KINDS: Record<Kind, { label: string; color: string; fill: string }> = {
   host: { label: 'host component', color: '#868e96', fill: '#f8f9fa' },
@@ -11,6 +11,7 @@ const KINDS: Record<Kind, { label: string; color: string; fill: string }> = {
   view: { label: 'view · one per status', color: '#e8590c', fill: '#fff4e6' },
   part: { label: 'part of a view', color: '#f08c00', fill: '#fff9db' },
   button: { label: 'button', color: '#c2255c', fill: '#fff0f6' },
+  slot: { label: 'slot', color: '#0b7285', fill: '#e3fafc' },
 }
 
 interface Node {

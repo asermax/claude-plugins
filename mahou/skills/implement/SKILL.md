@@ -39,7 +39,9 @@ When the user steers mid-run, forward the steering to every subagent it concerns
 
 As each implementation subagent reports, dispatch the agentic review for that repository without waiting for the others: a subagent invokes mahou:agentic-review on that repository's changeset, the branch measured against the default branch. When the repository's implementation subagent is still available, send it only this new instruction; when a new subagent is spawned, its brief carries the same change context, tasks and repository rules the implementation brief did, plus the instruction. The review fixes inside its own bounds and leaves its fixes uncommitted; relay them per repository and let the user decide whether to commit them on the branch before the manual validation runs.
 
-Run the same review on every later batch of fixes a subagent makes on a repository, such as the consistency fixes or a round of review fixes, before you relay the fixes as done.
+Then bring back every finding the review skipped, per repository, as a decision for the user: apply it or leave it. Give each finding with the reason the review gave for skipping it. A finding the user decides to apply becomes a task, which an implementation subagent works like the rest. Record each finding the user leaves as skipped in the change's scratch folder.
+
+Run the same review on every later batch of fixes a subagent makes on a repository, such as the consistency fixes or a round of review fixes, before you relay the fixes as done. Bring that review's skipped findings back the same way.
 
 ## Manual validation
 

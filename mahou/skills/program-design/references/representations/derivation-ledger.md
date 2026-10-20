@@ -17,7 +17,22 @@ It does not cover the shape of the values, which is the interfaces, nor the orde
 
 ## Representation
 
-A flat list in a fenced block, one value per line, grouped under the component, service or module that owns it. The left of a line is the name, `:=` and the expression that produces it, written as a call or an access, never as code. The right of a line tags where the value comes from, in the vocabulary of the layer: on a screen, `server`, `form`, `local`, `prop`; in a service, `request`, `upstream`, `database`, `config`. Those are examples; a branch names provenance in whatever words its layer uses and keeps one word per kind of source. Leave the tag off a value that derives from the lines above it. Where the expression does not show something the reader needs, a rule applied twice or a unit conversion, a comment on the line says it.
+A flat list in a fenced block, one value per line, grouped under the component, service or module that owns it. The left of a line is the name, `:=` and the expression that produces it, written as a call or an access, never as code. When the reader needs something the expression leaves out, such as a rule applied twice or a unit conversion, write it in a comment on the line.
+
+Put one of these tags on the right of each line:
+
+| Kind of line | Tags |
+|---|---|
+| What the part receives | `prop`, `arg` for a hook's or a function's argument, `request` for a service's request |
+| Configuration | `query meta`, `env` for a build variable, `config` for a service's settings |
+| Shared state from above | `context`, `cookie` |
+| A value read from outside the part | `server`, `browser`, `upstream`, `database` |
+| A value the part holds | `local` for state the part owns or an instance's mutable value, `form`, `constant` for a module constant |
+| A function rather than a value | `function` for a helper defined inside the part, `method` for a function of a class or of an object the part returns, `effect` for a `useEffect` |
+| A value derived from the lines above | `computed` |
+| The last line | `returns` |
+
+Name an `effect` line after the hook and its dependencies, such as `useEffect, [<dependency>]`, never by when the effect runs. When no tag fits a line, name a new one for its kind of source, use one tag per kind, and define the new tag the first time it appears in the ledger.
 
 A component's group ends with a `returns` line that says what the component renders, as a tree: one element per line, `├─` and `└─` before its children, and `←` before the props the element passes, each as a name or as `<prop> ← <where its value comes from>`. A condition goes on its own line under the element it shows or hides. Never write it as code, JSX or prose.
 

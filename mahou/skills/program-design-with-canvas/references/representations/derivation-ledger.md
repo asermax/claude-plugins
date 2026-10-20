@@ -6,7 +6,20 @@
 
 One `state-card` mock per component, in the same columns as the component tree, and one `hook-card` mock per hook or function the branch adds. Size each card to its content as `canvas` describes.
 
-- **A line is `name := expression`**, with a comment under it when the expression does not say something the reader needs, and a tag on the right naming where the value comes from. The tags are `prop`, `context`, `query meta`, `cookie`, `local`, `form`, `server`, `browser` and `computed` on a component; a hook adds `arg` for its arguments and `env` for a build variable. Every line that derives from the lines above it is `computed`.
+- **A line is `name := expression`**, with a comment under it when the reader needs something the expression leaves out, and a tag on the right from `program-design`'s derivation ledger. Draw each tag in the colour of its kind, and give tags of a similar kind similar colours:
+
+  | Kind | Tags and colours |
+  |---|---|
+  | What the part receives, greens | `prop` `#0ca678`, `arg` `#20c997`, `request` `#2b8a3e` |
+  | Configuration, olives | `query meta` `#5c940d`, `env` `#74b816`, `config` `#66a80f` |
+  | Shared state from above | `context` `#7048e8`, `cookie` `#c2255c` |
+  | Read from outside, blues and orange | `server` `#1c7ed6`, `upstream` `#1971c2`, `database` `#364fc7`, `browser` `#e8590c` |
+  | Held by the part, greys and amber | `local` `#495057`, `constant` `#5c677d`, `form` `#f08c00` |
+  | Functions, teals | `function` `#0b7285`, `method` `#1098ad`, `effect` `#15aabf` |
+  | Derived | `computed` `#868e96` |
+  | Last line | `returns` `#212529` |
+
+  When a branch adds a tag to the ledger, give the tag a colour from its kind's family that differs from the other colours in that family.
 - **Lines go in the order they appear in the code:** props first, then context, query meta and cookies, then local and form state, then server queries and mutations, then browser reads, then computed values. A value comes before any line that uses it.
 - **Only add variables when necessary.** If a value is used once, inline it where it is used, in the `returns` line or in an argument. Hooks and functions build the return value directly on the `return`, never step by step or through separate variables. Components do the same in the JSX: a value the JSX can use directly goes there instead of in a separate variable, such as a field destructured from a query's data.
 - **The last line says what the component renders or what the hook returns**, tagged `returns`, with no name and no `:=`, in the same style as the other lines. For a component, write it as a tree of the elements the component renders, never as code, JSX or prose: one element per line, `├─` and `└─` before its children, and `←` before the props the element passes, each as a name or as `<prop> ← <where its value comes from>`. A condition goes on its own line under the element it shows or hides. Put the conditions of what renders in this line, never in a computed value that only feeds it.

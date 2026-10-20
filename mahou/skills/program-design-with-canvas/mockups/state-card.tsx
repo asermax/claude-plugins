@@ -15,14 +15,24 @@ const KINDS: Record<Kind, { color: string; fill: string }> = {
 
 // One colour per kind of source, so a value's origin reads at a glance
 const SOURCES: Record<string, string> = {
-  server: '#1c7ed6',
-  local: '#495057',
   prop: '#0ca678',
+  arg: '#20c997',
+  request: '#2b8a3e',
+  'query meta': '#5c940d',
+  env: '#74b816',
+  config: '#66a80f',
   context: '#7048e8',
   cookie: '#c2255c',
+  server: '#1c7ed6',
+  upstream: '#1971c2',
+  database: '#364fc7',
   browser: '#e8590c',
+  local: '#495057',
+  constant: '#5c677d',
   form: '#f08c00',
-  'query meta': '#5c940d',
+  function: '#0b7285',
+  method: '#1098ad',
+  effect: '#15aabf',
   computed: '#868e96',
   returns: '#212529',
 }
@@ -52,7 +62,7 @@ export const mockup: MockDefinition<Props> = {
           {lines.map(([name, expression, source, comment]) => (
             <div key={name} style={{ display: 'contents' }}>
               <span style={{ fontWeight: 700 }}>{source === 'returns' ? '' : name}</span>
-              <span>
+              <span style={{ whiteSpace: 'pre-wrap' }}>
                 {source === 'returns' ? '' : ':= '}
                 {expression}
                 {comment == null ? null : <span style={{ display: 'block', fontFamily: HAND, fontSize: 12, color: MUTED }}># {comment}</span>}

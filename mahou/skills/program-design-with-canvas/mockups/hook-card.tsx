@@ -12,13 +12,24 @@ const KINDS: Record<Kind, { label: string; color: string; fill: string }> = {
 
 // Same colours as the component cards, plus the hook's own arguments and what it returns
 const SOURCES: Record<string, string> = {
-  arg: '#0ca678',
+  prop: '#0ca678',
+  arg: '#20c997',
+  request: '#2b8a3e',
+  'query meta': '#5c940d',
+  env: '#74b816',
+  config: '#66a80f',
   context: '#7048e8',
   cookie: '#c2255c',
   server: '#1c7ed6',
+  upstream: '#1971c2',
+  database: '#364fc7',
   browser: '#e8590c',
-  'query meta': '#5c940d',
-  env: '#5c940d',
+  local: '#495057',
+  constant: '#5c677d',
+  form: '#f08c00',
+  function: '#0b7285',
+  method: '#1098ad',
+  effect: '#15aabf',
   computed: '#868e96',
   returns: '#212529',
 }
@@ -52,7 +63,7 @@ export const mockup: MockDefinition<Props> = {
           {lines.map(([lineName, expression, source, comment]) => (
             <div key={lineName} style={{ display: 'contents' }}>
               <span style={{ fontWeight: 700 }}>{source === 'returns' ? '' : lineName}</span>
-              <span>
+              <span style={{ whiteSpace: 'pre-wrap' }}>
                 {source === 'returns' ? '' : ':= '}
                 {expression}
                 {comment == null ? null : <span style={{ display: 'block', fontFamily: HAND, fontSize: 11, color: MUTED }}># {comment}</span>}

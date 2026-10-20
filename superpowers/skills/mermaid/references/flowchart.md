@@ -101,7 +101,7 @@ classDef red fill:#fee2e2,stroke:#dc2626,color:#1f2937
 classDef payload stroke:#d97706
 ```
 
-A class with a fill sets dark text, because the fill stays light when the page turns dark and pele's dark theme would otherwise draw light text on it. `braces` draws no fill, so its text sits on the page background and has to follow the theme: it takes `payload`, an amber outline with no fill and no text colour.
+A class with a fill sets dark text, because the fill stays light when the page turns dark and pele's dark theme would otherwise draw light text on it. A class with a dark fill sets light text, `#e5e7eb`. `braces` draws no fill, so its text sits on the page background and has to follow the theme: it takes `payload`, an amber outline with no fill and no text colour.
 
 A state diagram takes the same colours through `classDef`; see [state-diagram.md](state-diagram.md).
 

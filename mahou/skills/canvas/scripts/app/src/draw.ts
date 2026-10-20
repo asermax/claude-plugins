@@ -66,21 +66,65 @@ export const drawOf = (editor: Editor) => {
     return one.x < other.maxX && one.maxX > other.x
   }
 
-  // A shape belongs to the lowest area of its column whose top edge is above the shape's top edge, so a shape placed
-  // under an area that has not grown yet still belongs to that area and not to the one below it
+  const encloses = (outer: TLShape, inner: TLShape) => {
+    const one = editor.getShapePageBounds(outer)!
+    const other = editor.getShapePageBounds(inner)!
+
+    return one.x <= other.x && one.maxX >= other.maxX && one.y <= other.y && one.maxY >= other.maxY
+  }
+
+  // An area strictly inside another's left and right edges belongs to that area even when the inner area starts below
+  // the outer area's bottom edge. The areas of one column share their width, so only a nested area is narrower than
+  // the area above it
+  const parentOf = (area: TLShape) => {
+    const inner = editor.getShapePageBounds(area)!
+
+    return topLevel()
+      .filter((other) => isArea(other) && other.id !== area.id)
+      .filter((other) => {
+        const outer = editor.getShapePageBounds(other)!
+
+        return outer.x < inner.x - 0.5 && outer.maxX > inner.maxX + 0.5 && outer.y <= inner.y + 1
+      })
+      .sort((a, b) => editor.getShapePageBounds(b)!.y - editor.getShapePageBounds(a)!.y)[0]
+  }
+
+  const isInside = (area: TLShape, outer: TLShape): boolean => {
+    const parent = parentOf(area)
+
+    return parent != null && (parent.id === outer.id || isInside(parent, outer))
+  }
+
+  const nestedOf = (area: TLShape) => topLevel().filter((other) => isArea(other) && parentOf(other)?.id === area.id)
+
+  // What moves with an area: its shapes, and each area nested in it with that area's own shapes
+  const withContents = (area: TLShape): TLShape[] => [area, ...contentsOf(area), ...nestedOf(area).flatMap(withContents)]
+
+  // A shape belongs to the innermost area that holds its top edge. When none holds it, it belongs to the lowest area of
+  // its column whose top edge is above it, so a shape placed under an area that has not grown yet still belongs to that
+  // area; an area nested inside another is left out there, or a shape placed under a nested area would grow it
   const ownerOf = (shape: TLShape) => {
     const top = editor.getShapePageBounds(shape)!
 
-    return topLevel()
+    const above = topLevel()
       .filter((area) => isArea(area) && area.id !== shape.id && overlapsX(area, shape))
       .filter((area) => editor.getShapePageBounds(area)!.y <= top.y + 1)
-      .sort((a, b) => editor.getShapePageBounds(b)!.y - editor.getShapePageBounds(a)!.y)[0]
+
+    const holding = above.filter((area) => editor.getShapePageBounds(area)!.maxY >= top.y)
+
+    const candidates =
+      holding.length > 0
+        ? holding
+        : above.filter((area) => !above.some((other) => other.id !== area.id && encloses(other, area)))
+
+    return candidates.sort((a, b) => editor.getShapePageBounds(b)!.y - editor.getShapePageBounds(a)!.y)[0]
   }
 
   const contentsOf = (area: TLShape) => topLevel().filter((shape) => !isArea(shape) && ownerOf(shape)?.id === area.id)
 
-  // The shapes that sit under a shape and move when it grows: the next areas of its column, each with its contents,
-  // or the shapes under it inside the same area. `own` holds the grown area's contents, which can already sit lower
+  // The shapes that sit under a shape and move when it grows: the next areas of its column inside the same parent area,
+  // each with its contents, or the shapes under it inside the same area. The areas past the parent move when the parent
+  // refits. `own` holds the grown area's contents, which can already sit lower
   // than the next area's top and would otherwise count as that area's
   const under = (shape: TLShape, bottom: number, own: Set<string> = new Set()) => {
     const owner = isArea(shape) ? undefined : ownerOf(shape)
@@ -89,7 +133,8 @@ export const drawOf = (editor: Editor) => {
       .filter((other) => other.id !== shape.id && !own.has(other.id) && isArea(other) === isArea(shape) && overlapsX(other, shape))
       .filter((other) => editor.getShapePageBounds(other)!.y >= bottom - 1)
       .filter((other) => isArea(other) || ownerOf(other)?.id === owner?.id)
-      .flatMap((other) => (isArea(other) ? [other, ...contentsOf(other).filter((inner) => !own.has(inner.id))] : [other]))
+      .filter((other) => !isArea(shape) || (!isInside(other, shape) && parentOf(other)?.id === parentOf(shape)?.id))
+      .flatMap((other) => (isArea(other) ? withContents(other).filter((inner) => !own.has(inner.id)) : [other]))
   }
 
   // Every height change goes through here: what sits under the shape moves by as much, and the area holding the
@@ -113,12 +158,18 @@ export const drawOf = (editor: Editor) => {
       fitAreaShape(owner, siblings)
     }
 
+    const parent = isArea(shape) ? parentOf(shape) : undefined
+
+    if (parent != null) {
+      fitAreaShape(parent)
+    }
+
     return h
   }
 
   // `held` is the area's contents, collected before anything moved: a shape pushed down by a sibling can sit below
   // the next area's top until this area grows
-  const fitAreaShape = (area: TLShape, held = contentsOf(area)) => {
+  const fitAreaShape = (area: TLShape, held = [...contentsOf(area), ...nestedOf(area)]) => {
     const outer = editor.getShapePageBounds(area)!
     const bottoms = held.map((shape) => editor.getShapePageBounds(shape.id)!.maxY)
 
@@ -207,6 +258,12 @@ export const drawOf = (editor: Editor) => {
       () => {
         editor.createShape({ id: id(name), type: 'mock', x, y, props: { w, h, kind: 'area', data: { label } } })
         editor.sendToBack([id(name)])
+
+        const parent = parentOf(editor.getShape(id(name))!)
+
+        if (parent != null) {
+          fitAreaShape(parent)
+        }
       },
       pause,
     )

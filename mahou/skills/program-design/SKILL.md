@@ -77,7 +77,7 @@ The orders list the parts a branch can have. Work only the parts that settle som
 
 ### Standards
 
-The standards branch lists, per source of conventions, what it governs in this root. Derive it from the settled branches; the user confirms it.
+The standards branch lists, per source of conventions, what it governs in this root. Derive it after every other branch of the root has settled, since what each source governs depends on what those branches settled. Show it and write it to the record, and mark it settled without asking the user to confirm it.
 
 ## Representations
 

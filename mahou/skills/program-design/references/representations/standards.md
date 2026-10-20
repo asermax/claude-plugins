@@ -23,4 +23,4 @@ One line per source, named by its path or wiki entry, followed by what it govern
 
 ## When it fits
 
-Once per root, always, after every other branch. A root closes only when this list exists.
+Once per root, always, after every other branch. A root closes only when this list exists. Mark the list settled as soon as it is written; do not ask the user to confirm it.

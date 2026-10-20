@@ -27,6 +27,8 @@ Tell the user to tick or cross out cards with sticky notes or by voice.
 
 Each branch is an `area` labelled `<id> <root> · <status>`, inside its tree's area. Branches stack down their tree's area, and the trees sit side by side.
 
+Draw every branch of a tree at once, each one whole: its root, classifications, partitions and matrix, labelled `proposed`. This replaces `test-design`'s one level and one branch at a time. A branch, and everything on it, stays `proposed` until the user approves it. Open the next tree once the user has approved every branch of the one before.
+
 - **The root is a blue box** at the top, with the entry point and what it is given.
 - **Each classification is a violet box** under the root, joined to it by a line with no arrowheads.
 - **Each partition is a green box** under its classification, joined the same way, with a short label.

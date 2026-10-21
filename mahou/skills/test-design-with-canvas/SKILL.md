@@ -29,6 +29,8 @@ Each branch is an `area` labelled `<id> <root> · <status>`, inside its tree's a
 
 Draw every branch of a tree at once, each one whole: its root, classifications, partitions and matrix, labelled `proposed`. This replaces `test-design`'s one level and one branch at a time. A branch, and everything on it, stays `proposed` until the user approves it. Open the next tree once the user has approved every branch of the one before.
 
+Draw each branch with `canvas`'s `classificationTree`, which lays out the root, the classifications, the partitions and the matrix. Keep each branch's spec as data in a script in the canvas folder. When a branch changes, such as a row turned manual or a partition added, call the helper again with the same name.
+
 - **The root is a blue box** at the top, with the entry point and what it is given.
 - **Each classification is a violet box** under the root, joined to it by a line with no arrowheads.
 - **Each partition is a green box** under its classification, joined the same way, with a short label.

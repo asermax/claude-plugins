@@ -4,9 +4,11 @@ import { stepOf } from './step'
 
 type Place = { x: number; y: number; w: number }
 
-type TextOptions = Partial<Place> & { text: string; mono?: boolean; size?: 's' | 'm' | 'l' }
+type Into = { into?: string }
 
-type CardOptions = Partial<Place> & {
+type TextOptions = Partial<Place> & Into & { text: string; mono?: boolean; size?: 's' | 'm' | 'l' }
+
+type CardOptions = Partial<Place> & Into & {
   text: string
   color?: TLDefaultColorStyle
   dash?: 'solid' | 'dashed'
@@ -16,13 +18,34 @@ type CardOptions = Partial<Place> & {
 
 type FollowUpOptions = { summary: string; note: string; question?: string }
 
-type BoxOptions = Place & {
+type BoxOptions = Place & Into & {
   h: number
   text: string
   geo?: 'rectangle' | 'ellipse' | 'cloud'
   color?: TLDefaultColorStyle
   fill?: 'none' | 'semi' | 'solid'
   dash?: 'draw' | 'solid' | 'dashed'
+}
+
+type MockOptions = Partial<Place> & Into & { kind: string; data: Record<string, unknown> }
+
+type TreeRow = {
+  id: string
+  summary: string
+  picks: string[]
+  expected: string
+  kind: string
+  setup?: string | null
+  manual?: boolean
+}
+
+type TreeSpec = {
+  label: string
+  root: string
+  classifications: { name: string; partitions: [key: string, label: string][] }[]
+  rows: TreeRow[]
+  dropped?: string[]
+  note?: string | null
 }
 
 type ArrowOptions = {
@@ -40,6 +63,10 @@ const AREA_GAP = 60
 const NOTE_LABEL = 'Claude\n\n'
 const LABEL_SPACE = 60
 const FLOW_GAP = 30
+const MOCK_WIDTH = 520
+const PARTITION_WIDTH = 170
+const ROW_TEXT_WIDTH = 620
+const OUTCOME_WIDTH = 760
 
 const nextFrame = () => new Promise((done) => requestAnimationFrame(() => done(null)))
 
@@ -204,6 +231,20 @@ export const drawOf = (editor: Editor) => {
 
     if (bottoms.length > 0) {
       setHeight(nameOf(area), Math.max(...bottoms) - outer.y + AREA_PADDING, new Set(held.map((shape) => shape.id)))
+    }
+  }
+
+  // A shape belongs to the area that holds its top edge, so the area grows before the shape is created: a shape placed
+  // past the area's bottom would belong to the area around it
+  const makeRoom = (into: string | undefined, y: number, h: number) => {
+    if (into == null) {
+      return
+    }
+
+    const outer = bounds(into)
+
+    if (y + h + AREA_PADDING > outer.maxY) {
+      setHeight(into, y + h + AREA_PADDING - outer.y)
     }
   }
 
@@ -379,7 +420,11 @@ export const drawOf = (editor: Editor) => {
     })
   }
 
-  const text = async (name: string, { x, y, w, text, mono = false, size = 's' }: TextOptions, pause?: number) => {
+  const text = async (name: string, { x, y, w, text, mono = false, size = 's', into }: TextOptions, pause?: number) => {
+    if (!exists(name)) {
+      makeRoom(into, y!, 40)
+    }
+
     await step(
       exists(name) ? id(name) : { x: x!, y: y! },
       () =>
@@ -421,7 +466,11 @@ export const drawOf = (editor: Editor) => {
     })
 
   const card = async (name: string, options: CardOptions, pause?: number) => {
-    const { x, y, w, text } = options
+    const { x, y, w, text, into } = options
+
+    if (!exists(name)) {
+      makeRoom(into, y!, 100)
+    }
 
     await step(
       exists(name) ? id(name) : centreOf({ x: x!, y: y!, w: w! }, 100),
@@ -472,8 +521,12 @@ export const drawOf = (editor: Editor) => {
   }
 
   // A diagram node keeps the size it is given, unlike a card, which fits its height to its text
-  const box = (name: string, { x, y, w, h, text, geo = 'rectangle', color = 'black', fill = 'semi', dash = 'draw' }: BoxOptions, pause?: number) =>
-    step(
+  const box = (name: string, { x, y, w, h, text, geo = 'rectangle', color = 'black', fill = 'semi', dash = 'draw', into }: BoxOptions, pause?: number) => {
+    if (!exists(name)) {
+      makeRoom(into, y, h)
+    }
+
+    return step(
       exists(name) ? id(name) : centreOf({ x, y, w }, h),
       () =>
         exists(name)
@@ -487,6 +540,7 @@ export const drawOf = (editor: Editor) => {
             }),
       pause,
     )
+  }
 
   // Bound to the centres of both shapes, so the arrow follows either one when it moves. Called with a name that exists,
   // it changes only the options given
@@ -605,5 +659,144 @@ export const drawOf = (editor: Editor) => {
     fitAreaShape(editor.getShape(id(areaName))!)
   }
 
-  return { id, bounds, plain, area, text, card, note, followUp, fit, resize, box, arrow, mermaid, move, flow }
+  // Called with a name that exists, mock replaces the shape's data and fits its height again
+  const mock = async (name: string, { x, y, w = MOCK_WIDTH, kind, data, into }: MockOptions, pause?: number) => {
+    if (!exists(name)) {
+      makeRoom(into, y!, 120)
+    }
+
+    await step(
+      exists(name) ? id(name) : centreOf({ x: x!, y: y!, w }, 120),
+      () =>
+        exists(name)
+          ? editor.updateShape({ id: id(name), type: 'mock', props: { data } })
+          : editor.createShape({ id: id(name), type: 'mock', x, y, props: { w, h: 120, kind, data } }),
+      pause,
+    )
+
+    return fit(name)
+  }
+
+  // One test branch drawn whole in one batch: stepping through every box, line and dot would make the user wait for a
+  // drawing they read only once it is finished. A branch drawn again gets fresh ids, since a deleted id cannot be reused
+  const classificationTree = (name: string, spec: TreeSpec, { x, y }: { x?: number; y?: number } = {}) => {
+    const version = exists(name) ? ((editor.getShape(id(name))!.meta.treeVersion as number) ?? 0) + 1 : 0
+    const prefix = `${name}~${version}-`
+    const drawn: string[] = []
+
+    if (exists(name)) {
+      editor.deleteShapes(topLevel().filter((shape) => shape.id.startsWith(`shape:${name}~${version - 1}-`)).map((shape) => shape.id))
+      editor.updateShape({ id: id(name), type: 'mock', props: { data: { label: spec.label } } })
+    } else {
+      editor.createShape({ id: id(name), type: 'mock', x, y, props: { w: 1000, h: 400, kind: 'area', data: { label: spec.label } } })
+      editor.sendToBack([id(name)])
+    }
+
+    editor.updateShape({ id: id(name), type: 'mock', meta: { treeVersion: version } })
+
+    const outer = bounds(name)
+    const partitions = spec.classifications.flatMap(({ partitions }, index) => partitions.map(([key]) => `${index}:${key}`))
+    const left = outer.x + AREA_PADDING
+    const middle = left + ROW_TEXT_WIDTH + AREA_PADDING
+    const middleWidth = Math.max(partitions.length * (PARTITION_WIDTH + GAP) - GAP, PARTITION_WIDTH)
+    const right = middle + middleWidth + AREA_PADDING
+    const column: Record<string, number> = {}
+
+    const shape = (part: string, props: object, type = 'geo', at: VecLike = { x: 0, y: 0 }) => {
+      editor.createShape({ id: id(`${prefix}${part}`), type, x: at.x, y: at.y, props })
+      drawn.push(`${prefix}${part}`)
+
+      return bounds(`${prefix}${part}`)
+    }
+
+    const label = (part: string, at: VecLike, w: number, text: string, color: TLDefaultColorStyle) =>
+      shape(part, { richText: toRichText(text), w, autoSize: false, size: 's', font: 'draw', color, textAlign: 'start' }, 'text', at)
+
+    const node = (part: string, at: VecLike, w: number, h: number, text: string, color: TLDefaultColorStyle) =>
+      shape(part, { geo: 'rectangle', w, h, growY: 0, color, fill: 'semi', dash: 'draw', size: 's', font: 'draw', align: 'middle', verticalAlign: 'middle', richText: toRichText(text) }, 'geo', at)
+
+    const join = (part: string, from: string, to: string) => {
+      const start = bounds(`${prefix}${from}`)
+      const end = bounds(`${prefix}${to}`)
+
+      shape(part, { start: { x: 0, y: 0 }, end: { x: end.center.x - start.center.x, y: end.y - start.maxY }, arrowheadStart: 'none', arrowheadEnd: 'none', color: 'grey', size: 's' }, 'arrow', { x: start.center.x, y: start.maxY })
+
+      const bind = (to: string, terminal: 'start' | 'end') => ({ type: 'arrow', fromId: id(`${prefix}${part}`), toId: id(`${prefix}${to}`), props: { terminal, normalizedAnchor: { x: 0.5, y: 0.5 }, isExact: false, isPrecise: false } })
+
+      editor.createBindings([bind(from, 'start'), bind(to, 'end')])
+    }
+
+    const dotted = (part: string, from: VecLike, to: VecLike) =>
+      shape(part, { dash: 'dotted', color: 'grey', size: 's', points: { a1: { id: 'a1', index: 'a1', x: 0, y: 0 }, a2: { id: 'a2', index: 'a2', x: to.x - from.x, y: to.y - from.y } } }, 'line', from)
+
+    let top = outer.y + LABEL_SPACE
+
+    node('root', { x: middle, y: top }, middleWidth, 110, spec.root, 'blue')
+    top += 110 + LABEL_SPACE
+
+    if (partitions.length > 0) {
+      let px = middle
+
+      spec.classifications.forEach(({ name: classification, partitions: parts }, index) => {
+        const width = parts.length * (PARTITION_WIDTH + GAP) - GAP
+
+        node(`c${index}`, { x: px, y: top }, width, 60, classification, 'violet')
+        join(`c${index}-line`, 'root', `c${index}`)
+
+        parts.forEach(([key, text], position) => {
+          const at = { x: px + position * (PARTITION_WIDTH + GAP), y: top + 110 }
+
+          node(`p${index}-${key}`, at, PARTITION_WIDTH, 70, text, 'green')
+          join(`p${index}-${key}-line`, `c${index}`, `p${index}-${key}`)
+          column[`${index}:${key}`] = at.x + PARTITION_WIDTH / 2
+        })
+
+        px += width + GAP
+      })
+
+      top += 220
+    }
+
+    label('head-left', { x: left, y: top }, ROW_TEXT_WIDTH, 'row · what the test does', 'grey')
+    label('head-right', { x: right, y: top }, OUTCOME_WIDTH, 'expected · kind · setup', 'grey')
+    top += 50
+
+    const matrixTop = top
+
+    spec.rows.forEach((row, index) => {
+      const color = row.manual ? 'orange' : 'black'
+      const summary = label(`r${index}-left`, { x: left, y: top }, ROW_TEXT_WIDTH, `${row.id} · ${row.summary}`, color)
+      const outcome = label(`r${index}-right`, { x: right, y: top }, OUTCOME_WIDTH, [row.expected, row.kind, row.setup].filter((part) => part != null).join(' · '), color)
+      const h = Math.max(summary.h, outcome.h)
+
+      row.picks.forEach((key, classification) => {
+        const cx = column[`${classification}:${key}`]
+
+        if (cx != null) {
+          shape(`r${index}-dot${classification}`, { geo: 'ellipse', w: 18, h: 18, growY: 0, color, fill: 'solid', dash: 'solid', size: 's', richText: toRichText('') }, 'geo', { x: cx - 9, y: top + Math.min(h, 40) / 2 - 5 })
+        }
+      })
+
+      top += h + GAP
+      dotted(`r${index}-rule`, { x: left, y: top - GAP / 2 }, { x: right + OUTCOME_WIDTH, y: top - GAP / 2 })
+    })
+
+    Object.values(column).forEach((cx, index) => dotted(`v${index}`, { x: cx, y: matrixTop - 10 }, { x: cx, y: top - GAP / 2 }))
+    top += GAP
+
+    for (const [index, reason] of (spec.dropped ?? []).entries()) {
+      top += label(`dropped${index}`, { x: left, y: top }, right + OUTCOME_WIDTH - left, `Dropped: ${reason}`, 'grey').h + 8
+    }
+
+    if (spec.note != null) {
+      top += label('note', { x: left, y: top }, right + OUTCOME_WIDTH - left, spec.note, 'grey').h + 8
+    }
+
+    editor.updateShape({ id: id(name), type: 'mock', props: { w: right + OUTCOME_WIDTH + AREA_PADDING - outer.x } })
+    setHeight(name, top - outer.y + AREA_PADDING, new Set(drawn.map(id)))
+
+    return bounds(name)
+  }
+
+  return { id, bounds, plain, area, text, card, note, followUp, fit, resize, box, arrow, mermaid, mock, move, flow, classificationTree }
 }

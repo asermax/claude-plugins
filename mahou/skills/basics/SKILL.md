@@ -58,6 +58,10 @@ The wiki is the standard the conventions reviewer measures a change against. mah
 
 Projects mahou runs in keep their own documentation in a folder they own, usually `docs/`. How to find it and what its structure is made of live in mahou:docs, which every skill and agent that reads or writes documentation loads. Skills that do not touch documentation leave it alone.
 
+## The project's invariants
+
+Projects keep the rules that every change respects in an invariants note in their docs folder. The rules cover how the product behaves and how the system is built. Before any decision or proposal, read the docs folder's index, find the invariants note in it, and read the note. Check every decision and proposal against it. When a decision would break a rule in the note, say so in the question that settles the decision and name the rule.
+
 ## The local layer
 
 A project can change how a skill behaves in a `.mahou/` folder at its root: `.mahou/basics.md` for standing rules, `.mahou/<skill>.md` for one skill, `.mahou/wiki/` for local knowledge. Every skill reads its own file when present, and local wins over global when the two conflict.

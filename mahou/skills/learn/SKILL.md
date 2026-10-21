@@ -27,7 +27,7 @@ Examples inside a skill or wiki entry are generic. They carry the shape the sess
 
 ## Drafting
 
-1. **Classify and scope each item before drafting it.** Process becomes a skill, new or iterated. Work a skill should hand to a subagent becomes an agent. Knowledge about a tool or technology becomes a wiki entry. A decision the user repeated for this project becomes a standing rule in a local file. Global means useful in any project; local means true only for this one. Restate the job the item does, which kind it is and where it lands. Read the skill, entry or index it would land in to check it is not already there; if it already says this, the finding becomes an iteration on whatever failed to read it. Draft only once the user confirms the shape.
+1. **Classify and scope each item before drafting it.** Process becomes a skill, new or iterated. Work a skill should hand to a subagent becomes an agent. Knowledge about a tool or technology becomes a wiki entry. A decision the user repeated for this project becomes a standing rule in a local file. A rule every change to this project respects, about how the product behaves or how the system is built, becomes a line in the project's invariants note. Global means useful in any project; local means true only for this one. Restate the job the item does, which kind it is and where it lands. Read the skill, entry or index it would land in to check it is not already there; if it already says this, the finding becomes an iteration on whatever failed to read it. Draft only once the user confirms the shape.
 
 2. **Draft every item in one reply**, ordered by confidence then by impact, each under its own heading, with the file it lands in. For a new skill, agent, wiki entry, design type or program design representation, give the full text; for an iteration, the old and new text. Before showing the drafts, write them to the change's scratch folder, per the convention in mahou:basics, and run `superpowers:unslop` over them. The user approves, corrects or drops each item separately; do not ask for a single approve-everything answer, though the user may give one.
 
@@ -49,6 +49,7 @@ Examples inside a skill or wiki entry are generic. They carry the shape the sess
 | A design type that generalizes beyond the session it came from | `skills/design/references/types/<type>.md`, plus its row in the types table of mahou:design. A type specific to one change stays out |
 | A program design representation that generalizes beyond the session it came from | `skills/program-design/references/representations/<form>.md`, plus its row in the representations table of mahou:program-design. A form specific to one change stays out |
 | A rule or fact true only for this project | `.mahou/<skill>.md`, or `.mahou/wiki/` with the same index-per-level shape as the global store |
+| A rule every change to this project respects | A line in the project's invariants note, in the section for its kind, linking the note that explains it when one does |
 
 ## New skill checklist
 

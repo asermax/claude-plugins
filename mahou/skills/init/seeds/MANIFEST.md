@@ -15,6 +15,7 @@ These files are **seed material**: once written, they belong to the project, and
 | Seed | Lands at | Instantiated |
 |---|---|---|
 | `charter-README.md` | `<<DOCS>>/README.md` | once |
+| `invariants.md` | `<<DOCS>>/invariants.md` | once |
 | `folder-README.md` | `<<DOCS>>/<<FOLDER>>/README.md` | **once per note folder** |
 | `template-note.md` | `<<DOCS>>/_templates/note.md` | once |
 

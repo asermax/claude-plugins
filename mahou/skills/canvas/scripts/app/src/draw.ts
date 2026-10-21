@@ -16,11 +16,30 @@ type CardOptions = Partial<Place> & {
 
 type FollowUpOptions = { summary: string; note: string; question?: string }
 
+type BoxOptions = Place & {
+  h: number
+  text: string
+  geo?: 'rectangle' | 'ellipse' | 'cloud'
+  color?: TLDefaultColorStyle
+  fill?: 'none' | 'semi' | 'solid'
+  dash?: 'draw' | 'solid' | 'dashed'
+}
+
+type ArrowOptions = {
+  text?: string
+  bend?: number
+  labelPosition?: number
+  color?: TLDefaultColorStyle
+  dash?: 'draw' | 'solid' | 'dashed' | 'dotted'
+}
+
 const CARD_PADDING = 20
 const GAP = 20
 const AREA_PADDING = 40
 const AREA_GAP = 60
 const NOTE_LABEL = 'Claude\n\n'
+const LABEL_SPACE = 60
+const FLOW_GAP = 30
 
 const nextFrame = () => new Promise((done) => requestAnimationFrame(() => done(null)))
 
@@ -44,10 +63,20 @@ export const drawOf = (editor: Editor) => {
 
   const partsOf = (name: string) => PARTS.map((part) => `${name}-${part}`).filter((part) => editor.getShape(id(part)) != null)
 
+  // Only a card has follow-up parts, and they sit within its left and right edges: an area named `b1` and a note
+  // named `b1-note` under it are two shapes of the layout, not a card and its part
   const isPart = (shape: TLShape) => {
     const match = nameOf(shape).match(/^(.*)-(summary|note|question)$/)
+    const base = match == null ? undefined : editor.getShape(id(match[1]))
 
-    return match != null && editor.getShape(id(match[1])) != null
+    if (base == null || base.type !== 'geo') {
+      return false
+    }
+
+    const card = editor.getShapePageBounds(base)!
+    const part = editor.getShapePageBounds(shape)!
+
+    return card.x <= part.x && card.maxX >= part.maxX
   }
 
   const moveBy = (shape: TLShape, dx: number, dy: number) => {
@@ -196,6 +225,30 @@ export const drawOf = (editor: Editor) => {
       return bounds(name).h
     }
 
+    // A mermaid shape draws its diagram at the shape's own size, so it takes the diagram's own size, one canvas unit per
+    // diagram unit, read from the viewBox once the diagram has rendered
+    if (shape.type === 'mock' && (shape.props as { kind: string }).kind === 'mermaid') {
+      editor.zoomToBounds(bounds(name), { immediate: true, inset: 80 })
+
+      for (let attempt = 0; attempt < 40; attempt++) {
+        await nextFrame()
+
+        const viewBox = document
+          .querySelector(`[data-shape-id="${id(name)}"] svg[viewBox]`)
+          ?.getAttribute('viewBox')
+          ?.split(/[ ,]+/)
+          .map(Number)
+
+        if (viewBox != null && viewBox[2] > 0) {
+          editor.updateShape({ id: shape.id, type: 'mock', props: { w: viewBox[2] } })
+
+          return setHeight(name, viewBox[3])
+        }
+      }
+
+      return null
+    }
+
     if (shape.type === 'mock') {
       const { kind, w } = shape.props as { kind: string; w: number }
       const width = definitionOf(kind)?.width
@@ -234,14 +287,53 @@ export const drawOf = (editor: Editor) => {
     if (w != null && isArea(shape)) {
       const before = bounds(name)
       const dx = w - before.w
-      const right = topLevel().filter((other) => editor.getShapePageBounds(other)!.x >= before.maxX - 1)
 
-      for (const area of topLevel().filter((other) => isArea(other) && overlapsX(other, shape))) {
+      // The column is the top-level areas sharing this area's left edge. Areas nested inside one keep their own width,
+      // and an area beside a narrower one in the column is not part of it
+      const column =
+        parentOf(shape) == null
+          ? topLevel().filter(
+              (other) => isArea(other) && parentOf(other) == null && Math.abs(editor.getShapePageBounds(other)!.x - before.x) < 1,
+            )
+          : [shape]
+
+      // What moves right: the shapes past the column's right edge, and those that start past the right edge of a
+      // narrower column area they sit beside
+      const columnMaxX = Math.max(...column.map((area) => editor.getShapePageBounds(area)!.maxX))
+      const right = topLevel().filter((other) => {
+        const box = editor.getShapePageBounds(other)!
+
+        if (column.some((area) => area.id === other.id)) {
+          return false
+        }
+
+        return (
+          box.x >= columnMaxX - 1 ||
+          column.some((area) => {
+            const edge = editor.getShapePageBounds(area)!
+
+            return box.x >= edge.maxX - 1 && box.y < edge.maxY && box.maxY > edge.y
+          })
+        )
+      })
+
+      // Each shape moves by the growth of the column area it sits beside, so a shape beside a narrower area clears that
+      // area's new right edge; a shape beside none moves by the resized area's growth
+      const shifts = right.map((other) => {
+        const box = editor.getShapePageBounds(other)!
+        const beside = column
+          .map((area) => editor.getShapePageBounds(area)!)
+          .filter((edge) => box.x >= edge.maxX - 1 && box.y < edge.maxY && box.maxY > edge.y)
+
+        return { other, shift: beside.length === 0 ? dx : Math.max(...beside.map((edge) => w - edge.w)) }
+      })
+
+      for (const area of column) {
         editor.updateShape({ id: area.id, type: 'mock', props: { w } })
       }
 
-      for (const other of right) {
-        moveBy(editor.getShape(other.id)!, dx, 0)
+      for (const { other, shift } of shifts) {
+        moveBy(editor.getShape(other.id)!, shift, 0)
       }
     } else if (w != null) {
       editor.updateShape({ id: shape.id, type: shape.type, props: { w } })
@@ -252,7 +344,13 @@ export const drawOf = (editor: Editor) => {
     }
   }
 
-  const area = (name: string, { x, y, w, h, label }: Place & { h: number; label: string }, pause?: number) =>
+  // Called with a name that exists, area replaces the label, such as a branch's status
+  const area = (name: string, { x, y, w, h, label }: Partial<Place> & { h?: number; label: string }, pause?: number) =>
+    exists(name)
+      ? step(id(name), () => editor.updateShape({ id: id(name), type: 'mock', props: { data: { label } } }), pause)
+      : createArea(name, { x: x!, y: y!, w: w!, h: h!, label }, pause)
+
+  const createArea = (name: string, { x, y, w, h, label }: Place & { h: number; label: string }, pause?: number) =>
     step(
       centreOf({ x, y, w }, h),
       () => {
@@ -373,5 +471,139 @@ export const drawOf = (editor: Editor) => {
     return fit(name)
   }
 
-  return { id, bounds, plain, area, text, card, note, followUp, fit, resize }
+  // A diagram node keeps the size it is given, unlike a card, which fits its height to its text
+  const box = (name: string, { x, y, w, h, text, geo = 'rectangle', color = 'black', fill = 'semi', dash = 'draw' }: BoxOptions, pause?: number) =>
+    step(
+      exists(name) ? id(name) : centreOf({ x, y, w }, h),
+      () =>
+        exists(name)
+          ? editor.updateShape({ id: id(name), type: 'geo', props: { richText: toRichText(text) } })
+          : editor.createShape({
+              id: id(name),
+              type: 'geo',
+              x,
+              y,
+              props: { geo, w, h, growY: 0, color, fill, dash, size: 's', font: 'draw', align: 'middle', verticalAlign: 'middle', richText: toRichText(text) },
+            }),
+      pause,
+    )
+
+  // Bound to the centres of both shapes, so the arrow follows either one when it moves. Called with a name that exists,
+  // it changes only the options given
+  const arrow = (name: string, from: string, to: string, options: ArrowOptions = {}, pause?: number) =>
+    step(
+      bounds(to).center,
+      () => {
+        const { text, ...style } = options
+        const given = Object.fromEntries(Object.entries(style).filter(([, value]) => value != null))
+
+        if (exists(name)) {
+          editor.updateShape({ id: id(name), type: 'arrow', props: { ...given, ...(text != null ? { richText: toRichText(text) } : {}) } })
+
+          return
+        }
+
+        const start = bounds(from).center
+        const end = bounds(to).center
+
+        editor.createShape({
+          id: id(name),
+          type: 'arrow',
+          x: start.x,
+          y: start.y,
+          props: {
+            start: { x: 0, y: 0 },
+            end: { x: end.x - start.x, y: end.y - start.y },
+            color: 'black',
+            bend: 0,
+            labelPosition: 0.5,
+            dash: 'draw',
+            ...given,
+            size: 's',
+            font: 'draw',
+            richText: toRichText(text ?? ''),
+          },
+        })
+
+        const bind = (target: string, terminal: 'start' | 'end') => ({
+          type: 'arrow' as const,
+          fromId: id(name),
+          toId: id(target),
+          props: { terminal, normalizedAnchor: { x: 0.5, y: 0.5 }, isExact: false, isPrecise: false },
+        })
+
+        editor.createBindings([bind(from, 'start'), bind(to, 'end')])
+      },
+      pause,
+    )
+
+  const mermaid = async (name: string, { x, y, source }: { x: number; y: number; source: string }, pause?: number) => {
+    await step(
+      exists(name) ? id(name) : { x, y },
+      () =>
+        exists(name)
+          ? editor.updateShape({ id: id(name), type: 'mock', props: { data: { source } } })
+          : editor.createShape({ id: id(name), type: 'mock', x, y, props: { w: 800, h: 200, kind: 'mermaid', data: { source } } }),
+      pause,
+    )
+
+    return fit(name)
+  }
+
+  // Every move goes through here: a card's parts and an area's contents travel with the shape, and the area it leaves
+  // and the area it lands in fit their height again
+  const move = async (name: string, { x, y }: { x?: number; y?: number }, pause?: number) => {
+    const shape = editor.getShape(id(name))!
+    const dx = x == null ? 0 : x - shape.x
+    const dy = y == null ? 0 : y - shape.y
+    const left = isArea(shape) ? parentOf(shape) : ownerOf(shape)
+
+    await step(id(name), () => {
+      for (const each of isArea(shape) ? withContents(shape) : [shape]) {
+        moveBy(editor.getShape(each.id)!, dx, dy)
+      }
+    }, pause)
+
+    const moved = editor.getShape(id(name))!
+    const entered = isArea(moved) ? parentOf(moved) : ownerOf(moved)
+
+    for (const owner of new Set([left?.id, entered?.id])) {
+      if (owner != null) {
+        fitAreaShape(editor.getShape(owner)!)
+      }
+    }
+  }
+
+  // The area grows to hold the shapes before they move, so none of them lands past its bottom edge, where the next area
+  // down would take it; the areas that held them before fit their height again
+  const flow = async (areaName: string, names: string[], { top, gap = FLOW_GAP }: { top?: number; gap?: number } = {}) => {
+    const outer = bounds(areaName)
+    const start = top ?? outer.y + LABEL_SPACE
+    const shapes = names.filter(exists)
+    const previous = new Set(shapes.map((name) => ownerOf(editor.getShape(id(name))!)?.id).filter((owner) => owner != null && owner !== id(areaName)))
+    const stacked = shapes.reduce((sum, name) => sum + bounds(name).h + gap, 0) - gap
+    const others = contentsOf(editor.getShape(id(areaName))!).filter((shape) => !shapes.includes(nameOf(shape)))
+    const lowest = Math.max(start + stacked, ...others.map((shape) => editor.getShapePageBounds(shape)!.maxY))
+
+    if (lowest + AREA_PADDING > outer.maxY) {
+      setHeight(areaName, lowest + AREA_PADDING - outer.y)
+    }
+
+    let y = start
+
+    for (const name of shapes) {
+      const shape = editor.getShape(id(name))!
+
+      moveBy(shape, 0, y - shape.y)
+      y += bounds(name).h + gap
+    }
+
+    for (const owner of previous) {
+      fitAreaShape(editor.getShape(owner!)!)
+    }
+
+    fitAreaShape(editor.getShape(id(areaName))!)
+  }
+
+  return { id, bounds, plain, area, text, card, note, followUp, fit, resize, box, arrow, mermaid, move, flow }
 }

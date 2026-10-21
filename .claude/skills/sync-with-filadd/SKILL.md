@@ -89,6 +89,8 @@ Leave these as they are unless the user asks:
 - `design-with-canvas` ends in `design`'s Recording section on the mahou side and its Documentation section on the Filadd side.
 - When syncing `superpowers:mermaid` to `filadd-experimental-dev:mermaid`, keep Filadd's Notion shape whitelist (`scripts/notion-shapes.txt`), its check in `scripts/validate-mermaid.mjs`, the "Shapes Notion renders" section of `references/flowchart.md` and the Notion fix in `SKILL.md`. superpowers carries none of them. Both validators render with pele and write a PNG when given a path, but superpowers' reads stdin and Filadd's takes a file path, so the validation steps differ. Filadd's rendering rules also keep the ones about Notion's mermaid renderer, marked by renderer, because its documents still render in Notion.
 
+- mahou's invariants note (read in `basics`, routed to by `learn`) stays out of experimental-dev for now, since Filadd's docs live in Notion and the note has no home there yet.
+
 When a new divergence is settled during a sync, add it here.
 
 ## Step 2: List the candidates and wait
@@ -119,4 +121,4 @@ Set the date under Last synced to today. Commit nothing and bump no version on e
 
 ## Last synced
 
-2026-10-20
+2026-10-21

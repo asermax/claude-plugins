@@ -69,3 +69,7 @@ A project can change how a skill behaves in a `.mahou/` folder at its root: `.ma
 ## Reporting to the user
 
 When a skill hands the user a report, such as findings, an investigation's answer, or a summary of a change, it loads mahou:report. That skill carries the shape a report should take: what comes first, when to diagram, how to separate fact from claim, and the unslop rules to hold while writing it.
+
+## Subagents
+
+Start every subagent from the folder the session started in, never from the session's current working directory. The working directory moves while the session works, into the scratch folder or into a repository. A subagent started inside the scratch folder found none of this plugin's skills and agents registered. When the tool that spawns the subagent starts it in the current working directory, as a herdr tab does, change to the folder the session started in before spawning the subagent. The subagent reaches its repository by absolute path.

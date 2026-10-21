@@ -60,7 +60,7 @@ Asked for by name:
 
 Loaded by other skills, never typed:
 
-- `mahou:basics`. Philosophy, rules, the scratch convention and its `status.md` tracker, the local layer.
+- `mahou:basics`. Philosophy, rules, the scratch convention and its `status.md` tracker, the local layer, and starting every subagent from the folder the session started in.
 - `mahou:docs`. How to find the project's docs folder, what its structure is made of, and the rule that the charter wins. Loaded by `write-documentation`, `explore`, `design`, `init` and the two docs agents.
 - `mahou:design-tree`. The tree format, the frontier, the question and answer rules, and how questions and branches merge.
 - `mahou:changeset`. Which repositories, which base (found by commit distance with a bundled script), which diff, and the rule separating what a change introduced from what predates it.

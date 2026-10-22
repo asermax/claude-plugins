@@ -22,7 +22,7 @@ The root goes at the top of the canvas as a title, `Problem: <one line>`. Each t
 - **Shape draws no representations.** A diagram goes on the canvas only inside a question, and is deleted with the question's card.
 - When a branch's sub-branches make it much taller than the others, lay its sub-branch sections side by side under its leaves.
 
-Lay the branches out in tree order, read down each column and then across. Use three columns, split where the tallest column stays as short as possible, and make each branch as wide as its column.
+Lay the branches out in tree order, read down each column and then across.
 
 The opening tree goes on the canvas as the branch areas, each one pending, with the ✓ leaves the user brought under their areas and no prose yet. Above the areas, a Claude note says in one line per branch what that branch settles. When a branch opens, its statement of what is settled goes on the canvas as its prose. When a branch settles, ask the user to approve it there.
 

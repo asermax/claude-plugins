@@ -30,7 +30,7 @@ For a branch whose type has a canvas reference under `references/types/`, read b
 | What a component agrees with the rest of the system | `contract.md` | `references/types/contract.md` |
 | How a value moves between components | `data-flow.md` | `references/types/data-flow.md` |
 
-Lay the branches out in tree order, read down each column and then across. Use three columns, split where the tallest column stays as short as possible, and make each branch as wide as its column.
+Lay the branches out in tree order, read down each column and then across.
 
 The opening tree goes on the canvas as the branch areas, each one pending, with no leaves yet. Above the areas, a Claude note says in one line per branch what that branch settles. A branch's opening statement goes on the canvas as its leaves and its prose. The exploration, the shape tree or earlier branches may already show how part of the branch looks. When they do, and a diagram would make that part easier to follow, draw it with tldraw shapes above the prose, in the diagram form of the branch's type, and mark on it the parts that are still undecided, so the unknowns are obvious. When they do not, the opening has leaves and prose only. When a branch settles, draw its representation and prose in its section and ask the user to approve it there.
 

@@ -65,7 +65,7 @@ Loaded by other skills, never typed:
 - `mahou:design-tree`. The tree format, the frontier, the question and answer rules, and how questions and branches merge.
 - `mahou:changeset`. Which repositories, which base (found by commit distance with a bundled script), which diff, and the rule separating what a change introduced from what predates it.
 - `mahou:lookup`. Where a fact comes from: the routing between the scouts and the researcher, the rule for facts outside the project, and how a verified fact is told apart from an asserted one. Loaded by `explore` and `design-tree`.
-- `mahou:prototype`. Shows a screen element as an interactive HTML prototype and iterates it with you, round by round. Loaded by `explore` when a question is about what something looks like, and by `design` for a UI branch.
+- `mahou:prototype`. Shows a screen element as an interactive HTML prototype and iterates it with you, round by round, following the patterns the wiki's frontend entries and the project's rule files set. Loaded by `explore` when a question is about what something looks like, and by `design` for a UI branch.
 
 ## Agents
 

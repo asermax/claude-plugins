@@ -17,6 +17,8 @@ One HTML file, written to the change's scratch folder at `prototypes/`, per the 
 
 The file shows the element inside enough of its surroundings for the user to judge its placement: the region of the existing screen it lands on, sketched with the same spacing and hierarchy, not reproduced. Match the existing screen only as far as the user has described it or pointed at it. Do not read the frontend's code for styling unless the user asks.
 
+Before building, read the wiki entries and the project's rule files on the frontend that match the element, and follow the patterns they set for the screen's chrome, lists, forms and actions. They are not the frontend's code, so read them without waiting for the user to ask.
+
 Example data is one fixed set, used by every alternative and every state, so the user compares the design and not the data.
 
 The screen shows only what the product would show. Put text that explains the prototype or the design to the reader in the text above the controls or in an alternative's line. Examples are who sees an element and what a control is for.

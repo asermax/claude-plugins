@@ -66,6 +66,8 @@ When the tree is complete, the project's docs record it, and mahou:write-documen
 
 Then run mahou:write-documentation once, giving it the tree and every settled amendment, so the pass weighs the whole documentation rather than one note at a time. Each settled branch already carries its prose and its representation, so drafting is mostly moving that text into the note; `write-documentation` fits it to the project's charter and templates, which this skill never reads.
 
+When the docs are written, check the scratch folder as mahou:basics says under Status.
+
 ## What this skill is not
 
 It does not choose endpoints, functions, files or test cases, does not write code, does not commit, and does not write into the docs folder itself. When the user decides that a piece of the change goes straight into a repository, that is their decision and happens outside this skill.

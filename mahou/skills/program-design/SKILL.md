@@ -102,7 +102,7 @@ One markdown file per root, named after the repository, or after the surface whe
 
 ## Ending
 
-When every root is settled, compare the settled tree against the source and list what the program design decided that the source now states differently or does not state at all. The user settles each one. When the source is design notes, run mahou:write-documentation once with every settled amendment. Then show the final tree and stop.
+When every root is settled, compare the settled tree against the source and list what the program design decided that the source now states differently or does not state at all. The user settles each one. When the source is design notes, run mahou:write-documentation once with every settled amendment. Then check the scratch folder as mahou:basics says under Status, show the final tree and stop.
 
 ## What this skill is not
 

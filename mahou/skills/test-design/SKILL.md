@@ -60,6 +60,8 @@ Then run mahou:write-documentation once, handing it every settled amendment toge
 
 When every tree is settled, show them together with, per tree, the row range, the count of test rows and the manual picks, and list the implementation tasks the trees surfaced. Write each settled tree with its matrix to the change's scratch folder, at `test-design/<repo>.md`, so the trees survive the session. mahou:implement takes the trees as input; mahou:validate runs the manual rows.
 
+Then check the scratch folder as mahou:basics says under Status.
+
 ## What this skill is not
 
 It does not write tests and does not run anything. It does not propose a case the design does not imply.

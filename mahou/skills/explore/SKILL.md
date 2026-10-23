@@ -44,4 +44,20 @@ When the user settles a decision, record it in one line and read the whole settl
 
 When the user asks for a check against the conventions for a technology, read the wiki entries for it and report where the direction matches or departs from them. Do not read entries otherwise.
 
-When the exploration ends, check the scratch folder as mahou:basics says under Status.
+## Final check
+
+When the user asks whether anything is left before moving on, report:
+
+- What is still open: the questions waiting on the user, and what nobody has investigated yet, split into what shapes the decisions still ahead and what can wait for a later stage. Name the decision or fact each item touches.
+- Where the settled decisions contradict each other, or contradict a fact found during the exploration. Write each contradiction as a question. When one answer follows from both sides, propose it as mahou:basics rule 2 says. Then list what was checked and found consistent, with the fact that settled it.
+
+Route any fact the check needs through mahou:lookup. Record each answer the user gives like any other decision.
+
+## Ending
+
+When the exploration ends, or before the user moves on to the next stage, save what exists only in the conversation and the settled decisions depend on. Write it to the change's scratch folder:
+
+- `decisions.md`: the settled decisions in the order they were settled, each with the question it answered, with each decision that a later one replaced marked as replaced, and what is still open. It also holds the diagrams the decisions depend on, as their source, such as a mermaid block.
+- `findings.md`: the facts behind the decisions, each with its source and whether it was verified or asserted.
+
+Leave out proposals the user did not settle. Then check the scratch folder as mahou:basics says under Status.

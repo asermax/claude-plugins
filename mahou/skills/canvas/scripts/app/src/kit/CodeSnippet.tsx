@@ -19,7 +19,7 @@ export interface CodeSnippetProps {
   lines: CodeLine[]
   gutterNotes: boolean
   highlight: Highlight[]
-  view: 'unified' | 'split'
+  view: 'unified' | 'split' | 'code'
   expanded: number[]
 }
 
@@ -88,19 +88,20 @@ const splitRows = (lines: CodeLine[]) => {
   return rows
 }
 
-const Cell = ({ line, number, rules }: { line: CodeLine | null; number: number | null; rules: Highlight[] }) =>
+// In the code view the lines are a plain file, not a diff: no mark colours and no struck-through lines
+const Cell = ({ line, number, rules, plain = false }: { line: CodeLine | null; number: number | null; rules: Highlight[]; plain?: boolean }) =>
   line == null ? (
     <div style={{ flex: 1, minWidth: 0, background: '#f8f9fa' }}>&nbsp;</div>
   ) : (
-    <div style={{ display: 'flex', flex: 1, minWidth: 0, background: MARK_BG[line.mark] }}>
+    <div style={{ display: 'flex', flex: 1, minWidth: 0, background: plain ? 'transparent' : MARK_BG[line.mark] }}>
       <span style={{ width: 30, flex: 'none', textAlign: 'right', paddingRight: 8, color: MUTED }}>{line.mark === 'gap' ? '' : number}</span>
-      <span style={{ whiteSpace: 'pre', overflow: 'hidden', color: line.mark === 'gap' ? MUTED : INK, textDecoration: line.mark === 'remove' ? 'line-through' : 'none' }}>
-        {line.mark === 'gap' ? '⋯' : line.mark === 'remove' ? line.text : colorize(line.text, rules)}
+      <span style={{ whiteSpace: 'pre', overflow: 'hidden', color: line.mark === 'gap' ? MUTED : INK, textDecoration: !plain && line.mark === 'remove' ? 'line-through' : 'none' }}>
+        {line.mark === 'gap' ? '⋯' : !plain && line.mark === 'remove' ? line.text : colorize(line.text, rules)}
       </span>
     </div>
   )
 
-const Toggle = ({ view, onChange }: { view: CodeSnippetProps['view']; onChange: (view: CodeSnippetProps['view']) => void }) => (
+const Toggle = ({ view, onChange }: { view: 'unified' | 'split'; onChange: (view: 'unified' | 'split') => void }) => (
   <span style={{ marginLeft: 'auto', display: 'flex', ...sketchBorder(MUTED), borderRadius: 999, overflow: 'hidden', fontSize: 12 }}>
     {(['unified', 'split'] as const).map((option) => (
       <span
@@ -160,7 +161,7 @@ export const CodeSnippet = ({ file, tag, lines, gutterNotes, highlight, view, ex
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', borderBottom: `1.5px solid ${LINE}`, fontFamily: HAND }}>
         <span style={{ fontWeight: 700 }}>{file}</span>
         {tag == null ? null : <span style={{ ...sketchBorder(MUTED), borderRadius: 999, padding: '0 8px', fontSize: 12, color: MUTED }}>{tag}</span>}
-        <Toggle view={view} onChange={(next) => update({ view: next })} />
+        {view === 'code' ? null : <Toggle view={view} onChange={(next) => update({ view: next })} />}
       </div>
       <div style={{ position: 'relative', padding: '6px 0', minHeight: layout.height }}>
         <div ref={rowsRef} style={{ display: 'flex', flexDirection: 'column', gap: 1, lineHeight: `${lineHeight}px`, marginRight: gutterNotes ? 260 : 0 }}>
@@ -177,8 +178,8 @@ export const CodeSnippet = ({ file, tag, lines, gutterNotes, highlight, view, ex
               })
             : lines.map((line, index) => (
                 <div key={index} data-line={index} style={{ display: 'flex' }}>
-                  <span style={{ width: 14, flex: 'none', textAlign: 'center', background: MARK_BG[line.mark], color: line.mark === 'add' ? GREEN : line.mark === 'remove' ? RED : MUTED }}>{MARK_SIGN[line.mark]}</span>
-                  <Cell line={line} number={numbers[index]} rules={highlight} />
+                  {view === 'code' ? null : <span style={{ width: 14, flex: 'none', textAlign: 'center', background: MARK_BG[line.mark], color: line.mark === 'add' ? GREEN : line.mark === 'remove' ? RED : MUTED }}>{MARK_SIGN[line.mark]}</span>}
+                  <Cell line={line} number={numbers[index]} rules={highlight} plain={view === 'code'} />
                 </div>
               ))}
         </div>

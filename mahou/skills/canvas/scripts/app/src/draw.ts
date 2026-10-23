@@ -291,8 +291,10 @@ export const drawOf = (editor: Editor) => {
     }
 
     if (shape.type === 'mock') {
-      const { kind, w } = shape.props as { kind: string; w: number }
-      const width = definitionOf(kind)?.width
+      const { kind, w, data } = shape.props as { kind: string; w: number; data: Record<string, unknown> }
+      const definition = definitionOf(kind)
+      // A mockup whose views differ in width, such as the code snippet's split view, gives its width as a function of its props
+      const width = typeof definition?.width === 'function' ? definition.width({ ...definition.defaults, ...data }) : definition?.width
       const root = await measure(name, '[data-root]')
 
       return root == null || width == null ? null : setHeight(name, (root.offsetHeight * w) / width)

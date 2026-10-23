@@ -10,6 +10,8 @@ Load mahou:program-design first, then mahou:canvas. Then read `.mahou/program-de
 
 `program-design` and the skills it loads keep their opening, tree, branch order, parts, standards, record and ending.
 
+When the user asks for a fast track, or fast track is already on in the session, load mahou:fast-track after mahou:canvas and before starting, unless it is already in context. It changes some of this skill's engagement rules.
+
 The document is `canvas/<name>.tldr.json` in the change's scratch folder, named after what the program design covers, such as `settings-screen.tldr.json`. The record stays `program-design/<root>.md`. Each time a part settles on the canvas, write it into the record in the text representation from `program-design`'s references.
 
 ## The canvas

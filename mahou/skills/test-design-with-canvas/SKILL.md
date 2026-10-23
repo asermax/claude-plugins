@@ -10,6 +10,8 @@ Load mahou:test-design first, then mahou:canvas. Then read `.mahou/test-design-w
 
 `test-design` and the skills it loads keep their procedure: roots, branches, classifications, partitions, matrices, facts, dropped rows, recording and ending.
 
+When the user asks for a fast track, or fast track is already on in the session, load mahou:fast-track after mahou:canvas and before starting, unless it is already in context. It changes some of this skill's engagement rules.
+
 The document is `canvas/test-design.tldr.json` in the change's scratch folder. The record stays `test-design/<repo>.md`; write a tree's change into it whenever the canvas changes, and draw the canvas from it.
 
 ## Roots on a map of the system

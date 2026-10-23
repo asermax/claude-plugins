@@ -10,6 +10,8 @@ Load mahou:shape first, then mahou:canvas. Then read `.mahou/shape-with-canvas.m
 
 `shape` and the skills it loads keep their procedure, question rules and tree rules, the Out of scope branch included.
 
+When the user asks for a fast track, or fast track is already on in the session, load mahou:fast-track after mahou:canvas and before starting, unless it is already in context. It changes some of this skill's engagement rules.
+
 The document is `canvas/shape.tldr.json` in the change's scratch folder. `shape.md` in the same folder keeps the tree and each branch's prose, updated whenever the canvas changes; the canvas draws from it.
 
 ## The canvas is the tree

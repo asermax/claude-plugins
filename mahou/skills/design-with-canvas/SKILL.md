@@ -10,6 +10,8 @@ Load mahou:design first, then mahou:canvas. Then read `.mahou/design-with-canvas
 
 `design` and the skills it loads keep their procedure, branch types, question rules and tree rules.
 
+When the user asks for a fast track, or fast track is already on in the session, load mahou:fast-track after mahou:canvas and before starting, unless it is already in context. It changes some of this skill's engagement rules.
+
 The document is `canvas/design.tldr.json` in the change's scratch folder. `design.md` in the same folder keeps the tree, each branch's prose and its mermaid diagrams, updated whenever the canvas changes; the canvas draws from it.
 
 ## The canvas is the tree

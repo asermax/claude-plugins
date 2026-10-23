@@ -22,10 +22,16 @@ One `state-card` mock per component, in the same columns as the component tree, 
   When a branch adds a tag to the ledger, give the tag a colour from its kind's family that differs from the other colours in that family.
 - **Lines go in the order they appear in the code:** props first, then context, query meta and cookies, then local and form state, then server queries and mutations, then browser reads, then computed values. A value comes before any line that uses it.
 - **Only add variables when necessary.** If a value is used once, inline it where it is used, in the `returns` line or in an argument. Hooks and functions build the return value directly on the `return`, never step by step or through separate variables. Components do the same in the JSX: a value the JSX can use directly goes there instead of in a separate variable, such as a field destructured from a query's data.
-- **The last line says what the component renders or what the hook returns**, tagged `returns`, with no name and no `:=`, in the same style as the other lines. For a component, write it as a tree of the elements the component renders, never as code, JSX or prose: one element per line, `├─` and `└─` before its children, and `←` before the props the element passes, each as a name or as `<prop> ← <where its value comes from>`. A condition goes on its own line under the element it shows or hides. Put the conditions of what renders in this line, never in a computed value that only feeds it.
+- **The last line says what the component renders or what the hook returns**, tagged `returns`, with no name and no `:=`, in the same style as the other lines. For a component, write it as a tree of the elements the component renders, never as code, JSX or prose: one element per line, `├─` and `└─` before its children, and `←` before the props the element passes, each as a name or as `<prop> ← <where its value comes from>`. A condition goes on its own line under the element it shows or hides. Put the conditions of what renders in this line, never in a computed value that only feeds it. The card draws `⇒` in the name column of that line and a dashed rule above that line, so the reader can tell the returns line from the lines above it.
 - **A hook card** starts with what the hook does in one line, then its arguments, what it reads, what it computes and what it returns.
 
-Join the cards with arrows. Label an arrow between two component cards with what crosses between them, such as a callback with its arguments or the props one card hands the other. Join each hook to every component or hook that calls it with a grey dashed arrow and no label, and place the hook card next to its caller's card.
+**Join the cards with arrows before showing the part**, so the reader can follow each value from where it is made to where it is used. For example:
+
+- From a component card to a card it renders, labelled with what crosses between them, such as `renders · <props>` or a callback with its arguments.
+- From a provider's card to a card that reads its context, such as `context · <the values that card reads>`.
+- From a hook or a function to its caller, as a grey dashed arrow with no label. Place the hook card next to its caller's card.
+
+Leave room between the columns for the labels, and curve an arrow around a column's side when a straight one would cross a card.
 
 Write each proposal and each point that the design leaves unsettled as a free-text note next to the card the note is about.
 

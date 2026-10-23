@@ -11,7 +11,7 @@ It does not cover who owns what, which is the component tree, nor where the valu
 ## What to check before proposing
 
 - Read the screen as it renders today, and the components that render the region the change lands in.
-- When the screen has a prototype, take the parts, the states and the copy from it.
+- Open the screen's prototype, or create one when the screen has none. Reconcile the prototype with what the design and the branch settled, and iterate it with the user until it shows the final screen. Then sketch the screen that the prototype settled, with its parts, states and copy.
 - Check the standards for layout and component conventions, so the proposed placement follows them.
 
 ## Representation

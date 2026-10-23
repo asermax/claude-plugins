@@ -62,8 +62,8 @@ export const mockup: MockDefinition<Props> = {
         <div style={{ display: 'grid', gridTemplateColumns: 'max-content 1fr max-content', columnGap: 10, rowGap: 3, alignItems: 'baseline', fontFamily: MONO, fontSize: 12 }}>
           {lines.map(([lineName, expression, source, comment]) => (
             <div key={lineName} style={{ display: 'contents' }}>
-              <span style={{ fontWeight: 700 }}>{source === 'returns' ? '' : lineName}</span>
-              <span style={{ whiteSpace: 'pre-wrap' }}>
+              <span style={{ fontWeight: 700, ...(source === 'returns' ? { borderTop: '1.5px dashed #adb5bd', paddingTop: 4, marginTop: 2 } : {}) }}>{source === 'returns' ? '⇒' : lineName}</span>
+              <span style={{ whiteSpace: 'pre-wrap', ...(source === 'returns' ? { borderTop: '1.5px dashed #adb5bd', paddingTop: 4, marginTop: 2 } : {}) }}>
                 {source === 'returns' ? '' : ':= '}
                 {expression}
                 {comment == null ? null : <span style={{ display: 'block', fontFamily: HAND, fontSize: 11, color: MUTED }}># {comment}</span>}

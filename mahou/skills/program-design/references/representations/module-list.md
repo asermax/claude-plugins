@@ -15,7 +15,7 @@ It does not cover what is inside a file, which the interfaces and the other part
 
 ## Representation
 
-A file tree in a fenced block, one per repository, with the folders the change lands in as they look after the change. Label each file that the change adds, changes or deletes as `new`, `touched` or `deleted`. When the path alone does not explain the change, put the reason on the same line. Leave the files and folders around them unlabelled, for context. Show only the name of a folder that the change does not enter.
+A file tree in a fenced block, one per repository, with the folders the change lands in as they look after the change. Label each file that the change adds, changes or deletes as `new`, `touched` or `deleted`. When the path alone does not explain the change, put the reason on the same line. Leave the files and folders around them unlabelled, for context. Show only the name of a folder that the change does not enter. Give every file its own line, and every folder its own line above the files in it. Never put a folder path in front of a file name.
 
 ```
 <library>/src/
@@ -44,7 +44,9 @@ The same form on a service:
 │   └── thing.<ext>                      touched   new field on two schemas
 └── services/
     └── thing.<ext>                      touched   new branch in the resolver
-<tests>/endpoints/thing_list.<ext>       touched
+<tests>/
+└── endpoints/
+    └── thing_list.<ext>                 touched
 ```
 
 Under the list, the placement decisions and only those: why a set of files became a folder with an index instead of siblings, why a helper sits in one domain folder rather than another. Each one cites the standard it follows when a standard covers it.

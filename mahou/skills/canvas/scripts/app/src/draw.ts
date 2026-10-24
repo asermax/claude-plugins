@@ -1,4 +1,4 @@
-import { createShapeId, toRichText, type Editor, type TLDefaultColorStyle, type TLShape, type VecLike } from 'tldraw'
+import { createShapeId, toRichText, type Editor, type TLDefaultColorStyle, type TLShape, type TLShapeId, type VecLike } from 'tldraw'
 import { definitionOf } from './MockShape'
 import { stepOf } from './step'
 
@@ -387,24 +387,74 @@ export const drawOf = (editor: Editor) => {
     }
   }
 
-  // Called with a name that exists, area replaces the label, such as a branch's status
-  const area = (name: string, { x, y, w, h, label }: Partial<Place> & { h?: number; label: string }, pause?: number) =>
-    exists(name)
-      ? step(id(name), () => editor.updateShape({ id: id(name), type: 'mock', props: { data: { label } } }), pause)
-      : createArea(name, { x: x!, y: y!, w: w!, h: h!, label }, pause)
+  // Only one area is focused at a time, so focusing one clears every other
+  const unfocusOthers = (keep?: TLShapeId) => {
+    for (const each of editor.getCurrentPageShapes().filter(isArea)) {
+      if (each.id === keep) continue
 
-  const createArea = (name: string, { x, y, w, h, label }: Place & { h: number; label: string }, pause?: number) =>
+      const { data } = each.props as { data: Record<string, unknown> }
+
+      if (data.isFocus === true) {
+        editor.updateShape({ id: each.id, type: 'mock', props: { data: { ...data, isFocus: false } } })
+      }
+    }
+  }
+
+  // Called with a name that exists, area replaces the label, such as a branch's status, and takes the focus when asked.
+  // The new data merges over the old, so a relabel keeps the focus
+  const area = (name: string, { x, y, w, h, label, focus }: Partial<Place> & { h?: number; label: string; focus?: boolean }, pause?: number) =>
+    exists(name)
+      ? step(
+          id(name),
+          () => {
+            const { data } = editor.getShape(id(name))!.props as { data: Record<string, unknown> }
+
+            editor.updateShape({
+              id: id(name),
+              type: 'mock',
+              props: { data: { ...data, label, ...(focus == null ? {} : { isFocus: focus }) } },
+            })
+
+            if (focus) {
+              unfocusOthers(id(name))
+            }
+          },
+          pause,
+        )
+      : createArea(name, { x: x!, y: y!, w: w!, h: h!, label, isFocus: focus === true }, pause)
+
+  const createArea = (name: string, { x, y, w, h, label, isFocus }: Place & { h: number; label: string; isFocus: boolean }, pause?: number) =>
     step(
       centreOf({ x, y, w }, h),
       () => {
-        editor.createShape({ id: id(name), type: 'mock', x, y, props: { w, h, kind: 'area', data: { label } } })
+        editor.createShape({ id: id(name), type: 'mock', x, y, props: { w, h, kind: 'area', data: { label, isFocus } } })
         editor.sendToBack([id(name)])
+
+        if (isFocus) {
+          unfocusOthers(id(name))
+        }
 
         const parent = parentOf(editor.getShape(id(name))!)
 
         if (parent != null) {
           fitAreaShape(parent)
         }
+      },
+      pause,
+    )
+
+  // Marks the area the drawing is happening in: one area keeps the focus, and `null` hands it back to none
+  const focus = (name: string | null, pause?: number) =>
+    step(
+      name == null ? null : id(name),
+      () => {
+        if (name != null) {
+          const { data } = editor.getShape(id(name))!.props as { data: Record<string, unknown> }
+
+          editor.updateShape({ id: id(name), type: 'mock', props: { data: { ...data, isFocus: true } } })
+        }
+
+        unfocusOthers(name == null ? undefined : id(name))
       },
       pause,
     )
@@ -800,5 +850,5 @@ export const drawOf = (editor: Editor) => {
     return bounds(name)
   }
 
-  return { id, bounds, plain, area, text, card, note, followUp, fit, resize, box, arrow, mermaid, mock, move, flow, classificationTree }
+  return { id, bounds, plain, area, focus, text, card, note, followUp, fit, resize, box, arrow, mermaid, mock, move, flow, classificationTree }
 }

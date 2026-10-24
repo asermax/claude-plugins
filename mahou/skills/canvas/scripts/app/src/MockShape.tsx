@@ -38,7 +38,7 @@ const BUILT_IN: Record<string, MockDefinition<any>> = {
   },
   // A labelled region around the shapes that belong together; drawn behind them, it does not move them along like a frame.
   // It has no natural width, so its border and label keep their size at any area size
-  area: { defaults: { label: '' }, render: ({ label }) => <Area label={label} /> },
+  area: { defaults: { label: '', isFocus: false }, render: ({ label, isFocus }) => <Area label={label} isFocus={isFocus} /> },
   // A mermaid diagram from its source text, drawn at the shape's own size and scaled to fit it
   mermaid: { defaults: { source: '' }, render: ({ source }) => <Mermaid source={source} /> },
   // A code or config fragment with diff marks, notes beside its lines and syntax highlighting; the side-by-side view

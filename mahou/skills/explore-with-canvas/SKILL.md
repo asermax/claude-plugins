@@ -21,6 +21,6 @@ The document is `canvas/explore.tldr.json` in the change's scratch folder.
 - **A prototype, an architecture drawing or a spike result** goes next to the answer it is part of. Draw screens as mockups copied from the prototype, and architecture drawings with `architecture-exploration`'s rules on this same canvas.
 - **A moodboard**, when the user wants to explore the visual design and direction of something: load `references/moodboard.md` and run it on this same canvas.
 
-## Messages from Claude
+## Messages from the agent
 
-Everything you would say in the chat goes on the canvas, as a Claude note: a grey dashed rectangle labelled `Claude`, next to the answer or shape the note refers to. Replace the note's text when the message changes instead of adding another note.
+Everything you would say in the chat goes on the canvas, as an Agent note: a grey dashed rectangle labelled `Agent`, next to the answer or shape the note refers to. Replace the note's text when the message changes instead of adding another note.

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
-import { useEditor, type Editor } from 'tldraw'
+import type { Editor } from 'tldraw'
 import { FONT_SANS, INK } from './kit/theme'
 
 interface RecognitionResult {
@@ -31,7 +31,7 @@ const LANG = new URLSearchParams(location.search).get('lang') ?? navigator.langu
 
 const SNIPPET = 60
 
-// Claude reads the selection to know which shapes "this" or "here" points at, so each shape carries its id and a short label
+// The agent reads the selection to know which shapes "this" or "here" points at, so each shape carries its id and a short label
 const selectionOf = (editor: Editor) =>
   editor.getSelectedShapes().map((shape) => {
     const text = editor.getShapeUtil(shape).getText(shape)?.replace(/\s+/g, ' ').trim() ?? ''
@@ -45,9 +45,10 @@ const send = (message: string, selected: ReturnType<typeof selectionOf>) =>
 
 type Status = 'idle' | 'listening' | 'sent' | 'error'
 
-// Hold the button, or Ctrl+, (Cmd+, on a Mac), to talk; releasing it sends what was said to Claude
-export const VoiceButton = () => {
-  const editor = useEditor()
+// Hold the button, or Ctrl+. (Cmd+. on a Mac), to talk; releasing it sends what was said to the agent
+type Props = { editor: Editor }
+
+export const VoiceButton = ({ editor }: Props) => {
   const [status, setStatus] = useState<Status>('idle')
   const [heard, setHeard] = useState('')
   const recognition = useRef<Recognition | null>(null)
@@ -114,7 +115,7 @@ export const VoiceButton = () => {
   const stop = () => recognition.current?.stop()
 
   useEffect(() => {
-    const isCombo = (event: KeyboardEvent) => event.key === ',' && (event.ctrlKey || event.metaKey)
+    const isCombo = (event: KeyboardEvent) => event.key === '.' && (event.ctrlKey || event.metaKey)
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (!isCombo(event)) return
@@ -129,7 +130,7 @@ export const VoiceButton = () => {
 
     // Letting go of either key ends the recording
     const onKeyUp = (event: KeyboardEvent) => {
-      if (event.key !== ',' && event.key !== 'Control' && event.key !== 'Meta') return
+      if (event.key !== '.' && event.key !== 'Control' && event.key !== 'Meta') return
 
       stop()
     }
@@ -157,9 +158,9 @@ export const VoiceButton = () => {
   const background = status === 'listening' ? '#ffc9c9' : status === 'sent' ? '#d3f9d8' : '#fff'
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       <button
-        title="Hold to talk to Claude (Ctrl+,)"
+        title="Hold to talk to Agent (Ctrl+.)"
         onPointerDown={onPointerDown}
         onPointerUp={stop}
         onPointerCancel={stop}
@@ -168,7 +169,7 @@ export const VoiceButton = () => {
         {status === 'sent' ? '✓' : '🎤'}
       </button>
       {heard === '' ? null : (
-        <div style={{ position: 'absolute', right: 0, top: 42, width: 320, padding: '6px 10px', borderRadius: 8, border: `1.5px solid ${INK}`, background: '#fff', fontFamily: FONT_SANS, fontSize: 12, color: status === 'error' ? '#c92a2a' : INK }}>
+        <div style={{ position: 'absolute', right: 0, bottom: 'calc(100% + 8px)', width: 320, padding: '6px 10px', borderRadius: 8, border: `1.5px solid ${INK}`, background: '#fff', fontFamily: FONT_SANS, fontSize: 12, color: status === 'error' ? '#c92a2a' : INK }}>
           {heard}
         </div>
       )}

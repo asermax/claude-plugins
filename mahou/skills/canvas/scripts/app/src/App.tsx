@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSync } from '@tldraw/sync'
 import { createShapeId, inlineBase64AssetStore, Tldraw, toRichText, type Editor } from 'tldraw'
 import 'tldraw/tldraw.css'
@@ -10,7 +11,6 @@ import { SendButton } from './SendButton'
 import { stepOf } from './step'
 
 const shapeUtils = [MockShapeUtil]
-const components = { SharePanel: SendButton }
 const SYNC_URI = `${location.origin.replace(/^http/, 'ws')}/api/sync`
 
 const start = (editor: Editor) => {
@@ -28,10 +28,12 @@ const start = (editor: Editor) => {
 
 export const App = () => {
   const store = useSync({ uri: SYNC_URI, assets: inlineBase64AssetStore, schema })
+  const [editor, setEditor] = useState<Editor | null>(null)
 
   return (
     <div style={{ position: 'fixed', inset: 0 }}>
-      <Tldraw store={store} shapeUtils={shapeUtils} components={components} onMount={start} />
+      <Tldraw store={store} shapeUtils={shapeUtils} onMount={(mounted) => { start(mounted); setEditor(mounted) }} />
+      {editor != null ? <SendButton editor={editor} /> : null}
     </div>
   )
 }

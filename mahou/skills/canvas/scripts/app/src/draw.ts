@@ -60,7 +60,7 @@ const CARD_PADDING = 20
 const GAP = 20
 const AREA_PADDING = 40
 const AREA_GAP = 60
-const NOTE_LABEL = 'Claude\n\n'
+const NOTE_LABEL = 'Agent\n\n'
 const LABEL_SPACE = 60
 const FLOW_GAP = 30
 const MOCK_WIDTH = 520
@@ -492,7 +492,7 @@ export const drawOf = (editor: Editor) => {
     return editor.getShapeUtil(shape).getText(shape) ?? ''
   }
 
-  // A card's follow-up sits inside the card, under the card's own text: a summary box, a Claude note and, when there
+  // A card's follow-up sits inside the card, under the card's own text: a summary box, an Agent note and, when there
   // is one, the next question as a card of its own; the card grows to hold them, which moves what is under it
   const followUp = async (name: string, { summary, note: noteText, question }: FollowUpOptions) => {
     editor.deleteShapes(partsOf(name).map((part) => id(part)))

@@ -2,7 +2,7 @@
 # Runs a tldraw canvas over one document, <folder>/<name>.tldr.json.
 #
 #   canvas.sh start   <document>  install on first run, start the server detached, print its URL
-#   canvas.sh watch   <document>  start if needed, then print one line per "Send to Claude" click or voice message
+#   canvas.sh watch   <document>  start if needed, then print one line per "Send to Agent" click or voice message
 #   canvas.sh export  <document>  write <folder>/<name>.svg from the open document
 #   canvas.sh texts   <document>  print every canvas text and arrow label, one per line
 #   canvas.sh migrate <document>  bring a document saved by an older version of the app to the current format
@@ -87,7 +87,7 @@ find_server() {
 
 install() {
   mkdir -p "$APP"
-  rsync -a --delete --exclude node_modules --exclude package-lock.json "$SKILL_APP/" "$APP/"
+  rsync -ac --delete --exclude node_modules --exclude package-lock.json "$SKILL_APP/" "$APP/"
 
   # npm, not pnpm: pnpm refuses to run esbuild's install script until the build is approved
   if [[ ! -d "$APP/node_modules" || "$APP/package.json" -nt "$APP/node_modules" ]]; then
@@ -202,11 +202,14 @@ case "$COMMAND" in
     ;;
   watch)
     URL="$(start)"
-    curl -sN "$URL/api/events" | sed -u -n 's/^data: //p'
+    while find_server; do
+      curl -sN "$URL/api/events" | sed -u -n 's/^data: //p' || true
+      sleep 1
+    done
     ;;
   export)
     URL="$(start)"
-    # Its own browser session, so the export leaves Claude's open tab alone
+    # Its own browser session, so the export leaves the agent's open tab alone
     agent-browser --session canvas-export open "$URL?user=export" >/dev/null
     agent-browser --session canvas-export wait --fn "window.editor != null" >/dev/null
     agent-browser --session canvas-export eval "(async () => { await document.fonts.ready; const e = window.editor; e.selectNone(); const r = await e.getSvgString([...e.getCurrentPageShapeIds()], { background: true, padding: 64 }); return await fetch('/api/export', { method: 'POST', body: r.svg }).then((response) => response.text()) })()"

@@ -34,23 +34,23 @@ For a branch whose type has a canvas reference under `references/types/`, read b
 
 Lay the branches out in tree order, read down each column and then across.
 
-The opening tree goes on the canvas as the branch areas, each one pending, with no leaves yet. Above the areas, a Claude note says in one line per branch what that branch settles. A branch's opening statement goes on the canvas as its leaves and its prose. The exploration, the shape tree or earlier branches may already show how part of the branch looks. When they do, and a diagram would make that part easier to follow, draw it with tldraw shapes above the prose, in the diagram form of the branch's type, and mark on it the parts that are still undecided, so the unknowns are obvious. When they do not, the opening has leaves and prose only. When a branch settles, draw its representation and prose in its section and ask the user to approve it there.
+The opening tree goes on the canvas as the branch areas, each one pending, with no leaves yet. Above the areas, an Agent note says in one line per branch what that branch settles. A branch's opening statement goes on the canvas as its leaves and its prose. The exploration, the shape tree or earlier branches may already show how part of the branch looks. When they do, and a diagram would make that part easier to follow, draw it with tldraw shapes above the prose, in the diagram form of the branch's type, and mark on it the parts that are still undecided, so the unknowns are obvious. When they do not, the opening has leaves and prose only. When a branch settles, draw its representation and prose in its section and ask the user to approve it there.
 
 ## Questions
 
-Questions go in the open branch, on its right side, under its write-up. The branch's Claude note goes under the questions.
+Questions go in the open branch, on its right side, under its write-up. The branch's Agent note goes under the questions.
 
 - **A question is a violet card**: a rectangle with violet border and fill, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question.
 - **Add a diagram, a table or a mockup to the card when text is not enough.** The canvas offers tldraw shapes for a diagram drawn by hand, a monospace text for a table, a mockup, and a `mermaid` shape. For example: a diagram of a library's format or of how its parts call each other, next to what the tree settled about it; a table in the summary box when findings compare options, one column per option and one row per point that matters for the decision; a small timeline with real values when the question is about order.
-- **Follow-ups stay inside the base question's card**, one at a time, until the question branch closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Claude note, and the current follow-up as a violet card of its own.
+- **Follow-ups stay inside the base question's card**, one at a time, until the question branch closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Agent note, and the current follow-up as a violet card of its own.
 - **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question branch has settled and the findings that bear on it. Rewrite it each round; never add a line per answer.
 - **When the question branch closes**, delete the card, update the branch's leaves on the left, and update its write-up.
 - **Keep two questions open for the user to answer.** A question waiting on a spike, a prototype or a lookup does not count toward the two, so there are three while one waits. Open the next question from the frontier as soon as one closes.
 - **A merged question is one card.** Retitle the lower-numbered card, fold the other card's summary into its summary box, and delete the other card.
 
-## Messages from Claude
+## Messages from the agent
 
-Everything you would say in the chat goes on the canvas: how you read an answer, research and spike results, status, and requests to approve a branch. Write it as a Claude note: a grey dashed rectangle labelled `Claude`, in the branch or the question it is about. Keep one Claude note per place and replace its text each round. When a branch is done, delete its note.
+Everything you would say in the chat goes on the canvas: how you read an answer, research and spike results, status, and requests to approve a branch. Write it as an Agent note: a grey dashed rectangle labelled `Agent`, in the branch or the question it is about. Keep one Agent note per place and replace its text each round. When a branch is done, delete its note.
 
 ## Recording
 

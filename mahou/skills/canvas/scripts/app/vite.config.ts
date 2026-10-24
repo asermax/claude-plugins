@@ -29,7 +29,7 @@ const readBody = (req: NodeJS.ReadableStream) =>
     req.on('end', () => done(body))
   })
 
-// Clicks on "Send to Claude" are streamed to whoever listens, so nothing about them is written to disk
+// Clicks on "Send to Agent" are streamed to whoever listens, so nothing about them is written to disk
 const listeners = new Set<ServerResponse>()
 
 const canvasApi = (): Plugin => ({
@@ -39,7 +39,7 @@ const canvasApi = (): Plugin => ({
     // re-runs src/mockups.ts through hot reload, which swaps the definitions without reloading the page
     server.watcher.add(MOCKUPS_DIR)
 
-    // Every open tab, the user's and Claude's, edits this one room, which keeps the document on disk current
+    // Every open tab, the user's and the agent's, edits this one room, which keeps the document on disk current
     const room = new TLSocketRoom({ schema, initialSnapshot: readDocument(DOC_PATH)?.room, onDataChange: () => scheduleSave() })
 
     let saveTimer: ReturnType<typeof setTimeout> | undefined

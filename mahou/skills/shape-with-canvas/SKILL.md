@@ -26,24 +26,24 @@ The root goes at the top of the canvas as a title, `Problem: <one line>`. Each t
 
 Lay the branches out in tree order, read down each column and then across.
 
-The opening tree goes on the canvas as the branch areas, each one pending, with the ✓ leaves the user brought under their areas and no prose yet. Above the areas, a Claude note says in one line per branch what that branch settles. When a branch opens, its statement of what is settled goes on the canvas as its prose. When a branch settles, ask the user to approve it there.
+The opening tree goes on the canvas as the branch areas, each one pending, with the ✓ leaves the user brought under their areas and no prose yet. Above the areas, an Agent note says in one line per branch what that branch settles. When a branch opens, its statement of what is settled goes on the canvas as its prose. When a branch settles, ask the user to approve it there.
 
 A dropped branch or leaf folds into Out of scope as `shape` says: delete the branch's area or the leaf, and add the ✓ leaf to Out of scope.
 
 ## Questions
 
-Questions go in the open branch, on its right side, under its prose. The branch's Claude note goes under the questions.
+Questions go in the open branch, on its right side, under its prose. The branch's Agent note goes under the questions.
 
 - **A question is a violet card**: a rectangle with violet border and fill, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question. Add a diagram, drawn with tldraw shapes, when the question is about the order things happen in, who sees what, or which part of the definition a situation touches.
-- **Follow-ups stay inside the base question's card**, one at a time, until the question branch closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Claude note, and the current follow-up as a violet card of its own.
+- **Follow-ups stay inside the base question's card**, one at a time, until the question branch closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Agent note, and the current follow-up as a violet card of its own.
 - **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question branch has settled and the findings that bear on it. Rewrite it each round; never add a line per answer.
 - **When the question branch closes**, delete the card, update the branch's leaves on the left, and update its prose.
 - **Keep two questions open for the user to answer.** A question waiting on a lookup does not count toward the two, so there are three while one waits. Open the next question from the branch's open leaves as soon as one closes.
 
-## Messages from Claude
+## Messages from the agent
 
-Everything you would say in the chat goes on the canvas: how you read an answer, lookup results, status, and requests to approve a branch. Write it as a Claude note: a grey dashed rectangle labelled `Claude`, in the branch or the question it is about. Keep one Claude note per place and replace its text each round. When a branch is done, delete its note.
+Everything you would say in the chat goes on the canvas: how you read an answer, lookup results, status, and requests to approve a branch. Write it as an Agent note: a grey dashed rectangle labelled `Agent`, in the branch or the question it is about. Keep one Agent note per place and replace its text each round. When a branch is done, delete its note.
 
 ## Ending
 
-When every branch is settled, put a Claude note under the root title stating that the tree is complete, and stop. Ask nothing, as `design-tree`'s Ending says.
+When every branch is settled, put an Agent note under the root title stating that the tree is complete, and stop. Ask nothing, as `design-tree`'s Ending says.

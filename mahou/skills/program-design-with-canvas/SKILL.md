@@ -37,16 +37,16 @@ Each canvas reference describes how to draw one of `program-design`'s representa
 
 ## Questions
 
-A question goes inside the part it is about, on the right side of the part's area, next to the items it discusses. The part's Claude note goes under the questions.
+A question goes inside the part it is about, on the right side of the part's area, next to the items it discusses. The part's Agent note goes under the questions.
 
 - **A question is a violet card**: a rectangle with violet border and fill, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question. Add a diagram, drawn with tldraw shapes, when the question is about where something runs, in what order or across which boundary.
-- **Follow-ups stay inside the base question's card**, one at a time, until the question closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Claude note, and the current follow-up as a violet card of its own.
+- **Follow-ups stay inside the base question's card**, one at a time, until the question closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Agent note, and the current follow-up as a violet card of its own.
 - **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question has settled and the findings that bear on it. Rewrite it each round; never add a line per answer.
 - **When the question closes**, delete the card, redraw the part with what it settled, and update the record.
 
-## Messages from Claude
+## Messages from the agent
 
-Everything you would say in the chat goes on the canvas: how you read an answer, research results, status, and requests to approve a part. Write it as a Claude note: a grey dashed rectangle labelled `Claude`, in the part or the question it is about. Keep one Claude note per place and replace its text each round. When a part settles, delete its note.
+Everything you would say in the chat goes on the canvas: how you read an answer, research results, status, and requests to approve a part. Write it as an Agent note: a grey dashed rectangle labelled `Agent`, in the part or the question it is about. Keep one Agent note per place and replace its text each round. When a part settles, delete its note.
 
 ## Mockups
 

@@ -23,8 +23,8 @@ Say in one line that fast track is on.
 2. **Record what earlier artifacts settled without a confirmation round.** A decision that a file in the change's scratch folder already shows, such as the exploration's decisions, a prototype or `status.md`, becomes a ✓ leaf with its source written on it. A leaf the user corrects goes back to ❔.
 3. **Settle single-answer decisions directly.** When a decision follows from leaves already settled or from how the code works today, it becomes a ✓ leaf marked "follows from <leaf or fact>" instead of a proposal asked for confirmation.
 4. **Ask only the open decisions, all of them at once.** Every question whose prerequisites are settled goes on the canvas in the same round, each in its branch or part. The canvas skills' limit of two open questions does not apply.
-5. **Record each answer as you read it.** Write the reading once in the branch's Claude note, so the user can correct the reading, and apply the correction in place when the user sends it.
-6. **Settle a branch or part when its last question closes.** Relabel its area `settled`, draw its final representation as the stage skill describes, and delete its Claude note. Do not ask the user to approve it.
+5. **Record each answer as you read it.** Write the reading once in the branch's Agent note, so the user can correct the reading, and apply the correction in place when the user sends it.
+6. **Settle a branch or part when its last question closes.** Relabel its area `settled`, draw its final representation as the stage skill describes, and delete its Agent note. Do not ask the user to approve it.
 
 ## What stays
 

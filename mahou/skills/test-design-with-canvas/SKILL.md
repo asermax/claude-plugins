@@ -36,9 +36,9 @@ Draw each branch with `canvas`'s `classificationTree`, which lays out the root, 
 - **The root is a blue box** at the top, with the entry point and what it is given.
 - **Each classification is a violet box** under the root, joined to it by a line with no arrowheads.
 - **Each partition is a green box** under its classification, joined the same way, with a short label.
-- **The matrix goes under the tree.** A header line reads `row · what the test does` on the left and `expected · kind · setup` on the right, both in grey. Each row is one line: its id and summary on the left, a filled dot under the centre of each partition it picks, and its expected outcome, kind and setup on the right. Dotted grey lines run between the rows and down each partition's column.
-- **A row run by hand is orange**, its text and its dots, whether it is `test + manual` or `manual`. Its expected outcome adds what the check observes by hand.
-- **Dropped rows get a grey line under the matrix**, `Dropped: <reason>`.
+- **The matrix goes under the tree.** On the left, a narrow `★` column sits before `row · what the test does`, separated from it by a vertical dotted grey line; on the right, the header reads `expected · kind · setup`. Header labels are grey. Each row is one line: `★` in the first column when `isNew: true` and blank when the test already exists in the suite, its id and summary next to it, a filled dot under the centre of each partition it picks, and its expected outcome, kind and setup on the right. Dotted grey lines run between the rows and down each partition's column.
+- **A row run by hand is orange**, its `★`, its text and its dots, whether it is `test + manual` or `manual`. Its expected outcome adds what the check observes by hand.
+- **Dropped rows and deleted tests get grey lines under the matrix**, `Dropped: <reason>` and `Deleted: <test and reason>`. When either list is empty, nothing is drawn for it.
 - **A branch with one row** draws its root and that row, with no classifications.
 
 ## Questions

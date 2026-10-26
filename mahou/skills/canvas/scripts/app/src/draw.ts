@@ -32,11 +32,12 @@ type MockOptions = Partial<Place> & Into & { kind: string; data: Record<string, 
 type TreeRow = {
   id: string
   summary: string
-  picks: string[]
+  picks: (string | null)[]
   expected: string
   kind: string
   setup?: string | null
   manual?: boolean
+  isNew?: boolean
 }
 
 type TreeSpec = {
@@ -45,6 +46,7 @@ type TreeSpec = {
   classifications: { name: string; partitions: [key: string, label: string][] }[]
   rows: TreeRow[]
   dropped?: string[]
+  deleted?: string[]
   note?: string | null
 }
 
@@ -65,6 +67,7 @@ const LABEL_SPACE = 60
 const FLOW_GAP = 30
 const MOCK_WIDTH = 520
 const PARTITION_WIDTH = 170
+const STAR_WIDTH = 38
 const ROW_TEXT_WIDTH = 620
 const OUTCOME_WIDTH = 760
 
@@ -761,8 +764,8 @@ export const drawOf = (editor: Editor) => {
       return bounds(`${prefix}${part}`)
     }
 
-    const label = (part: string, at: VecLike, w: number, text: string, color: TLDefaultColorStyle) =>
-      shape(part, { richText: toRichText(text), w, autoSize: false, size: 's', font: 'draw', color, textAlign: 'start' }, 'text', at)
+    const label = (part: string, at: VecLike, w: number, text: string, color: TLDefaultColorStyle, textAlign: 'start' | 'middle' = 'start') =>
+      shape(part, { richText: toRichText(text), w, autoSize: false, size: 's', font: 'draw', color, textAlign }, 'text', at)
 
     const node = (part: string, at: VecLike, w: number, h: number, text: string, color: TLDefaultColorStyle) =>
       shape(part, { geo: 'rectangle', w, h, growY: 0, color, fill: 'semi', dash: 'draw', size: 's', font: 'draw', align: 'middle', verticalAlign: 'middle', richText: toRichText(text) }, 'geo', at)
@@ -809,7 +812,11 @@ export const drawOf = (editor: Editor) => {
       top += 220
     }
 
-    label('head-left', { x: left, y: top }, ROW_TEXT_WIDTH, 'row · what the test does', 'grey')
+    const summaryLeft = left + STAR_WIDTH
+    const summaryWidth = ROW_TEXT_WIDTH - STAR_WIDTH
+
+    label('head-star', { x: left, y: top }, STAR_WIDTH - 6, '★', 'grey', 'middle')
+    label('head-left', { x: summaryLeft, y: top }, summaryWidth, 'row · what the test does', 'grey')
     label('head-right', { x: right, y: top }, OUTCOME_WIDTH, 'expected · kind · setup', 'grey')
     top += 50
 
@@ -817,12 +824,17 @@ export const drawOf = (editor: Editor) => {
 
     spec.rows.forEach((row, index) => {
       const color = row.manual ? 'orange' : 'black'
-      const summary = label(`r${index}-left`, { x: left, y: top }, ROW_TEXT_WIDTH, `${row.id} · ${row.summary}`, color)
+
+      if (row.isNew) {
+        label(`r${index}-star`, { x: left, y: top }, STAR_WIDTH - 6, '★', color, 'middle')
+      }
+
+      const summary = label(`r${index}-left`, { x: summaryLeft, y: top }, summaryWidth, `${row.id} · ${row.summary}`, color)
       const outcome = label(`r${index}-right`, { x: right, y: top }, OUTCOME_WIDTH, [row.expected, row.kind, row.setup].filter((part) => part != null).join(' · '), color)
       const h = Math.max(summary.h, outcome.h)
 
       row.picks.forEach((key, classification) => {
-        const cx = column[`${classification}:${key}`]
+        const cx = key == null ? undefined : column[`${classification}:${key}`]
 
         if (cx != null) {
           shape(`r${index}-dot${classification}`, { geo: 'ellipse', w: 18, h: 18, growY: 0, color, fill: 'solid', dash: 'solid', size: 's', richText: toRichText('') }, 'geo', { x: cx - 9, y: top + Math.min(h, 40) / 2 - 5 })
@@ -833,11 +845,16 @@ export const drawOf = (editor: Editor) => {
       dotted(`r${index}-rule`, { x: left, y: top - GAP / 2 }, { x: right + OUTCOME_WIDTH, y: top - GAP / 2 })
     })
 
+    dotted('v-star', { x: summaryLeft - 4, y: matrixTop - 10 }, { x: summaryLeft - 4, y: top - GAP / 2 })
     Object.values(column).forEach((cx, index) => dotted(`v${index}`, { x: cx, y: matrixTop - 10 }, { x: cx, y: top - GAP / 2 }))
     top += GAP
 
     for (const [index, reason] of (spec.dropped ?? []).entries()) {
       top += label(`dropped${index}`, { x: left, y: top }, right + OUTCOME_WIDTH - left, `Dropped: ${reason}`, 'grey').h + 8
+    }
+
+    for (const [index, entry] of (spec.deleted ?? []).entries()) {
+      top += label(`deleted${index}`, { x: left, y: top }, right + OUTCOME_WIDTH - left, `Deleted: ${entry}`, 'grey').h + 8
     }
 
     if (spec.note != null) {

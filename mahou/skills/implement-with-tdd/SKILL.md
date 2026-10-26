@@ -18,7 +18,7 @@ Neither subagent commits. That is the only change to the brief's repository rule
 
 ## The rounds
 
-1. **Red.** The tester writes the tests for the repository's `test` rows, plus the changes the existing tests need once the new code exists. It runs them and confirms that each new test fails because the behaviour is missing, not because the test is broken. When the tests cannot load before the code exists, it says how it checked the reason for the failure. It reports the row-to-test mapping, the files it changed and why each test fails.
+1. **Red.** The tester writes the new tests for the repository's `★` `test` rows, updates any unstarred `test` rows whose expected outcome changed, and removes any tests listed under `Deleted:`. It runs the suite and confirms that each new or updated test fails because the behaviour is missing, not because the test is broken. When the tests cannot load before the code exists, it says how it checked the reason for the failure. It reports the row-to-test mapping, the files it changed and why each test fails.
 2. **Green.** Relay the failing tests and the changed files to the implementer. It writes the code until the tests pass, then reports the linter and test output tail.
 3. **Validate.** Relay the implementer's report to the tester. The tester runs the suite and checks the code against the design's rules and contracts, not only against the tests. It answers with an approval or with concrete feedback. Relay the feedback to the implementer and repeat 2 and 3 until the tester approves.
 

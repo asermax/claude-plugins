@@ -302,15 +302,9 @@ git commit -m "$(cat <<'EOF'
 <body explaining what changed and why>
 
 Version bump: <scope> X.Y.Z → X.Y.Z[, <other-scope> X.Y.Z → X.Y.Z]
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
-
-If you (the assistant running this skill) know your exact model identity, you can use it instead of bare "Claude" in the Co-Authored-By line (e.g., `Claude Opus 4.7 <noreply@anthropic.com>`). Otherwise, the generic form is fine.
 
 ### 5. Repeat for each group
 
@@ -326,10 +320,6 @@ Conventional commits, with the version-bump footer:
 <longer description explaining the change>
 
 Version bump: <scope-name> X.Y.Z → X.Y.Z
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ### Type mapping
@@ -354,10 +344,6 @@ Fixed unclear instructions in agent-communication SKILL.md
 regarding the notify→receive pattern.
 
 Version bump: superpowers 1.0.0 → 1.0.1, marketplace 2.2.0 → 2.2.1
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 **Minor (new root skill):**
@@ -373,10 +359,6 @@ Features:
 - Multi-commit support for unrelated changes
 
 Version bump: marketplace 1.0.0 → 1.1.0
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 **Major (plugin removal):**
@@ -387,10 +369,6 @@ BREAKING CHANGE: The /aur:bump-version command has been removed.
 Use /aur:update-package instead which provides better functionality.
 
 Version bump: aur 1.0.0 → 2.0.0, marketplace 2.0.0 → 3.0.0
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ## Error handling

@@ -54,4 +54,4 @@ Before writing code, read the project's `CLAUDE.md` and `.mahou/basics.md` when 
 
 Run that repository's linters and tests afterwards, scoped to the files you touched rather than the whole tree. A blanket formatter run reformats unrelated files and drags them into the change.
 
-Leave everything uncommitted.
+Commit the approved fixes through mahou:commit-changes. The user's approval of a fix is the consent to commit it, so commit the groups mahou:commit-changes proposes without asking for confirmation.

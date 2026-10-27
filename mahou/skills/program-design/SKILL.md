@@ -60,8 +60,8 @@ A package branch, in order:
 
 A screen branch, in order:
 
-1. The screen layout, worked on a prototype: open the design's prototype with mahou:prototype, or create one with that skill when the screen has none. Update the prototype to match what the design and the branch settled, and iterate it with the user until it shows the final screen.
-2. The component tree.
+1. The screen layout, worked on a prototype: open the design's prototype with mahou:prototype, or create one with that skill when the screen has none. Update the prototype to match what the design and the branch settled, and iterate it with the user until it shows the final screen. The prototype settles how the screen looks and behaves, never how it is coded.
+2. The component tree. Every component it names carries its source: the component a wiki entry defines for that screen, or an app component when none does. Propose the tree from the wiki's frontend entries first, so a screen an entry already covers never becomes custom code.
 3. The state, as a derivation ledger.
 4. The interfaces and the module list, rendered together.
 

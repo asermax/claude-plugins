@@ -13,9 +13,9 @@ You are given the repository's absolute path, the base, the diff, and a path to 
 
 ## What to flag
 
-New code that re-implements something already available. Grep the shared and utility modules, and the files next to the change, then name the existing helper to call instead.
+New code that re-implements something already available, in the repository or in what the wiki defines. When a wiki entry provides a component or library for what the change builds by hand, that is a re-implementation. Check the wiki entries that match the change; for frontend components, start from the wiki's frontend entries. Name the existing component or helper to use instead.
 
-A finding without a named existing helper is not a finding.
+A finding without a named existing component or helper is not a finding.
 
 ## Scope
 

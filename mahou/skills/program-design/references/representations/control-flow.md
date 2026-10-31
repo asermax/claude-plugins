@@ -53,6 +53,8 @@ sequenceDiagram
     S-->>C: the outcome
 ```
 
+When the branch changes a flow that exists, draw either form as a diff: the steps and messages only today has marked removed, the ones only the change has marked added, as superpowers:mermaid's diff reference says.
+
 Validate the diagram before it is shown. The prose under it covers what the diagram cannot show: which steps had to be in that order and which happen to be, what each kind of failure does to the run, and what the outcome tells whoever started it. Numbered steps in the prose refer to the diagram's numbers.
 
 ## When it fits

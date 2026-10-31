@@ -31,6 +31,19 @@ Comments never go inside a structure definition. Object and array literals, payl
 
 This holds in every repository, whatever the language.
 
+## Referencing code
+
+When a skill's output points at code, it writes the pointer in one form, so every reference reads the same and can be found by searching for `[[`:
+
+| Points at | Form |
+|---|---|
+| A declaration | `[[path#symbol]]`, qualified when the name is ambiguous: `[[src/store.ts#Store.save]]` |
+| A file | `[[path]]` |
+| A line range | `[[path#L12-L30]]` |
+| Lines as a commit left them | `[[sha:path#L12-L30]]`, or `[[base..head:path#L12-L30]]` for a range of commits |
+
+Paths are relative to the repository's root; when the output spans several repositories, the path starts with the repository's folder name. Prefer a symbol to a line range, because a symbol survives edits above it. Point at a commit once the code is committed and the reference has to keep showing that version. Check every reference against the file before writing it. Something the change will create has no reference yet: name it in plain text.
+
 ## Scratch folder
 
 Every artifact a skill produces for the user and keeps between rounds goes under `.scratch/<change-slug>/` in the project's root, never under `/tmp`: a design handoff, a prototype, a draft, a research file. One directory named after the current change, holding the files the skill writes: `handoff.md`, `design.md`, `research.md`, a `prototypes/` folder, a `reports/` folder, a `test-design/` folder, a `spikes/` folder, whatever the skill defines. A skill that reopens a file reopens it from there, so the folder survives compaction, restarts and the next day. Throwaway files that are not to be reused, such as a diagram written only to validate it, may still use `/tmp`.

@@ -34,4 +34,4 @@ When several searches, agents, or rounds feed one report, organize it around the
 
 ## Name what you refer to
 
-Refer to code, rows, questions and items by their name or by what they do, not by a bare pointer. Write "the delete button in the student editor removes by the sorted index", not ":120"; write "the collision question", not "Q4". A line number, row id or question number on its own makes the reader stop and look it up before the sentence means anything. A `file:line` reference can follow the name as a pointer to the place, but it never stands in for the name.
+Refer to code, rows, questions and items by their name or by what they do, not by a bare pointer. Write "the delete button in the student editor removes by the sorted index", not ":120"; write "the collision question", not "Q4". A line number, row id or question number on its own makes the reader stop and look it up before the sentence means anything. A reference in the form mahou:basics gives under Referencing code can follow the name as a pointer to the place, but it never stands in for the name.

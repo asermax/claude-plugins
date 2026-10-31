@@ -14,7 +14,9 @@ Takes a change whose decisions are settled and specifies how it lands in the cod
 
 Every part rests on the code and follows the conventions, and every part is a representation of the code, never the code itself. No function bodies, no declarations in the language's syntax, no snippet that would compile. A shape is a JSON Schema, a call path is a callstack, a value is a line in a derivation ledger, a file is a path in the module list. When a part cannot be stated without writing code, the part is too low; say so and lift it.
 
-Because it proposes, ground every proposal in the code and in the conventions you read for the proposal's root. With each proposal, cite the code or the convention it follows. A proposal with nothing behind it is a guess, and the user cannot tell the two apart.
+Because it proposes, ground every proposal in the code and in the conventions you read for the proposal's root. With each proposal, cite the code or the convention it follows, the code as a reference in the form `basics` gives under Referencing code. A proposal with nothing behind it is a guess, and the user cannot tell the two apart.
+
+When a part changes something that exists, its representation shows what the change adds, alters and removes, marked the way the part's reference says.
 
 Some parts carry complex logic or solve a problem other code already solves, such as reading a standard format or running a well-known algorithm. Before proposing one, look for existing code that does the job. Look first at the project's own code: a package or service of its own, or a library one of its repositories already depends on. Then look at maintained libraries. For each candidate, say where the project already uses it, how actively it is maintained, its size and its license. Propose the project's own solution or a library it already uses over a new dependency, and a library over hand-written code. The user picks.
 

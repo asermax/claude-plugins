@@ -27,6 +27,8 @@ Use a diagram to show something that prose would explain worse: a data model, a 
 
 When two charts fit, such as a flow that could be a `flowchart` or a `sequenceDiagram`, use `sequenceDiagram` when who acts and the order of messages matter, and `flowchart` when branches and decisions matter more than order.
 
+To show a change to something that exists, today and the change in one diagram, draw the chart above as a diff: [references/diff.md](references/diff.md).
+
 ## Common syntax
 
 

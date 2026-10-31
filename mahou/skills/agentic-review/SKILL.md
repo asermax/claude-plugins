@@ -51,7 +51,7 @@ Spawn them unnamed and keep the `agentId` from each spawn result. That is what r
 
 Read every findings file. Collapse findings that different facets raised about the same line or mechanism, then fix each survivor.
 
-Skip a finding when its fix would change intended behavior, reach outside the bounds above, or when you judge it a false positive. Record the skip and its reason. Never argue with it.
+Skip a finding when its fix would change intended behavior, reach outside the bounds above, or when you judge it a false positive. Record the skip with why the reviewer proposed the change, the problem the reviewer saw in the code, and why you skipped the finding. Never argue with it.
 
 Then read every comment the diff adds, yourself, against the project's comments rule: a wiki entry, the project's `CLAUDE.md` or a rule file in the repository. The reviewers do not flag comments. Remove or rewrite every comment the rule does not allow. When the project states no comments rule, say so and leave the comments as they are.
 
@@ -65,6 +65,6 @@ Stop when a round returns no findings, or after the third round, whichever comes
 
 ## Step 5: Report and hand off
 
-Per repository: what each round fixed, what it skipped and why, and the linter and test results. Everything stays uncommitted.
+Per repository: what each round fixed, what it skipped, and the linter and test results. Write each skipped finding so the user can rule on it without asking back: the problem the reviewer saw and why the reviewer proposed the change, then why the review skipped the finding. Everything stays uncommitted.
 
 Then hand off to mahou:human-review.

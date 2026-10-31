@@ -34,7 +34,7 @@ classDiagram
     }
 ```
 
-Mark each class as a diff, as superpowers:mermaid's diff reference says: `:::added` for a model the branch creates, `:::removed` for one it drops, `:::changed` for one whose attributes it alters. Members take no marks, so a removed attribute is named in the prose.
+Mark each class as a diff, as the mermaid skill's diff reference says: `:::added` for a model the branch creates, `:::removed` for one it drops, `:::changed` for one whose attributes it alters. Members take no marks, so a removed attribute is named in the prose.
 
 Validate the diagram before it is shown. The prose under it names, per declaration, the precedent it follows when one exists and what the boundary enforces. It then states once which paths carry the value and what each does with an absent key, a present value and an explicit null. When there is a migration, it says how it is produced, what it adds and what gate it must pass.
 

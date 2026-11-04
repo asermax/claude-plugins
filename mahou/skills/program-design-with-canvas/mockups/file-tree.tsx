@@ -10,6 +10,8 @@ const CHANGES: Record<Change, { fill: string; border: string }> = {
   deleted: { fill: '#ffe3e3', border: '1.5px solid #c92a2a' },
 }
 
+const SIGNS: Record<Change, string> = { new: '+ ', touched: '~ ', deleted: '− ' }
+
 type Line = [prefix: string, name: string, change?: Change | null, note?: string | null]
 
 interface Props {
@@ -25,7 +27,7 @@ export const mockup: MockDefinition<Props> = {
       {lines.map(([prefix, name, change, note], index) => (
         <div key={index} style={{ display: 'flex', alignItems: 'baseline', whiteSpace: 'pre' }}>
           <span style={{ color: MUTED }}>{prefix}</span>
-          <span style={change == null ? undefined : { background: CHANGES[change].fill, border: CHANGES[change].border, borderRadius: 4, padding: '0 4px', textDecoration: change === 'deleted' ? 'line-through' : undefined }}>{name}</span>
+          <span style={change == null ? undefined : { background: CHANGES[change].fill, border: CHANGES[change].border, borderRadius: 4, padding: '0 4px', textDecoration: change === 'deleted' ? 'line-through' : undefined }}>{change == null ? '' : SIGNS[change]}{name}</span>
           {note == null ? null : <span style={{ fontFamily: HAND, fontSize: 13, color: MUTED, marginLeft: 12, whiteSpace: 'normal' }}>{note}</span>}
         </div>
       ))}

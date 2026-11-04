@@ -27,6 +27,12 @@ interface Props {
   columns: Node[][]
 }
 
+const BADGE_: Record<string, { label: string; color: string }> = {
+  new: { label: '+ NEW', color: '#2b8a3e' },
+  touched: { label: '~ CHANGED', color: '#e67700' },
+  unchanged: { label: '= UNCHANGED', color: '#868e96' },
+}
+
 const Tag = ({ text, color }: { text: string; color: string }) => (
   <span style={{ fontSize: 11, padding: '0 6px', borderRadius: 6, border: `1.5px solid ${color}`, color, whiteSpace: 'nowrap' }}>{text}</span>
 )
@@ -37,11 +43,12 @@ const Card = ({ node, inRow = false }: { node: Node; inRow?: boolean }) => {
   const { color, fill, label } = KINDS[node.kind]
 
   return (
-    <div data-card={node.name} style={{ border: `2px ${node.change === 'new' ? 'solid' : node.change === 'touched' ? 'dashed' : 'dotted'} ${node.change === 'unchanged' ? '#ced4da' : color}`, background: fill, borderRadius: node.kind === 'button' ? 22 : 12, padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6, flex: inRow ? 1 : undefined }}>
+    <div data-card={node.name} style={{ border: `${node.change === 'new' ? 3 : 2}px ${node.change === 'new' ? 'solid' : node.change === 'touched' ? 'dashed' : 'dotted'} ${node.change === 'unchanged' ? '#adb5bd' : color}`, background: fill, borderRadius: node.kind === 'button' ? 22 : 12, padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6, flex: inRow ? 1 : undefined }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
         <b style={{ fontSize: 15 }}>{node.name}</b>
         <Tag text={label} color={color} />
-        <Tag text={`${node.repo} · ${node.change}`} color={MUTED} />
+        <Tag text={node.repo} color={MUTED} />
+        <span style={{ marginLeft: 'auto', fontFamily: 'monospace', fontSize: 11, fontWeight: 700, padding: '1px 7px', borderRadius: 6, background: BADGE_[node.change].color, color: '#fff', whiteSpace: 'nowrap' }}>{BADGE_[node.change].label}</span>
       </div>
       {node.children == null || node.children.length === 0 ? null : (
         <div style={{ display: 'flex', flexDirection: node.row ? 'row' : 'column', gap: 8, marginTop: 2 }}>
@@ -73,7 +80,10 @@ export const mockup: MockDefinition<Props> = {
         {(Object.keys(KINDS) as Kind[]).map((kind) => (
           <Tag key={kind} text={KINDS[kind].label} color={KINDS[kind].color} />
         ))}
-        <span style={{ color: MUTED }}>A card sits inside the component that renders it. Solid border: new. Dashed border: touched. Dotted grey: unchanged, shown only because it renders a new or touched card.</span>
+        <span style={{ color: MUTED }}>A card sits inside the component that renders it. The colour names the kind of component.</span>
+        {(['new', 'touched', 'unchanged'] as const).map((change) => (
+          <span key={change} style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 700, padding: '1px 7px', borderRadius: 6, background: BADGE_[change].color, color: '#fff', border: change === 'new' ? '3px solid #2b8a3e' : change === 'touched' ? '2px dashed #e67700' : '2px dotted #adb5bd' }}>{BADGE_[change].label}</span>
+        ))}
       </div>
     </div>
   ),

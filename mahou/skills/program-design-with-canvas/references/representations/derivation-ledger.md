@@ -24,12 +24,13 @@ One `state-card` mock per component, in the same columns as the component tree, 
 - **Only add variables when necessary.** If a value is used once, inline it where it is used, in the `returns` line or in an argument. Hooks and functions build the return value directly on the `return`, never step by step or through separate variables. Components do the same in the JSX: a value the JSX can use directly goes there instead of in a separate variable, such as a field destructured from a query's data.
 - **The last line says what the component renders or what the hook returns**, tagged `returns`, with no name and no `:=`, in the same style as the other lines. For a component, write it as a tree of the elements the component renders, never as code, JSX or prose: one element per line, `├─` and `└─` before its children, and `←` before the props the element passes, each as a name or as `<prop> ← <where its value comes from>`. A condition goes on its own line under the element it shows or hides. Put the conditions of what renders in this line, never in a computed value that only feeds it. The card draws `⇒` in the name column of that line and a dashed rule above that line, so the reader can tell the returns line from the lines above it.
 - **A hook card** starts with what the hook does in one line, then its arguments, what it reads, what it computes and what it returns.
+- **Mark each card and each line** as `SKILL.md` describes under Marking the change. A line is `[name, expression, tag, comment, change]`, with `change` set to `added`, `changed`, `removed` or `null`, and a card takes `change: 'new' | 'touched' | 'unchanged'`. A line the change removes stays on the card, struck through, with a comment naming where its logic goes.
 
 **Join the cards with arrows before showing the part**, so the reader can follow each value from where it is made to where it is used. For example:
 
 - From a component card to a card it renders, labelled with what crosses between them, such as `renders · <props>` or a callback with its arguments.
-- From a provider's card to a card that reads its context, such as `context · <the values that card reads>`.
-- From a hook or a function to its caller, as a grey dashed arrow with no label. Place the hook card next to its caller's card.
+- `reads context · <the values that card reads>` between a provider's card and a card that reads its context.
+- `calls`, as a grey dashed arrow, between a card and the hook or function it calls. Place the hook card next to its caller's card.
 
 Leave room between the columns for the labels, and curve an arrow around a column's side when a straight one would cross a card.
 

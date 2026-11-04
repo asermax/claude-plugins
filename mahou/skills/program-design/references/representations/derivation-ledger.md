@@ -34,6 +34,21 @@ Put one of these tags on the right of each line:
 
 Name an `effect` line after the hook and its dependencies, such as `useEffect, [<dependency>]`, never by when the effect runs. When no tag fits a line, name a new one for its kind of source, use one tag per kind, and define the new tag the first time it appears in the ledger.
 
+When the branch changes a part that exists, mark each line in a first column the way the callstack marks its lines: `+` for a line the change adds, `-` for a line it removes, `~` for a line it alters, and a space for a line that stays. A removed line keeps a comment naming the part its logic moves to. A group's header carries `new`, `touched` or `unchanged`. A component that takes part in the change without changing, such as the host that renders a new component, appears as an `unchanged` group with the lines that connect it to the change.
+
+```
+ParentComponent                                                        unchanged
+  thing            := useThing(id)                                      server
+  returns            <Panel>
+                     └─ ChildComponent ← thing
+
+ChildComponent                                                         touched
+  thing            := thing                                             prop
+- localCopy        := useState(thing)                                   local    # moved to useThingDraft
++ draft            := useThingDraft(thing)                              server
+~ returns            <Form> ← draft
+```
+
 A component's group ends with a `returns` line that says what the component renders, as a tree: one element per line, `├─` and `└─` before its children, and `←` before the props the element passes, each as a name or as `<prop> ← <where its value comes from>`. A condition goes on its own line under the element it shows or hides. Never write it as code, JSX or prose.
 
 ```

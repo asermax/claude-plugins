@@ -51,6 +51,8 @@ The same form on a service:
 
 Under the list, the placement decisions and only those: why a set of files became a folder with an index instead of siblings, why a helper sits in one domain folder rather than another. Each one cites the standard it follows when a standard covers it.
 
+A file that another branch of the same root adds or changes, and that this branch uses, appears with that branch's label followed by `shared, defined in <branch>`, so each branch's list holds every file the branch depends on.
+
 Every path traces to something a part above names, and everything a part names has a path here. That check is what says the branch is complete.
 
 ## When it fits

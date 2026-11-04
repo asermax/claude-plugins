@@ -34,7 +34,33 @@ const SOURCES: Record<string, string> = {
   returns: '#212529',
 }
 
-type Line = [name: string, expression: string, source: string, comment?: string | null]
+type LineChange = 'added' | 'changed' | 'removed'
+
+const LINE_CHANGES: Record<LineChange, { sign: string; color: string; fill: string }> = {
+  added: { sign: '+', color: '#2b8a3e', fill: '#ebfbee' },
+  changed: { sign: '~', color: '#e67700', fill: '#fff9db' },
+  removed: { sign: '−', color: '#c92a2a', fill: '#fff5f5' },
+}
+
+const markCell = (change: LineChange | null | undefined) => (
+  <span style={{ fontWeight: 700, color: change == null ? 'transparent' : LINE_CHANGES[change].color }}>{change == null ? '·' : LINE_CHANGES[change].sign}</span>
+)
+
+const lineStyle = (change: LineChange | null | undefined) =>
+  change == null ? {} : { color: LINE_CHANGES[change].color, textDecoration: change === 'removed' ? 'line-through' : undefined }
+
+const CARD_CHANGES: Record<string, { label: string; color: string; dash: string }> = {
+  new: { label: '+ NEW', color: '#2b8a3e', dash: 'solid' },
+  touched: { label: '~ CHANGED', color: '#e67700', dash: 'dashed' },
+  unchanged: { label: '= UNCHANGED', color: '#868e96', dash: 'dotted' },
+}
+
+const changeBadge = (change: string | null | undefined) =>
+  change == null ? null : (
+    <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, padding: '1px 8px', borderRadius: 6, background: CARD_CHANGES[change].color, color: '#fff', whiteSpace: 'nowrap' }}>{CARD_CHANGES[change].label}</span>
+  )
+
+type Line = [name: string, expression: string, source: string, comment?: string | null, change?: LineChange | null]
 
 interface Props {
   name: string
@@ -42,28 +68,31 @@ interface Props {
   repo: string
   does: string
   lines: Line[]
+  change?: 'new' | 'touched' | 'unchanged' | null
 }
 
 // A hook or function the branch adds: rounder than a component card, listed the same way from arguments to return value
 export const mockup: MockDefinition<Props> = {
   width: 760,
   defaults: { name: '', kind: 'hook', repo: '', does: '', lines: [] },
-  render: ({ name, kind, repo, does, lines }) => {
+  render: ({ name, kind, repo, does, lines, change }) => {
     const { label, color, fill } = KINDS[kind]
 
     return (
-      <div data-root style={{ position: 'absolute', left: 0, top: 0, right: 0, border: `2px solid ${color}`, background: fill, borderRadius: 30, padding: '10px 18px', fontFamily: HAND, color: INK, display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div data-root style={{ position: 'absolute', left: 0, top: 0, right: 0, border: `${(change ?? 'new') === 'new' ? 3 : 2}px ${CARD_CHANGES[change ?? 'new'].dash} ${color}`, background: fill, borderRadius: 30, padding: '10px 18px', fontFamily: HAND, color: INK, display: 'flex', flexDirection: 'column', gap: 6 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
           <b style={{ fontFamily: MONO, fontSize: 15 }}>{name}</b>
           <span style={{ fontSize: 12, padding: '0 6px', borderRadius: 6, border: `1.5px solid ${color}`, color }}>{label}</span>
-          <span style={{ fontSize: 12, color: MUTED }}>{repo} · new</span>
+          <span style={{ fontSize: 12, color: MUTED }}>{repo}</span>
+          <span style={{ marginLeft: 'auto' }}>{changeBadge(change ?? 'new')}</span>
         </div>
         <span style={{ fontSize: 13, lineHeight: 1.3, color: MUTED }}>{does}</span>
-        <div style={{ display: 'grid', gridTemplateColumns: 'max-content 1fr max-content', columnGap: 10, rowGap: 3, alignItems: 'baseline', fontFamily: MONO, fontSize: 12 }}>
-          {lines.map(([lineName, expression, source, comment]) => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'max-content max-content 1fr max-content', columnGap: 10, rowGap: 3, alignItems: 'baseline', fontFamily: MONO, fontSize: 12 }}>
+          {lines.map(([lineName, expression, source, comment, change]) => (
             <div key={lineName} style={{ display: 'contents' }}>
-              <span style={{ fontWeight: 700, ...(source === 'returns' ? { borderTop: '1.5px dashed #adb5bd', paddingTop: 4, marginTop: 2 } : {}) }}>{source === 'returns' ? '⇒' : lineName}</span>
-              <span style={{ whiteSpace: 'pre-wrap', ...(source === 'returns' ? { borderTop: '1.5px dashed #adb5bd', paddingTop: 4, marginTop: 2 } : {}) }}>
+              {markCell(change)}
+              <span style={{ fontWeight: 700, ...lineStyle(change), ...(source === 'returns' ? { borderTop: '1.5px dashed #adb5bd', paddingTop: 4, marginTop: 2 } : {}) }}>{source === 'returns' ? '⇒' : lineName}</span>
+              <span style={{ whiteSpace: 'pre-wrap', ...lineStyle(change), ...(source === 'returns' ? { borderTop: '1.5px dashed #adb5bd', paddingTop: 4, marginTop: 2 } : {}) }}>
                 {source === 'returns' ? '' : ':= '}
                 {expression}
                 {comment == null ? null : <span style={{ display: 'block', fontFamily: HAND, fontSize: 11, color: MUTED }}># {comment}</span>}

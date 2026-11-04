@@ -16,7 +16,7 @@ It does not look for correctness bugs. Those belong to the human pass, where som
 `basics` says every decision belongs to the user and every choice goes back to them as a question. This skill is the exception, and it holds inside these bounds:
 
 - It fixes nothing that would change how the change looks or behaves.
-- It keeps every mechanism that a settled program design entry, a settled design tree leaf, an explicit user decision or a source on the conventions list chose. A prototype settles how the change looks and behaves, not how it is coded, so the review may change code that does what the prototype's code did in a different way.
+- It keeps every mechanism that a settled program design entry, a settled design tree leaf, an explicit user decision or a source on the conventions list chose. A mechanism is what a part does, where it lives and what crosses between parts. How a representation or a prototype writes it is not a mechanism. When the code follows a ledger line, a schema's wording or the prototype's code where a source on the conventions list asks for something else, the review fixes it and never skips the finding because the design or the prototype had it that way.
 - It may create a new file or edit a file the changeset does not touch when the fix reduces complexity or duplication, or otherwise improves the code.
 - It leaves everything uncommitted, so the user can read the whole pass with one `git diff` and discard it as a whole.
 - It reports every fix and every skip.

@@ -54,6 +54,8 @@ Test the premise, not only the conclusion. A finding often states a fact on the 
 
 Check the finding against rulings already made: earlier in this session, in the change's scratch folder, in the project's docs. A finding the user already declined is reported in one line as previously declined, with the reviewer's new argument if there is one. It is not re-argued.
 
+A finding is Intended only when a ruling settled what the flagged code does. That the prototype's code or a program design representation writes it the same way does not make it Intended. The prototype and the representations settle what the code does, not how it is written.
+
 ## Step 5: Present, then stop
 
 Load mahou:report for the shape. Verdicts stay short. Confirmed findings get the evidence and the fix. Not a bug and Intended get one line for the reason. The user routinely overrides that verdict, and that is the correct outcome, so do not argue it down at length.

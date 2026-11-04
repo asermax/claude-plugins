@@ -22,18 +22,19 @@ Use the number the user passed. Otherwise, `gh pr view --json number,url,baseRef
 
 ## Step 3: Fetch the review
 
-One query returns everything. The two obvious alternatives both lose information: `gh pr view --json reviews` returns bodies with no resolution state, so settled threads look live, and `gh pr view --comments` returns issue comments, which are not where the findings are.
+One query returns everything. `gh pr view --json reviews` loses information: it returns bodies with no resolution state, so settled threads look live.
 
 ```bash
 gh api graphql -f query='
 query($owner:String!,$repo:String!,$number:Int!){
   repository(owner:$owner,name:$repo){
     pullRequest(number:$number){
-      reviews(first:20){nodes{author{login} state body}}
+      reviews(first:20){nodes{author{login} state body submittedAt}}
       reviewThreads(first:100){nodes{
         id isResolved isOutdated path line originalLine
         comments(first:20){nodes{author{login} body}}
       }}
+      comments(last:100){nodes{author{login} body createdAt}}
     }
   }
 }' -f owner=OWNER -f repo=REPO -F number=N
@@ -45,6 +46,7 @@ Reading the result:
 - `line` is null when `isOutdated` is true. Use `originalLine`.
 - A reply from the user inside a thread is a ruling they already made. Carry it into the report as decided; do not ask again.
 - The review body is framing (summary, tables, counts), but a finding that appears only there, with no thread, is still a finding. Include it.
+- A PR comment from a reviewer is a finding too. A reviewer bot may post an inline finding as a PR comment, headed by the file and lines, when it cannot attach the thread. It has no thread to resolve, so after the user rules on it nothing is resolved on GitHub.
 
 ## Step 4: Verify every finding
 

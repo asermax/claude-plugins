@@ -24,25 +24,28 @@ Report every PR URL.
 
 ## Step 3: Babysit the pull requests
 
-Start one background loop per PR that polls at a fixed interval and exits on the first of these:
+Start one background loop per PR with `scripts/babysit-pr.sh`, as a background task so its exit notifies you. Pass the repository as `<owner>/<repo>`, read from the remote. It polls every 60 seconds and exits on the first of these:
 
-- an unresolved review thread appeared, or the review body has a finding without a thread
-- the branch fell behind its base
+- an unresolved review thread appeared
+- a review body or a PR comment was posted after the watch's start time by someone other than the PR author. A reviewer bot may post a finding as a PR comment when it cannot attach the inline thread, so a comment counts as a finding as much as a thread does
+- the branch fell behind its base, or conflicts with it
 - a check failed
-- the PR was merged
+- the PR was merged or closed
+- three polls in a row failed, for example because the repository or the PR does not exist
 
 ```
-gh pr view <number> --repo <owner>/<repo> --json state,mergeStateStatus,statusCheckRollup
+<land>/scripts/babysit-pr.sh <owner>/<repo> <number> [since]
 ```
 
-plus the review threads through the GraphQL API (`gh api graphql`, the `reviewThreads` connection of the pull request, reading `isResolved` per thread). `gh pr checks --watch` blocks on checks, but nothing in `gh` blocks on reviews or merges, so the loop polls.
+On the first watch, pass the PR's `createdAt` as `since`, so a review that landed before the watch started still fires. When restarting a loop after handling a review, leave `since` out: it defaults to now, and the findings already handled do not fire again. `gh pr checks --watch` blocks on checks, but nothing in `gh` blocks on reviews or merges, so the loop polls.
 
 When a loop exits, handle that PR and start its loop again:
 
 - **Review.** Run mahou:address-pr-review on that PR. It settles the findings with the user, applies what they approve, commits, pushes and resolves the threads.
-- **Behind its base.** Run mahou:rebase, which never pushes. Report what moved and push once the user confirms.
+- **Behind its base, or in conflict with it.** Run mahou:rebase, which never pushes. Report what moved and push once the user confirms.
 - **Failed check.** Report the check with its URL and stop for the user.
 - **Merged.** Record it.
+- **Error.** Report the error line with the command that started the loop, and stop for the user.
 
 The user merges the pull request, either in GitHub or by asking you to merge it.
 

@@ -24,13 +24,13 @@ A surface that needs none of these skips the ask. Do not mine the conversation f
 
 ## The running system
 
-The system is yours to bring up, not the user's. When it is down, say what bringing it up costs and do it following the project's setup once the user confirms. When a credential or a dependency is missing, stop and ask rather than working around it.
+The system is yours to bring up, not the user's. Bring up everything the rows need without asking, following the project's setup: the services, the optional integrations and the workers, whether the system is down or running without them. List what you started in the report. Stop and ask only when a credential is missing or a service fails to come up, and do not work around either.
 
 Everything runs against the local system only. Never against a production database or a shared environment.
 
 ## Mutating data to reach a row
 
-When the existing data does not reach the code path a row exercises, mutate the local data to make it reachable.
+When the existing data does not reach the code path a row exercises, mutate the local data to make it reachable. When no existing record can be changed to reach the path, insert the records the path needs. Neither needs the user's approval.
 
 Some rows need an error the system does not produce on its own, such as an upstream that is down, an error response or a request that hangs. Force that failure on the local system. Mutate data for it only as the last resort, when no seeded data, configuration or input reaches the path. The discipline below applies to a forced failure too: record what you changed, restore it before the run is declared complete, and report the pair.
 
@@ -40,6 +40,7 @@ The discipline:
 
 - **Capture the original value first**, with a read that prints what you are about to overwrite, before any mutating write. The revert depends on it.
 - **Pair every mutation with a revert** that restores the captured value verbatim, and run the revert before the run is declared complete.
+- **An inserted record is a mutation whose revert is a delete.** Record its key when you insert it and delete it before the run is declared complete. Delete the records the run creates through the product the same way, such as a record that a click in a row creates.
 - Keep the mutation as small as possible: one field on one record.
 - Resetting a flow's state between rows follows the same pattern. A flow that only advances one way at the API level may need a direct write to return to an earlier step; capture, mutate, revert.
 - Every mutate and revert pair goes at the top of the report, so the user can audit it.
@@ -79,7 +80,7 @@ One HTML file per run, in the change's scratch folder at `reports/<surface>/inde
 In order:
 
 1. **Header**: the change, the branches and commits under validation, how the system was brought up, the identities and inputs used.
-2. **Setup and mutations**: every configuration change made for the run and the mutate and revert pair of every record touched, with before and after values.
+2. **Setup and mutations**: what the run started, every configuration change made for the run, and the mutate and revert pair of every record touched or inserted, with before and after values.
 3. **One section per row**, in the order they ran: the setup the row needed, the steps performed, what was observed, PASS or FAIL, the evidence in the shape the surface's reference gives, and each fix made for the row: what failed, what the fix changed, and the run that passed after it.
 4. **Bugs not fixed**: every bug found that no row and no previous decision covers, with its evidence.
 5. **Summary table**: every row with its result (passed, passed after a fix, blocked), and the rows that could not be run with the reason.

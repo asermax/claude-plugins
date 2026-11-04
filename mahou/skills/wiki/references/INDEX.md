@@ -7,7 +7,7 @@
 - [`modal`](modal/INDEX.md): calling Modal functions from outside its Python client
 - [`naming`](naming/INDEX.md): how to name variables, props and state in code
 - [`node`](node/INDEX.md): running and distributing a Node program
-- [`react`](react/INDEX.md): structuring React components and the files they live in
+- [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them
 - [`tanstack-query`](tanstack-query/INDEX.md): reaching an API through TanStack Query from React
 - [`tanstack-start`](tanstack-start/INDEX.md): building and deploying a TanStack Start app
 - [`testing`](testing/INDEX.md): how test runners are built and what they expose

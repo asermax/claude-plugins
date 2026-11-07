@@ -16,7 +16,7 @@ Every part rests on the code and follows the conventions, and every part is a re
 
 The user can ask to see a part as code, such as a diff of the change against the code as it stands, to understand how the part changes the code as it stands. Draw the code next to the part it details, marked as a sketch, and keep it out of the record. The part stays the representation, and the code is not a decision the user settles.
 
-Because it proposes, ground every proposal in the code and in the conventions you read for the proposal's root. With each proposal, cite the code or the convention it follows, the code as a reference in the form `basics` gives under Referencing code. A proposal with nothing behind it is a guess, and the user cannot tell the two apart.
+Because it proposes, ground every proposal in the code and in the conventions you read for the proposal's root. Everything a part proposes follows those conventions, even where the code around it does something else. With each proposal, cite the code or the convention it follows, the code as a reference in the form `basics` gives under Referencing code. A proposal with nothing behind it is a guess, and the user cannot tell the two apart.
 
 When a part changes something that exists, its representation shows what the change adds, alters and removes, marked the way the part's reference says.
 
@@ -55,6 +55,8 @@ Every root also carries **standards**. A root does not close while they are miss
 ### Working a branch
 
 A branch is worked in parts, in order. Each part is one short message: the proposal in its representation, the facts and conventions behind it, and one question at the end asking whether it holds. Never open the next part before the current one settles, and never render the whole branch at once. Apply the user's corrections to a part in place before the next part starts.
+
+Before showing a part, dispatch one `mahou:program-design-reviewer` with the part, the repository's path and the sources of conventions you read for the part's root. Apply each finding that holds, and say in the part's message what the review changed and which findings you left out, with why. When you show several parts at once, dispatch one reviewer per part, all in a single message so they run together.
 
 A package branch, in order:
 

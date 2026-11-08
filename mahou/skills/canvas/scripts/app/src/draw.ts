@@ -176,10 +176,23 @@ export const drawOf = (editor: Editor) => {
         ? holding
         : above.filter((area) => !above.some((other) => other.id !== area.id && encloses(other, area)))
 
-    return candidates.sort((a, b) => editor.getShapePageBounds(b)!.y - editor.getShapePageBounds(a)!.y)[0]
+    // An area that spans the shape's whole width wins over one that only overlaps its side: when areas of different
+    // widths overlap, the lower one would otherwise take shapes that sit inside the one above
+    const spans = (area: TLShape) => {
+      const outer = editor.getShapePageBounds(area)!
+
+      return outer.x <= top.x + 1 && outer.maxX >= top.maxX - 1 ? 1 : 0
+    }
+
+    return candidates.sort((a, b) => spans(b) - spans(a) || editor.getShapePageBounds(b)!.y - editor.getShapePageBounds(a)!.y)[0]
   }
 
-  const contentsOf = (area: TLShape) => topLevel().filter((shape) => !isArea(shape) && ownerOf(shape)?.id === area.id)
+  // An arrow bound to shapes follows them on its own, so it belongs to no area. Counted as content, an arrow that spans
+  // rows would grow the area to the arrow's far end, which moves the rows below, which stretches the arrow, without end
+  const isBoundArrow = (shape: TLShape) => shape.type === 'arrow' && editor.getBindingsFromShape(shape, 'arrow').length > 0
+
+  const contentsOf = (area: TLShape) =>
+    topLevel().filter((shape) => !isArea(shape) && !isBoundArrow(shape) && ownerOf(shape)?.id === area.id)
 
   // The shapes that sit under a shape and move when it grows: the next areas of its column inside the same parent area,
   // each with its contents, or the shapes under it inside the same area. The areas past the parent move when the parent
@@ -189,7 +202,7 @@ export const drawOf = (editor: Editor) => {
     const owner = isArea(shape) ? undefined : ownerOf(shape)
 
     return topLevel()
-      .filter((other) => other.id !== shape.id && !own.has(other.id) && isArea(other) === isArea(shape) && overlapsX(other, shape))
+      .filter((other) => other.id !== shape.id && !own.has(other.id) && !isBoundArrow(other) && isArea(other) === isArea(shape) && overlapsX(other, shape))
       .filter((other) => editor.getShapePageBounds(other)!.y >= bottom - 1)
       .filter((other) => isArea(other) || ownerOf(other)?.id === owner?.id)
       .filter((other) => !isArea(shape) || (!isInside(other, shape) && parentOf(other)?.id === parentOf(shape)?.id))

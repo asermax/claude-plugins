@@ -4,13 +4,13 @@ description: Runs a change's manual validation rows against the running system a
 argument-hint: <the manual rows or scenarios, the change under validation and the repositories it touches>
 ---
 
-Load mahou:basics first. Then read `.mahou/validate.md` if present: it is where a project says how its local system is brought up, which surfaces it has and how each one is reached and authenticated. When it is absent, the project's own setup carries that: its `AGENTS.md`, its README, its compose or task files. Say what you found before touching anything, and ask when neither says how the system runs.
+Load mahou:basics first. Then read `.mahou/validate.md` if present: it is where a project says how its local system is brought up, which surfaces it has and how each one is reached and authenticated. When it is absent, the project's own setup carries that: its `AGENTS.md`, its README, its compose or task files. Say what you found before touching anything, and ask when neither says how the system runs. When `.mahou/validate.md` is absent, say that mahou:validate-setup writes it, once, before carrying on with what the project's setup gives.
 
 # Validate
 
 Proves a change against the running system, by hand, after the automated tests have passed. The tests prove the units; this proves the assembled thing does what the design said, through the path a real caller takes.
 
-The rows come from mahou:test-design: every row marked `manual` or both, with its expected outcome and its setup. Without a test design, the user names the scenarios, and the skill records them in the same row shape before running any. The skill adds no scenario of its own.
+The rows come from mahou:test-design: every row marked `manual` or both, with its expected outcome and its setup. Without a test design, the user names the scenarios, and the skill records them in the same row shape before running any. The skill adds no scenario of its own. When the user names a scenario that `.mahou/validate/features/` has a file for, read that file for how to reach the feature and drive it, and for its gotchas, instead of asking again.
 
 ## Inputs to ask for
 
@@ -57,6 +57,8 @@ Load the reference for the surface under validation:
 
 When a change touches more than one surface, load each reference and run each row against its surface. Follow each row's setup, perform its steps, observe, and record PASS or FAIL with the evidence the reference names. Every row runs, in id order; a failing row is recorded and the run continues.
 
+When `.mahou/validate.md` has a Doctor section, run its check before the first row and again after any row that fails or does something unexpected, and drive nothing until it passes. A failure the check cannot see, such as a screen stuck in a state on a healthy process, is cleared by resetting to a known state or restarting, never by driving on.
+
 ## Fixing what fails
 
 A row fails when the system departs from the row's expected outcome, or from what previous decisions settled for that path. Fix that failure without asking, then re-run the row and any row the fix's code reaches, until every row passes or is blocked. The bounds:
@@ -64,6 +66,8 @@ A row fails when the system departs from the row's expected outcome, or from wha
 - The fix makes the code do what previous decisions settled. It never changes a row's expected outcome or a previous decision, and it never adds behaviour no previous decision settled.
 - The fix stays in the repositories of the change under validation.
 - Linters and the relevant suites pass after each fix.
+
+When two fixes for the same row have failed, stop fixing and write the assumption both fixes shared as one sentence, such as "the handler receives the updated record". Test it with one observation that would come out differently if it were false: a log line, a query, a request read off the wire. When the observation contradicts the assumption, the row is blocked: record it with the assumption and the observation that contradicts it. When the observation confirms it, carry on fixing with that confirmed.
 
 A failure whose fix would break a bound is blocked: record it with its evidence, say what the fix would change in what previous decisions settled, and continue with the rest of the rows. When a blocked row blocks later rows, say which rows it blocks and ask before skipping them.
 
@@ -85,7 +89,7 @@ In order:
 4. **Bugs not fixed**: every bug found that no row and no previous decision covers, with its evidence.
 5. **Summary table**: every row with its result (passed, passed after a fix, blocked), and the rows that could not be run with the reason.
 
-The reply loads mahou:report and gives: the artifact path, which surfaces were exercised, the rows that passed, each fix with the row it fixed, what failed and what the fix changed, every blocked row stated as a failure with where its evidence sits and what its fix would change, every bug left unfixed, and every row not run with why.
+The reply loads mahou:report and gives: the artifact path, which surfaces were exercised, the rows that passed, each fix with the row it fixed, what failed and what the fix changed, every blocked row stated as a failure with where its evidence sits and what its fix would change, or the assumption it was blocked on and the observation that contradicts it, every bug left unfixed, and every row not run with why.
 
 ## Boundaries
 

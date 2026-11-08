@@ -29,7 +29,7 @@ Write your findings to the path you were given, then return that path and the nu
 
 Give each finding the file, the line, a one-line summary, and the concrete cost: what is duplicated, wasted, or made harder to maintain. Name the replacement whenever there is one.
 
-At most ten findings. If the diff is clean on this angle, write an empty file and say so.
+If the diff is clean on this angle, write an empty file and say so.
 
 ## In a later round
 

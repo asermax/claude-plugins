@@ -27,4 +27,4 @@ Read the repository to check names and reuse, with absolute paths. Never `cd`.
 
 Write your findings to the path you were given, then return that path and the number of findings. Return nothing else.
 
-Give each finding the line of the part it concerns, the source path, what the source asks for, and the correction to the part. At most ten findings. When the part follows the sources, write an empty file and say so.
+Give each finding the line of the part it concerns, the source path, what the source asks for, and the correction to the part. When the part follows the sources, write an empty file and say so.

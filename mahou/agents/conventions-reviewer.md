@@ -37,7 +37,7 @@ Write your findings to the path you were given, then return that path and the nu
 
 Give each finding the file, the line, the rule in your source it departs from, and the correction. When the fix is a concrete line edit, include the exact replacement text, indented correctly, replacing exactly the lines you named. Omit the replacement when the fix is structural, such as extracting a helper, moving a module, or adding a test.
 
-At most ten findings. If the diff is clean against your source, write an empty file and say so.
+If the diff is clean against your source, write an empty file and say so.
 
 ## In a later round
 

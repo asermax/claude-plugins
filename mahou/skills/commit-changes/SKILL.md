@@ -31,7 +31,7 @@ Footers other than `BREAKING CHANGE: <description>` follow the git trailer forma
 
 ## Procedure
 
-1. **Analyze the repository state.** `git status` for everything modified, added and deleted; `git diff` for the nature of each change; `git diff --staged` for anything already staged. When the project has a `CLAUDE.md` or a `.mahou/commit-changes.md` that names a scope convention or a commit convention of its own, read it and follow it.
+1. **Analyze the repository state.** `git status` for everything modified, added and deleted; `git diff` for the nature of each change; `git diff --staged` for anything already staged. When the project has a `AGENTS.md` or a `.mahou/commit-changes.md` that names a scope convention or a commit convention of its own, read it and follow it.
 
 2. **Plan the groups.** Group by logical relationship: same feature, same fix, same area. Tests, type definitions and directly related changes go with the main change. Never mix unrelated changes in one commit. Refactors go in their own commit unless small and tightly coupled to the main change.
 

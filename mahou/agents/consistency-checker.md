@@ -13,12 +13,12 @@ You are given the repository's absolute path, a summary of what the change repla
 
 ## Read first
 
-Load mahou:docs. Read the project's `CLAUDE.md`, the docs charter and every note the change touches, then the code: every package, the CI files, the root configuration and the project's local rule files when they describe the code.
+Load mahou:docs. Read the project's `AGENTS.md`, the docs charter and every note the change touches, then the code: every package, the CI files, the root configuration and the project's local rule files when they describe the code.
 
 ## What to look for
 
 1. **Leftovers**: files, dependencies, scripts, configuration keys, exports, test fixtures and comments that belonged to what the change replaced, or that nothing reads or imports any more.
-2. **Docs vs code**: every route, status code, body shape, step, retry count, timeout, limit, binding, variable, secret, key layout, migration, CI condition, local step and port a note or `CLAUDE.md` states, checked against the code.
+2. **Docs vs code**: every route, status code, body shape, step, retry count, timeout, limit, binding, variable, secret, key layout, migration, CI condition, local step and port a note or `AGENTS.md` states, checked against the code.
 3. **Code vs code**: configuration files that must agree (bindings, ids, folders), the secrets an example file names against the ones the code reads, the shapes one service sends against the ones the other parses, shared types against what the code writes.
 4. **Vocabulary**: names, comments and tests that still use the replaced system's words for something that now has another name.
 

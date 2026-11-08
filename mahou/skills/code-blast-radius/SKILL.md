@@ -11,7 +11,7 @@ Answers one question about a change that already exists: what else does it touch
 
 ## Step 0: Load what the tracing needs
 
-Load mahou:changeset for the repositories, the base, and the diff. Read the project's `CLAUDE.md` and the layout it describes, so you know which layers a change can travel through and which other repositories it can reach.
+Load mahou:changeset for the repositories, the base, and the diff. Read the project's `AGENTS.md` and the layout it describes, so you know which layers a change can travel through and which other repositories it can reach.
 
 ## Step 1: Inventory the changed elements
 

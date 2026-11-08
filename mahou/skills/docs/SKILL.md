@@ -13,7 +13,7 @@ Mahou has no shared knowledge base about a project. The project keeps one itself
 In this order:
 
 1. `.mahou/basics.md`, when it names one.
-2. A section in the project's `CLAUDE.md` pointing at one. The one mahou:init writes is `## Docs`, but any section naming a documentation folder counts.
+2. A section in the project's `AGENTS.md` pointing at one. The one mahou:init writes is `## Docs`, but any section naming a documentation folder counts.
 3. A `docs/` directory holding a `README.md`.
 
 When none of these exists, say the project's docs are not set up and mention mahou:init. Never create the folder as a side effect of another skill.
@@ -42,4 +42,4 @@ The project's note template decides this, and the template is the project's to e
 
 ## The rule
 
-Read the charter and the target folder's README before writing or judging a line. Where the project differs from anything a skill or an agent sketches as an example, the project is right. If the charter and `CLAUDE.md` disagree, the charter is right, and you fix both.
+Read the charter and the target folder's README before writing or judging a line. Where the project differs from anything a skill or an agent sketches as an example, the project is right. If the charter and `AGENTS.md` disagree, the charter is right, and you fix both.

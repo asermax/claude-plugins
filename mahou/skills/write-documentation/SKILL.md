@@ -16,7 +16,7 @@ Most of the time a draft already exists. When mahou:design hands over a tree, ea
 
 ## 1. Pick the folder, and say which
 
-Use the charter's folder table and, when the project's `CLAUDE.md` has a section on where each kind of change is documented, that section. Announce the folder and the reason in one line before writing. A note in the wrong folder is worse than a missing one, because readers find it, trust it and never look for a second copy.
+Use the charter's folder table and, when the project's `AGENTS.md` has a section on where each kind of change is documented, that section. Announce the folder and the reason in one line before writing. A note in the wrong folder is worse than a missing one, because readers find it, trust it and never look for a second copy.
 
 Search the folder first and **prefer extending the note that already covers it**. A new section in the right note beats a new note beside it, and near-duplicates are how an index stops being readable. Check the name against every file in the docs folder before creating one; the charter usually says why a collision matters.
 

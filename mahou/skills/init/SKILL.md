@@ -14,7 +14,7 @@ Tell the user this during the interview, because the output does not show it.
 
 ## Never overwrite
 
-Touch nothing that exists. A target that exists is reported as `kept`; one that is missing is created and reported as `added`. That holds for the charter, folder READMEs, the template, notes, and individual `CLAUDE.md` bullets.
+Touch nothing that exists. A target that exists is reported as `kept`; one that is missing is created and reported as `added`. That holds for the charter, folder READMEs, the template, notes, and individual `AGENTS.md` bullets.
 
 Compare against the current files, not against what you wrote last time. An edited template is then indistinguishable from a hand-written one, and both are left alone.
 
@@ -24,7 +24,7 @@ This is also why a re-run is the way to add something later. A re-run detects an
 
 ## 1. Detect what is there
 
-Resolve the docs folder as `docs` says. Look for the charter (`README.md` at its root), the folder READMEs, a `_templates/` folder, a docs section in `CLAUDE.md`, and whether the repository has significant code: a brownfield repo answers several interview questions by itself.
+Resolve the docs folder as `docs` says. Look for the charter (`README.md` at its root), the folder READMEs, a `_templates/` folder, a docs section in `AGENTS.md`, and whether the repository has significant code: a brownfield repo answers several interview questions by itself.
 
 Report what you found before asking anything. If everything is present and consistent, say so and stop; there is nothing to do.
 
@@ -34,7 +34,7 @@ Ask in plain prose, one round at a time, and propose rather than asking an open 
 
 1. **Where the docs go.** Propose `docs/`, or an existing documentation directory if there is one. If it already holds markdown, say plainly: *this becomes the docs root, and nothing will be moved.*
 
-2. **What the project is**, in two sentences, for the `CLAUDE.md` opener. Skip it silently if `CLAUDE.md` already opens with one.
+2. **What the project is**, in two sentences, for the `AGENTS.md` opener. Skip it silently if `AGENTS.md` already opens with one.
 
 3. **The note folders.** Everything else depends on this one. For each: the folder name, one line on what it holds, and the human name its index displays.
 
@@ -44,15 +44,15 @@ Ask in plain prose, one round at a time, and propose rather than asking an open 
 
 4. **Whether the docs folder is also an Obsidian vault.** Offer it, with no as the default. When yes, the Obsidian config directory goes in `.gitignore` with its one-line reason (its contents are per-person), and the user is told to point the Templates core plugin at `_templates/` by hand once. Everything seeded renders the same on GitHub and in Obsidian either way.
 
-5. **The commands.** Detect from the lockfile or manifest (never infer a package manager from a language) and confirm separately how to run the thing and what must be green before a change is done. Skip when `CLAUDE.md` already carries them.
+5. **The commands.** Detect from the lockfile or manifest (never infer a package manager from a language) and confirm separately how to run the thing and what must be green before a change is done. Skip when `AGENTS.md` already carries them.
 
 ## 3. Write the docs
 
 Read `${CLAUDE_PLUGIN_ROOT}/skills/init/seeds/MANIFEST.md`. It carries the landing table, the tokens, the per-folder instantiation rule and the zero-`<<` post-condition, and it is the authority on each of them.
 
-## 4. Write the CLAUDE.md section
+## 4. Write the AGENTS.md section
 
-Append the block below, filled from the interview, or create `CLAUDE.md` if there is none. If the section already exists, **add only the bullets that are missing.** Never rewrite one the user has edited. Omit any field the interview did not answer; the skill that needs it will resolve it and offer to record it.
+Append the block below, filled from the interview, or create `AGENTS.md` if there is none. If the section already exists, **add only the bullets that are missing.** Never rewrite one the user has edited. Omit any field the interview did not answer; the skill that needs it will resolve it and offer to record it.
 
 ```markdown
 ## Docs

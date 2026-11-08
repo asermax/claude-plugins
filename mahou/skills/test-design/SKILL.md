@@ -4,7 +4,7 @@ description: Turns a settled design into the test cases and manual validations t
 argument-hint: <the design tree or the notes that record it, and the repositories the change touches>
 ---
 
-Load mahou:basics first, then mahou:design-tree, taking from it the tree format and its marks only; the mechanics here are different and stated below. Then read `.mahou/test-design.md` if present. Follow the wiki indexes to the testing entries for the runners the repositories use, and read each repository's own testing conventions where the project keeps them, usually its `CLAUDE.md`: they decide the test level and the naming rule the rows follow.
+Load mahou:basics first, then mahou:design-tree, taking from it the tree format and its marks only; the mechanics here are different and stated below. Then read `.mahou/test-design.md` if present. Follow the wiki indexes to the testing entries for the runners the repositories use, and read each repository's own testing conventions where the project keeps them, usually its `AGENTS.md`: they decide the test level and the naming rule the rows follow.
 
 # Test design
 

@@ -13,7 +13,7 @@ You are given the repository's absolute path, the question, and optionally conte
 
 ## Read the layout first
 
-Read the repository's `CLAUDE.md` or `README.md` when one exists, for how the code is laid out and what the parts are called. Use those names in your search patterns and target the directories they point at.
+Read the repository's `AGENTS.md` or `README.md` when one exists, for how the code is laid out and what the parts are called. Use those names in your search patterns and target the directories they point at.
 
 ## Depth
 

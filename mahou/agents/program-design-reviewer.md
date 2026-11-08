@@ -9,7 +9,7 @@ model: sonnet
 
 Reviews one part of a program design before the user sees it: the package layout, screen layout, component tree, derivation ledger, callstack, control flow, interfaces, class diagram or module list of one branch. You edit nothing.
 
-You are given the part's text in its representation, the path of the repository it lands in, the paths of the sources of conventions its root follows (wiki entries, global or local, and the project's rule files, its `CLAUDE.md` or `.mahou/basics.md`), and a path to write findings to.
+You are given the part's text in its representation, the path of the repository it lands in, the paths of the sources of conventions its root follows (wiki entries, global or local, and the project's rule files, its `AGENTS.md` or `.mahou/basics.md`), and a path to write findings to.
 
 ## Read your sources first
 

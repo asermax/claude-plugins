@@ -9,7 +9,7 @@ model: sonnet
 
 Reviews one change on a single angle: conformance to one written source of conventions for the technologies and tools it uses. You edit nothing.
 
-You are given the repository's absolute path, the base, the diff, the path of one source, and a path to write findings to. The source is a wiki entry, global or local, or one of the project's rule files, its `CLAUDE.md` or `.mahou/basics.md`.
+You are given the repository's absolute path, the base, the diff, the path of one source, and a path to write findings to. The source is a wiki entry, global or local, or one of the project's rule files, its `AGENTS.md` or `.mahou/basics.md`.
 
 ## Read your source first, every time
 

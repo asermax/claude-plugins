@@ -27,7 +27,7 @@ A finding whose fix would break any of those becomes a skipped finding in the re
 
 Load mahou:changeset for the repositories, the base, and the diff.
 
-Then settle the conventions list, the sources the conventions reviewers check the change against. When the caller passes one, use it as given. When it does not, follow the wiki indexes, global and local, to the entries about the technologies the diff touches, and add the project's `CLAUDE.md` and `.mahou/basics.md` when present. Open every source on the list. Every fix has to follow them.
+Then settle the conventions list, the sources the conventions reviewers check the change against. When the caller passes one, use it as given. When it does not, follow the wiki indexes, global and local, to the entries about the technologies the diff touches, and add the project's `AGENTS.md` and `.mahou/basics.md` when present. Open every source on the list. Every fix has to follow them.
 
 ## Step 2: Dispatch the facet reviewers
 
@@ -53,9 +53,9 @@ Read every findings file. Collapse findings that different facets raised about t
 
 Skip a finding when its fix would change intended behavior, reach outside the bounds above, or when you judge it a false positive. Record the skip with why the reviewer proposed the change, the problem the reviewer saw in the code, and why you skipped the finding. Never argue with it.
 
-Then read every comment the diff adds, yourself, against the project's comments rule: a wiki entry, the project's `CLAUDE.md` or a rule file in the repository. The reviewers do not flag comments. Remove or rewrite every comment the rule does not allow. When the project states no comments rule, say so and leave the comments as they are.
+Then read every comment the diff adds, yourself, against the project's comments rule: a wiki entry, the project's `AGENTS.md` or a rule file in the repository. The reviewers do not flag comments. Remove or rewrite every comment the rule does not allow. When the project states no comments rule, say so and leave the comments as they are.
 
-Run the repository's linters and tests afterwards, scoped to the files you touched rather than the whole tree. The project's `CLAUDE.md` usually names the commands; when it does not, detect them from the lockfile or manifest and say which you ran.
+Run the repository's linters and tests afterwards, scoped to the files you touched rather than the whole tree. The project's `AGENTS.md` usually names the commands; when it does not, detect them from the lockfile or manifest and say which you ran.
 
 ## Step 4: Record the round and show it
 

@@ -4,7 +4,7 @@ description: Runs a change's manual validation rows against the running system a
 argument-hint: <the manual rows or scenarios, the change under validation and the repositories it touches>
 ---
 
-Load mahou:basics first. Then read `.mahou/validate.md` if present: it is where a project says how its local system is brought up, which surfaces it has and how each one is reached and authenticated. When it is absent, the project's own setup carries that: its `CLAUDE.md`, its README, its compose or task files. Say what you found before touching anything, and ask when neither says how the system runs.
+Load mahou:basics first. Then read `.mahou/validate.md` if present: it is where a project says how its local system is brought up, which surfaces it has and how each one is reached and authenticated. When it is absent, the project's own setup carries that: its `AGENTS.md`, its README, its compose or task files. Say what you found before touching anything, and ask when neither says how the system runs.
 
 # Validate
 

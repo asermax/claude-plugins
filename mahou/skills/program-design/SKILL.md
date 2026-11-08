@@ -46,7 +46,7 @@ Program design
 
 ## Working a root
 
-When a root opens, read the wiki entries for the technologies the root uses and the project's rules that govern it (its `CLAUDE.md`, `.mahou/basics.md` and any rule file the project keeps), before proposing the root's first part. List what you read in the message that proposes the first part.
+When a root opens, read the wiki entries for the technologies the root uses and the project's rules that govern it (its `AGENTS.md`, `.mahou/basics.md` and any rule file the project keeps), before proposing the root's first part. List what you read in the message that proposes the first part.
 
 Branches change as the work goes. The user renames, merges, splits or drops them, and a settled branch that reopens goes back to open, as `design-tree` states.
 

@@ -4,7 +4,7 @@ The conventions that govern the implementation of one root, and what each one go
 
 ## What it covers
 
-Every source of conventions the root's settled branches touch: the wiki entries for the technologies involved, the project's `CLAUDE.md`, `.mahou/basics.md` and any rule file the repository keeps. Each source is listed with the piece of the change it constrains. A source the change does not touch is not listed.
+Every source of conventions the root's settled branches touch: the wiki entries for the technologies involved, the project's `AGENTS.md`, `.mahou/basics.md` and any rule file the repository keeps. Each source is listed with the piece of the change it constrains. A source the change does not touch is not listed.
 
 ## What to check before proposing
 
@@ -17,7 +17,7 @@ One line per source, named by its path or wiki entry, followed by what it govern
 
 ```
 - wiki `<topic>/<entry>`: the payload validation at the endpoint
-- `CLAUDE.md`, "Testing": where the new tests live and how they are named
+- `AGENTS.md`, "Testing": where the new tests live and how they are named
 - `.mahou/basics.md`: the error format the new endpoint returns
 ```
 

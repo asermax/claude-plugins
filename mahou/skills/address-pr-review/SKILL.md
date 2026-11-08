@@ -68,11 +68,11 @@ Change nothing yet. Never apply the obvious ones unasked. Where two readings of 
 
 ## Step 6: Apply what the user approves
 
-Before writing code, read the project's `CLAUDE.md` and `.mahou/basics.md` when present, and read the wiki entries for the technologies the fix touches. Follow the conventions of the repository you are in.
+Before writing code, read the project's `AGENTS.md` and `.mahou/basics.md` when present, and read the wiki entries for the technologies the fix touches. Follow the conventions of the repository you are in.
 
 A reviewer's suggested code is a sketch. When it fails the repository's own checks (a lint rule it did not know about, a type the repository forbids), substitute an equivalent and say what changed and why.
 
-Run the repository's linters and tests afterwards, scoped to the files you touched rather than the whole tree. The project's `CLAUDE.md` usually names the commands; when it does not, detect them from the lockfile or manifest and say which you ran.
+Run the repository's linters and tests afterwards, scoped to the files you touched rather than the whole tree. The project's `AGENTS.md` usually names the commands; when it does not, detect them from the lockfile or manifest and say which you ran.
 
 ## Step 7: Land
 

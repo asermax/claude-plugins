@@ -16,6 +16,8 @@ It does not cover the hops a value takes between services; those are a data flow
 - What follows a terminal state.
 - Whether a state can be re-entered or a transition repeated.
 
+When reading cannot settle whether a rule always holds, because of retries, two actors moving the thing at once, or an invariant the user wants proved, the question goes to mahou:spike with the model-check strategy.
+
 ## Representation
 
 One state diagram, transitions labelled with their trigger, a note per state naming what it shows. The prose under the diagram walks the states from the entry and says what the diagram cannot: why a transition exists, what is deliberately not a state, and which consumer sees which state.

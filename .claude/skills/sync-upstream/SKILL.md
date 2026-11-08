@@ -12,7 +12,7 @@ This skill keeps the plugin marketplace in lockstep with its upstream sources wh
 - **agentic-evolve** — `~/workspace/random/agentic-evolve` (clone of `github.com/ericksoa/agentic-evolve`) — evolve commands (master dispatcher + perf/size/ml subskills)
 - **agent-browser** — `~/workspace/random/agent-browser` (clone of `github.com/vercel-labs/agent-browser`) — browser automation CLI skill (slim discovery stub)
 - **dmmulroy-skills** — `~/workspace/random/dmmulroy-skills` (clone of `github.com/dmmulroy/skills`) — the `bro` and `herdr` skills, mirrored into **superpowers**
-- **cursor-plugins** — `~/workspace/random/cursor-plugins` (clone of `github.com/cursor/plugins`) — the `unslop` skill from the `pstack` plugin, mirrored into **superpowers**
+- **cursor-plugins** — `~/workspace/random/cursor-plugins` (clone of `github.com/cursor/plugins`) — the `unslop` skill from the `pstack` plugin, mirrored into **superpowers**, and the `statechart` skill from the same plugin, adapted into **mahou** as a spike strategy
 
 ## High-level flow
 
@@ -66,8 +66,9 @@ That repo holds more skills than these two. Ignore the rest — the collection i
 
 **From `~/workspace/random/cursor-plugins/pstack/skills/`:**
 - `unslop/SKILL.md` → `superpowers/skills/unslop/SKILL.md` (manual merge — the plugin copy carries four locally added patterns and a local method)
+- `statechart/SKILL.md` (and `references/`) → `mahou/skills/spike/references/strategies/model-check.md` (conceptual merge only — see Type 8)
 
-`cursor/plugins` is a monorepo of Cursor plugins, and `pstack` alone ships around forty skills (the `principle-*` family, `tdd`, `architect`, `why`, `swarm`, and more), plus other plugins at the repo root. Only `unslop` is tracked. Ignore everything else unless the user asks for a specific skill by name.
+`cursor/plugins` is a monorepo of Cursor plugins, and `pstack` alone ships around forty skills (the `principle-*` family, `tdd`, `architect`, `why`, `swarm`, and more), plus other plugins at the repo root. Only `unslop` and `statechart` are tracked. Ignore everything else unless the user asks for a specific skill by name.
 
 **Plugin-specific skills with no upstream — never touch these during sync:**
 - `using-live-documentation`, `self-maintaining-claude-md`, `using-antigravity`, `agent-communication`, `financial-summary`, `using-code-directives`, `mermaid`, `show-markdown`
@@ -250,6 +251,16 @@ Numbering is the thing most likely to collide. Upstream treats rule numbers as s
 The frontmatter is local too. Upstream sets `disable-model-invocation: true` and describes the skill as `Must always apply.`; the plugin copy drops the flag and scopes the description to document writing (documentation, READMEs, design notes, specs, PR descriptions, and "when another skill asks for a writing pass"). The reason is mahou's `write-documentation`, which invokes `superpowers:unslop` by name as its writing pass: with the flag set the model cannot call it, so the pass silently stops happening. The scoped description keeps it off code, chat replies and short answers, which is what upstream's flag was protecting against. On sync, port any description wording upstream changes but keep the flag out and the scope in.
 
 Everything else in the file is upstream's.
+
+### Type 8 — `statechart` → mahou's model-check strategy (cursor-plugins)
+
+**Never a copy, and not a line-by-line merge either.** Upstream is a standalone skill with a bundled TypeScript command that installs TLC and Java through mise, runs TLC, and renders the chart with its own view module. The mahou file is one spike strategy in mahou's voice that keeps the method and drops all of that: TLC is found on the machine or installed with the user's consent, the chart is drawn by hand with `superpowers:mermaid`, and the user decides whether a broken rule is a bug or a wrong rule.
+
+```bash
+git -C ~/workspace/random/cursor-plugins diff <old>..<new> -- pstack/skills/statechart/SKILL.md pstack/skills/statechart/references/
+```
+
+Read upstream's diff for changes to the method: how rules become invariants, how `Next` is written, deadlock handling, how a broken rule is re-run, chart labelling and marks, the arrow budget, replaying paths against code. Port those into `model-check.md` in mahou's wording. Ignore changes to `scripts/`, upstream's mise-based install step, the `--view` module API and `references/render.md` (Pele CSS, SVG options); none of it exists on the mahou side. When an upstream change only makes sense with the bundled command, tell the user and skip it.
 
 ### Manual-merge procedure (used by Types 1, 5 and 7 when upstream changed)
 

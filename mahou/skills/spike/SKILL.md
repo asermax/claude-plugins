@@ -23,6 +23,7 @@ A spike is code written to answer a question. The answer is the product; the cod
    |---|---|
    | [One variable per round](references/strategies/one-variable.md) | The question has a working baseline and the rounds narrow in on failures |
    | [Variants in parallel](references/strategies/variants-in-parallel.md) | Several answers could work and only evidence picks between them |
+   | [Model check](references/strategies/model-check.md) | The question is whether a rule always holds for something that moves between states: retries, concurrent actors, messages late or twice |
 
    A spike may invent its own strategy; when one works, it is a candidate for mahou:learn to add here.
 

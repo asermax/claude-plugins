@@ -11,6 +11,7 @@ It does not cover who owns what, which is the component tree, nor where the valu
 ## What to check before proposing
 
 - Read the screen as it renders today, and the components that render the region the change lands in.
+- Read the components that render the screen's other states, such as the route's pending, error and not-found components, since what the branch adds shows in those states too.
 - Open the screen's prototype, or create one when the screen has none. Reconcile the prototype with what the design and the branch settled, and iterate it with the user until it shows the final screen. Then sketch the screen that the prototype settled, with its parts, states and copy.
 - Check the standards for layout and component conventions, so the proposed placement follows them.
 
@@ -33,7 +34,7 @@ Boxes in a fenced block, with nothing inside a box but the word that names what 
 └────────────────────────────────────────────────────────┘
 ```
 
-When the element has several states, sketch the one that carries the change and say in a line how the others differ. The prose under it covers what the sketch cannot place, such as anything whose position depends on the data. When the rendering itself is undecided, the branch goes through the `prototype` skill, and the sketch records what the prototype settled.
+Sketch the state that carries the change. Under the sketch, list every state the screen can show the change in, each with a line on how it differs and the component that renders it. Take the states from the design and the prototype. Examples: loading, with a skeleton or a placeholder; empty; error; disabled; success. List the ones the screen reaches in its context, including any the list does not name. When a route renders a pending or error component in place of the page, list that component and the branch's addition in it, such as a skeleton in the pending component. The prose under it covers what the sketch cannot place, such as anything whose position depends on the data. When the rendering itself is undecided, the branch goes through the `prototype` skill, and the sketch records what the prototype settled.
 
 ## When it fits
 

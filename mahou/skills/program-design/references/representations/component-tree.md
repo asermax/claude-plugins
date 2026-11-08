@@ -12,6 +12,7 @@ It does not cover props, state values or files: those are the interfaces, the de
 
 - Read the components around the change: the parent that will render the new ones, its siblings, and the components the repository already has for the same job.
 - Check the standards for when a component is split out and where its state lives, since those are what make a split arguable.
+- Read the components that render the screen's other states, such as the route's pending, error and not-found components. When the branch adds something to the screen, add to the tree each component that shows the addition in another state, such as the pending component that renders the addition's skeleton.
 
 ## Representation
 

@@ -12,7 +12,7 @@ It does not cover how the data reaches the screen, that is a data flow. It does 
 
 - Which information is shown, and which of the available data is deliberately left out.
 - Where the element sits relative to the existing screen, and what it displaces or joins.
-- Which states exist. One per distinct thing the user can see, including the empty case and the loading or partial case when the data can be incomplete.
+- Which states exist. One per distinct thing the user can see. Examples: loading, with a skeleton or a placeholder while the data arrives; empty; error, such as a failed request; disabled; success. Ask which of these states the element can reach in its context, and whether it can reach any state the list does not name.
 - How each value is encoded, and what the encoding follows: a fixed scale, a rule, a comparison against something else on screen.
 - What each interaction does, and whether the element has any. A static element is a valid answer.
 - What the user sees when the data is absent or the rule that derives it returns nothing.

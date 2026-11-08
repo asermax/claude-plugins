@@ -29,7 +29,8 @@ A new prototype starts from the prototypes already settled for the same product 
 
 The prototype is interactive from the first file:
 
-- A control strip above the element switches what it sees: each state the loading skill names, the empty case, and any other data variation the user asks for. The element re-renders from the selected data; each state is not a separate copy.
+- A control strip above the element switches what it sees: each state the loading skill names and any other data variation the user asks for. The element re-renders from the selected data; each state is not a separate copy.
+- Before the first round, check the loading skill's states against the states the element can reach in its context. Examples: loading, with a skeleton or a placeholder; empty; error; disabled; success. Name to the user each state the element can reach that the loading skill did not name, including states the list leaves out, and add it to the strip once the user settles it.
 - The element itself responds to the interactions that have been decided: expanding, hovering, tapping, whatever the design gives it. An interaction that has not been decided is not invented.
 - A "show all states" control lays every state out with the same example data, for comparison at a glance, and switches back to the single interactive view.
 

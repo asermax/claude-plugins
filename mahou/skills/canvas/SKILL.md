@@ -22,14 +22,14 @@ Every canvas has a title, shown as the browser tab's title, so the user can tell
 
 `scripts/canvas.sh` runs the app over one document. Pass it the document's path:
 
-- `start` takes the title after the document's path: `canvas.sh start <document> "<title>"`. It installs the app on first run, starts a detached server for the document on the first free port from 5190 and prints the URL to give the user. The title is saved in the document, so a later `start`, and the `watch` and `export` that start a server when none runs, read it back; `start` refuses a document that has no title and was given none. A title given to a document whose server already runs takes effect only after `stop` and `start`. A document that already has a server gets its URL back. Each document has its own server, so several canvases run at once, in one project or in several; `CANVAS_PORT` picks the port instead. It refuses a document saved in an older format and names the `migrate` command.
+- `start` takes the title after the document's path: `canvas.sh start <document> "<title>"`. It installs the app on first run, starts a server for the document on the first free port from 5190, prints the URL to give the user and stays in the foreground for as long as the server runs. Run it as a background task and wait for the URL line in its output. Stopping the task stops the server; there is no other way to stop it. The title is saved in the document, so a later `start` reads it back; `start` refuses a document that has no title and was given none. A title given to a document whose server already runs takes effect only after the task is stopped and started again. A document that already has a server gets its URL back, and that `start` exits at once. Each document has its own server, so several canvases run at once, in one project or in several; `CANVAS_PORT` picks the port instead. It refuses a document saved in an older format and names the `migrate` command.
+- `watch` and `export` need the canvas running and fail when it is not.
 - `watch` prints one line per event: `click` for each "Send to Agent" click, and `voice: <message>` for each voice message, with the shapes selected when it was sent.
 - `export` writes `<name>.svg`.
 - `texts` prints every canvas text and arrow label, one per line.
 - `migrate` brings an older document to the current format, keeping the original as `<name>.tldr.json.bak`. Run it with the server stopped. When it warns that a mockup received a variant string, rewrite that mockup to read its props from `data`.
-- `stop` stops the document's own server and leaves every other canvas running.
 
-Edits to the app under `scripts/app/` reach the running canvas only after a restart, because `start` copies the app into the cache. Run `stop` and then `start`, and reload the open tabs.
+Edits to the app under `scripts/app/` reach the running canvas only after a restart, because `start` copies the app into the cache. Stop the background task, start it again, and reload the open tabs.
 
 Build and edit the canvas from scripts run with `agent-browser` in your own tab, opened once on `<URL>?user=Agent` and kept open, so the user sees your cursor under that name. Every tab edits the same document live: your changes appear in the user's tab as you make them, and theirs in yours. The page exposes `window.editor`, `window.tldraw` with `createShapeId` and `toRichText`, and `window.canvas` with `notes()`, `step(at, change, pause?)` and the drawing helpers below.
 
@@ -132,7 +132,7 @@ When the screen has a prototype, copy the mockup from it: the same parts, the sa
 
 ## Ending
 
-When the loading skill's work is done, or the user moves on to other work, stop the canvas: run `canvas.sh stop` on the document, stop the monitor running `canvas.sh watch`, and close your `agent-browser` tab.
+When the loading skill's work is done, or the user moves on to other work, stop the canvas: stop the background task running `canvas.sh start`, stop the monitor running `canvas.sh watch`, and close your `agent-browser` tab.
 
 ## What this skill is not
 

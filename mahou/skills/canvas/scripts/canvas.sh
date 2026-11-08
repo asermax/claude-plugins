@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Runs a tldraw canvas over one document, <folder>/<name>.tldr.json.
 #
-#   canvas.sh start   <document> [title]  install on first run, start the server detached, print its URL; the title is
-#                                         required until the document has one, and replaces the stored one when given
-#   canvas.sh watch   <document>  start if needed, then print one line per "Send to Agent" click or voice message
-#   canvas.sh export  <document>  write <folder>/<name>.svg from the open document
+#   canvas.sh start   <document> [title]  install on first run, start the server, print its URL and stay in the
+#                                         foreground until the server stops; the title is required until the document
+#                                         has one, and replaces the stored one when given
+#   canvas.sh watch   <document>  print one line per "Send to Agent" click or voice message from the running canvas
+#   canvas.sh export  <document>  write <folder>/<name>.svg from the running canvas
 #   canvas.sh texts   <document>  print every canvas text and arrow label, one per line
 #   canvas.sh migrate <document>  bring a document saved by an older version of the app to the current format
-#   canvas.sh stop    <document>  stop the document's server
 #
 # Each document gets its own server on the first free port from 5190 up, or on CANVAS_PORT when it is set. Its
 # document, port and PID are kept in a state file in the cache, keyed by a hash of the document's path.
@@ -16,7 +16,7 @@
 # plugin's directory. Every document in a folder shares the folder's mockups/.
 set -euo pipefail
 
-USAGE="usage: canvas.sh <start|watch|export|texts|migrate|stop> <folder>/<name>.tldr.json [title]"
+USAGE="usage: canvas.sh <start|watch|export|texts|migrate> <folder>/<name>.tldr.json [title]"
 COMMAND="${1:?$USAGE}"
 DOC="$(realpath -m "${2:?$USAGE}")"
 DOC_DIR="$(dirname "$DOC")"
@@ -107,30 +107,18 @@ scaffold() {
   mkdir -p "$DOC_DIR/mockups"
 }
 
-stop() {
-  find_server || return 0
-
-  kill "$PID" 2>/dev/null || true
-  rm -f "$STATE"
-
-  for _ in $(seq 20); do
-    kill -0 "$PID" 2>/dev/null || return 0
-    sleep 0.25
-  done
-}
-
 # Starts the server on one port and waits for it; fails when the process exits, as vite does when the port is taken
 launch() {
   local port="$1" pid
 
-  # Detached, so the server outlives the shell that started it and any background time limit
-  CANVAS_DOC="$DOC" CANVAS_TITLE="$TITLE" setsid nohup "$APP/node_modules/.bin/vite" --config "$APP/vite.config.ts" --port "$port" --strictPort \
+  CANVAS_DOC="$DOC" CANVAS_TITLE="$TITLE" "$APP/node_modules/.bin/vite" --config "$APP/vite.config.ts" --port "$port" --strictPort \
     >"$LOG" 2>&1 </dev/null &
   pid=$!
 
   for _ in $(seq 60); do
     if [[ "$(serving "$port")" == "$DOC" ]]; then
       printf '%s\n%s\n%s\n' "$DOC" "$port" "$pid" >"$STATE"
+      PID="$pid"
       echo "http://localhost:$port"
       return 0
     fi
@@ -141,6 +129,25 @@ launch() {
 
   kill "$pid" 2>/dev/null || true
   return 1
+}
+
+# Keeps start in the foreground for as long as the server runs, so the caller can hold it as a background task.
+# A background child of a non-interactive shell ignores SIGINT, so the server is killed here rather than by the signal.
+hold() {
+  trap 'kill "$PID" 2>/dev/null || true; rm -f "$STATE"' EXIT
+  trap 'exit 0' INT TERM HUP
+
+  wait "$PID" || true
+}
+
+# The running canvas's URL; watch and export never start one, since start no longer returns while its server runs
+running_url() {
+  if ! find_server; then
+    echo "the canvas is not running; start it first with canvas.sh start $DOC as a background task" >&2
+    exit 1
+  fi
+
+  echo "http://localhost:$PORT"
 }
 
 start() {
@@ -174,7 +181,11 @@ start() {
       exit 1
     fi
 
-    launch "$CANVAS_PORT" && return
+    if launch "$CANVAS_PORT"; then
+      hold
+      return
+    fi
+
     echo "the server did not come up; its log is $LOG" >&2
     exit 1
   fi
@@ -190,7 +201,10 @@ start() {
     port_free "$port" || continue
 
     # Another start may take the port between the check and the launch; vite then exits and the next port is tried
-    launch "$port" && return
+    if launch "$port"; then
+      hold
+      return
+    fi
 
     if [[ "$(serving "$port")" == "$DOC" ]]; then
       echo "http://localhost:$port"
@@ -212,14 +226,14 @@ case "$COMMAND" in
     start
     ;;
   watch)
-    URL="$(start)"
+    URL="$(running_url)"
     while find_server; do
       curl -sN "$URL/api/events" | sed -u -n 's/^data: //p' || true
       sleep 1
     done
     ;;
   export)
-    URL="$(start)"
+    URL="$(running_url)"
     # Its own browser session, so the export leaves the agent's open tab alone
     agent-browser --session canvas-export open "$URL?user=export" >/dev/null
     agent-browser --session canvas-export wait --fn "window.editor != null" >/dev/null
@@ -231,14 +245,11 @@ case "$COMMAND" in
     ;;
   migrate)
     if find_server; then
-      echo "stop the canvas before migrating its document" >&2
+      echo "stop the canvas's start task before migrating its document" >&2
       exit 1
     fi
 
     document_cli migrate
-    ;;
-  stop)
-    stop
     ;;
   *)
     echo "unknown command: $COMMAND" >&2

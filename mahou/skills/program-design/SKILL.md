@@ -56,7 +56,7 @@ Every root also carries **standards**. A root does not close while they are miss
 
 A branch is worked in parts, in order. Each part is one short message: the proposal in its representation, the facts and conventions behind it, and one question at the end asking whether it holds. Never open the next part before the current one settles, and never render the whole branch at once. Apply the user's corrections to a part in place before the next part starts.
 
-Before showing a part, dispatch one `mahou:program-design-reviewer` with the part, the repository's path and the sources of conventions you read for the part's root. Apply each finding that holds, and say in the part's message what the review changed and which findings you left out, with why. When you show several parts at once, dispatch one reviewer per part, all in a single message so they run together.
+Before showing a part, dispatch one `mahou:program-design-reviewer` with the part, the repository's path and the sources of conventions you read for the part's root, always including the wiki entry `design/red-flags`. Apply each finding that holds, and say in the part's message what the review changed and which findings you left out, with why. When you show several parts at once, dispatch one reviewer per part, all in a single message so they run together.
 
 A package branch, in order:
 

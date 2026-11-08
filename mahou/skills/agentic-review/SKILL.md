@@ -1,13 +1,13 @@
 ---
 name: agentic-review
-description: Refines the code in a change before a human reads it. Runs four facet reviewers and one conventions reviewer per wiki entry and per project rule file on each repository, fixes what they find without changing how the change looks or behaves, and repeats for up to three rounds. Typed by the user, or invoked by mahou:implement once a repository's code lands.
+description: Refines the code in a change before a human reads it. Runs four facet reviewers, a test reviewer when the change touches tests, and one conventions reviewer per wiki entry and per project rule file on each repository, fixes what they find without changing how the change looks or behaves, and repeats for up to three rounds. Typed by the user, or invoked by mahou:implement once a repository's code lands.
 ---
 
 Load mahou:basics first. Then read `.mahou/agentic-review.md` if present.
 
 # Agentic review
 
-Cleans up a change so mahou:human-review spends its attention on judgment instead of on mechanical findings. It reviews for reuse, simplification, efficiency, altitude, and conformance to the conventions the wiki holds.
+It reviews for reuse, simplification, efficiency, altitude, tests that check behaviour, and conformance to the conventions the wiki holds.
 
 It does not look for correctness bugs. Those belong to the human pass, where someone can weigh whether the behavior was intended.
 
@@ -16,7 +16,7 @@ It does not look for correctness bugs. Those belong to the human pass, where som
 `basics` says every decision belongs to the user and every choice goes back to them as a question. This skill is the exception, and it holds inside these bounds:
 
 - It fixes nothing that would change how the change looks or behaves.
-- It keeps the change's contracts with other repositories (the requests, responses and events that cross a deployable's boundary), the change's architecture (which deployable and which layer does each job), and the cases the change's tests check. Everything else inside the repository can change when a finding asks for it, even when the program design, the prototype or a user decision set it. That includes names, file locations, how the code is split into functions, components and hooks, the interfaces between those parts, and the names of tests. Design reconciliation brings the design files up to date with what the review changed, so the review never skips a finding because a design file or a decision set it another way.
+- It keeps the change's contracts with other repositories (the requests, responses and events that cross a deployable's boundary), the change's architecture (which deployable and which layer does each job), and the cases the change's tests check, by name and by what each case covers. How a test asserts its case can change, such as an expected value taken from the requirement instead of computed, or a mock moved from an internal helper to the boundary. Removing a test changes the cases, so a finding that asks for a removal is skipped for the user to rule on. Everything else inside the repository can change when a finding asks for it, even when the program design, the prototype or a user decision set it. That includes names, file locations, how the code is split into functions, components and hooks, the interfaces between those parts, and the names of tests. Design reconciliation brings the design files up to date with what the review changed, so the review never skips a finding because a design file or a decision set it another way.
 - It may create a new file or edit a file the changeset does not touch when the fix reduces complexity or duplication, or otherwise improves the code.
 - It leaves everything uncommitted, so the user can read the whole pass with one `git diff` and discard it as a whole.
 - It reports every fix and every skip.
@@ -27,11 +27,11 @@ A finding whose fix would break any of those becomes a skipped finding in the re
 
 Load mahou:changeset for the repositories, the base, and the diff.
 
-Then settle the conventions list, the sources the conventions reviewers check the change against. When the caller passes one, use it as given. When it does not, follow the wiki indexes, global and local, to the entries about the technologies the diff touches, and add the project's `AGENTS.md` and `.mahou/basics.md` when present. Open every source on the list. Every fix has to follow them.
+Then settle the conventions list, the sources the conventions reviewers check the change against. When the caller passes one, use it as given. When it does not, follow the wiki indexes, global and local, to the entries about the technologies the diff touches, and add the project's `AGENTS.md` and `.mahou/basics.md` when present. The wiki entry `design/red-flags` is always on the list, including when the caller passes one without it. Open every source on the list. Every fix has to follow them.
 
 ## Step 2: Dispatch the facet reviewers
 
-Per repository, one reviewer per facet and one conventions reviewer per source on the list, all in a single message so they run together.
+Per repository, one reviewer per facet and one conventions reviewer per source on the list, all in a single message so they run together. Dispatch the test reviewer only when the diff adds or changes a test file. It makes its edits and runs each test alone in a worktree of its own, so it never touches the checkout the other reviewers read.
 
 | Facet | Agent | Looks for |
 |---|---|---|
@@ -39,6 +39,7 @@ Per repository, one reviewer per facet and one conventions reviewer per source o
 | Simplification | `mahou:simplification-reviewer` | redundant or derivable state, copy-paste with variation, deep nesting, dead code left behind |
 | Efficiency | `mahou:efficiency-reviewer` | redundant computation, repeated I/O, independent work run sequentially, closures pinning large scopes |
 | Altitude | `mahou:altitude-reviewer` | special cases layered on shared infrastructure where the mechanism underneath should generalize instead |
+| Tests | `mahou:test-reviewer` | added or changed tests that pass when the behaviour breaks or fail when only the internals change |
 | Conventions | `mahou:conventions-reviewer`, one per source | departures from the one wiki entry or rule file it is given |
 
 Give each one the repository's absolute path, the base, the diff, and the path to write its findings to. Give each conventions reviewer the path of its source as well, and a findings path of its own.

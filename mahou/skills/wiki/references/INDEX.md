@@ -1,6 +1,7 @@
 # References
 
 - [`cloudflare`](cloudflare/INDEX.md): running jobs, gates, agents, containers and data on Cloudflare's platform
+- [`design`](design/INDEX.md): shapes of modules, functions and state that make code harder to change; always reviewed, whatever the technology
 - [`firecrawl`](firecrawl/INDEX.md): calling Firecrawl from runtimes its SDK does not support
 - [`gemini`](gemini/INDEX.md): what the Gemini API accepts as input and how it describes it
 - [`markdown`](markdown/INDEX.md): parsing markdown into a syntax tree outside a renderer

@@ -17,6 +17,8 @@ Load mahou:basics first, then mahou:report. Then read `.mahou/implementation-sta
 
 Start with the blocking questions: each question a subagent is waiting on, with the repository, the subagent's label, what it asked and why it cannot continue without the answer.
 
+At the end of a run, when `implementation-status.md` holds design friction groups, give them next, in their own section. Each group is an open item, numbered with the others: the spot in the program design, what the program design says there, every entry with its repository and code reference, and what the entries have in common, so the user can decide whether the program design changes there. Before the groups exist, a departure appears only as a highlight of its repository.
+
 Then one section per repository that changed since the last report:
 
 1. **Status.** One or two lines: the stage the repository is in, the commits since the last report, and the subagent or check running on it. With no earlier report in the conversation, give every repository its full status.

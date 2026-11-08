@@ -13,7 +13,15 @@ A prototype is a picture the user can look at and poke, standing in for a screen
 
 ## The file
 
-One HTML file, written to the change's scratch folder at `prototypes/`, per the convention in mahou:basics, with its CSS and script inline and no external dependencies, no build step and no framework. It is opened with `xdg-open` and reopened from the same path on every round so the user's browser tab keeps its place.
+One HTML file, written to the change's scratch folder at `prototypes/`, per the convention in mahou:basics, with its CSS and script inline and no external dependencies, no build step and no framework. It keeps the same path on every round.
+
+Open the file with Plannotator, backgrounded, every round:
+
+```
+plannotator annotate --render-html {absolute-path-to-prototype.html} --title "{element name}"
+```
+
+The command returns when the user submits, and its output carries their annotations on the rendered page. Read them as that round's pick or corrections. Never poll; the result arrives on its own. When the session times out before the user submits, start it again with the same command and tell the user it restarted. The user can also answer in the chat instead of annotating; take whichever arrives first.
 
 The file shows the element inside enough of its surroundings for the user to judge its placement: the region of the existing screen it lands on, sketched with the same spacing and hierarchy, not reproduced. Match the existing screen only as far as the user has described it or pointed at it. Do not read the frontend's code for styling unless the user asks.
 

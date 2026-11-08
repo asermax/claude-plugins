@@ -68,7 +68,7 @@ Loaded by other skills, never typed:
 - `mahou:design-tree`. The tree format, the frontier, the question and answer rules, and how questions and branches merge.
 - `mahou:changeset`. Which repositories, which base (found by commit distance with a bundled script), which diff, and the rule separating what a change introduced from what predates it.
 - `mahou:lookup`. Where a fact comes from: the routing between the scouts and the researcher, the rule for facts outside the project, and how a verified fact is told apart from an asserted one. Loaded by `explore` and `design-tree`.
-- `mahou:prototype`. Shows a screen element as an interactive HTML prototype and iterates it with you, round by round, after checking which states the element can reach and naming those nobody asked for, following the patterns the wiki's frontend entries and the project's rule files set. Loaded by `explore` when a question is about what something looks like, and by `design` for a UI branch.
+- `mahou:prototype`. Shows a screen element as an interactive HTML prototype and iterates it with you, round by round, each round opened in Plannotator so you annotate the rendered page, after checking which states the element can reach and naming those nobody asked for, following the patterns the wiki's frontend entries and the project's rule files set. Loaded by `explore` when a question is about what something looks like, and by `design` for a UI branch.
 
 ## Agents
 
@@ -107,7 +107,7 @@ Separately, `.scratch/<change-slug>/` at the project's root holds the artifacts 
 ## Dependencies
 
 - `superpowers:unslop` and `superpowers:mermaid`, from the `superpowers` plugin in this marketplace, for the writing pass and diagrams in `design` and `write-documentation`. Without them those skills say so and continue unvalidated.
-- The `plannotator` CLI for `human-review`.
+- The `plannotator` CLI for `human-review` and `prototype`.
 - Node and npm, plus the `agent-browser` CLI, for `canvas`. The app installs into `~/.cache/mahou-canvas` on first run.
 - herdr and Bun for `telepathy`. Its server's dependencies install next to the script on first run.
 

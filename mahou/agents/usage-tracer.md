@@ -19,7 +19,15 @@ You are given the element, the absolute path of the repository it lives in, the 
 
    Quote the globs. The shell expands `grep --include=*.py` before grep sees it, and the search matches nothing without saying so.
 
-3. For each user, name what it does differently after the change. Read the base version of both sides with `git show <base>:<path>` when the answer is not obvious.
+3. Look where a symbol search stops. Grep finds the callers that name the element; these users do not name it:
+
+   - **The library the element calls.** Read its source at the version the project installs, found in the lockfile, and under `node_modules`, `site-packages` or the language's equivalent, together with any local patch applied to it. The documentation describes the latest version, not the installed one.
+   - **Timing and teardown.** When the change moves work across an `await`, a callback, a subscription, an unmount or a cleanup, work out what runs before and after it now, and what still holds a reference once the owner is gone.
+   - **Data that outlives the code.** A response body, a stored column, a queue message, a cache entry or a file another program reads, including a reader written in another language. Search for the field name as a string, since such readers never import the symbol.
+   - **Feature flags and configuration.** The flag or setting that decides whether the changed path runs at all, and where each value is set.
+   - **Code a few hops downstream.** A user of a user, when the element's change alters what the first user hands on.
+
+4. For each user, name what it does differently after the change. Read the base version of both sides with `git show <base>:<path>` when the answer is not obvious.
 
    Three outcomes, and only the first is a finding:
 
@@ -27,11 +35,11 @@ You are given the element, the absolute path of the repository it lives in, the 
    2. A signature or shape changed and this user changed with it in the same change. Not a finding, unless the two sides deploy separately. Then the finding is the deploy ordering, not the code.
    3. The user is touched, still compiles, and does what it did before. Not a finding. Say nothing about it.
 
-4. Attribute each finding as introduced by this change, pre-existing, or pre-existing and made reachable more often by this change. `git log` and `git show <commit>` settle it when reading the base version is not enough.
+5. Attribute each finding as introduced by this change, pre-existing, or pre-existing and made reachable more often by this change. `git log` and `git show <commit>` settle it when reading the base version is not enough.
 
 ## Output
 
-At most ten findings, three sentences each. Give the file, the line, the user, what that user does differently, and the attribution. Anything longer gets cut off in delivery and costs a round trip to recover.
+Three sentences per finding. Give the file, the line, the user, what that user does differently, the attribution, and how far you proved it: `line cited` when you point at the line, or `failure walked through` when you traced the bad case step by step to the user it reaches. Anything longer gets cut off in delivery and costs a round trip to recover.
 
 If you cannot name the user and what it does differently, you do not have a finding. Shared code paths, widened interfaces, and fragility that only a future edit would turn into a failure are not findings. Report none rather than inventing one.
 

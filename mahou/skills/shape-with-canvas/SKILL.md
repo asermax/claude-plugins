@@ -1,6 +1,6 @@
 ---
 name: shape-with-canvas
-description: Runs the shape skill on a canvas instead of in the chat. The canvas is the shape tree, one section per branch with its leaves and its prose; questions, findings and readings are written on it, and the user answers with sticky notes. Use when the user wants to settle the open decisions of a problem and solution definition on a canvas.
+description: Runs the shape skill on a canvas instead of in the chat. The canvas is the shape tree, one section per branch with its leaves and its prose; questions, findings and readings are written on it, and the user answers with sticky notes. Once every branch is settled, the skill draws a breadboard of the places a person moves through to check the connections between the leaves. Use when the user wants to settle the open decisions of a problem and solution definition on a canvas.
 argument-hint: <the problem and the decisions settled so far>
 ---
 
@@ -21,7 +21,7 @@ The root goes at the top of the canvas as a title, `Problem: <one line>`. Each t
 - **Left side: the branch's leaves**, in monospace text, with the same marks as `design-tree`. The sub-branches follow as a tree under them, `├─ <n.m> <title>  <status>` with their leaves indented, and a blank line above each sub-branch.
 - **Right side: the prose**, at the branch level. The branch's own prose comes first, the statement of what is settled under it. Then each sub-branch that has prose gets a heading, `<n.m> <title> · <status>`, with its prose under it. A sub-branch without prose gets no heading.
 - **Prose is plain paragraphs, all of them the same width**, 1160 units.
-- **Shape draws no representations.** A diagram goes on the canvas only inside a question, and is deleted with the question's card.
+- **Shape draws no representations.** A diagram goes on the canvas only inside a question, and is deleted with the question's card. The breadboard is the one exception.
 - When a branch's sub-branches make it much taller than the others, lay its sub-branch sections side by side under its leaves.
 
 Lay the branches out in tree order, read down each column and then across.
@@ -44,6 +44,10 @@ Questions go in the open branch, on its right side, under its prose. The branch'
 
 Everything you would say in the chat goes on the canvas: how you read an answer, lookup results, status, and requests to approve a branch. Write it as an Agent note: a grey dashed rectangle labelled `Agent`, in the branch or the question it is about. Keep one Agent note per place and replace its text each round. When a branch is done, delete its note.
 
+## Breadboard
+
+When every branch is settled, check whether the tree defines screens, dialogs, commands or messages that a person moves through. When it does, load `references/breadboard.md` and draw the breadboard before ending. When it defines none, say so in an Agent note and ask whether to skip the breadboard.
+
 ## Ending
 
-When every branch is settled, put an Agent note under the root title stating that the tree is complete, and stop. Ask nothing, as `design-tree`'s Ending says.
+When every branch is settled and the user has approved or skipped the breadboard, put an Agent note under the root title stating that the tree is complete, and stop. Ask nothing, as `design-tree`'s Ending says.

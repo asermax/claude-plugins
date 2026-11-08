@@ -1,6 +1,6 @@
-// Document commands that run without the server: node document/cli.ts <check|migrate|texts> <document>
+// Document commands that run without the server: node document/cli.ts <check|migrate|texts|title> <document>
 import { copyFileSync, writeFileSync } from 'node:fs'
-import { migrateDocument, outdatedReason, readDocument, readRawDocument, versionOf } from './canvasDocument.ts'
+import { migrateDocument, outdatedReason, readDocument, readRawDocument, titleOf, versionOf } from './canvasDocument.ts'
 import { CURRENT_VERSION } from './migrations.ts'
 
 const [command, path] = process.argv.slice(2)
@@ -50,10 +50,14 @@ const texts = () => {
     })
 }
 
-const COMMANDS: Record<string, () => void> = { check, migrate, texts }
+const title = () => {
+  console.log(titleOf(path) ?? '')
+}
+
+const COMMANDS: Record<string, () => void> = { check, migrate, texts, title }
 
 if (path == null || COMMANDS[command] == null) {
-  console.error('usage: node document/cli.ts <check|migrate|texts> <document>')
+  console.error('usage: node document/cli.ts <check|migrate|texts|title> <document>')
   process.exit(1)
 }
 

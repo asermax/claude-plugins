@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Runs a tldraw canvas over one document, <folder>/<name>.tldr.json.
 #
-#   canvas.sh start   <document>  install on first run, start the server detached, print its URL
+#   canvas.sh start   <document> [title]  install on first run, start the server detached, print its URL; the title is
+#                                         required until the document has one, and replaces the stored one when given
 #   canvas.sh watch   <document>  start if needed, then print one line per "Send to Agent" click or voice message
 #   canvas.sh export  <document>  write <folder>/<name>.svg from the open document
 #   canvas.sh texts   <document>  print every canvas text and arrow label, one per line
@@ -15,10 +16,11 @@
 # plugin's directory. Every document in a folder shares the folder's mockups/.
 set -euo pipefail
 
-USAGE="usage: canvas.sh <start|watch|export|texts|migrate|stop> <folder>/<name>.tldr.json"
+USAGE="usage: canvas.sh <start|watch|export|texts|migrate|stop> <folder>/<name>.tldr.json [title]"
 COMMAND="${1:?$USAGE}"
 DOC="$(realpath -m "${2:?$USAGE}")"
 DOC_DIR="$(dirname "$DOC")"
+TITLE="${3:-}"
 
 if [[ "$DOC" != *.tldr.json ]]; then
   echo "$USAGE" >&2
@@ -122,7 +124,7 @@ launch() {
   local port="$1" pid
 
   # Detached, so the server outlives the shell that started it and any background time limit
-  CANVAS_DOC="$DOC" setsid nohup "$APP/node_modules/.bin/vite" --config "$APP/vite.config.ts" --port "$port" --strictPort \
+  CANVAS_DOC="$DOC" CANVAS_TITLE="$TITLE" setsid nohup "$APP/node_modules/.bin/vite" --config "$APP/vite.config.ts" --port "$port" --strictPort \
     >"$LOG" 2>&1 </dev/null &
   pid=$!
 
@@ -152,6 +154,15 @@ start() {
 
   # An older document would be served in a format the app no longer reads, and its edits saved over it
   if ! document_cli check; then
+    exit 1
+  fi
+
+  if [[ -z "$TITLE" ]]; then
+    TITLE="$(document_cli title)"
+  fi
+
+  if [[ -z "$TITLE" ]]; then
+    echo "the canvas needs a title: canvas.sh start $DOC \"<title>\"" >&2
     exit 1
   fi
 

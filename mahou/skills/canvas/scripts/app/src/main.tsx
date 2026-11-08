@@ -9,4 +9,6 @@ if (user != null) {
   setUserPreferences({ ...getUserPreferences(), name: user })
 }
 
+document.title = __CANVAS_TITLE__
+
 createRoot(document.getElementById('root')!).render(<App />)

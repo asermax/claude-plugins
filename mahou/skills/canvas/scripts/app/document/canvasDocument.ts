@@ -5,6 +5,7 @@ import { CURRENT_VERSION, MIGRATIONS } from './migrations.ts'
 
 export interface CanvasDocument {
   canvasVersion: number
+  title: string | null
   room: RoomSnapshot
 }
 
@@ -43,8 +44,14 @@ export const readDocument = (path: string): CanvasDocument | null => {
   return readRawDocument(path) as CanvasDocument | null
 }
 
-export const writeDocument = (path: string, room: RoomSnapshot) => {
-  const document: CanvasDocument = { canvasVersion: CURRENT_VERSION, room }
+export const titleOf = (path: string) => {
+  const title = readRawDocument(path)?.title
+
+  return typeof title === 'string' ? title : null
+}
+
+export const writeDocument = (path: string, room: RoomSnapshot, title: string) => {
+  const document: CanvasDocument = { canvasVersion: CURRENT_VERSION, title, room }
 
   writeFileSync(path, JSON.stringify(document))
 }

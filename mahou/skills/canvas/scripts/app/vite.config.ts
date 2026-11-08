@@ -14,6 +14,12 @@ if (DOC_PATH == null) {
   throw new Error('CANVAS_DOC must point to the canvas document, <folder>/<name>.tldr.json')
 }
 
+const TITLE = process.env.CANVAS_TITLE
+
+if (TITLE == null || TITLE.trim() === '') {
+  throw new Error('CANVAS_TITLE must name the canvas, so its tab can be told apart from other canvases')
+}
+
 const DOC_DIR = dirname(DOC_PATH)
 const MOCKUPS_DIR = resolve(DOC_DIR, 'mockups')
 const SVG_PATH = DOC_PATH.replace(/\.tldr\.json$/, '.svg')
@@ -40,14 +46,20 @@ const canvasApi = (): Plugin => ({
     server.watcher.add(MOCKUPS_DIR)
 
     // Every open tab, the user's and the agent's, edits this one room, which keeps the document on disk current
-    const room = new TLSocketRoom({ schema, initialSnapshot: readDocument(DOC_PATH)?.room, onDataChange: () => scheduleSave() })
+    const existing = readDocument(DOC_PATH)
+    const room = new TLSocketRoom({ schema, initialSnapshot: existing?.room, onDataChange: () => scheduleSave() })
+
+    // A title given on start replaces the stored one right away, so a later start without a title reads it back
+    if (existing != null && existing.title !== TITLE) {
+      writeDocument(DOC_PATH, existing.room, TITLE)
+    }
 
     let saveTimer: ReturnType<typeof setTimeout> | undefined
 
     const save = () => {
       clearTimeout(saveTimer)
       saveTimer = undefined
-      writeDocument(DOC_PATH, room.getCurrentSnapshot())
+      writeDocument(DOC_PATH, room.getCurrentSnapshot(), TITLE)
     }
 
     const scheduleSave = () => {
@@ -113,6 +125,7 @@ export default defineConfig({
   root: __dirname,
   cacheDir: resolve(__dirname, 'node_modules/.vite'),
   plugins: [react(), canvasApi()],
+  define: { __CANVAS_TITLE__: JSON.stringify(TITLE) },
   resolve: {
     alias: {
       '@canvas': resolve(__dirname, 'src'),

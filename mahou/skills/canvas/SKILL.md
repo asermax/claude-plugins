@@ -88,7 +88,13 @@ Use a `code-snippet` to show a change to a file, such as a config the user has n
 
 Keep them low fidelity: the hand font, sketched borders, and grey bars for text that does not matter.
 
-When the screen has a prototype, copy the mockup from it: the same parts, the same states and the same copy, translated into the language the canvas is written in. A state that is its own view in the prototype is its own mockup on the canvas.
+When the screen has a prototype, copy the mockup from it as its last round left it: the same parts, the same states and the same copy, translated into the language the canvas is written in. A state that is its own view in the prototype is its own mockup on the canvas. Draw the mockups where the prototype was asked for: the question, the part or the answer that needed it.
+
+Draw a spike's result where the spike was asked for, in the form of the strategy it ran:
+
+- **Model check**: the chart as a `mermaid` shape, and under it a card with one line per broken rule: the rule as the user said it, the path as numbered steps, and whether the replay reproduced the path.
+- **Variants in parallel**: a table in monospace text, one column per variant, with a row for the measure, a row for the evidence and a row for what each variant got wrong.
+- **One variable per round**: a card with one line per round: what the round changed, how many cases passed and failed, and which case failed.
 
 - **Size a mock to its content** when the content's height depends on its data. Give the mockup's root element a `data-root` attribute, and lay it out from the top with no bottom edge. Zoom your tab to the shape, and once the shape has rendered, set the shape's `h` to the root's `offsetHeight` times the shape's width over the mockup's natural width. The canvas renders only the shapes on screen, so a shape measured off screen has no root element. Its `h` then drops to a few units while its content still draws at full size, and every arrow bound to the shape ends at its top edge. `fit(name)` does all of this, and `mock(name, …)` calls it after creating the shape.
 - **Make a mockup interactive** when the user needs to switch what it shows, such as a view or a collapsed part. Mark each element that takes a click with `data-interactive`; tldraw keeps every other click for selecting and moving the shape. `render` receives `update(patch)` as its second argument, which merges the patch into the shape's `data`, so the canvas saves the change and every tab shows it. While the shape is on screen, the canvas keeps the shape's height equal to the height of its `data-root` element, so a click that grows or shrinks the content resizes the shape.

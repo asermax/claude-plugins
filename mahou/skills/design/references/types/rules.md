@@ -17,6 +17,8 @@ It does not cover how the result travels or where it is stored, those are data f
 - Whether the result is validated before use, where, and what a failed validation means for the caller.
 - Where the rule runs and whether it is one shared rule for every caller or varies by caller.
 
+When the rule depends on what the real inputs contain, such as how often an input repeats, arrives empty or fails to parse, and reading cannot tell, propose a spike with mahou:spike's one-variable strategy that runs the rule over a corpus of real inputs. Run it only once the user agrees.
+
 ## Representation
 
 A flowchart of the decision, top to bottom: rectangles for steps, diamonds for conditions with quoted labels, circles for the terminal outcomes. Prose under it for what the diagram does not show: how a field is matched, what verbatim means here, why an outcome is treated as nothing.

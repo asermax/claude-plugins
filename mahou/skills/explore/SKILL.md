@@ -36,7 +36,7 @@ The user builds the understanding. You bring facts on demand. You edit nothing, 
 
 5. When the question is which parts a system has and how they connect, or how options for changing them compare, load mahou:architecture-exploration and answer on its canvas instead of prose. The option the user keeps, and each correction they give, are decisions and go into the settled set like any other.
 
-6. When the question can only be answered by running code, such as whether an approach works on the real platform, load mahou:spike and answer with what the spike found. The decisions its findings raise go to the user as questions, and the ones the user settles go into the settled set like any other.
+6. When the question can only be answered by running code, such as whether an approach works on the real platform, propose a spike with mahou:spike, naming the question it would answer. Run it only once the user agrees, and answer with what the spike found. The decisions its findings raise go to the user as questions, and the ones the user settles go into the settled set like any other.
 
 ## Decisions
 

@@ -17,6 +17,8 @@ It does not cover endpoint names, payload schemas or function names, those are p
 - Interactions: when one request triggers two paths, which value ends up stored, and whether an existing mechanism (an override, a parameter) carries it or a new one is needed.
 - Whether an existing mechanism the path relies on is general or ad hoc, and whether the change generalizes it.
 
+When reading cannot settle which value ends up stored when a hop is retried, a message arrives late or twice, or one request triggers two paths, propose a spike with mahou:spike's model-check strategy, naming the rule it would check. Run it only once the user agrees.
+
 ## Representation
 
 One numbered sequence diagram per write path, high level: actors and components, no endpoint or function names, `alt` for the branches the path has. Prose under it that walks the numbers and explains what the diagram does not show: the case where the value is absent, why an order was chosen, what the fallback preserves.

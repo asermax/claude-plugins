@@ -22,6 +22,7 @@ The document is `canvas/<name>.tldr.json` in the change's scratch folder, named 
 - **Draw each part as its reference under `references/representations/` describes.** Work out a part with no canvas reference with the user before drawing it.
 - **Draw the contents of a file, such as a route file or a config, as a `code-snippet` mock** in its `code` view, with highlighting rules for the file's language. Never draw a file's contents as a monospace text card.
 - **Draw the code the user asks for as `code-snippet` mocks** inside an `area` in the column of the branch it details, under the branch's parts, labelled as a sketch that does not enter the record. Draw a change as a diff in the `unified` view, one snippet per file, with a note beside each changed line on the behaviour the line adds or changes.
+- **A spike's result goes in the area of the part that asked for it**, under the part's representation, as `canvas` describes.
 - **An arrow runs from the part that acts to the part it acts on**, labelled with the action and what it carries: `renders · <props>` from a component to what it renders, `calls · <arguments>` from a caller to the hook or function it calls, `reads context · <values>` from a component to the provider whose context it reads. The canvas references name only the labels each one uses.
 
 Each canvas reference describes how to draw one of `program-design`'s representations, and has the same file name as that representation's reference under `program-design/references/representations/`:

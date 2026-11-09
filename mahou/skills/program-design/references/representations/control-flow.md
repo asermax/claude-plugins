@@ -13,6 +13,7 @@ It does not cover which functions are called or where a value lands, which is th
 - Read the entry point as it stands: its steps, its error handling and what it returns.
 - For a step that waits on another service, a queue or a worker, read the other side's contract.
 - Check the standards for how the layer handles errors, retries and return values, so the proposed flow follows them.
+- When several actors hand work to each other, or a retried step can run twice, and reading cannot settle whether a rule always holds, propose a model-check spike, naming the rule it would check. Run it only once the user agrees.
 
 ## Representation
 

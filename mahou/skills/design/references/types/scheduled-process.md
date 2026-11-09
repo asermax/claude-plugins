@@ -19,6 +19,8 @@ It does not cover the states the record moves through; those are a lifecycle. It
 - What the user sees before the process acts and after it.
 - Whether another process acts on the same records, and whether the order between them matters.
 
+When reading cannot settle whether a rule holds while runs overlap or while another process acts on the same records, such as a record never being handled twice, propose a spike with mahou:spike's model-check strategy, naming the rule it would check. Run it only once the user agrees.
+
 ## Representation
 
 One flowchart, left to right, from the user's action to what they see after the process acts: the wait as a `delay`, the job as an `st-rect`, the state it leaves as a `cyl`, the screens as `rect`, and a dotted edge for the user coming back. The prose under the diagram says what starts the process, how it picks its records, what it does to each one and why the wait has that length.

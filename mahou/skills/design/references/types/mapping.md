@@ -16,6 +16,8 @@ It does not cover the code that performs the conversion, that is program design.
 - The constructs left out on purpose, and the ones kept in whatever form the converter produces.
 - Variants of one construct that look alike but come out differently.
 
+When reading cannot tell which constructs the real sources carry, or what the converter produces for one of them, propose a spike with mahou:spike's one-variable strategy that runs the mapping over a corpus of real sources. Run it only once the user agrees.
+
 ## Representation
 
 A table, one row per construct: the source, what it becomes in the value, and its form. A worked example follows the table: one input that exercises the rules that interact, and the value it produces. The prose under them says what the table cannot: why a construct produces nothing, how a nested case resolves, and what the example shows that a single row does not.

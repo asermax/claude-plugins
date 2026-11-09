@@ -29,6 +29,8 @@ Outputs:
 - Whether the value is passed as produced or transformed on the way. Whether it has to cross a boundary, such as a process, a file, or a network, which constrains its shape.
 - Who validates it, the producer or the consumer, and what an invalid value does.
 
+When the other side's documentation cannot settle what it accepts or returns, propose a spike with mahou:spike's one-variable strategy that calls the real component. Run it only once the user agrees.
+
 ## Representation
 
 One form per part, each followed by its prose.

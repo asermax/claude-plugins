@@ -16,7 +16,7 @@ It does not cover the hops a value takes between services; those are a data flow
 - What follows a terminal state.
 - Whether a state can be re-entered or a transition repeated.
 
-When reading cannot settle whether a rule always holds, because of retries, two actors moving the thing at once, or an invariant the user wants proved, the question goes to mahou:spike with the model-check strategy.
+When reading cannot settle whether a rule always holds, because of retries, two actors moving the thing at once, or an invariant the user wants proved, propose a spike with mahou:spike's model-check strategy, naming the rule it would check. Run it only once the user agrees.
 
 ## Representation
 

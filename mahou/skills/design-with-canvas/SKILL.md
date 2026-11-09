@@ -46,11 +46,12 @@ Questions go in the open branch, on its right side, under its write-up. The bran
 - **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question branch has settled and the findings that bear on it. Rewrite it each round; never add a line per answer.
 - **When the question branch closes**, delete the card, update the branch's leaves on the left, and update its write-up.
 - **Keep two questions open for the user to answer.** A question waiting on a spike, a prototype or a lookup does not count toward the two, so there are three while one waits. Open the next question from the frontier as soon as one closes.
+- **A spike's result goes in the card of the question that asked for it**, as `canvas` describes. When the question closes, carry the result to every place it affects, such as the write-up of the sub-branch whose leaves the result settled, a question the result raises in another branch, or a new branch the result opens.
 - **A merged question is one card.** Retitle the lower-numbered card, fold the other card's summary into its summary box, and delete the other card.
 
 ## Messages from the agent
 
-Everything you would say in the chat goes on the canvas: how you read an answer, research and spike results, status, and requests to approve a branch. Write it as an Agent note: a grey dashed rectangle labelled `Agent`, in the branch or the question it is about. Keep one Agent note per place and replace its text each round. When a branch is done, delete its note.
+Everything you would say in the chat goes on the canvas: how you read an answer, research results, a spike's progress, status, and requests to approve a branch. Write it as an Agent note: a grey dashed rectangle labelled `Agent`, in the branch or the question it is about. Keep one Agent note per place and replace its text each round. When a branch is done, delete its note.
 
 ## Recording
 

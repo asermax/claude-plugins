@@ -39,4 +39,4 @@ A model is not the real thing, so the spike is not over when the chart is drawn.
 
 ## Findings
 
-Per broken rule: the rule, the path, whether the replay reproduced it, and the user's call on it. Also what the model leaves out, the rules not checked, and the command that runs TLC again. Each confirmed path is a case for mahou:test-design.
+Per broken rule: the rule, the path, whether the replay reproduced it, and the user's call on it. Also what the model leaves out, the rules not checked, and the command that runs TLC again.

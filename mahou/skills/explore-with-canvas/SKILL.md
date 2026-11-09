@@ -18,7 +18,7 @@ The document is `canvas/explore.tldr.json` in the change's scratch folder.
 - **The decision log** is an `area` labelled `Decisions`, next to the problem. Add each decision the user settles as one line, in the order settled, and never move or rebuild the log, so the user can always go back to it.
 - **Lay the answers out freely on the canvas.** Draw related topics close together, and join them with an arrow when the relation needs saying. Give the answer first, then the facts that support it, then the decisions it raises. Write each decision as a violet card titled `❓ <title>`. Keep verified facts apart from what a source asserts.
 - **Draw diagrams with tldraw shapes**, which are easier to change when a later answer changes the diagram.
-- **A prototype, an architecture drawing or a spike result** goes next to the answer it is part of. Draw screens as mockups copied from the prototype, and architecture drawings with `architecture-exploration`'s rules on this same canvas.
+- **A prototype, an architecture drawing or a spike result** goes next to the answer it is part of. Draw a prototype's screens and a spike's result as `canvas` describes, and architecture drawings with `architecture-exploration`'s rules on this same canvas.
 - **A moodboard**, when the user wants to explore the visual design and direction of something: load `references/moodboard.md` and run it on this same canvas.
 
 ## Messages from the agent

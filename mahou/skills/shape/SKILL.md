@@ -29,7 +29,7 @@ Problem: <one line>
 
 1. Read the problem and the decisions the user brings. Build the tree from them: the root, one pending branch per area of the definition, the Out of scope branch, and a ✓ leaf under its area for every decision already made. Show it and wait for the user's corrections. Open the first branch in the reply to the approval.
 
-2. Open one branch at a time, in order. When a branch opens, state what is already settled under it in a few lines of prose and ask the user to correct what is wrong. The reply after the confirmation asks the frontier, which is that branch's open leaves. A situation the definition does not mention follows the Scope section of `design-tree`; a deferred one goes under Out of scope.
+2. Open one branch at a time, in order. When a branch opens, state what is already settled under it in a few lines of prose, and ask the frontier, which is that branch's open leaves, in the same reply. A situation the definition does not mention follows the Scope section of `design-tree`; a deferred one goes under Out of scope.
 
 3. When every leaf of the branch is ✓, show the whole tree and stop. Open the next branch when the user approves.
 

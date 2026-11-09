@@ -28,7 +28,9 @@ Leaves carry their own mark. A branch is settled only when every leaf under it i
 └─ <area>                                                    pending
 ```
 
-When the loading skill works one branch at a time, show the whole tree once it is built. Show it again when a branch settles and the next one opens, and once more at the end. Before every other round, show the branch being worked with its leaves and the rest of the tree collapsed to its branch lines and marks. When the whole frontier is worked at once, show the whole tree before every round and once more at the end.
+When the loading skill works one branch at a time, show the whole tree once it is built. Show it again when a branch settles and the next one opens, and once more at the end.
+
+Opening a branch takes no confirmation round, unless the loading skill puts one there. The reply that opens a branch states what is already settled under it and asks its frontier in the same reply; the user corrects a wrong leaf when answering. Settling a branch does take one: the reply that settles its last leaf shows the settled branch and stops, so the user can keep asking about it, and the next branch opens when the user approves. Before every other round, show the branch being worked with its leaves and the rest of the tree collapsed to its branch lines and marks. When the whole frontier is worked at once, show the whole tree before every round and once more at the end.
 
 ## Rounds
 
@@ -54,7 +56,23 @@ When the user corrects or changes a settled decision, find every leaf and branch
 
 Before the first round, read the files that `status.md` lists in the change's scratch folder, such as the exploration's decision log and canvas, the prototypes and the earlier trees, unless they are already in context. A decision that any of these files shows becomes a ✓ leaf, including a decision that only a prototype shows. Write on the leaf which file the decision came from. Make your questions informed on topics that are not covered so far, avoid repeating questions that were already answered in previous artifacts.
 
-When an open decision has only one plausible answer, because it follows from decisions the tree already settled or from how the code works today, it stays a ❔ leaf in the tree like any other question, and it is asked as a proposal: the round states the answer and the decision or the behaviour it follows from, and asks the user to confirm or correct it. The leaf becomes ✓ with the answer the user confirms or gives. A decision that more than one answer could reasonably settle is asked open.
+## Proposals
+
+Some open decisions already have an answer in information the session holds, without the user having settled them:
+
+- It follows from decisions the tree already settled.
+- The conversation or an earlier artifact discussed it without settling it as a decision.
+- The codebase already solves the same problem in a certain way: the same kind of value stored, the same kind of failure handled, the same kind of screen built. Before asking a question whose subject the codebase may already handle, check through mahou:lookup how it handles it, without asking the user first. The user should never have to ask you to go and look.
+
+Ask such a decision as a proposal. It stays a ❔ leaf in the tree like any other question. The question gives the answer the information points to and the full context behind it, so the user can confirm without asking anything back:
+
+- From the conversation or an artifact: what was said, by whom when it matters, and where (the round, the file).
+- From the codebase: where it is solved, cited as mahou:basics says, how it works there, with a short example of the code or the data when it helps, and how that applies to this decision.
+- From settled leaves: which leaves, and how the answer follows from them.
+
+Then ask the user to confirm or correct it. The leaf becomes ✓ with the answer the user confirms or gives.
+
+A proposal is not a recommendation. It states what the session already knows and where it comes from, never which answer you prefer. When the sources point to different answers, for instance two places in the codebase solving the same problem differently, give each with its source and ask the decision open. A decision that no source answers, or that more than one answer could reasonably settle, is asked open.
 
 ## What a question carries
 
@@ -74,7 +92,7 @@ The body carries nothing about which answers exist. Each of these proposes an an
 - A default the user did not set: "by default", "typically", "usually", "the standard approach".
 - A verdict: "I'd go with", "the obvious choice", "the simplest is", "probably", "it makes sense to", "we should".
 - What follows from one particular answer: "if it goes on the order, every read pays for it". Naming that the answer affects reads is context; working out the effect of one answer is a candidate.
-- A confirmation, "so it goes on the order?". A decision the user settled is a ✓ leaf, and one they never settled is asked open.
+- A confirmation, "so it goes on the order?", with no source behind it. A decision the user settled is a ✓ leaf, one that a settled leaf, the conversation or the codebase answers is a proposal (see Proposals), and any other is asked open.
 
 Before sending a round, reread every question. Check that each question's context is complete and that the question follows the unslop rules, and cut anything from the second list. If the user does not know how to answer, they will ask.
 
@@ -108,7 +126,7 @@ Each situation the user picks becomes a ❔ leaf in the next frontier. Record ea
 
 ## Facts
 
-Never look up a fact on your own initiative. When a question needs a fact you do not have, say inside the question that you lack that context and offer to search for it. The user decides whether the lookup happens; when it does, it goes through mahou:lookup.
+Never look up a fact on your own initiative, except to check how the codebase already handles a question's subject (see Proposals). When a question needs a fact you do not have, say inside the question that you lack that context and offer to search for it. The user decides whether the lookup happens; when it does, it goes through mahou:lookup.
 
 When the user asks for a check, run it, then report the result before the next round's tree, labelled by the question it unblocks. A fact about a library, a tool or anything else outside the project goes to a `mahou:researcher`, with the requirements taken from the branch being worked. A fact about the project's own code or docs goes to a scout. When the result contradicts a claim the user made or a decision already settled, say so in the first sentence.
 

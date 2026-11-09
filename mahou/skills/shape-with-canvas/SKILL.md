@@ -26,7 +26,7 @@ The root goes at the top of the canvas as a title, `Problem: <one line>`. Each t
 
 Lay the branches out in tree order, read down each column and then across.
 
-The opening tree goes on the canvas as the branch areas, each one pending, with the ✓ leaves the user brought under their areas and no prose yet. Above the areas, an Agent note says in one line per branch what that branch settles. When a branch opens, its statement of what is settled goes on the canvas as its prose. When a branch settles, ask the user to approve it there.
+The opening tree goes on the canvas as the branch areas, each one pending, with the ✓ leaves the user brought under their areas and no prose yet. Above the areas, an Agent note says in one line per branch what that branch settles. When a branch opens, its statement of what is settled goes on the canvas as its prose, and its first questions go on the canvas in the same step. When a branch settles, ask the user to approve it there.
 
 A dropped branch or leaf folds into Out of scope as `shape` says: delete the branch's area or the leaf, and add the ✓ leaf to Out of scope.
 

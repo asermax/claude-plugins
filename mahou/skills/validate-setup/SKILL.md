@@ -19,7 +19,7 @@ Answer each question from the repository: its `AGENTS.md`, README, package scrip
 
 - **Surface.** What a person or a caller touches: a browser UI, an API, a mobile app, a CLI. A repository can have several; list each.
 - **Launch.** The command that starts the system for validation, from an empty data folder, migrations and seed data included, and how to tell it is ready.
-- **Drive.** How an agent reaches each surface: the validate reference that fits, and the stable handles this repository offers, such as ARIA labels, data attributes, route paths or prompt strings.
+- **Drive.** How an agent reaches each surface: the validate reference that fits, and the stable handles this repository offers, such as ARIA labels, data attributes, route paths or prompt strings. For a browser surface, the desktop size and the mobile size that rows run at. Read them from the project's breakpoints, or ask for them.
 - **Evidence.** What can be captured: screenshots, response bodies, logs, exit codes, database rows.
 - **Isolation.** Whether a second instance can run beside the user's own, through other ports, data folders or profiles. When it cannot, the file says so, and validate refuses to drive an instance the user is using.
 
@@ -31,7 +31,7 @@ When the checkout does not build or start as it is, stop and report what fails w
 
 - **Launch**: the exact commands, what ready looks like and how to stop it. Ready means usable: a login works, a page renders, a request returns data. A process that answers on its port can still be running its migrations.
 - **Doctor**: one read-only check that says whether the running instance is worth driving: the processes are up, the build is the branch under validation, the port belongs to this instance, the identity used is still valid. mahou:validate runs it before the first row and after any failure.
-- **Drive**: per surface, the validate reference to load and the handles to use.
+- **Drive**: per surface, the validate reference to load and the handles to use, and for a browser surface the desktop and mobile sizes.
 - **Evidence**: what a row captures and where it goes. When the safe way to run something is a dry run or a test mode, the file says what that mode still does, observed by running it, because some dry runs still reach the network.
 - **Cleanup**: how to stop what a run started. Stop the processes the run started, by the id the run recorded, never by name. Cleanup removes instances and scratch data and never the evidence, which stays where Evidence says.
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # texts.sh — prints every visible text or content description on the device screen,
-# top to bottom, with its center and whether the node is enabled and checked.
+# top to bottom, with its bounds and center and whether the node is enabled and checked.
 set -euo pipefail
 adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
 adb exec-out cat /sdcard/ui.xml | python3 -c "
@@ -16,7 +16,7 @@ for match in re.finditer(r'<node [^>]*>', xml):
     bounds = re.search(r'bounds=\"\[(\d+),(\d+)\]\[(\d+),(\d+)\]\"', node)
     if bounds and (text or desc):
         x1, y1, x2, y2 = map(int, bounds.groups())
-        rows.append((y1, (x1 + x2) // 2, (y1 + y2) // 2, (text or desc)[:90], enabled, checked))
-for _, cx, cy, label, enabled, checked in sorted(rows):
-    print(f'y={cy:>5} x={cx:>4} enabled={enabled:<5} checked={checked:<5} {label}')
+        rows.append((y1, (x1 + x2) // 2, (y1 + y2) // 2, f'[{x1},{y1}][{x2},{y2}]', (text or desc)[:90], enabled, checked))
+for _, cx, cy, box, label, enabled, checked in sorted(rows):
+    print(f'y={cy:>5} x={cx:>4} bounds={box:<23} enabled={enabled:<5} checked={checked:<5} {label}')
 "

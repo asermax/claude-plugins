@@ -74,7 +74,7 @@ When a screen shows an error, read the logs of the service behind the request th
 
 The helpers under `scripts/android/` drive the device through `adb` and read its UI through `uiautomator`:
 
-- **`texts.sh`** prints every visible text and content description with its center, and whether the node is enabled and checked. Assert state from this, not from pixels.
+- **`texts.sh`** prints every visible text and content description with its bounds and center, and whether the node is enabled and checked. Assert state from this, and check how the screen looks as "Checking how the screen looks" says.
 - **`tap.sh "<text>" [index]`** taps the Nth visible node whose text or content description contains the text.
 - **`wait-for.sh "<text>" [timeout]`** waits until a node with the text is visible.
 - **`relaunch.sh <package> "<text>" [timeout]`** force-stops the app, launches it and waits for the text.
@@ -94,6 +94,15 @@ Every row leaves the evidence the report artifact in `validate` requires:
 - **A recording for anything transient**, such as an animation or a state too short for a screenshot to catch reliably: `adb shell screenrecord --time-limit <seconds> /sdcard/<name>.mp4`, pulled with `adb pull`. Extract frames into a contact sheet to inspect them: `ffmpeg -i <name>.mp4 -vf "fps=4,scale=270:-1,tile=8x3" -frames:v 1 <name>-sheet.png`.
 - **The UI state** from `texts.sh` at the decisive moment: which nodes are enabled and checked.
 - **The request and the stored state**: the request line from the service logs, and the state read back through the API or the database afterwards, both trimmed to the fields the row is about.
+
+## Checking how the screen looks
+
+Check the screen against what was decided for it: the row's expected outcome, the design notes, the program design's screen layout, and the parts of a prototype that a decision adopted. A difference from a part of a prototype that no decision adopted is not a failure.
+
+- Read every screenshot the row took. Look for an element on the wrong side of its anchor, misaligned, overlapping another, clipped by its container, running off the screen, or missing.
+- Measure every placement that the decisions state. Take the bounds from `texts.sh` and the screen size from `adb shell wm size`, and record the numbers next to the screenshot. `texts.sh` lists only nodes with a text or a content description; for any other node, read its bounds from the `uiautomator dump`. When the numbers and the screenshot disagree, go by the numbers.
+
+A screen that departs from what was decided fails the row. Handle the failure as "Fixing what fails" in `validate` says. A visual defect no decision covers is a bug outside the rows: report it with its screenshot and do not fix it.
 
 ## Leaving the device and the system as found
 

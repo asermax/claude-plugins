@@ -55,13 +55,13 @@ Load the reference for the surface under validation:
 - [references/http.md](references/http.md) for an API driven with `curl`.
 - [references/android.md](references/android.md) for a mobile app driven on an Android device or emulator.
 
-When a change touches more than one surface, load each reference and run each row against its surface. Follow each row's setup, perform its steps, observe, and record PASS or FAIL with the evidence the reference names. Every row runs, in id order; a failing row is recorded and the run continues.
+When a change touches more than one surface, load each reference and run each row against its surface. Follow each row's setup, perform its steps, observe, and record PASS or FAIL with the evidence the reference names. A row that runs on a screen also checks how the screen looks, as its surface's reference says. Every row runs, in id order; a failing row is recorded and the run continues.
 
 When `.mahou/validate.md` has a Doctor section, run its check before the first row and again after any row that fails or does something unexpected, and drive nothing until it passes. A failure the check cannot see, such as a screen stuck in a state on a healthy process, is cleared by resetting to a known state or restarting, never by driving on.
 
 ## Fixing what fails
 
-A row fails when the system departs from the row's expected outcome, or from what previous decisions settled for that path. Fix that failure without asking, then re-run the row and any row the fix's code reaches, until every row passes or is blocked. The bounds:
+A row fails when the system departs from the row's expected outcome, or from what previous decisions settled for that path, in what it does or in how the screen looks. Fix that failure without asking, then re-run the row and any row the fix's code reaches, until every row passes or is blocked. The bounds:
 
 - The fix makes the code do what previous decisions settled. It never changes a row's expected outcome or a previous decision, and it never adds behaviour no previous decision settled.
 - The fix stays in the repositories of the change under validation.

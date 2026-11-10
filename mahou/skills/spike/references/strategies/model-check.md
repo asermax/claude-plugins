@@ -10,6 +10,11 @@ The strategy needs TLC. Look for it on the machine before the first round: a `tl
 
 Run TLC with one worker, so a path reads the same on every run.
 
+- **Give every run its own state folder** with `-metadir`, on a disk with room, and delete it when the run ends. Two runs started in the same second share TLC's default folder, and a killed run leaves gigabytes behind, since it never reaches its own cleanup. Before the spike ends, look for state folders left in the spike's folder, the temporary directory and wherever a run was pointed, and delete them.
+- **Run independent configs in parallel**, each its own TLC process with one worker. Record each process id from TLC's output header and stop a run by that id.
+- **Start TLC as a background command** and wait for it with a loop on its output file. A run can last longer than a foreground command is allowed to.
+- **Keep a trace printer.** Some TLC versions have no `ALIAS` and no JSON trace dump; a small script in the spike's folder turns TLC's trace into one readable block per step.
+
 ## Writing the model
 
 The model lives in the spike's folder, next to its config and TLC's output.
@@ -18,6 +23,10 @@ The model lives in the spike's folder, next to its config and TLC's output.
 - **`Next` is a disjunction of named actions**, such as `Submit \/ Approve \/ Pay \/ RetryWebhook`, so each step in a path carries the name of what happened. A `Next` written as one block names every step `Next`.
 - **A correct end state is not a deadlock.** TLC reports a state with no step out as a deadlock. Add an action that holds only in the end states and changes nothing, such as `Done == phase \in {"paid", "failed"} /\ UNCHANGED vars`.
 - **Keep the model small.** Small constants, or a `CONSTRAINT`, so the run finishes. A model with no bound on its states runs without end.
+- **Bound every parameter before the first run.** Each value, date, entity and currency multiplies the number of states TLC explores at every step. Start with one or two of each as constants in the config, and widen only what a path needs.
+- **Model a request that reads, computes and then writes as two steps**, a check and a write, with whatever it computed fixed at the check. A design that reads, computes and then writes in one batch can let a second request run in between, and only a model that splits the check from the write finds that interleaving.
+- **Give each suspected cause of a broken rule a switch constant**, and rerun with all but one switched off. TLC reports only the shortest path to a broken rule, so for a rule with several causes, TLC reports one cause until you switch the others off.
+- **Known TLA+ errors**: a bound in a set comprehension cannot depend on another bound variable (use `UNION` over the outer one), and comparing a string with a record fails at run time (use a record for the idle value too).
 - **Model only what the question needs.** A call in flight whose return changes nothing is not a state.
 
 ## A round

@@ -14,7 +14,7 @@ Takes a definition the user has settled and designs the system that satisfies it
 
 1. Read the settled shape tree. Do not read code unless the user asks a question that needs it, or a question's subject may already be solved in the codebase (see `design-tree`'s Proposals); either way, a `mahou:code-scout` keeps the reading out of the conversation.
 
-2. List what has to be designed, as the tree. The root is "System design", each item is a pending branch, and each item names what must be specified, not how. Order the branches from abstract to concrete so each one builds on the previous, typically data model, then how data moves, then the rules that produce it, then whatever the change adds on top. Do not propose representations yet. When the change contains several independent pieces, for instance two APIs or two features designed in one session, each piece is its own root with its own areas, worked one root at a time.
+2. List what has to be designed, as the tree. The root is "System design", each item is a pending branch, and each item names what must be specified, not how. Order the branches from abstract to concrete so each one builds on the previous, typically data model, then how data moves, then the rules that produce it, then whatever the change adds on top. When the design writes the same stored value from more than one path, or something can run at the same time against shared data, the tree closes with an invariants branch (see `references/types/invariants.md`); add the branch later if the user asks whether the system can reach an invalid state. Do not propose representations yet. When the change contains several independent pieces, for instance two APIs or two features designed in one session, each piece is its own root with its own areas, worked one root at a time.
 
 ```
 System design
@@ -52,6 +52,7 @@ Open one branch at a time, in order. The first opens with the tree's approval. E
 | What a program is made of: its components, what crosses between them, its inputs and outputs | `references/types/component-architecture.md` |
 | What a component agrees with the rest of the system: its inputs and their sources, what it exposes, the value it hands on | `references/types/contract.md` |
 | What the user sees on a screen: placement, states, encodings, interactions | `references/types/ui.md` |
+| The rules that must hold on every path through the system, checked across every order of its operations | `references/types/invariants.md` |
 | How the constructs of a source map to what a value carries: which part each becomes and in what form | `references/types/mapping.md` |
 
 A branch that fits none of these is worked out with the user. A type that turns out to generalize beyond this session is a candidate for mahou:learn to add to this table.

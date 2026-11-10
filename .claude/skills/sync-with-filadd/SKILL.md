@@ -90,6 +90,8 @@ Leave these as they are unless the user asks:
 - When syncing `superpowers:mermaid` to `filadd-experimental-dev:mermaid`, keep Filadd's Notion shape whitelist (`scripts/notion-shapes.txt`), its check in `scripts/validate-mermaid.mjs`, the "Shapes Notion renders" section of `references/flowchart.md` and the Notion fix in `SKILL.md`. superpowers carries none of them. Both validators render with pele and write a PNG when given a path, but superpowers' reads stdin and Filadd's takes a file path, so the validation steps differ. Filadd's rendering rules also keep the ones about Notion's mermaid renderer, marked by renderer, because its documents still render in Notion.
 
 - mahou's invariants note (read in `basics`, routed to by `learn`) stays out of experimental-dev for now, since Filadd's docs live in Notion and the note has no home there yet.
+- The visual direction stays mahou-only: `prototype`'s visual-direction variant and its split into `references/screen-element.md`, the visual-direction section of `design`'s ui type, the moodboard in `explore-with-canvas` (removed from experimental-dev 2026-11-09) and the design system note. Filadd already has a defined visual direction, so its `prototype` stays one file for screen elements and its ui type prototypes against that direction.
+- The TLA+ gate in experimental-dev's `basics` is Filadd-only: everything built on TLA+ is off unless `FILADD_USE_TLA_PLUS` is `1`, `true`, `yes` or `on`. mahou keeps it always on. Port TLA+ content (the model-check strategy, the invariants type, the proposals in the design types) as usual; the gate covers it there without per-skill edits.
 
 When a new divergence is settled during a sync, add it here.
 

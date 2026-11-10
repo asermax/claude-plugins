@@ -17,9 +17,13 @@ It does not cover how the data reaches the screen, that is a data flow. It does 
 - What each interaction does, and whether the element has any. A static element is a valid answer.
 - What the user sees when the data is absent or the rule that derives it returns nothing.
 
+## The visual direction
+
+Before the first prototype, check whether the product's visual direction (palette, icons, logo, fonts, and the other decisions that hold across screens) is already settled. Look in the project's design system note, where the charter puts it, and in the exploration's decision log. When it is settled, the prototypes use it. When it is missing or partial, settle the missing pieces in this branch first, through mahou:prototype's visual-direction variant. Each pick is a leaf of the branch. When the branch is recorded, write the picks to the design system note.
+
 ## Representation
 
-A prototype, built and iterated through mahou:prototype, whose states are the branch's states and whose interactions are the branch's interactions. Load that skill when the branch opens; it carries how the file is built and iterated.
+A prototype, built and iterated through mahou:prototype's screen-element variant, whose states are the branch's states and whose interactions are the branch's interactions. Load that skill when the branch opens; it carries how the file is built and iterated.
 
 When a prototype already exists from the exploration, it is the starting point and not the representation. Before the branch renders, ask `prototype` to reconcile the file against the settled leaves, so every leaf that departs from the picture is applied and named.
 

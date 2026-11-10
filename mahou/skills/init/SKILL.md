@@ -42,9 +42,11 @@ Ask in plain prose, one round at a time, and propose rather than asking an open 
 
    Say that the folders are the project's to add to, rename or remove afterwards.
 
-4. **Whether the docs folder is also an Obsidian vault.** Offer it, with no as the default. When yes, the Obsidian config directory goes in `.gitignore` with its one-line reason (its contents are per-person), and the user is told to point the Templates core plugin at `_templates/` by hand once. Everything seeded renders the same on GitHub and in Obsidian either way.
+4. **Whether the project has screens or a site that a person sees.** When it does, propose that its design system note, the visual direction and the rules that hold across screens, lives in the folder for *what it is for*, as `design-system.md`, and confirm the folder. Skip it when the project has no screens or site.
 
-5. **The commands.** Detect from the lockfile or manifest (never infer a package manager from a language) and confirm separately how to run the thing and what must be green before a change is done. Skip when `AGENTS.md` already carries them.
+5. **Whether the docs folder is also an Obsidian vault.** Offer it, with no as the default. When yes, the Obsidian config directory goes in `.gitignore` with its one-line reason (its contents are per-person), and the user is told to point the Templates core plugin at `_templates/` by hand once. Everything seeded renders the same on GitHub and in Obsidian either way.
+
+6. **The commands.** Detect from the lockfile or manifest (never infer a package manager from a language) and confirm separately how to run the thing and what must be green before a change is done. Skip when `AGENTS.md` already carries them.
 
 ## 3. Write the docs
 

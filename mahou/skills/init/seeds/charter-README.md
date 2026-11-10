@@ -31,6 +31,8 @@ Every note carries `title` and `summary`, plus `created`. The summary is what sh
 
 `invariants.md`, at the root of this folder, lists the rules every change respects. The mahou skills read it before settling or proposing anything and check each decision against it. Add a rule when it holds beyond the change that surfaced it, and link the note that explains it when the reason needs more than a sentence.
 
+<<DESIGN_SYSTEM_SECTION>>
+
 ## How to write a note
 
 **A note explains how one part works.** It opens with an overview a reader can stop after, then the mechanism: the shape of the data, what calls what, in what order, with a diagram when the subject is a flow, a tree or a sequence. A reader should be able to hold that part of the system in their head without opening `<<CODE>>` first.

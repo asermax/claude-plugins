@@ -18,6 +18,7 @@ These files are **seed material**: once written, they belong to the project, and
 | `invariants.md` | `<<DOCS>>/invariants.md` | once |
 | `folder-README.md` | `<<DOCS>>/<<FOLDER>>/README.md` | **once per note folder** |
 | `template-note.md` | `<<DOCS>>/_templates/note.md` | once |
+| `design-system.md` | `<<DOCS>>/<<DESIGN_FOLDER>>/design-system.md` | once, only when the project has screens or a site that a person sees |
 
 The per-folder seed is what makes an arbitrary number of project-chosen folders work. **There is no built-in set of note folders anywhere in this plugin**: there are only instantiations of that one file.
 
@@ -33,6 +34,8 @@ Docs-wide, decided once in the interview:
 | `<<DOCS>>` | The docs directory, relative to the repository root (for example `docs`) |
 | `<<FOLDER_ROWS>>` | The rows of the charter's folder table, one per note folder. Leave `_templates` out: the charter explains it in prose directly below the table |
 | `<<FOLDER_SPLIT>>` | A paragraph naming the seam between the note folders and giving **one worked example from this project** of a subject that could look like either and belongs on one side. Without a concrete example the rule does not survive contact with a real note. With a single folder, one sentence saying every note goes there |
+| `<<DESIGN_FOLDER>>` | The note folder that holds the design system note, from the interview |
+| `<<DESIGN_SYSTEM_SECTION>>` | When the project has screens or a site that a person sees, the section in "The design system section" below with `<<DESIGN_FOLDER>>` filled in; otherwise nothing, and init removes the blank line the token leaves |
 | `<<CODE>>` | The code roots a reader would otherwise open, for the charter's "without opening" sentence (for example `src/`) |
 
 Per note folder, in `folder-README.md`:
@@ -42,6 +45,14 @@ Per note folder, in `folder-README.md`:
 | `<<FOLDER>>` | The directory name |
 | `<<HOLDS>>` | What this folder holds, as a **lowercase noun phrase with no full stop**: `the shape of the system and how each part works`. It is read into a sentence in two places and into the charter's table in a third, so any other form comes out wrong in at least one |
 | `<<DISPLAY>>` | The human name for this folder's index, for example `Technical design` |
+
+## The design system section
+
+```markdown
+## Design system
+
+`<<DESIGN_FOLDER>>/design-system.md` holds the visual direction, made of the palette, icons, logo and fonts. It also holds the rules that hold across every screen, such as how modals and confirmations behave. Screens and their notes use it rather than restating it. The mahou skills read it before prototyping a screen and write a settled pick into it when mahou:design records a design. A rule a change must never break also goes to `invariants.md`, linking back here.
+```
 
 ## Rules while writing
 

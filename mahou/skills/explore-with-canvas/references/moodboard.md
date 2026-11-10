@@ -28,3 +28,7 @@ Write a mockup per need into `mockups/` beside the document; the mockup's kind i
 ## Clustering the direction
 
 When the user has marked what they like, move the winners into a **chosen direction** area: the images they picked, the palette and type pairing that won, and a card naming each settled pick. Settled picks go to the decision log like any other decision.
+
+## Picking the final options
+
+Once the direction is clustered, show the candidates for each piece of the visual direction (palette, icons, logo, fonts) through mahou:prototype's visual-direction variant, one page per piece, and settle each pick there. The pick goes to the decision log, and add a card naming the pick to the chosen direction area. The prototype rounds can change a pick, for example when the user corrects the chosen logo or asks for a softer palette. Carry each change back to the canvas, so the chosen direction area and its palette, font and style-tile mockups show the final picks, not the first ones.

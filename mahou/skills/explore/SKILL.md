@@ -32,7 +32,7 @@ The user builds the understanding. You bring facts on demand. You edit nothing, 
 
 3. Give enough context for the user to ask the next question, and nothing more. Do not answer questions they have not asked.
 
-4. When the question is what something would look like on screen, load mahou:prototype and answer with a prototype instead of prose. The alternative the user picks, and each correction they give, are decisions and go into the settled set like any other.
+4. When the question is what something would look like on screen, load mahou:prototype and answer with a prototype in its screen-element variant instead of prose. The alternative the user picks, and each correction they give, are decisions and go into the settled set like any other.
 
 5. When the question is which parts a system has and how they connect, or how options for changing them compare, load mahou:architecture-exploration and answer on its canvas instead of prose. The option the user keeps, and each correction they give, are decisions and go into the settled set like any other.
 

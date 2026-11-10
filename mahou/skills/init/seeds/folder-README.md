@@ -13,7 +13,3 @@ One row per note, kept by hand: adding a note here is part of writing it.
 
 | Note | Explains |
 |---|---|
-
-## What has no note yet
-
-Honest gaps, so nobody assumes coverage that is not there. Name the part, and say where its behaviour is currently documented instead: in code comments, in a commit message, or nowhere.

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { GREEN, HAND, INK, LINE, MONO, MUTED, PAPER, RED, sketchBorder } from './theme'
 
@@ -22,6 +22,16 @@ export interface CodeSnippetProps {
   view: 'unified' | 'split' | 'code'
   expanded: number[]
 }
+
+interface NotesLayout {
+  tops: number[]
+  lines: number[]
+  height: number
+  clipped: number[]
+}
+
+const sameLayout = (a: NotesLayout, b: NotesLayout) =>
+  a.height === b.height && a.tops.join() === b.tops.join() && a.lines.join() === b.lines.join() && a.clipped.join() === b.clipped.join()
 
 const MARK_BG: Record<CodeLine['mark'], string> = {
   same: 'transparent',
@@ -88,18 +98,24 @@ const splitRows = (lines: CodeLine[]) => {
   return rows
 }
 
-// In the code view the lines are a plain file, not a diff: no mark colours and no struck-through lines
-const Cell = ({ line, number, rules, plain = false }: { line: CodeLine | null; number: number | null; rules: Highlight[]; plain?: boolean }) =>
-  line == null ? (
-    <div style={{ flex: 1, minWidth: 0, background: '#f8f9fa' }}>&nbsp;</div>
-  ) : (
+// In the code view the lines are a plain file, not a diff: no mark colours and no struck-through lines. A line too
+// long for the column wraps instead of being cut, its continuation indented two characters past the line's own
+// indent, and the notes follow the taller row.
+const Cell = ({ line, number, rules, plain = false }: { line: CodeLine | null; number: number | null; rules: Highlight[]; plain?: boolean }) => {
+  if (line == null) return <div style={{ flex: 1, minWidth: 0, background: '#f8f9fa' }}>&nbsp;</div>
+
+  const indent = line.text.match(/^ */)?.[0].length ?? 0
+  const text = line.text.slice(indent)
+
+  return (
     <div style={{ display: 'flex', flex: 1, minWidth: 0, background: plain ? 'transparent' : MARK_BG[line.mark] }}>
       <span style={{ width: 30, flex: 'none', textAlign: 'right', paddingRight: 8, color: MUTED }}>{line.mark === 'gap' ? '' : number}</span>
-      <span style={{ whiteSpace: 'pre', overflow: 'hidden', color: line.mark === 'gap' ? MUTED : INK, textDecoration: !plain && line.mark === 'remove' ? 'line-through' : 'none' }}>
-        {line.mark === 'gap' ? '⋯' : !plain && line.mark === 'remove' ? line.text : colorize(line.text, rules)}
+      <span style={{ flex: 1, minWidth: 0, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', paddingLeft: `${indent + 2}ch`, textIndent: '-2ch', color: line.mark === 'gap' ? MUTED : INK, textDecoration: !plain && line.mark === 'remove' ? 'line-through' : 'none' }}>
+        {line.mark === 'gap' ? '⋯' : !plain && line.mark === 'remove' ? text : colorize(text, rules)}
       </span>
     </div>
   )
+}
 
 const Toggle = ({ view, onChange }: { view: 'unified' | 'split'; onChange: (view: 'unified' | 'split') => void }) => (
   <span style={{ marginLeft: 'auto', display: 'flex', ...sketchBorder(MUTED), borderRadius: 999, overflow: 'hidden', fontSize: 12 }}>
@@ -116,34 +132,55 @@ const Toggle = ({ view, onChange }: { view: 'unified' | 'split'; onChange: (view
   </span>
 )
 
-// Notes sit beside their line without making it taller. A note starts at its line's top, or under the previous note
-// when the two would overlap, and the box grows to hold the last one. A note longer than two lines shows two lines
-// and a "more…" that expands it.
+// Notes sit beside their line without making it taller, each starting at its line's top so it stays on that line.
+// A note takes at most two lines, and fewer when the next note's line starts sooner; text that does not fit shows a
+// "more…" that expands the note over the ones under it. The box grows to hold the lowest note.
+//
+// The layout is measured again whenever the rows or notes change size: a shape first rendered off screen or before
+// its fonts loaded measures every row at the top, and nothing else re-renders it once it is laid out.
 export const CodeSnippet = ({ file, tag, lines, gutterNotes, highlight, view, expanded, update }: CodeSnippetProps & { update: (patch: Partial<CodeSnippetProps>) => void }) => {
   const rowsRef = useRef<HTMLDivElement>(null)
   const notesRef = useRef<HTMLDivElement>(null)
-  const [layout, setLayout] = useState<{ tops: number[]; height: number; clipped: number[] }>({ tops: [], height: 0, clipped: [] })
+  const [layout, setLayout] = useState<NotesLayout>({ tops: [], lines: [], height: 0, clipped: [] })
+  const lineHeight = 17
 
-  useLayoutEffect(() => {
+  const measure = () => {
     if (!gutterNotes || rowsRef.current == null || notesRef.current == null) return
 
     const rows = Array.from(rowsRef.current.children) as HTMLElement[]
     const notes = Array.from(notesRef.current.children) as HTMLElement[]
-    const tops: number[] = []
-    const clipped: number[] = []
-    let floor = 0
+    const topOf = (note: HTMLElement | undefined) => rows.find((row) => row.dataset.line === note?.dataset.line)?.offsetTop ?? null
+    const next: NotesLayout = { tops: [], lines: [], height: 0, clipped: [] }
 
-    notes.forEach((note) => {
-      const row = rows.find((candidate) => candidate.dataset.line === note.dataset.line)
-      const top = Math.max(row?.offsetTop ?? 0, floor)
+    notes.forEach((note, position) => {
+      const top = topOf(note) ?? 0
+      const following = topOf(notes[position + 1])
+      const room = following == null ? Infinity : following - top - 2
+      const allowed = Math.max(1, Math.min(2, Math.floor(room / lineHeight)))
       const text = note.querySelector<HTMLElement>('[data-text]')
+      const isOpen = expanded.includes(Number(note.dataset.line))
 
-      if (text != null && text.scrollHeight > text.clientHeight + 1) clipped.push(Number(note.dataset.line))
-      tops.push(top)
-      floor = top + note.offsetHeight + 6
+      if (text != null && text.scrollHeight > allowed * lineHeight + 1) next.clipped.push(Number(note.dataset.line))
+      next.tops.push(top)
+      next.lines.push(allowed)
+      next.height = Math.max(next.height, top + (isOpen ? note.offsetHeight : allowed * lineHeight) + 6)
     })
 
-    if (tops.join() !== layout.tops.join() || floor !== layout.height || clipped.join() !== layout.clipped.join()) setLayout({ tops, height: floor, clipped })
+    setLayout((previous) => (sameLayout(previous, next) ? previous : next))
+  }
+
+  useLayoutEffect(measure)
+
+  useEffect(() => {
+    if (!gutterNotes || rowsRef.current == null || notesRef.current == null) return
+
+    const observer = new ResizeObserver(() => measure())
+
+    observer.observe(rowsRef.current)
+    Array.from(notesRef.current.children).forEach((note) => observer.observe(note))
+    document.fonts?.ready.then(() => measure())
+
+    return () => observer.disconnect()
   })
 
   const numbers: number[] = []
@@ -154,7 +191,6 @@ export const CodeSnippet = ({ file, tag, lines, gutterNotes, highlight, view, ex
   })
 
   const noted = lines.map((line, index) => ({ line, index })).filter(({ line }) => line.note != null)
-  const lineHeight = 17
 
   return (
     <div data-root style={{ ...sketchBorder(), background: PAPER, fontFamily: MONO, fontSize: 13, color: INK }}>
@@ -187,11 +223,17 @@ export const CodeSnippet = ({ file, tag, lines, gutterNotes, highlight, view, ex
           <div ref={notesRef} style={{ position: 'absolute', top: 0, right: 0, width: 260 }}>
             {noted.map(({ line, index }, position) => {
               const open = expanded.includes(index)
+              const allowed = layout.lines[position] ?? 2
+              const isClipped = layout.clipped.includes(index)
               return (
-                <div key={index} data-line={index} style={{ position: 'absolute', top: layout.tops[position] ?? 0, left: 0, right: 0, paddingLeft: 12, fontFamily: HAND, fontSize: 13, lineHeight: `${lineHeight}px`, color: INK, borderLeft: `2px solid ${INK}` }}>
-                  <div data-text style={{ maxHeight: open ? 'none' : lineHeight * 2, overflow: 'hidden' }}>{line.note}</div>
-                  {open || layout.clipped.includes(index) ? (
-                    <span data-interactive onClick={() => update({ expanded: open ? expanded.filter((item) => item !== index) : [...expanded, index] })} style={{ color: MUTED, fontSize: 12 }}>
+                <div key={index} data-line={index} style={{ position: 'absolute', top: layout.tops[position] ?? 0, left: 0, right: 0, zIndex: open ? 1 : 0, paddingLeft: 12, fontFamily: HAND, fontSize: 13, lineHeight: `${lineHeight}px`, color: INK, background: open ? PAPER : 'transparent', borderLeft: `2px solid ${INK}` }}>
+                  <div data-text style={{ maxHeight: open ? 'none' : lineHeight * allowed, overflow: 'hidden', overflowWrap: 'anywhere' }}>{line.note}</div>
+                  {open || isClipped ? (
+                    <span
+                      data-interactive
+                      onClick={() => update({ expanded: open ? expanded.filter((item) => item !== index) : [...expanded, index] })}
+                      style={open ? { color: MUTED, fontSize: 12 } : { position: 'absolute', right: 0, bottom: 0, paddingLeft: 6, background: PAPER, color: MUTED, fontSize: 12, lineHeight: `${lineHeight}px` }}
+                    >
                       {open ? 'less' : 'more…'}
                     </span>
                   ) : null}

@@ -16,9 +16,9 @@ mahou:basics loads this skill, so every mahou skill has its indexes. When invoke
 2. When a skill or the user asks for a lookup, follow the folders relevant to the question into their indexes, descending one level at a time.
 3. Read only the entries that answer the question.
 4. Report what the entries say, with their verified date. When an entry is old enough that the knowledge may have moved, verify against current documentation before relying on it, and say you did.
-5. Nothing matches. Say so and move on. The gap gets filled through mahou:learn, not mid-task.
+5. Nothing matches. Say so and move on. Do not fill the gap mid-task.
 
-Entries are written by mahou:learn or by the author by hand. This skill reads them; it never writes them.
+This skill reads entries; it never writes them.
 
 ## Entry format
 

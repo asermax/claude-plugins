@@ -48,6 +48,7 @@ Entry points and tooling:
 - `mahou:init`. Typed only. Seeds a `docs/` folder the project then owns: a charter, one folder per kind of note with its index, a note template, and a `## Docs` block in `AGENTS.md`. Never overwrites; re-run it to add a folder.
 - `mahou:wiki`. Distilled knowledge about technologies, tools, and their gotchas, indexed for progressive discovery.
 - `mahou:learn`. Typed only. The author's tool. Collects the points where a session generated friction, takes your ask directly, or both, and proposes new or iterated skills, agents, wiki entries and local files.
+- `mahou:distill-to-wiki`. Typed only. Surveys one or several repositories, whole or the part you name, for the technologies they use, the conventions they repeat and the architectural decisions that shape them. Sends a `codebase-surveyor` to any part too large to read in one go and checks what the surveyor returns. Compares each finding with the global and local wiki and reports it as a new global entry, a new local entry, an iteration of an entry, or a contradiction for you to rule on: change the entry, override it locally, or record that the code should be fixed. Drafts the entries you approve and commits nothing.
 
 Asked for by name:
 
@@ -78,6 +79,7 @@ Dispatched by skills, never called directly. Every one writes findings and edits
 - `test-reviewer`: the tests a change adds or changes, dispatched by `agentic-review` when the diff touches tests. In a worktree of its own it breaks the behaviour each test claims, which must fail the test, and restructures only the internals, which must pass it, running each test alone.
 - `usage-tracer`: one changed element, every repository in scope, dispatched by `code-blast-radius`. Reads past grep: the installed library's source, timing and teardown, stored data and feature flags.
 - `code-scout`, `docs-scout`: one question against one repository or the project's docs folder, dispatched through `mahou:lookup` by `explore` and `design-tree`.
+- `codebase-surveyor`: one part of one repository, dispatched by `distill-to-wiki`. Proposes the patterns the part repeats and the decisions that shape it, each with the places that follow it and the places that break it.
 - `researcher`: one question about a library, tool or platform outside the project, answered with facts and sources and no recommendation, dispatched through `mahou:lookup`.
 - `compat-checker`: one service boundary, testing the new side against the deployed other side in both directions, dispatched by `release-check`.
 - `program-design-reviewer`: one proposed part of a program design against the wiki entries and project rule files of its root, before you see the part, dispatched by `program-design` once per part.
@@ -113,7 +115,7 @@ Separately, `.scratch/<change-slug>/` at the project's root holds the artifacts 
 
 ## Growing the toolbox
 
-`mahou:learn` reads a conversation for the points where the user had to steer it (a format change, a request outside the running flow, a correction of something the agent produced) and proposes, ordered by confidence then impact: new skills, iterations on existing ones, agents, wiki entries, and local files. The skills above were brought in from real sessions rather than designed upfront, and the same loop grows them further.
+`mahou:learn` reads a conversation for the points where the user had to steer it (a format change, a request outside the running flow, a correction of something the agent produced) and proposes, ordered by confidence then impact: new skills, iterations on existing ones, agents, wiki entries, and local files. The skills above were brought in from real sessions rather than designed upfront, and the same loop grows them further. `mahou:distill-to-wiki` grows the wiki from what a codebase already does, where `mahou:learn` grows it from what a session had to correct.
 
 ## Installation
 

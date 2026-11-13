@@ -67,7 +67,7 @@ The change's scratch folder holds files such as the decision log, the design tre
 
 Knowledge about technologies and tools, their gotchas and their patterns, lives in mahou:wiki, indexed one level per folder so entries load on demand. Load it now and read its root indexes, global and local, so that you know which topics have entries when they come up in conversation. Read an entry only when the skill you are running says so, or when the user asks for a check against the conventions for a technology. Do not bring an entry's conventions into a question the user has not asked; when a topic with an entry comes up in a decision, say the entry exists and offer to read it.
 
-The wiki is the standard the conventions reviewer measures a change against. mahou:learn writes it.
+The wiki is the standard the conventions reviewer measures a change against. mahou:learn proposes entries from what a session taught, mahou:distill-to-wiki proposes them from what a codebase already does, and the author writes them by hand.
 
 ## The project's docs
 

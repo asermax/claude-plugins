@@ -47,6 +47,7 @@ Renamed pairs:
 | `agents/code-scout.md`, `agents/docs-scout.md` | `dev/agents/repo-scout.md`, `dev/agents/doc-scout.md` |
 | `agents/conventions-reviewer.md` | `experimental-dev/agents/standards-reviewer.md` |
 | `agents/documentation-reviewer.md` | `docs/agents/design-doc-validator.md` |
+| `skills/distill-to-wiki/` | `experimental-dev/skills/distill-to-dev-standards/` (see Deliberate divergences) |
 | `superpowers/skills/unslop/` rules 16, 32 and 34 to 39 | `docs/skills/unslop/` rules 15, 29 and 30 to 34 (16 is Filadd's 15, 32 is 29, 34 is 30, 35 is 31, 36 is 32, 38 is 33, 39 is 34; Filadd has no 37) |
 | `superpowers/skills/mermaid/` | `experimental-dev/skills/mermaid/` (Filadd keeps the Notion shape whitelist, see Deliberate divergences) |
 
@@ -92,6 +93,8 @@ Leave these as they are unless the user asks:
 - mahou's invariants note (read in `basics`, routed to by `learn`) stays out of experimental-dev for now, since Filadd's docs live in Notion and the note has no home there yet.
 - The visual direction stays mahou-only: `prototype`'s visual-direction variant and its split into `references/screen-element.md`, the visual-direction section of `design`'s ui type, the moodboard in `explore-with-canvas` (removed from experimental-dev 2026-11-09) and the design system note. Filadd already has a defined visual direction, so its `prototype` stays one file for screen elements and its ui type prototypes against that direction.
 - The TLA+ gate in experimental-dev's `basics` is Filadd-only: everything built on TLA+ is off unless `FILADD_USE_TLA_PLUS` is `1`, `true`, `yes` or `on`. mahou keeps it always on. Port TLA+ content (the model-check strategy, the invariants type, the proposals in the design types) as usual; the gate covers it there without per-skill edits.
+
+- `distill-to-wiki` and `distill-to-dev-standards` (paired 2026-11-13) differ in where findings land. mahou splits them into global and local wiki entries and offers a local override for a contradiction; Filadd has one store, so every finding is a `dev-standards` guide section, guide or template, and a contradiction is ruled include or fix the code only. Filadd's adds templates for repeated boilerplate, prepares each repository through `prepare-repo`, and says out loud that its drafts edit `plugins/dev/`. Neither proposes `project-knowledge` or invariants entries. `codebase-surveyor` is the same file on both sides apart from the dispatching skill and `AGENTS.md` versus `CLAUDE.md`.
 
 When a new divergence is settled during a sync, add it here.
 

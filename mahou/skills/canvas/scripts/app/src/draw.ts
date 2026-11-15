@@ -1,10 +1,12 @@
-import { createShapeId, toRichText, type Editor, type TLDefaultColorStyle, type TLShape, type TLShapeId, type VecLike } from 'tldraw'
+import { createShapeId, toRichText, type Editor, type TLCreateShapePartial, type TLDefaultColorStyle, type TLShape, type TLShapeId, type VecLike } from 'tldraw'
 import { definitionOf } from './MockShape'
 import { stepOf } from './step'
 
 type Place = { x: number; y: number; w: number }
 
 type Into = { into?: string }
+
+type Range = { x: number; maxX: number }
 
 type TextOptions = Partial<Place> & Into & { text: string; mono?: boolean; size?: 's' | 'm' | 'l' }
 
@@ -62,6 +64,7 @@ const CARD_PADDING = 20
 const GAP = 20
 const AREA_PADDING = 40
 const AREA_GAP = 60
+const EDGE_TOLERANCE = 1
 const NOTE_LABEL = 'Agent\n\n'
 const LABEL_SPACE = 60
 const FLOW_GAP = 30
@@ -118,6 +121,8 @@ export const drawOf = (editor: Editor) => {
   const topLevel = () =>
     editor.getCurrentPageShapes().filter((shape) => shape.parentId === editor.getCurrentPageId() && !isPart(shape))
 
+  const areas = () => topLevel().filter(isArea)
+
   const overlapsX = (a: TLShape, b: TLShape) => {
     const one = editor.getShapePageBounds(a)!
     const other = editor.getShapePageBounds(b)!
@@ -125,98 +130,139 @@ export const drawOf = (editor: Editor) => {
     return one.x < other.maxX && one.maxX > other.x
   }
 
-  const encloses = (outer: TLShape, inner: TLShape) => {
-    const one = editor.getShapePageBounds(outer)!
-    const other = editor.getShapePageBounds(inner)!
+  const within = (inner: Range, outer: Range) => outer.x <= inner.x + EDGE_TOLERANCE && outer.maxX >= inner.maxX - EDGE_TOLERANCE
 
-    return one.x <= other.x && one.maxX >= other.maxX && one.y <= other.y && one.maxY >= other.maxY
-  }
+  // The one definition of a column, for pushing and for resize: one area's left and right edges sit inside the other's
+  const sameColumn = (a: Range, b: Range) => within(a, b) || within(b, a)
 
-  // An area strictly inside another's left and right edges belongs to that area even when the inner area starts below
-  // the outer area's bottom edge. The areas of one column share their width, so only a nested area is narrower than
-  // the area above it
-  const parentOf = (area: TLShape) => {
-    const inner = editor.getShapePageBounds(area)!
+  // The innermost area whose bounds hold the whole shape. An area counts as inside another only strictly between its
+  // left and right edges: the areas of one column share their width and are never nested
+  const containerOf = (shape: TLShape) => {
+    const inner = editor.getShapePageBounds(shape)!
 
-    return topLevel()
-      .filter((other) => isArea(other) && other.id !== area.id)
-      .filter((other) => {
-        const outer = editor.getShapePageBounds(other)!
+    return areas()
+      .filter((area) => area.id !== shape.id)
+      .filter((area) => {
+        const outer = editor.getShapePageBounds(area)!
+        const holdsWidth = isArea(shape) ? outer.x < inner.x - 0.5 && outer.maxX > inner.maxX + 0.5 : within(inner, outer)
 
-        return outer.x < inner.x - 0.5 && outer.maxX > inner.maxX + 0.5 && outer.y <= inner.y + 1
+        return holdsWidth && outer.y <= inner.y + EDGE_TOLERANCE && outer.maxY >= inner.maxY - EDGE_TOLERANCE
       })
-      .sort((a, b) => editor.getShapePageBounds(b)!.y - editor.getShapePageBounds(a)!.y)[0]
+      .sort((a, b) => {
+        const one = editor.getShapePageBounds(a)!
+        const other = editor.getShapePageBounds(b)!
+
+        return one.w - other.w || other.y - one.y
+      })[0]
   }
 
-  const isInside = (area: TLShape, outer: TLShape): boolean => {
-    const parent = parentOf(area)
+  // `meta.area` records the area a shape belongs to: the area's name, or null for none
+  const record = (shape: TLShape, area: TLShape | undefined) =>
+    editor.updateShape({ id: shape.id, type: shape.type, meta: { area: area == null ? null : nameOf(area) } })
 
-    return parent != null && (parent.id === outer.id || isInside(parent, outer))
-  }
+  // A new shape joins the area named with `into` at once. Without `into` it joins the area that holds it whole, which
+  // `settle` reads once the helper has given the shape its height, and belongs to none until then
+  const adopt = (name: string, into?: string) => record(editor.getShape(id(name))!, into == null ? undefined : editor.getShape(id(into)))
 
-  const nestedOf = (area: TLShape) => topLevel().filter((other) => isArea(other) && parentOf(other)?.id === area.id)
+  const settle = (name: string, into?: string) => {
+    const shape = editor.getShape(id(name))!
 
-  // What moves with an area: its shapes, and each area nested in it with that area's own shapes
-  const withContents = (area: TLShape): TLShape[] => [area, ...contentsOf(area), ...nestedOf(area).flatMap(withContents)]
-
-  // A shape belongs to the innermost area that holds its top edge. When none holds it, it belongs to the lowest area of
-  // its column whose top edge is above it, so a shape placed under an area that has not grown yet still belongs to that
-  // area; an area nested inside another is left out there, or a shape placed under a nested area would grow it
-  const ownerOf = (shape: TLShape) => {
-    const top = editor.getShapePageBounds(shape)!
-
-    const above = topLevel()
-      .filter((area) => isArea(area) && area.id !== shape.id && overlapsX(area, shape))
-      .filter((area) => editor.getShapePageBounds(area)!.y <= top.y + 1)
-
-    const holding = above.filter((area) => editor.getShapePageBounds(area)!.maxY >= top.y)
-
-    const candidates =
-      holding.length > 0
-        ? holding
-        : above.filter((area) => !above.some((other) => other.id !== area.id && encloses(other, area)))
-
-    // An area that spans the shape's whole width wins over one that only overlaps its side: when areas of different
-    // widths overlap, the lower one would otherwise take shapes that sit inside the one above
-    const spans = (area: TLShape) => {
-      const outer = editor.getShapePageBounds(area)!
-
-      return outer.x <= top.x + 1 && outer.maxX >= top.maxX - 1 ? 1 : 0
+    if (into == null) {
+      record(shape, containerOf(shape))
     }
 
-    return candidates.sort((a, b) => spans(b) - spans(a) || editor.getShapePageBounds(b)!.y - editor.getShapePageBounds(a)!.y)[0]
+    fitAreaOf(name)
   }
+
+  // The area a shape, or a nested area, belongs to. The record wins. A shape without one, drawn by hand or before
+  // shapes carried a record, belongs to the area that holds it now; so does a shape whose recorded area was deleted
+  const areaOf = (shape: TLShape) => {
+    const recorded = shape.meta.area as string | null | undefined
+
+    if (recorded === null) {
+      return undefined
+    }
+
+    const area = recorded == null ? undefined : editor.getShape(id(recorded))
+
+    return area != null && isArea(area) && area.id !== shape.id ? area : containerOf(shape)
+  }
+
+  // `seen` stops at a loop, which a record and a hand-made resize can form between two areas
+  const isInside = (area: TLShape, outer: TLShape, seen: Set<string> = new Set()): boolean => {
+    const parent = areaOf(area)
+
+    if (parent == null || seen.has(parent.id)) {
+      return false
+    }
+
+    return parent.id === outer.id || isInside(parent, outer, seen.add(parent.id))
+  }
+
+  const nestedOf = (area: TLShape) => areas().filter((other) => other.id !== area.id && areaOf(other)?.id === area.id)
+
+  // What moves with an area: its shapes, and each area nested in it with that area's own shapes
+  const withContents = (area: TLShape, seen: Set<string> = new Set()): TLShape[] =>
+    seen.has(area.id) ? [] : [area, ...contentsOf(area), ...nestedOf(area).flatMap((nested) => withContents(nested, seen.add(area.id)))]
 
   // An arrow bound to shapes follows them on its own, so it belongs to no area. Counted as content, an arrow that spans
   // rows would grow the area to the arrow's far end, which moves the rows below, which stretches the arrow, without end
   const isBoundArrow = (shape: TLShape) => shape.type === 'arrow' && editor.getBindingsFromShape(shape, 'arrow').length > 0
 
   const contentsOf = (area: TLShape) =>
-    topLevel().filter((shape) => !isArea(shape) && !isBoundArrow(shape) && ownerOf(shape)?.id === area.id)
+    topLevel().filter((shape) => !isArea(shape) && !isBoundArrow(shape) && areaOf(shape)?.id === area.id)
 
-  // The shapes that sit under a shape and move when it grows: the next areas of its column inside the same parent area,
-  // each with its contents, or the shapes under it inside the same area. The areas past the parent move when the parent
-  // refits. `own` holds the grown area's contents, which can already sit lower
-  // than the next area's top and would otherwise count as that area's
-  const under = (shape: TLShape, bottom: number, own: Set<string> = new Set()) => {
-    const owner = isArea(shape) ? undefined : ownerOf(shape)
+  // The shapes that sit under a shape inside the same area and move when its height changes
+  const under = (shape: TLShape, bottom: number) => {
+    const owner = areaOf(shape)
 
     return topLevel()
-      .filter((other) => other.id !== shape.id && !own.has(other.id) && !isBoundArrow(other) && isArea(other) === isArea(shape) && overlapsX(other, shape))
+      .filter((other) => other.id !== shape.id && !isArea(other) && !isBoundArrow(other) && overlapsX(other, shape))
       .filter((other) => editor.getShapePageBounds(other)!.y >= bottom - 1)
-      .filter((other) => isArea(other) || ownerOf(other)?.id === owner?.id)
-      .filter((other) => !isArea(shape) || (!isInside(other, shape) && parentOf(other)?.id === parentOf(shape)?.id))
-      .flatMap((other) => (isArea(other) ? withContents(other).filter((inner) => !own.has(inner.id)) : [other]))
+      .filter((other) => areaOf(other)?.id === owner?.id)
   }
 
-  // Every height change goes through here: what sits under the shape moves by as much, and the area holding the
-  // shape grows or shrinks to keep its margin
-  const setHeight = (name: string, h: number, own?: Set<string>) => {
+  // The areas an area can push: those inside the same parent area, each with what moves with it, read before anything
+  // moves. The areas past the parent move when the parent refits. `own` holds the grown area's contents, which can
+  // already sit lower than the next area's top
+  const pushable = (area: TLShape, own: Set<string>) => {
+    const parent = areaOf(area)
+
+    return areas()
+      .filter((other) => other.id !== area.id && !own.has(other.id) && areaOf(other)?.id === parent?.id)
+      .map((other) => ({ box: editor.getShapePageBounds(other)!, members: withContents(other).filter((inner) => !own.has(inner.id)) }))
+      .sort((a, b) => a.box.y - b.box.y)
+  }
+
+  // An area that grew by `dy` moves only the areas under it in its column, and each of those moves the areas under
+  // itself the same way. An area moves by the part of the growth that the space above it, down to the gap between
+  // areas, does not absorb. An area that shrank moves none
+  const pushAreas = (before: Range & { y: number; maxY: number }, dy: number, others: ReturnType<typeof pushable>) => {
+    const settled = [{ box: before, shift: Math.max(dy, 0) }]
+
+    for (const { box, members } of others) {
+      const above = settled.filter((each) => sameColumn(each.box, box) && box.y >= each.box.maxY - 1)
+      const shift = Math.max(0, ...above.map((each) => Math.min(each.shift, each.box.maxY + each.shift + AREA_GAP - box.y)))
+
+      settled.push({ box, shift })
+
+      if (shift > 0) {
+        for (const member of members) {
+          moveBy(editor.getShape(member.id)!, 0, shift)
+        }
+      }
+    }
+  }
+
+  // Every height change goes through here: what sits under the shape moves, and the area holding the shape grows or
+  // shrinks to keep its margin. `before` is the shape's bounds from before the change, for a caller whose change
+  // already made tldraw resize the shape, such as a card's new text
+  const setHeight = (name: string, h: number, own: Set<string> = new Set(), before = bounds(name)) => {
     const shape = editor.getShape(id(name))!
-    const before = bounds(name)
-    const owner = isArea(shape) ? undefined : ownerOf(shape)
-    const siblings = owner == null ? undefined : contentsOf(owner)
-    const moving = under(shape, before.maxY, own)
+    const owner = areaOf(shape)
+    const siblings = owner == null || isArea(shape) ? undefined : [...contentsOf(owner), ...nestedOf(owner)]
+    const moving = isArea(shape) ? [] : under(shape, before.maxY)
+    const pushed = isArea(shape) ? pushable(shape, own) : []
 
     editor.updateShape({ id: shape.id, type: shape.type, props: { h, ...(shape.type === 'geo' ? { growY: 0 } : {}) } })
 
@@ -226,21 +272,16 @@ export const drawOf = (editor: Editor) => {
       moveBy(editor.getShape(other.id)!, 0, dy)
     }
 
+    pushAreas(before, dy, pushed)
+
     if (owner != null) {
       fitAreaShape(owner, siblings)
-    }
-
-    const parent = isArea(shape) ? parentOf(shape) : undefined
-
-    if (parent != null) {
-      fitAreaShape(parent)
     }
 
     return h
   }
 
-  // `held` is the area's contents, collected before anything moved: a shape pushed down by a sibling can sit below
-  // the next area's top until this area grows
+  // `held` is the area's contents, collected before anything moved
   const fitAreaShape = (area: TLShape, held = [...contentsOf(area), ...nestedOf(area)]) => {
     const outer = editor.getShapePageBounds(area)!
     const bottoms = held.map((shape) => editor.getShapePageBounds(shape.id)!.maxY)
@@ -250,17 +291,11 @@ export const drawOf = (editor: Editor) => {
     }
   }
 
-  // A shape belongs to the area that holds its top edge, so the area grows before the shape is created: a shape placed
-  // past the area's bottom would belong to the area around it
-  const makeRoom = (into: string | undefined, y: number, h: number) => {
-    if (into == null) {
-      return
-    }
+  const fitAreaOf = (name: string) => {
+    const owner = areaOf(editor.getShape(id(name))!)
 
-    const outer = bounds(into)
-
-    if (y + h + AREA_PADDING > outer.maxY) {
-      setHeight(into, y + h + AREA_PADDING - outer.y)
+    if (owner != null) {
+      fitAreaShape(owner)
     }
   }
 
@@ -273,7 +308,7 @@ export const drawOf = (editor: Editor) => {
   }
 
   // tldraw measures a text, and a mockup draws its root, only once the shape is on screen, so fit zooms to it first
-  const fit = async (name: string) => {
+  const fitShape = async (name: string, before?: ReturnType<typeof bounds>) => {
     const shape = editor.getShape(id(name))!
 
     if (isArea(shape)) {
@@ -327,17 +362,15 @@ export const drawOf = (editor: Editor) => {
       const textHeight = label.getBoundingClientRect().height / editor.getZoomLevel() + 2 * CARD_PADDING
       const partsHeight = parts.length === 0 ? 0 : Math.max(...parts) - bounds(name).y + CARD_PADDING
 
-      return setHeight(name, Math.max(textHeight, partsHeight))
+      return setHeight(name, Math.max(textHeight, partsHeight), undefined, before)
     }
 
-    const owner = ownerOf(shape)
-
-    if (owner != null) {
-      fitAreaShape(owner)
-    }
+    fitAreaOf(name)
 
     return bounds(name).h
   }
+
+  const fit = (name: string) => fitShape(name)
 
   // A wider area widens every area of its column and moves the columns to its right by as much
   const resize = (name: string, { h, w }: { h?: number; w?: number }) => {
@@ -347,14 +380,8 @@ export const drawOf = (editor: Editor) => {
       const before = bounds(name)
       const dx = w - before.w
 
-      // The column is the top-level areas sharing this area's left edge. Areas nested inside one keep their own width,
-      // and an area beside a narrower one in the column is not part of it
-      const column =
-        parentOf(shape) == null
-          ? topLevel().filter(
-              (other) => isArea(other) && parentOf(other) == null && Math.abs(editor.getShapePageBounds(other)!.x - before.x) < 1,
-            )
-          : [shape]
+      // The column is the top-level areas of this area's column. Areas nested inside one keep their own width
+      const column = areaOf(shape) == null ? areas().filter((other) => areaOf(other) == null && sameColumn(editor.getShapePageBounds(other)!, before)) : [shape]
 
       // What moves right: the shapes past the column's right edge, and those that start past the right edge of a
       // narrower column area they sit beside
@@ -418,7 +445,7 @@ export const drawOf = (editor: Editor) => {
 
   // Called with a name that exists, area replaces the label, such as a branch's status, and takes the focus when asked.
   // The new data merges over the old, so a relabel keeps the focus
-  const area = (name: string, { x, y, w, h, label, focus }: Partial<Place> & { h?: number; label: string; focus?: boolean }, pause?: number) =>
+  const area = (name: string, { x, y, w, h, label, focus, into }: Partial<Place> & Into & { h?: number; label: string; focus?: boolean }, pause?: number) =>
     exists(name)
       ? step(
           id(name),
@@ -437,9 +464,9 @@ export const drawOf = (editor: Editor) => {
           },
           pause,
         )
-      : createArea(name, { x: x!, y: y!, w: w!, h: h!, label, isFocus: focus === true }, pause)
+      : createArea(name, { x: x!, y: y!, w: w!, h: h!, label, isFocus: focus === true, into }, pause)
 
-  const createArea = (name: string, { x, y, w, h, label, isFocus }: Place & { h: number; label: string; isFocus: boolean }, pause?: number) =>
+  const createArea = (name: string, { x, y, w, h, label, isFocus, into }: Place & Into & { h: number; label: string; isFocus: boolean }, pause?: number) =>
     step(
       centreOf({ x, y, w }, h),
       () => {
@@ -450,11 +477,8 @@ export const drawOf = (editor: Editor) => {
           unfocusOthers(id(name))
         }
 
-        const parent = parentOf(editor.getShape(id(name))!)
-
-        if (parent != null) {
-          fitAreaShape(parent)
-        }
+        adopt(name, into)
+        settle(name, into)
       },
       pause,
     )
@@ -488,18 +512,20 @@ export const drawOf = (editor: Editor) => {
     })
   }
 
+  const create = (name: string, into: string | undefined, shape: Omit<TLCreateShapePartial, 'id'>) => {
+    editor.createShape({ ...shape, id: id(name) } as TLCreateShapePartial)
+    adopt(name, into)
+  }
+
   const text = async (name: string, { x, y, w, text, mono = false, size = 's', into }: TextOptions, pause?: number) => {
-    if (!exists(name)) {
-      makeRoom(into, y!, 40)
-    }
+    const isNew = !exists(name)
 
     await step(
       exists(name) ? id(name) : { x: x!, y: y! },
       () =>
         exists(name)
           ? update(name, { x, y, w, text })
-          : editor.createShape({
-              id: id(name),
+          : create(name, into, {
               type: 'text',
               x,
               y,
@@ -507,6 +533,10 @@ export const drawOf = (editor: Editor) => {
             }),
       pause,
     )
+
+    if (isNew) {
+      settle(name, into)
+    }
 
     return fit(name)
   }
@@ -535,21 +565,32 @@ export const drawOf = (editor: Editor) => {
 
   const card = async (name: string, options: CardOptions, pause?: number) => {
     const { x, y, w, text, into } = options
-
-    if (!exists(name)) {
-      makeRoom(into, y!, 100)
-    }
+    // tldraw grows a card as soon as its text changes, so the height the card had is read first
+    const before = exists(name) ? bounds(name) : undefined
 
     await step(
       exists(name) ? id(name) : centreOf({ x: x!, y: y!, w: w! }, 100),
-      () => (exists(name) ? update(name, { x, y, w, text }) : createCard(name, options)),
+      () => {
+        if (exists(name)) {
+          update(name, { x, y, w, text })
+        } else {
+          createCard(name, options)
+          adopt(name, into)
+        }
+      },
       pause,
     )
 
-    return fit(name)
+    const h = await fitShape(name, before)
+
+    if (before == null) {
+      settle(name, into)
+    }
+
+    return h
   }
 
-  const note = (name: string, { text, ...place }: Partial<Place> & { text: string }, pause?: number) =>
+  const note = (name: string, { text, ...place }: Partial<Place> & Into & { text: string }, pause?: number) =>
     card(name, { ...place, text: `${NOTE_LABEL}${text}`, color: 'grey', dash: 'dashed', fill: 'none' }, pause)
 
   const plain = (name: string) => {
@@ -589,26 +630,26 @@ export const drawOf = (editor: Editor) => {
   }
 
   // A diagram node keeps the size it is given, unlike a card, which fits its height to its text
-  const box = (name: string, { x, y, w, h, text, geo = 'rectangle', color = 'black', fill = 'semi', dash = 'draw', into }: BoxOptions, pause?: number) => {
-    if (!exists(name)) {
-      makeRoom(into, y, h)
-    }
-
-    return step(
+  const box = (name: string, { x, y, w, h, text, geo = 'rectangle', color = 'black', fill = 'semi', dash = 'draw', into }: BoxOptions, pause?: number) =>
+    step(
       exists(name) ? id(name) : centreOf({ x, y, w }, h),
-      () =>
-        exists(name)
-          ? editor.updateShape({ id: id(name), type: 'geo', props: { richText: toRichText(text) } })
-          : editor.createShape({
-              id: id(name),
-              type: 'geo',
-              x,
-              y,
-              props: { geo, w, h, growY: 0, color, fill, dash, size: 's', font: 'draw', align: 'middle', verticalAlign: 'middle', richText: toRichText(text) },
-            }),
+      () => {
+        if (exists(name)) {
+          editor.updateShape({ id: id(name), type: 'geo', props: { richText: toRichText(text) } })
+
+          return
+        }
+
+        create(name, into, {
+          type: 'geo',
+          x,
+          y,
+          props: { geo, w, h, growY: 0, color, fill, dash, size: 's', font: 'draw', align: 'middle', verticalAlign: 'middle', richText: toRichText(text) },
+        })
+        settle(name, into)
+      },
       pause,
     )
-  }
 
   // Bound to the centres of both shapes, so the arrow follows either one when it moves. Called with a name that exists,
   // it changes only the options given
@@ -659,26 +700,35 @@ export const drawOf = (editor: Editor) => {
       pause,
     )
 
-  const mermaid = async (name: string, { x, y, source }: { x: number; y: number; source: string }, pause?: number) => {
+  const mermaid = async (name: string, { x, y, source, into }: Into & { x: number; y: number; source: string }, pause?: number) => {
+    const isNew = !exists(name)
+
     await step(
       exists(name) ? id(name) : { x, y },
       () =>
         exists(name)
           ? editor.updateShape({ id: id(name), type: 'mock', props: { data: { source } } })
-          : editor.createShape({ id: id(name), type: 'mock', x, y, props: { w: 800, h: 200, kind: 'mermaid', data: { source } } }),
+          : create(name, into, { type: 'mock', x, y, props: { w: 800, h: 200, kind: 'mermaid', data: { source } } }),
       pause,
     )
 
-    return fit(name)
+    const h = await fit(name)
+
+    if (isNew) {
+      settle(name, into)
+    }
+
+    return h
   }
 
   // Every move goes through here: a card's parts and an area's contents travel with the shape, and the area it leaves
-  // and the area it lands in fit their height again
+  // and the area it lands in fit their height again. The shape joins the area that holds it where it lands and belongs
+  // to none when it lands clear of every area; landing across an area's edge, it stays in the area it had
   const move = async (name: string, { x, y }: { x?: number; y?: number }, pause?: number) => {
     const shape = editor.getShape(id(name))!
     const dx = x == null ? 0 : x - shape.x
     const dy = y == null ? 0 : y - shape.y
-    const left = isArea(shape) ? parentOf(shape) : ownerOf(shape)
+    const left = areaOf(shape)
 
     await step(id(name), () => {
       for (const each of isArea(shape) ? withContents(shape) : [shape]) {
@@ -687,7 +737,14 @@ export const drawOf = (editor: Editor) => {
     }, pause)
 
     const moved = editor.getShape(id(name))!
-    const entered = isArea(moved) ? parentOf(moved) : ownerOf(moved)
+    const holder = containerOf(moved)
+    const box = bounds(name)
+
+    if (holder != null || !areas().some((other) => other.id !== moved.id && !isInside(other, moved) && box.collides(editor.getShapePageBounds(other)!))) {
+      record(moved, holder)
+    }
+
+    const entered = areaOf(editor.getShape(id(name))!)
 
     for (const owner of new Set([left?.id, entered?.id])) {
       if (owner != null) {
@@ -696,13 +753,13 @@ export const drawOf = (editor: Editor) => {
     }
   }
 
-  // The area grows to hold the shapes before they move, so none of them lands past its bottom edge, where the next area
-  // down would take it; the areas that held them before fit their height again
+  // The shapes join the area, which grows to hold them before they move; the areas that held them before fit their
+  // height again
   const flow = async (areaName: string, names: string[], { top, gap = FLOW_GAP }: { top?: number; gap?: number } = {}) => {
     const outer = bounds(areaName)
     const start = top ?? outer.y + LABEL_SPACE
     const shapes = names.filter(exists)
-    const previous = new Set(shapes.map((name) => ownerOf(editor.getShape(id(name))!)?.id).filter((owner) => owner != null && owner !== id(areaName)))
+    const previous = new Set(shapes.map((name) => areaOf(editor.getShape(id(name))!)?.id).filter((owner) => owner != null && owner !== id(areaName)))
     const stacked = shapes.reduce((sum, name) => sum + bounds(name).h + gap, 0) - gap
     const others = contentsOf(editor.getShape(id(areaName))!).filter((shape) => !shapes.includes(nameOf(shape)))
     const lowest = Math.max(start + stacked, ...others.map((shape) => editor.getShapePageBounds(shape)!.maxY))
@@ -716,6 +773,7 @@ export const drawOf = (editor: Editor) => {
     for (const name of shapes) {
       const shape = editor.getShape(id(name))!
 
+      record(shape, editor.getShape(id(areaName)))
       moveBy(shape, 0, y - shape.y)
       y += bounds(name).h + gap
     }
@@ -729,20 +787,24 @@ export const drawOf = (editor: Editor) => {
 
   // Called with a name that exists, mock replaces the shape's data and fits its height again
   const mock = async (name: string, { x, y, w = MOCK_WIDTH, kind, data, into }: MockOptions, pause?: number) => {
-    if (!exists(name)) {
-      makeRoom(into, y!, 120)
-    }
+    const isNew = !exists(name)
 
     await step(
       exists(name) ? id(name) : centreOf({ x: x!, y: y!, w }, 120),
       () =>
         exists(name)
           ? editor.updateShape({ id: id(name), type: 'mock', props: { data } })
-          : editor.createShape({ id: id(name), type: 'mock', x, y, props: { w, h: 120, kind, data } }),
+          : create(name, into, { type: 'mock', x, y, props: { w, h: 120, kind, data } }),
       pause,
     )
 
-    return fit(name)
+    const h = await fit(name)
+
+    if (isNew) {
+      settle(name, into)
+    }
+
+    return h
   }
 
   // One test branch drawn whole in one batch: stepping through every box, line and dot would make the user wait for a
@@ -756,7 +818,7 @@ export const drawOf = (editor: Editor) => {
       editor.deleteShapes(topLevel().filter((shape) => shape.id.startsWith(`shape:${name}~${version - 1}-`)).map((shape) => shape.id))
       editor.updateShape({ id: id(name), type: 'mock', props: { data: { label: spec.label } } })
     } else {
-      editor.createShape({ id: id(name), type: 'mock', x, y, props: { w: 1000, h: 400, kind: 'area', data: { label: spec.label } } })
+      editor.createShape({ id: id(name), type: 'mock', x, y, meta: { area: null }, props: { w: 1000, h: 400, kind: 'area', data: { label: spec.label } } })
       editor.sendToBack([id(name)])
     }
 
@@ -771,7 +833,7 @@ export const drawOf = (editor: Editor) => {
     const column: Record<string, number> = {}
 
     const shape = (part: string, props: object, type = 'geo', at: VecLike = { x: 0, y: 0 }) => {
-      editor.createShape({ id: id(`${prefix}${part}`), type, x: at.x, y: at.y, props })
+      editor.createShape({ id: id(`${prefix}${part}`), type, x: at.x, y: at.y, props, meta: { area: name } })
       drawn.push(`${prefix}${part}`)
 
       return bounds(`${prefix}${part}`)
@@ -876,6 +938,10 @@ export const drawOf = (editor: Editor) => {
 
     editor.updateShape({ id: id(name), type: 'mock', props: { w: right + OUTCOME_WIDTH + AREA_PADDING - outer.x } })
     setHeight(name, top - outer.y + AREA_PADDING, new Set(drawn.map(id)))
+
+    if (version === 0) {
+      settle(name)
+    }
 
     return bounds(name)
   }

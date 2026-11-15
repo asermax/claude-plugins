@@ -60,6 +60,16 @@ type ArrowOptions = {
   dash?: 'draw' | 'solid' | 'dashed' | 'dotted'
 }
 
+type PartCard = { name: string; category: 'INPUT' | 'STATE' | 'RESPONSE' | 'OUTPUT'; text: string; tone: 'varied' | 'fixed' | 'output' | 'refused' }
+
+type Part = { name: string; kind: 'code' | 'store' | 'external' | 'actor'; title: string; caption?: string; color?: TLDefaultColorStyle; cards?: PartCard[] }
+
+type PartsSpec = Partial<Place> & Into & { label: string; parts: Part[]; arrows: [from: string, to: string, text: string, options?: ArrowOptions][] }
+
+const PART_WIDTH = 380
+const PART_GAP = 260
+const TONES: Record<PartCard['tone'], TLDefaultColorStyle> = { varied: 'orange', fixed: 'grey', output: 'green', refused: 'red' }
+
 const CARD_PADDING = 20
 const GAP = 20
 const AREA_PADDING = 40
@@ -946,5 +956,42 @@ export const drawOf = (editor: Editor) => {
     return bounds(name)
   }
 
-  return { id, bounds, plain, area, focus, text, card, note, followUp, fit, resize, box, arrow, mermaid, mock, move, flow, classificationTree }
+
+  // One flow of a test design: its parts in call order, each part's variables as cards under it. A store is measured
+  // from its own data-root, so a card under it never covers its title or caption
+  const partsDrawing = async (name: string, { x, y, label, parts, arrows, into }: PartsSpec) => {
+    const place = exists(name) ? bounds(name) : { x: x!, y: y! }
+
+    await area(name, { x: place.x, y: place.y, w: parts.length * (PART_WIDTH + PART_GAP) - PART_GAP + 120, h: 400, label, into })
+
+    for (const [index, part] of parts.entries()) {
+      const px = place.x + 60 + index * (PART_WIDTH + PART_GAP)
+      const py = place.y + 80
+      const varied = (part.cards ?? []).some((partCard) => partCard.tone === 'varied')
+
+      if (part.kind === 'store') {
+        await mock(part.name, { x: px, y: py, w: PART_WIDTH, kind: 'cylinder', data: { title: part.title, caption: part.caption ?? '' }, into: name }, 0)
+      } else {
+        const geo = part.kind === 'external' ? 'cloud' : part.kind === 'actor' ? 'ellipse' : 'rectangle'
+        const color = part.color ?? (part.kind === 'code' ? (varied ? 'orange' : 'green') : 'grey')
+
+        await box(part.name, { x: px, y: py, w: PART_WIDTH, h: 120, geo, color, text: part.title, into: name }, 0)
+      }
+
+      let cy = bounds(part.name).y + bounds(part.name).h + 30
+
+      for (const partCard of part.cards ?? []) {
+        await card(partCard.name, { x: px, y: cy, w: PART_WIDTH, color: TONES[partCard.tone], text: `${partCard.category}\n${partCard.text}`, into: name }, 0)
+        cy = bounds(partCard.name).y + bounds(partCard.name).h + 30
+      }
+    }
+
+    for (const [from, to, text, options] of arrows) {
+      await arrow(`${name}-${from}-${to}`, from, to, { text, ...options }, 0)
+    }
+
+    await fit(name)
+  }
+
+  return { id, bounds, plain, area, focus, text, card, note, followUp, fit, resize, box, arrow, mermaid, mock, move, flow, classificationTree, partsDrawing }
 }

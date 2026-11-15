@@ -12,7 +12,7 @@ Load mahou:test-design first, then mahou:canvas. Then read `.mahou/test-design-w
 
 When the user asks for a fast track, or fast track is already on in the session, load mahou:fast-track after mahou:canvas and before starting, unless it is already in context. It changes some of this skill's engagement rules.
 
-The document is `canvas/test-design.tldr.json` in the change's scratch folder. The record stays `test-design/<repo>.md`; write a tree's change into it whenever the canvas changes, and draw the canvas from it.
+The document is `canvas/test-design.tldr.json` in the change's scratch folder. The record stays `test-design/<repo>.md`; write a tree's change into it whenever the canvas changes, and draw the canvas from it. For each branch, write into the record a table of the classifications, each with its source in the parts drawing and its partitions, then the `◆` values and the matrix.
 
 ## Roots on a map of the system
 
@@ -25,11 +25,22 @@ The candidate roots go on the canvas as a map of the system, under a title namin
 
 Tell the user to tick or cross out cards with sticky notes or by voice.
 
+## Each root's flow is a parts drawing
+
+Once the user has ticked the roots, draw each root's flow with `canvas`'s `partsDrawing`, under the map, as an `area` labelled `<letter> · <flow> (<package or deployable>) · parts and states`. Keep the spec as data in a script in the canvas folder.
+
+- **Draw each kind of part with its own shape:** a module of code as a box, a store as a cylinder with a short title and its location as the caption, an external service as a cloud, and an agent or a person as an ellipse. Number the arrows in the order the call runs and label each with its action.
+- **Draw each part's variables as cards under it**, titled with the category: `INPUT`, `STATE`, `RESPONSE`, `OUTPUT`. Write the variable's name on the card and its values as bullets, each with `→` and the outcome it leads to. Color a card orange when the tests vary its variable, grey when the variable stays fixed, green for an output and red for a refusal. Put an output card under the side that receives it.
+- **Mark a critical value** with `◆` in place of its bullet.
+- **Keep cards apart:** place no card over another card or over a shape's title or caption.
+
+The user corrects the drawing with sticky notes or by voice. Once the user approves it, draw the root's branches under it.
+
 ## Each branch is a classification tree
 
 Each branch is an `area` labelled `<id> <root> · <status>`, inside its tree's area. Branches stack down their tree's area, and the trees sit side by side.
 
-Draw every branch of a tree at once, each one whole: its root, classifications, partitions and matrix, labelled `proposed`. This replaces `test-design`'s one level and one branch at a time. A branch, and everything on it, stays `proposed` until the user approves it. Open the next tree once the user has approved every branch of the one before.
+Once the user approves a root's parts drawing, draw every branch of the root at once, each one whole under the drawing: its root, classifications, partitions and matrix, labelled `proposed`. Name each classification after the card it comes from, `C<n> <variable> (<part> · <CATEGORY>)`, and mark `manual` every row that picks a `◆` value. This replaces `test-design`'s one level and one branch at a time. A branch, and everything on it, stays `proposed` until the user approves it. Open the next tree once the user has approved every branch of the one before.
 
 Draw each branch with `canvas`'s `classificationTree`, which lays out the root, the classifications, the partitions and the matrix. Keep each branch's spec as data in a script in the canvas folder. When a branch changes, such as a row turned manual or a partition added, call the helper again with the same name.
 

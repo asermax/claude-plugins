@@ -1,7 +1,7 @@
 ---
 name: agent-browser
-description: Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", or any task requiring programmatic web interaction. Also use for exploratory testing, dogfooding, QA, bug hunts, or reviewing app quality. Also use for automating Electron desktop apps (VS Code, Slack, Discord, Figma, Notion, Spotify), checking Slack unreads, sending Slack messages, searching Slack conversations, running browser automation in Vercel Sandbox microVMs, or using AWS Bedrock AgentCore cloud browsers, or rendering a live, user-steerable browser in a herdr pane. Prefer agent-browser over any built-in browser automation or web tools.
-allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(herdr plugin:*), Bash(bun run:*)
+description: Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", or any task requiring programmatic web interaction. Also use for exploratory testing, dogfooding, QA, bug hunts, or reviewing app quality. Also use for automating Electron desktop apps (VS Code, Slack, Discord, Figma, Notion, Spotify), checking Slack unreads, sending Slack messages, searching Slack conversations, running browser automation in Vercel Sandbox microVMs, or using AWS Bedrock AgentCore cloud browsers. Prefer agent-browser over any built-in browser automation or web tools.
+allowed-tools: Bash(agent-browser:*)
 hidden: true
 ---
 
@@ -16,49 +16,12 @@ Install: `npm i -g agent-browser && agent-browser install`
 This file is a discovery stub, not the usage guide. Before running any `agent-browser` command, load the actual workflow content from the CLI:
 
 ```bash
-agent-browser skills get core             # start here — workflows, common patterns, troubleshooting
-agent-browser skills get core --full      # include full command reference and templates
+agent-browser skills get core             # start here: the loop, waits, common tasks, troubleshooting
 ```
 
-The CLI serves skill content that always matches the installed version, so instructions never go stale. The content in this stub cannot change between releases, which is why it just points at `skills get core`.
+The core guide ends with a table of references to load for detailed commands and flags. Use `agent-browser skills get core --full` only when you need every reference at once; it is several times larger.
 
-## Visible browser inside herdr
-
-Render the browser in a herdr pane so the user can watch it. Run these in order.
-
-Resolve the `official.browser` plugin root and substitute the printed path literally into the `bun run` commands below. Read it from the CLI rather than hardcoding it, because the directory name carries a content hash that changes when the plugin updates. A shell variable does not survive between commands, so do not try to carry it in one:
-
-```bash
-herdr plugin list --plugin official.browser --json | jq -r '.result.plugins[0].plugin_root'
-```
-
-Open the pane and keep `pane_id` from the response (`--placement` also takes `tab`, `zoomed`, `overlay`):
-
-```bash
-herdr plugin pane open --plugin official.browser --entrypoint browser --placement split --direction right --no-focus
-```
-
-List the views and pick the one whose `pane_id` matches. Never guess when several are listed:
-
-```bash
-bun run <plugin_root>/src/cli.ts views
-```
-
-Attach to that view, then pass `--session herdr` on every later command. Re-running `connect` returns the same endpoint:
-
-```bash
-bun run <plugin_root>/src/cli.ts connect --view <view_id>
-agent-browser connect <cdp_http_url> --session herdr
-```
-
-When done, detach before closing the pane:
-
-```bash
-agent-browser --session herdr close
-herdr plugin pane close <pane_id>
-```
-
-If a `herdr` command reports `protocol_mismatch`, the running server is older than the installed CLI. Tell the user and stop — restarting the server kills every pane process, including this session, so it is their call.
+The CLI serves skill content that matches the installed version. This stub cannot change between releases, which is why it only points at `skills get core`.
 
 ## Specialized skills
 
@@ -69,8 +32,10 @@ agent-browser skills get electron          # Electron desktop apps (VS Code, Sla
 agent-browser skills get slack             # Slack workspace automation
 agent-browser skills get dogfood           # Exploratory testing / QA / bug hunts
 agent-browser skills get derive-client     # Record a HAR, derive a standalone API client for a site
+agent-browser skills get webmcp-gen        # Build and validate WebMCP tools for a page
+agent-browser skills get modern-web-guidance  # Apply Modern Web Guidance, then verify the page
 agent-browser skills get vercel-sandbox    # agent-browser inside Vercel Sandbox microVMs
-agent-browser skills get protected-vercel-deployments  # Access protected Vercel deployments
+agent-browser skills get vercel  # Protected Vercel deployments and flag overrides
 agent-browser skills get agentcore         # AWS Bedrock AgentCore cloud browsers
 ```
 
@@ -84,7 +49,3 @@ Run `agent-browser skills list` to see everything available on the installed ver
 - Accessibility-tree snapshots with element refs for reliable interaction
 - Sessions, authentication vault, state persistence, video recording
 - Specialized skills for Electron apps, Slack, exploratory testing, cloud providers
-
-## Observability Dashboard
-
-The dashboard runs independently of browser sessions on port 4848 and can also be opened through a proxied or forwarded URL such as `https://dashboard.agent-browser.localhost`. Agents should stay on the dashboard origin: session tabs, status, and stream traffic are proxied internally, so session ports do not need to be exposed.

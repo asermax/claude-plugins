@@ -96,7 +96,6 @@ Plugin-side customizations to be aware of:
 
 - **All skills**: use the `superpowers:` namespace prefix for any cross-skill reference
 - **systematic-debugging**: removed references to skills not bundled here (`defense-in-depth`, `condition-based-waiting`, `verification-before-completion`)
-- **agent-browser**: local-only `## Visible browser inside herdr` section plus two extra `allowed-tools` entries — always a manual merge, never a copy
 - **unslop**: six locally added patterns at the end of `### Plain speech` (34 to 39), local sentences added to upstream's 16 (slogan lead-ins) and 32 (artifacts that talk), a locally rewritten `## Process` and `## How to scan` (a two-round pass: the first round finds, the second verifies the first's fixes survived), a local `### Prompts` with a scan template and a verification template, plus a local frontmatter: no `disable-model-invocation` and a description scoped to document writing — always a manual merge, never a copy
 
 Suggested format:
@@ -196,11 +195,11 @@ rm -rf ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/refer
        ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/templates
 ```
 
-**This one is a manual merge, not a copy.** The plugin file carries a local-only `## Visible browser inside herdr` section that does not exist upstream, so a straight `cp` deletes it. Diff upstream against the plugin copy, port whatever upstream changed, and leave that section standing. Also keep `Bash(herdr plugin:*)` and `Bash(bun run:*)` in `allowed-tools` — the section needs both and upstream declares neither.
+Direct copy, verbatim. The plugin copy carries no local changes (a local herdr section was dropped 2026-11-14).
 
 ```bash
-diff ~/workspace/random/agent-browser/skills/agent-browser/SKILL.md \
-     ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/SKILL.md
+cp ~/workspace/random/agent-browser/skills/agent-browser/SKILL.md \
+   ~/workspace/asermax/claude-plugins/superpowers/skills/agent-browser/SKILL.md
 ```
 
 ### Type 6 — `bro` and `herdr` (dmmulroy)
@@ -219,8 +218,6 @@ Two things to leave alone:
 
 - **Upstream typos in the `herdr` description** ("terminl", "requies", "another skills"). Copy them as-is. Fixing them locally turns every future sync into a manual merge, and the description still routes correctly.
 - **`disable-model-invocation: true` on `bro`.** It is a restate-my-last-message command, so it must only ever fire when the user types `/superpowers:bro`.
-
-`herdr` overlaps with the "Visible browser inside herdr" section in `agent-browser`, but they do different jobs: `agent-browser` drives the `official.browser` plugin pane, `herdr` drives panes, tabs and sibling agents. Do not merge them or add cross-references between them.
 
 ### Type 7 — `unslop` (cursor-plugins)
 
@@ -262,7 +259,7 @@ git -C ~/workspace/random/cursor-plugins diff <old>..<new> -- pstack/skills/stat
 
 Read upstream's diff for changes to the method: how rules become invariants, how `Next` is written, deadlock handling, how a broken rule is re-run, chart labelling and marks, the arrow budget, replaying paths against code. Port those into `model-check.md` in mahou's wording. Ignore changes to `scripts/`, upstream's mise-based install step, the `--view` module API and `references/render.md` (Pele CSS, SVG options); none of it exists on the mahou side. When an upstream change only makes sense with the bundled command, tell the user and skip it.
 
-### Manual-merge procedure (used by Types 1, 5 and 7 when upstream changed)
+### Manual-merge procedure (used by Types 1 and 7 when upstream changed)
 
 1. Read upstream version end-to-end.
 2. Read plugin version end-to-end.
@@ -300,7 +297,6 @@ Cursor-Plugins:
 ⚠️ Plugin customizations preserved:
 - All skills: superpowers: namespace prefix applied
 - systematic-debugging: references to non-bundled skills removed
-- agent-browser: "Visible browser inside herdr" section kept
 - unslop: local patterns 34 to 39 kept, local sentences in 16 and 32 kept, local `## Process` and `## How to scan` kept, model invocation kept on with the document-scoped description
 ```
 

@@ -16,7 +16,7 @@ The document is `canvas/design.tldr.json` in the change's scratch folder. `desig
 
 ## The canvas is the tree
 
-Each top-level branch is an `area` labelled `<n> <title> · <status>`.
+Each top-level branch is an `area` labelled `<n> <title> · <status>`. Draw it with `canvas`'s `branch` helper, `title` being `<n> <title>`, and call `branch` again with the same name to change the status, the leaves, the write-up's prose or the Agent note.
 
 - **Left side: the branch's leaves**, in monospace text, with the same marks as `design-tree`. The sub-branches follow as a tree under them, `├─ <n.m> <title>  <status>` with their leaves indented, and a blank line above each sub-branch.
 - **Right side: the write-up**, at the branch level. The branch's own representation and prose come first. Then each sub-branch that has a representation or prose gets a heading, `<n.m> <title> · <status>`, with its diagrams and its prose under it. A sub-branch with neither gets no heading.
@@ -38,16 +38,16 @@ The opening tree goes on the canvas as the branch areas, each one pending, with 
 
 ## Questions
 
-Questions go in the open branch, on its right side, under its write-up. The branch's Agent note goes under the questions.
+Questions go in the open branch, on its right side, under its write-up, each placed with `below` under the shape above it. The branch's Agent note goes under the questions.
 
 - **A question is a violet card**: a rectangle with violet border and fill, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question.
 - **Add a diagram, a table or a mockup to the card when text is not enough.** The canvas offers tldraw shapes for a diagram drawn by hand, a monospace text for a table, a mockup, and a `mermaid` shape. For example: a diagram of a library's format or of how its parts call each other, next to what the tree settled about it; a table in the summary box when findings compare options, one column per option and one row per point that matters for the decision; a small timeline with real values when the question is about order.
 - **Follow-ups stay inside the base question's card**, one at a time, until the question branch closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Agent note, and the current follow-up as a violet card of its own.
 - **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question branch has settled and the findings that bear on it. Rewrite it each round; never add a line per answer.
-- **When the question branch closes**, delete the card, update the branch's leaves on the left, and update its write-up.
+- **When the question branch closes**, remove the card with `remove`, update the branch's leaves on the left, and update its write-up.
 - **Keep two questions open for the user to answer.** A question waiting on a spike, a prototype or a lookup does not count toward the two, so there are three while one waits. Open the next question from the frontier as soon as one closes.
 - **A spike's result goes in the card of the question that asked for it**, as `canvas` describes. When the question closes, carry the result to every place it affects, such as the write-up of the sub-branch whose leaves the result settled, a question the result raises in another branch, or a new branch the result opens.
-- **A merged question is one card.** Retitle the lower-numbered card, fold the other card's summary into its summary box, and delete the other card.
+- **A merged question is one card.** Retitle the lower-numbered card, fold the other card's summary into its summary box, and remove the other card with `remove`.
 
 ## Messages from the agent
 

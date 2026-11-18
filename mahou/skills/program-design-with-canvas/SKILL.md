@@ -55,7 +55,7 @@ A question goes inside the part it is about, on the right side of the part's are
 - **A question is a violet card**: a rectangle with violet border and fill, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question. Add a diagram, drawn with tldraw shapes, when the question is about where something runs, in what order or across which boundary.
 - **Follow-ups stay inside the base question's card**, one at a time, until the question closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Agent note, and the current follow-up as a violet card of its own.
 - **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question has settled and the findings that bear on it. Rewrite it each round; never add a line per answer.
-- **When the question closes**, delete the card, redraw the part with what it settled, and update the record.
+- **When the question closes**, remove the card with `remove`, redraw the part with what it settled, and update the record.
 
 ## Messages from the agent
 
@@ -63,4 +63,4 @@ Everything you would say in the chat goes on the canvas: how you read an answer,
 
 ## Mockups
 
-The canvas references use the mockups in this skill's `mockups/` folder: `component-cards`, `state-card`, `hook-card`, `interface-card`, `file-tree` and `change-legend`. Before drawing a part, copy the mockups it uses into the canvas folder's `mockups/`, unless they are already there. Each file's props are its `data`.
+The canvas references use the mockups in this skill's `mockups/` folder: `component-cards`, `state-card`, `hook-card`, `interface-card`, `file-tree` and `change-legend`. `canvas.sh start` links them into the canvas folder's `mockups/`, so draw them by kind without copying them. To change one for this canvas only, replace its link with a real file of the same name, as `canvas` describes. Each file's props are its `data`.

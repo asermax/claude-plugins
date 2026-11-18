@@ -2,7 +2,9 @@ import { Vec, type Editor, type TLShapeId, type VecLike } from 'tldraw'
 
 const GLIDE_FRAMES = 12
 const FRAME_MS = 25
-const DEFAULT_PAUSE_MS = 500
+
+// The pause a step waits when its call passes none; window.canvas.pause reads and sets it for the session
+export const pauses = { default: 500 }
 
 const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms))
 
@@ -20,7 +22,7 @@ const glideTo = async (editor: Editor, target: VecLike) => {
 // waits, so the user sees each one arrive instead of the whole drawing at once
 export const stepOf =
   (editor: Editor) =>
-  async (at: TLShapeId | VecLike | null, change: () => unknown, pause = DEFAULT_PAUSE_MS) => {
+  async (at: TLShapeId | VecLike | null, change: () => unknown, pause?: number) => {
     const target = typeof at === 'string' ? editor.getShapePageBounds(at)?.center : at
 
     if (target != null) {
@@ -29,7 +31,7 @@ export const stepOf =
 
     const result = change()
 
-    await sleep(pause)
+    await sleep(pause ?? pauses.default)
 
     return result
   }

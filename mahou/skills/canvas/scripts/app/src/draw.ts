@@ -8,9 +8,12 @@ type Into = { into?: string }
 
 type Range = { x: number; maxX: number }
 
-type TextOptions = Partial<Place> & Into & { text: string; mono?: boolean; size?: 's' | 'm' | 'l' }
+// Places a new shape under a named one: its y is the named shape's bottom edge plus `gap`, and its x the named shape's x
+type Below = { below?: string; gap?: number }
 
-type CardOptions = Partial<Place> & Into & {
+type TextOptions = Partial<Place> & Into & Below & { text: string; mono?: boolean; size?: 's' | 'm' | 'l' }
+
+type CardOptions = Partial<Place> & Into & Below & {
   text: string
   color?: TLDefaultColorStyle
   dash?: 'solid' | 'dashed'
@@ -20,7 +23,7 @@ type CardOptions = Partial<Place> & Into & {
 
 type FollowUpOptions = { summary: string; note: string; question?: string }
 
-type BoxOptions = Place & Into & {
+type BoxOptions = Partial<Place> & Into & Below & {
   h: number
   text: string
   geo?: 'rectangle' | 'ellipse' | 'cloud'
@@ -29,7 +32,19 @@ type BoxOptions = Place & Into & {
   dash?: 'draw' | 'solid' | 'dashed'
 }
 
-type MockOptions = Partial<Place> & Into & { kind: string; data: Record<string, unknown> }
+type MockOptions = Partial<Place> & Into & Below & { kind: string; data: Record<string, unknown> }
+
+type TableOptions = Partial<Place> & Into & Below & { columns: string[]; rows: string[][] }
+
+type BranchOptions = Partial<Place> & Into & {
+  title: string
+  status: string
+  leaves: string
+  prose: string
+  note?: string | null
+}
+
+type TextPair = { shape?: string; from: string; to: string }
 
 type TreeRow = {
   id: string
@@ -79,6 +94,13 @@ const NOTE_LABEL = 'Agent\n\n'
 const LABEL_SPACE = 60
 const FLOW_GAP = 30
 const MOCK_WIDTH = 520
+const BELOW_GAP = 30
+const BRANCH_LEAVES_WIDTH = 760
+const BRANCH_PROSE_WIDTH = 1160
+const BRANCH_TOP = 70
+// tldraw's monospace text at size s: the width of one character and the padding around a line, in canvas units
+const MONO_CHAR_WIDTH = 10.9
+const MONO_PADDING = 32
 const PARTITION_WIDTH = 170
 const STAR_WIDTH = 38
 const ROW_TEXT_WIDTH = 620
@@ -89,13 +111,26 @@ const nextFrame = () => new Promise((done) => requestAnimationFrame(() => done(n
 export const drawOf = (editor: Editor) => {
   const step = stepOf(editor)
 
-  const id = (name: string) => createShapeId(name)
+  // A name, or a shape id such as a sticky note's from notes(), which has no name of its own
+  const id = (name: string) => (name.startsWith('shape:') ? (name as TLShapeId) : createShapeId(name))
 
   const bounds = (name: string) => editor.getShapePageBounds(id(name))!
 
   const exists = (name: string) => editor.getShape(id(name)) != null
 
   const centreOf = ({ x, y, w }: Place, h: number): VecLike => ({ x: x + w / 2, y: y + h / 2 })
+
+  const placed = <T extends Partial<Place> & Below>(options: T): T => {
+    const { below, gap = BELOW_GAP } = options
+
+    if (below == null || options.y != null) {
+      return options
+    }
+
+    const anchor = bounds(below)
+
+    return { ...options, x: options.x ?? anchor.x, y: anchor.maxY + gap }
+  }
 
   const isArea = (shape: TLShape) => shape.type === 'mock' && (shape.props as { kind?: string }).kind === 'area'
 
@@ -244,11 +279,39 @@ export const drawOf = (editor: Editor) => {
       .sort((a, b) => a.box.y - b.box.y)
   }
 
+  // An area that shrank by `dy` pulls up the area right under it in its column, by as much, when that area sits within
+  // two gaps of it, and each pulled area pulls the next one the same way. A farther area stays: pulling it by the whole
+  // shrink while a growth only pushes it by what its gap does not absorb would creep it up on every grow and shrink.
+  // Moving an area moves its shapes and changes no area's height, so a pull never makes another area grow
+  const pullAreas = (before: Range & { y: number; maxY: number }, dy: number, others: ReturnType<typeof pushable>) => {
+    const settled = [{ box: before, shift: dy }]
+
+    for (const { box, members } of others) {
+      const above = settled.filter((each) => sameColumn(each.box, box) && box.y >= each.box.maxY - 1)
+      const nearest = above.reduce<(typeof settled)[number] | undefined>((last, each) => (last == null || each.box.maxY > last.box.maxY ? each : last), undefined)
+      const shift = nearest != null && nearest.shift < 0 && box.y - nearest.box.maxY <= 2 * AREA_GAP ? nearest.shift : 0
+
+      settled.push({ box, shift })
+
+      if (shift < 0) {
+        for (const member of members) {
+          moveBy(editor.getShape(member.id)!, 0, shift)
+        }
+      }
+    }
+  }
+
   // An area that grew by `dy` moves only the areas under it in its column, and each of those moves the areas under
   // itself the same way. An area moves by the part of the growth that the space above it, down to the gap between
-  // areas, does not absorb. An area that shrank moves none
+  // areas, does not absorb. An area that shrank pulls the areas under it instead
   const pushAreas = (before: Range & { y: number; maxY: number }, dy: number, others: ReturnType<typeof pushable>) => {
-    const settled = [{ box: before, shift: Math.max(dy, 0) }]
+    if (dy < 0) {
+      pullAreas(before, dy, others)
+
+      return
+    }
+
+    const settled = [{ box: before, shift: dy }]
 
     for (const { box, members } of others) {
       const above = settled.filter((each) => sameColumn(each.box, box) && box.y >= each.box.maxY - 1)
@@ -527,8 +590,14 @@ export const drawOf = (editor: Editor) => {
     adopt(name, into)
   }
 
-  const text = async (name: string, { x, y, w, text, mono = false, size = 's', into }: TextOptions, pause?: number) => {
+  const text = async (name: string, options: TextOptions, pause?: number) => {
+    const { x, y, w, text, mono = false, size = 's', into } = placed(options)
     const isNew = !exists(name)
+    // tldraw sets a text's height from its content as soon as the text changes, so the shapes under it are read, and
+    // the height it had, before the change. A text moved to a new place leaves the shapes under its old place alone
+    const isEditedInPlace = !isNew && x == null && y == null
+    const before = isEditedInPlace ? bounds(name) : undefined
+    const moving = isEditedInPlace ? under(editor.getShape(id(name))!, before!.maxY) : []
 
     await step(
       exists(name) ? id(name) : { x: x!, y: y! },
@@ -546,6 +615,14 @@ export const drawOf = (editor: Editor) => {
 
     if (isNew) {
       settle(name, into)
+    }
+
+    if (before != null) {
+      const dy = bounds(name).maxY - before.maxY
+
+      for (const other of moving) {
+        moveBy(editor.getShape(other.id)!, 0, dy)
+      }
     }
 
     return fit(name)
@@ -573,7 +650,8 @@ export const drawOf = (editor: Editor) => {
       },
     })
 
-  const card = async (name: string, options: CardOptions, pause?: number) => {
+  const card = async (name: string, given: CardOptions, pause?: number) => {
+    const options = placed(given)
     const { x, y, w, text, into } = options
     // tldraw grows a card as soon as its text changes, so the height the card had is read first
     const before = exists(name) ? bounds(name) : undefined
@@ -600,14 +678,121 @@ export const drawOf = (editor: Editor) => {
     return h
   }
 
-  const note = (name: string, { text, ...place }: Partial<Place> & Into & { text: string }, pause?: number) =>
+  const note = (name: string, { text, ...place }: Partial<Place> & Into & Below & { text: string }, pause?: number) =>
     card(name, { ...place, text: `${NOTE_LABEL}${text}`, color: 'grey', dash: 'dashed', fill: 'none' }, pause)
 
-  const plain = (name: string) => {
+  const NOTE_PREFIX = /^Agent\n+/
+
+  // With `body: true`, an Agent note's text comes back without its label, ready to pass to `note` again
+  const plain = (name: string, { body = false }: { body?: boolean } = {}) => {
+    const shape = editor.getShape(id(name))!
+    const value = editor.getShapeUtil(shape).getText(shape) ?? ''
+
+    return body ? value.replace(NOTE_PREFIX, '') : value
+  }
+
+  const isBox = (shape: TLShape) => shape.type === 'geo' && (shape.props as { align?: string }).align === 'middle'
+
+  // Writes a whole new text into any shape that holds one, through the helper that keeps the layout for its kind: a text
+  // or a card moves the shapes under it when its height changes, a box keeps its size
+  const setText = async (name: string, value: string, pause?: number) => {
     const shape = editor.getShape(id(name))!
 
-    return editor.getShapeUtil(shape).getText(shape) ?? ''
+    if (shape.type === 'text') {
+      return text(name, { text: value }, pause)
+    }
+
+    if (shape.type === 'geo' && !isBox(shape)) {
+      return card(name, { text: value }, pause)
+    }
+
+    return step(id(name), () => editor.updateShape({ id: shape.id, type: shape.type, props: { richText: toRichText(value) } }), pause)
   }
+
+  const replaceIn = (value: string, pairs: [from: string, to: string][], all: boolean) =>
+    pairs.reduce((result, [from, to]) => (all ? result.split(from).join(to) : result.replace(from, () => to)), value)
+
+  // Every `from` must be found before anything changes, so a stale pair never leaves the text half edited
+  const edit = async (name: string, pairs: [from: string, to: string][], { all = false }: { all?: boolean } = {}, pause?: number) => {
+    const value = plain(name)
+    const missing = pairs.filter(([from]) => !value.includes(from)).map(([from]) => from)
+
+    if (missing.length > 0) {
+      throw new Error(`edit(${name}): not found: ${missing.map((from) => JSON.stringify(from)).join(', ')}`)
+    }
+
+    return setText(name, replaceIn(value, pairs, all), pause)
+  }
+
+  // A sticky note is the user's message, so the writing pass leaves it as the user wrote it
+  const hasText = (shape: TLShape) => shape.type !== 'note' && (shape.props as { richText?: unknown }).richText != null
+
+  // Find-and-replace over the canvas texts and arrow labels, for the writing pass: a pair with `shape` changes that
+  // shape only, a pair without it every shape holding `from`. Returns the pairs found nowhere
+  const applyTexts = async (pairs: TextPair[]) => {
+    const missing: TextPair[] = []
+
+    for (const pair of pairs) {
+      const targets = pair.shape == null
+        ? editor.getCurrentPageShapes().filter((shape) => hasText(shape) && plain(shape.id).includes(pair.from))
+        : [editor.getShape(id(pair.shape))].filter((shape): shape is TLShape => shape != null && plain(shape.id).includes(pair.from))
+
+      if (targets.length === 0) {
+        missing.push(pair)
+
+        continue
+      }
+
+      for (const target of targets) {
+        await setText(target.id, replaceIn(plain(target.id), [[pair.from, pair.to]], true), 0)
+      }
+    }
+
+    return missing
+  }
+
+  // The shapes under the removed one move up until the first of them takes its place, so the gap that stood above the
+  // removed shape stays and the one it filled closes. Arrows bound to the shape or to its follow-up parts would stay
+  // where they were drawn, so they go with it
+  const remove = (name: string, pause?: number) =>
+    step(
+      id(name),
+      () => {
+        const shape = editor.getShape(id(name))!
+
+        // A sticky note is the user's message laid over the drawing, so removing it moves nothing and fits no area
+        if (shape.type === 'note') {
+          const arrows = editor.getBindingsToShape(shape, 'arrow').map((binding) => binding.fromId)
+
+          editor.deleteShapes([shape.id, ...arrows])
+
+          return
+        }
+
+        const before = bounds(name)
+        const owner = areaOf(shape)
+        const moving = under(shape, before.maxY)
+        const removed = [name, ...partsOf(name)].map((each) => id(each))
+        const arrows = topLevel().filter(
+          (other) => other.type === 'arrow' && editor.getBindingsFromShape(other, 'arrow').some((binding) => removed.includes(binding.toId)),
+        )
+
+        editor.deleteShapes([...removed, ...arrows.map((arrow) => arrow.id)])
+
+        if (moving.length > 0) {
+          const dy = Math.min(...moving.map((other) => editor.getShapePageBounds(other)!.y)) - before.y
+
+          for (const other of moving) {
+            moveBy(editor.getShape(other.id)!, 0, -dy)
+          }
+        }
+
+        if (owner != null) {
+          fitAreaShape(owner)
+        }
+      },
+      pause,
+    )
 
   // A card's follow-up sits inside the card, under the card's own text: a summary box, an Agent note and, when there
   // is one, the next question as a card of its own; the card grows to hold them, which moves what is under it
@@ -640,9 +825,11 @@ export const drawOf = (editor: Editor) => {
   }
 
   // A diagram node keeps the size it is given, unlike a card, which fits its height to its text
-  const box = (name: string, { x, y, w, h, text, geo = 'rectangle', color = 'black', fill = 'semi', dash = 'draw', into }: BoxOptions, pause?: number) =>
-    step(
-      exists(name) ? id(name) : centreOf({ x, y, w }, h),
+  const box = (name: string, options: BoxOptions, pause?: number) => {
+    const { x, y, w, h, text, geo = 'rectangle', color = 'black', fill = 'semi', dash = 'draw', into } = placed(options)
+
+    return step(
+      exists(name) ? id(name) : centreOf({ x: x!, y: y!, w: w! }, h),
       () => {
         if (exists(name)) {
           editor.updateShape({ id: id(name), type: 'geo', props: { richText: toRichText(text) } })
@@ -660,6 +847,7 @@ export const drawOf = (editor: Editor) => {
       },
       pause,
     )
+  }
 
   // Bound to the centres of both shapes, so the arrow follows either one when it moves. Called with a name that exists,
   // it changes only the options given
@@ -710,11 +898,12 @@ export const drawOf = (editor: Editor) => {
       pause,
     )
 
-  const mermaid = async (name: string, { x, y, source, into }: Into & { x: number; y: number; source: string }, pause?: number) => {
+  const mermaid = async (name: string, options: Partial<Place> & Into & Below & { source: string }, pause?: number) => {
+    const { x, y, source, into } = placed(options)
     const isNew = !exists(name)
 
     await step(
-      exists(name) ? id(name) : { x, y },
+      exists(name) ? id(name) : { x: x!, y: y! },
       () =>
         exists(name)
           ? editor.updateShape({ id: id(name), type: 'mock', props: { data: { source } } })
@@ -796,7 +985,8 @@ export const drawOf = (editor: Editor) => {
   }
 
   // Called with a name that exists, mock replaces the shape's data and fits its height again
-  const mock = async (name: string, { x, y, w = MOCK_WIDTH, kind, data, into }: MockOptions, pause?: number) => {
+  const mock = async (name: string, options: MockOptions, pause?: number) => {
+    const { x, y, w = MOCK_WIDTH, kind, data, into } = placed(options)
     const isNew = !exists(name)
 
     await step(
@@ -815,6 +1005,72 @@ export const drawOf = (editor: Editor) => {
     }
 
     return h
+  }
+
+  // Pads every column to its widest cell so the `|` separators line up in the monospace font
+  const tableText = (columns: string[], rows: string[][]) => {
+    const widths = columns.map((column, index) => Math.max(column.length, ...rows.map((row) => (row[index] ?? '').length)))
+    const line = (cells: string[]) => widths.map((width, index) => (cells[index] ?? '').padEnd(width)).join(' | ').trimEnd()
+
+    return [line(columns), widths.map((width) => '-'.repeat(width)).join('-|-'), ...rows.map(line)].join('\n')
+  }
+
+  // Without `w` the text is as wide as its longest line, since a wrapped line breaks the columns
+  const table = (name: string, { columns, rows, w, ...place }: TableOptions, pause?: number) => {
+    const value = tableText(columns, rows)
+    const longest = Math.max(...value.split('\n').map((line) => line.length))
+
+    return text(name, { ...place, w: w ?? Math.ceil(longest * MONO_CHAR_WIDTH + MONO_PADDING), text: value, mono: true }, pause)
+  }
+
+  // A tree branch as the with-canvas skills lay it out: the area labelled with its title and status, the leaves in
+  // monospace on the left, the prose on the right, and the Agent note under whatever sits under the prose. Called again,
+  // it rewrites each part in place, so the questions and the note under the prose move with its height
+  const branch = async (name: string, { x, y, w, title, status, leaves, prose, note: noteText, into }: BranchOptions, pause?: number) => {
+    const label = `${title} · ${status}`
+    const leavesName = `${name}-leaves`
+    const proseName = `${name}-prose`
+    const noteName = `${name}-agent`
+
+    if (!exists(name)) {
+      const width = w ?? AREA_PADDING + BRANCH_LEAVES_WIDTH + AREA_PADDING + BRANCH_PROSE_WIDTH + AREA_PADDING
+
+      await area(name, { x: x!, y: y!, w: width, h: 200, label, into }, pause)
+
+      const outer = bounds(name)
+
+      await text(leavesName, { x: outer.x + AREA_PADDING, y: outer.y + BRANCH_TOP, w: BRANCH_LEAVES_WIDTH, text: leaves, mono: true, into: name }, pause)
+      await text(proseName, { x: outer.x + 2 * AREA_PADDING + BRANCH_LEAVES_WIDTH, y: outer.y + BRANCH_TOP, w: BRANCH_PROSE_WIDTH, text: prose, into: name }, pause)
+    } else {
+      await area(name, { label }, pause)
+
+      if (plain(leavesName) !== leaves) {
+        await text(leavesName, { text: leaves }, pause)
+      }
+
+      if (plain(proseName) !== prose) {
+        await text(proseName, { text: prose }, pause)
+      }
+    }
+
+    if (noteText === null && exists(noteName)) {
+      await remove(noteName, pause)
+    } else if (noteText != null && exists(noteName)) {
+      await note(noteName, { text: noteText }, pause)
+    } else if (noteText != null) {
+      const column = bounds(proseName)
+      const lowest = Math.max(
+        column.maxY,
+        ...contentsOf(editor.getShape(id(name))!)
+          .map((shape) => editor.getShapePageBounds(shape)!)
+          .filter((box) => box.x < column.maxX && box.maxX > column.x)
+          .map((box) => box.maxY),
+      )
+
+      await note(noteName, { x: column.x, y: lowest + BELOW_GAP, w: BRANCH_PROSE_WIDTH, text: noteText, into: name }, pause)
+    }
+
+    return bounds(name)
   }
 
   // One test branch drawn whole in one batch: stepping through every box, line and dot would make the user wait for a
@@ -993,5 +1249,30 @@ export const drawOf = (editor: Editor) => {
     await fit(name)
   }
 
-  return { id, bounds, plain, area, focus, text, card, note, followUp, fit, resize, box, arrow, mermaid, mock, move, flow, classificationTree, partsDrawing }
+  return {
+    id,
+    bounds,
+    plain,
+    edit,
+    applyTexts,
+    area,
+    focus,
+    text,
+    card,
+    note,
+    followUp,
+    fit,
+    resize,
+    box,
+    arrow,
+    mermaid,
+    mock,
+    move,
+    flow,
+    remove,
+    table,
+    branch,
+    classificationTree,
+    partsDrawing,
+  }
 }

@@ -16,7 +16,7 @@ The document is `canvas/shape.tldr.json` in the change's scratch folder. `shape.
 
 ## The canvas is the tree
 
-The root goes at the top of the canvas as a title, `Problem: <one line>`. Each top-level branch is an `area` labelled `<n> <title> · <status>`, and Out of scope is always the last one.
+The root goes at the top of the canvas as a title, `Problem: <one line>`. Each top-level branch is an `area` labelled `<n> <title> · <status>`, and Out of scope is always the last one. Draw it with `canvas`'s `branch` helper, `title` being `<n> <title>`, and call `branch` again with the same name to change the status, the leaves, the prose or the Agent note.
 
 - **Left side: the branch's leaves**, in monospace text, with the same marks as `design-tree`. The sub-branches follow as a tree under them, `├─ <n.m> <title>  <status>` with their leaves indented, and a blank line above each sub-branch.
 - **Right side: the prose**, at the branch level. The branch's own prose comes first, the statement of what is settled under it. Then each sub-branch that has prose gets a heading, `<n.m> <title> · <status>`, with its prose under it. A sub-branch without prose gets no heading.
@@ -32,12 +32,12 @@ A dropped branch or leaf folds into Out of scope as `shape` says: delete the bra
 
 ## Questions
 
-Questions go in the open branch, on its right side, under its prose. The branch's Agent note goes under the questions.
+Questions go in the open branch, on its right side, under its prose, each placed with `below` under the shape above it. The branch's Agent note goes under the questions.
 
 - **A question is a violet card**: a rectangle with violet border and fill, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question. Add a diagram, drawn with tldraw shapes, when the question is about the order things happen in, who sees what, or which part of the definition a situation touches.
 - **Follow-ups stay inside the base question's card**, one at a time, until the question branch closes. The card holds, top to bottom: the base question and its diagram, a summary box, one Agent note, and the current follow-up as a violet card of its own.
 - **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question branch has settled and the findings that bear on it. Rewrite it each round; never add a line per answer.
-- **When the question branch closes**, delete the card, update the branch's leaves on the left, and update its prose.
+- **When the question branch closes**, remove the card with `remove`, update the branch's leaves on the left, and update its prose.
 - **Keep two questions open for the user to answer.** A question waiting on a lookup does not count toward the two, so there are three while one waits. Open the next question from the branch's open leaves as soon as one closes.
 
 ## Messages from the agent

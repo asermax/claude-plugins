@@ -4,7 +4,7 @@ A breadboard draws the settled tree as the places a person moves through, the pi
 
 ## Before drawing
 
-Copy this skill's `mockups/place.tsx` into the canvas folder's `mockups/`, unless it is already there. Its props are its `data`: a `title`, a `subtitle` or `null`, and `items`, each `{ kind, label, id }`, where `kind` is `button`, `field`, `text`, `list`, `toggle`, `tabs` or `gap`.
+The `place` mockup lives in this skill's `mockups/`, and `canvas.sh start` links it into the canvas folder's `mockups/`. Its props are its `data`: a `title`, a `subtitle` or `null`, and `items`, each `{ kind, label, id }`, where `kind` is `button`, `field`, `text`, `list`, `toggle`, `tabs` or `gap`.
 
 ## What to draw
 

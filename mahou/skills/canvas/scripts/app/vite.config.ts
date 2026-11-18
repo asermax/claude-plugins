@@ -1,6 +1,6 @@
-import { writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import type { ServerResponse } from 'node:http'
-import { dirname, resolve } from 'node:path'
+import { dirname, extname, relative, resolve } from 'node:path'
 import { TLSocketRoom } from '@tldraw/sync-core'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
@@ -22,6 +22,23 @@ if (TITLE == null || TITLE.trim() === '') {
 
 const DOC_DIR = dirname(DOC_PATH)
 const MOCKUPS_DIR = resolve(DOC_DIR, 'mockups')
+// The folder holding the canvas folder, the change's scratch folder, whose files html mocks show under /files/
+const FILES_DIR = dirname(DOC_DIR)
+const CONTENT_TYPES: Record<string, string> = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css',
+  '.js': 'text/javascript',
+  '.json': 'application/json',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.webp': 'image/webp',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+}
 const SVG_PATH = DOC_PATH.replace(/\.tldr\.json$/, '.svg')
 const SYNC_PATH = '/api/sync'
 
@@ -95,6 +112,21 @@ const canvasApi = (): Plugin => ({
       res.end(SVG_PATH)
     })
 
+    server.middlewares.use('/files', (req, res) => {
+      const path = resolve(FILES_DIR, decodeURIComponent(new URL(req.url ?? '/', 'http://localhost').pathname).replace(/^\/+/, ''))
+
+      // Only files inside the folder, so a ../ in the URL reads nothing outside it
+      if (relative(FILES_DIR, path).startsWith('..') || !existsSync(path) || !statSync(path).isFile()) {
+        res.statusCode = 404
+        res.end('not found')
+
+        return
+      }
+
+      res.setHeader('content-type', CONTENT_TYPES[extname(path).toLowerCase()] ?? 'application/octet-stream')
+      res.end(readFileSync(path))
+    })
+
     server.middlewares.use('/api/notify', async (req, res) => {
       // Whoever reacts to the click reads the document from disk
       if (saveTimer != null) {
@@ -131,6 +163,9 @@ export default defineConfig({
       '@canvas': resolve(__dirname, 'src'),
       '@mockups': MOCKUPS_DIR,
     },
+    // canvas.sh start links the built-in mockups into the folder's mockups/; kept as links, they resolve inside the
+    // folder, which the server may read and watches, instead of in the plugin's install path
+    preserveSymlinks: true,
     // The document's mockups live outside the app, so React and tldraw resolve from the app's node_modules
     dedupe: ['react', 'react-dom', 'tldraw', '@tldraw/tlschema', '@tldraw/validate'],
   },

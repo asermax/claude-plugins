@@ -8,7 +8,7 @@ import { MockShapeUtil } from './MockShape'
 import { notesOf } from './notes'
 import { schema } from './schema'
 import { SendButton } from './SendButton'
-import { stepOf } from './step'
+import { pauses, stepOf } from './step'
 
 const shapeUtils = [MockShapeUtil]
 const SYNC_URI = `${location.origin.replace(/^http/, 'ws')}/api/sync`
@@ -18,7 +18,17 @@ const start = (editor: Editor) => {
   Object.assign(window, {
     editor,
     tldraw: { createShapeId, toRichText },
-    canvas: { notes: () => notesOf(editor), step: stepOf(editor), ...drawOf(editor) },
+    canvas: {
+      notes: () => notesOf(editor),
+      step: stepOf(editor),
+      ...drawOf(editor),
+      get pause() {
+        return pauses.default
+      },
+      set pause(ms: number) {
+        pauses.default = ms
+      },
+    },
   })
 
   guardDeletedIds(editor)

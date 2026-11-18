@@ -4,6 +4,7 @@ import { Area } from './kit/Area'
 import { Browser } from './kit/Browser'
 import { CodeSnippet, JS_HIGHLIGHT, type CodeSnippetProps } from './kit/CodeSnippet'
 import { Cylinder } from './kit/Cylinder'
+import { Html, type HtmlProps } from './kit/Html'
 import { Mermaid } from './kit/Mermaid'
 import { mockupOf, mockupsVersion, subscribeToMockups } from './mockups'
 import { MOCK_TYPE, mockShapeProps } from './schema'
@@ -27,7 +28,7 @@ export interface MockDefinition<P extends object = Record<string, never>> {
   // A shape's data is merged over these, so a shape passes only what differs
   defaults: P
   // `update` merges a patch into the shape's data, so state a mockup changes on a click is saved and reaches every tab
-  render: (props: P, tools: { update: (patch: Partial<P>) => void }) => ReactNode
+  render: (props: P, tools: { update: (patch: Partial<P>) => void; shapeId: string }) => ReactNode
 }
 
 const BUILT_IN: Record<string, MockDefinition<any>> = {
@@ -47,6 +48,13 @@ const BUILT_IN: Record<string, MockDefinition<any>> = {
     width: (props: CodeSnippetProps) => (props.view === 'split' ? 1500 : 900),
     defaults: { file: 'file.ts', tag: null, lines: [], gutterNotes: false, highlight: JS_HIGHLIGHT, view: 'unified', expanded: [] },
     render: (props: CodeSnippetProps, { update }: { update: (patch: Partial<CodeSnippetProps>) => void }) => <CodeSnippet {...props} update={update} />,
+  },
+  // A prototype's HTML file, from the folder that holds the canvas folder, laid out at `width` and scaled to the shape;
+  // `state` names the control-strip controls to click, in order
+  html: {
+    width: (props: HtmlProps) => props.width,
+    defaults: { file: '', state: null, width: 1280 },
+    render: (props: HtmlProps, { shapeId }: { shapeId: string }) => <Html {...props} shapeId={shapeId} />,
   },
   // The legend's sample of a screen
   'blank-screen': { width: 560, defaults: {}, render: () => <Browser app="…">{null}</Browser> },
@@ -109,7 +117,7 @@ const MockContent = ({ shape }: { shape: MockShape }) => {
       }}
     >
       <style>{'[data-interactive] { pointer-events: all; cursor: pointer; }'}</style>
-      {definition == null ? <span>unknown mockup: {shape.props.kind}</span> : definition.render({ ...definition.defaults, ...shape.props.data }, { update })}
+      {definition == null ? <span>unknown mockup: {shape.props.kind}</span> : definition.render({ ...definition.defaults, ...shape.props.data }, { update, shapeId: shape.id })}
     </div>
   )
 }

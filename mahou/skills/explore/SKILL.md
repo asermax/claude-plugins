@@ -42,6 +42,8 @@ The user builds the understanding. You bring facts on demand. You edit nothing, 
 
 When the user settles a decision, record it in one line and read the whole settled set back each time it changes. The user reads the set, not the transcript.
 
+When the user changes or refines a decision already in the set, rewrite that decision's line with the current answer and keep its number. Do not add a new line for it. A decision can carry a sublist under its line for context: an earlier answer it replaced and why it changed, an option that was discarded and why, or the reason behind the answer. When a later decision settles the same subject as an earlier one, merge them into the earlier decision's line and move what the later one adds into its sublist.
+
 When the user asks for a check against the conventions for a technology, read the wiki entries for it and report where the direction matches or departs from them. Do not read entries otherwise.
 
 ## Final check
@@ -57,7 +59,9 @@ Route any fact the check needs through mahou:lookup. Record each answer the user
 
 When the exploration ends, or before the user moves on to the next stage, save what exists only in the conversation and the settled decisions depend on. Write it to the change's scratch folder:
 
-- `decisions.md`: the settled decisions in the order they were settled, each with the question it answered, with each decision that a later one replaced marked as replaced, and what is still open. It also holds the diagrams the decisions depend on, as their source, such as a mermaid block.
+- `decisions.md`: the settled decisions in the order they were settled, each with the question it answered, each with its sublist of context when it has one, and what is still open. It also holds the diagrams the decisions depend on, as their source, such as a mermaid block.
 - `findings.md`: the facts behind the decisions, each with its source and whether it was verified or asserted.
+
+A second exploration in the same change, on a different topic, writes its own pair, `decisions-<topic>.md` and `findings-<topic>.md`.
 
 Leave out proposals the user did not settle. Then check the scratch folder as mahou:basics says under Status.

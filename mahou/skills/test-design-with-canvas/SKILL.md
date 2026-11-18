@@ -12,7 +12,7 @@ Load mahou:test-design first, then mahou:canvas. Then read `.mahou/test-design-w
 
 When the user asks for a fast track, or fast track is already on in the session, load mahou:fast-track after mahou:canvas and before starting, unless it is already in context. It changes some of this skill's engagement rules.
 
-The document is `canvas/test-design.tldr.json` in the change's scratch folder. The record stays `test-design/<repo>.md`; write a tree's change into it whenever the canvas changes, and draw the canvas from it. For each branch, write into the record a table of the classifications, each with its source in the parts drawing and its partitions, then the `◆` values and the matrix.
+The document is `canvas/test-design.tldr.json` in the change's scratch folder. The record stays `test-design/<repo>.md`, and `scripts/record.mjs` prints it from the same branch specs the canvas is drawn from (see "Each branch is a classification tree"), so never edit the record by hand. Name each classification after the card it comes from, so the record shows its source in the parts drawing.
 
 ## Roots on a map of the system
 
@@ -42,7 +42,17 @@ Each branch is an `area` labelled `<id> <root> · <status>`, inside its tree's a
 
 Once the user approves a root's parts drawing, draw every branch of the root at once, each one whole under the drawing: its root, classifications, partitions and matrix, labelled `proposed`. Name each classification after the card it comes from, `C<n> <variable> (<part> · <CATEGORY>)`, and mark `manual` every row that picks a `◆` value. This replaces `test-design`'s one level and one branch at a time. A branch, and everything on it, stays `proposed` until the user approves it. Open the next tree once the user has approved every branch of the one before.
 
-Draw each branch with `canvas`'s `classificationTree`, which lays out the root, the classifications, the partitions and the matrix. Keep each branch's spec as data in a script in the canvas folder. When a branch changes, such as a row turned manual or a partition added, call the helper again with the same name.
+Draw each branch with `canvas`'s `classificationTree`, which lays out the root, the classifications, the partitions and the matrix. Keep every branch's spec in `canvas/specs.js` in the change's scratch folder, the one source for both the drawing and the record. The file assigns one object to a property of `window`, with the branch name as key and the spec as value:
+
+```js
+window.testDesignSpecs = {
+  a1: { label: 'A·1 <entry point> · proposed', root: '<entry point>\ngiven <input>', classifications: [], rows: [] },
+}
+```
+
+Load the file into the canvas tab and draw each branch with `classificationTree(name, testDesignSpecs[name], …)`. When a branch changes, such as a row turned manual or a partition added, edit its spec, then draw it again with the same name and print the record again. End each label with ` · <status>` (`proposed`, `settled`): the script reads the status from it.
+
+Write the record with `node <this skill's folder>/scripts/record.mjs canvas/specs.js <branch names> --title "Test design · <repo>" --root "<letter> <repo>" > test-design/<repo>.md`, naming the branches that belong to that repository's tree in order. It prints the tree of classifications and partitions, then for each branch its root, the matrix with the `★` column, the kind and setup, and the `Dropped:`, `Deleted:` and note lines. Run it again after every change to a spec.
 
 - **The root is a blue box** at the top, with the entry point and what it is given.
 - **Each classification is a violet box** under the root, joined to it by a line with no arrowheads.
@@ -59,7 +69,7 @@ A question goes inside the branch it is about, beside the classification, partit
 - **A question is a card with a violet border and no fill**, titled `❓ Q<n> · <title>`, then the body, which gives the situation and ends with the question. The card has no fill so it differs from the filled violet classification boxes.
 - **Follow-ups stay inside the base question's card**, one at a time, until the question closes. The card holds, top to bottom: the base question, a summary box, one Agent note, and the current follow-up as a card of its own.
 - **The summary box**, a solid grey rectangle labelled `Summary · Q<n> so far`, holds what the question has settled. Rewrite it each round; never add a line per answer.
-- **When the question closes**, delete the card, redraw the branch with what it settled, and update the record.
+- **When the question closes**, remove the card with `remove`, redraw the branch with what it settled, and update the record.
 
 ## Messages from the agent
 

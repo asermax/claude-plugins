@@ -32,7 +32,7 @@ export const App = () => {
 
   return (
     <div style={{ position: 'fixed', inset: 0 }}>
-      <Tldraw store={store} shapeUtils={shapeUtils} onMount={(mounted) => { start(mounted); setEditor(mounted) }} />
+      <Tldraw store={store} shapeUtils={shapeUtils} options={{ maxShapesPerPage: 20000 }} onMount={(mounted) => { start(mounted); setEditor(mounted) }} />
       {editor != null ? <SendButton editor={editor} /> : null}
     </div>
   )

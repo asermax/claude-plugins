@@ -79,15 +79,49 @@ Leave the fixes uncommitted unless the caller says to commit them, and list each
 
 Validation produces a report artifact on disk and a summary in the reply that points at it. The artifact is not optional.
 
-One HTML file per run, in the change's scratch folder at `reports/<surface>/index.html`, per the convention in mahou:basics, with every asset in the same folder referenced by relative path. Self-contained, no external resources. Build it as the rows run, not at the end, so a run that stops half way still leaves what it saw.
+One HTML file per run, in the change's scratch folder at `reports/<surface>/index.html`, per the convention in mahou:basics, with every asset in the same folder referenced by relative path. Do not write the HTML. Keep the run's data in `reports/<surface>/results.json`, create it before the first row and append to it as each row finishes: its steps, observation, result, evidence paths and fixes. After every append, run `python3 <this skill's folder>/scripts/report.py reports/<surface>/results.json reports/<surface>` to rebuild `index.html` from it. A run that stops half way still leaves a report of the rows it ran. The script renders the sections below with one shared stylesheet, light and dark, and a summary table at the top; it is a standard-library script that needs no install and renders `assets/report-template.html`.
 
-In order:
+Evidence files go under `reports/<surface>/evidence/` and `results.json` names them relative to `reports/<surface>/`.
 
-1. **Header**: the change, the branches and commits under validation, how the system was brought up, the identities and inputs used.
-2. **Setup and mutations**: what the run started, every configuration change made for the run, and the mutate and revert pair of every record touched or inserted, with before and after values.
-3. **One section per row**, in the order they ran: the setup the row needed, the steps performed, what was observed, PASS or FAIL, the evidence in the shape the surface's reference gives, and each fix made for the row: what failed, what the fix changed, and the run that passed after it.
-4. **Bugs not fixed**: every bug found that no row and no previous decision covers, with its evidence.
-5. **Summary table**: every row with its result (passed, passed after a fix, blocked), and the rows that could not be run with the reason.
+`results.json` has this shape. Every key except `rows` is optional, and text fields take plain text with `` `code` `` spans.
+
+```json
+{
+  "title": "string",
+  "subtitle": "string",
+  "header": [{"label": "Branch", "value": "string"}],
+  "started": ["what the run brought up"],
+  "mutations": [
+    {"what": "string", "before": "string", "change": "string", "restore": "string", "evidence": ["evidence/dump.sql"]}
+  ],
+  "rows": [
+    {
+      "id": "A1",
+      "title": "string",
+      "setup": "string",
+      "steps": ["string"],
+      "expected": "string",
+      "observed": "string",
+      "result": "passed | passed_after_fix | failed | blocked | not_run",
+      "note": "string",
+      "evidence": ["evidence/A1-01.png", {"path": "evidence/A1-net.txt", "caption": "string"}],
+      "fixes": [{"failed": "string", "changed": "string", "rerun": "the run that passed"}],
+      "blocked": {"assumption": "string", "observation": "string", "would_change": "string", "blocks": ["A2"]}
+    }
+  ],
+  "bugs": [{"title": "string", "found_in": "A3", "description": "string", "evidence": ["evidence/bug.txt"]}],
+  "gaps": ["a row not run or a surface not covered, with the reason"]
+}
+```
+
+The script puts them in this order:
+
+1. **Summary table** at the top: every row with its result, and the counts.
+2. **Header**: from `header`. Put the change, the branches and commits under validation, how the system was brought up, and the identities and inputs used.
+3. **Setup and mutations**: `started`, and `mutations` with the mutate and revert pair of every configuration change and every record touched or inserted, with before and after values, so the user can audit it.
+4. **One section per row**, in the order they ran, with the setup, steps, observation, result, evidence (images shown inline, other files linked) and each fix.
+5. **Bugs not fixed**: from `bugs`, every bug found that no row and no previous decision covers, with its evidence.
+6. **Gaps**: from `gaps`, the rows that could not be run, with the reason.
 
 The reply loads mahou:report and gives: the artifact path, which surfaces were exercised, the rows that passed, each fix with the row it fixed, what failed and what the fix changed, every blocked row stated as a failure with where its evidence sits and what its fix would change, or the assumption it was blocked on and the observation that contradicts it, every bug left unfixed, and every row not run with why.
 

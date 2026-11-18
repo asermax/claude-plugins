@@ -27,7 +27,7 @@ A spike is code written to answer a question. The answer is the product; the cod
 
    A spike may invent its own strategy; when one works, it is a candidate for mahou:learn to add here.
 
-5. **Stop when the question is answered.** Record the answer and the findings in the spike's folder. Every surprise is input to the design that follows. The artifacts stay as reference material for whoever builds the real thing.
+5. **Stop when the question is answered.** Record the answer and the findings in the spike's folder. Every surprise is input to the design that follows. The artifacts stay as reference material for whoever builds the real thing. Before stopping, delete what the spike installed or fetched into its folder, such as `node_modules`, virtualenvs, build output and repository clones, and keep the lockfile and the commands that recreate them in the findings. A research round that cloned repositories into the scratch folder deletes the clones the same way when it ends.
 
 ## Processes and secrets
 

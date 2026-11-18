@@ -27,7 +27,7 @@ Read the date under Last synced at the end of this file. Then list each side's c
 
 ```bash
 git -C ~/workspace/asermax/claude-plugins log --since='<date> 00:00' --format='%h %ad %s' --date=short -- mahou superpowers/skills/unslop superpowers/skills/mermaid
-git -C ~/workspace/filadd/cc-plugin-marketplace log --since='<date> 00:00' --format='%h %ad %s' --date=short -- plugins/experimental-dev plugins/dev/skills/commit-changes plugins/dev/skills/create-pull-request plugins/dev/skills/validate-feature plugins/docs
+git -C ~/workspace/filadd/cc-plugin-marketplace log --since='<date> 00:00' --format='%h %ad %s' --date=short -- plugins/experimental-dev plugins/dev/skills/commit-changes plugins/dev/skills/create-pull-request plugins/dev/skills/validate-feature plugins/dev/skills/dev-standards plugins/docs
 ```
 
 Include uncommitted changes on both sides (`git status --short`). Then diff every paired file (see Pairs) and write the diffs to `/tmp` so you can read them in parts. Most of each diff is the substitution table applied. Read each commit's own diff (`git show <sha> -- <path>`) to tell a real change from a substitution.
@@ -50,8 +50,13 @@ Renamed pairs:
 | `skills/distill-to-wiki/` | `experimental-dev/skills/distill-to-dev-standards/` (see Deliberate divergences) |
 | `superpowers/skills/unslop/` rules 16, 32 and 34 to 39 | `docs/skills/unslop/` rules 15, 29 and 30 to 34 (16 is Filadd's 15, 32 is 29, 34 is 30, 35 is 31, 36 is 32, 38 is 33, 39 is 34; Filadd has no 37) |
 | `superpowers/skills/mermaid/` | `experimental-dev/skills/mermaid/` (Filadd keeps the Notion shape whitelist, see Deliberate divergences) |
+| `skills/wiki/references/<topic>/<entry>.md` | a section of a `dev/skills/dev-standards/references/guides/<layer>/<guide>.md` (paired by topic, see below) |
 
-`program-design/references/representations/` exists on both sides in one format (What it covers, What to check before proposing, Representation, When it fits), and the files present on both sides name no skill from either plugin, so they sync as whole files. The exception is one line each in Filadd's `callstack.md`, `component-tree.md`, `derivation-ledger.md` and `interfaces.md` under What to check before proposing, which names a `dev-standards` guide (`endpoints`, `components`, `common`) or the `gateway` repository; those lines stay Filadd-only, and the rest of each file stays identical. `standards.md` is per side (dev-standards guides against wiki entries and rule files), and `package-layout.md` is mahou's only. A new representation that applies to both sides is written in the same plugin-neutral way and copied to both.
+`program-design/references/representations/` exists on both sides in one format (What it covers, What to check before proposing, Representation, When it fits), and the files present on both sides name no skill from either plugin, so they sync as whole files. The exception is one line each in Filadd's `callstack.md`, `component-tree.md`, `derivation-ledger.md` and `interfaces.md` under What to check before proposing, which names a `dev-standards` guide (`endpoints`, `components`, `common`) or the `gateway` repository; those lines stay Filadd-only, and the rest of each file stays identical.
+
+The wiki and `dev-standards` pair by topic rather than by path. A wiki entry is one file per question, with a Knowledge list and Sources; a `dev-standards` rule is a paragraph or section inside a layer guide, such as the `### Naming` section of `guides/frontend/common.md`, which pairs with `wiki/references/naming/`. For every wiki entry changed since the last sync and every guide section changed since then, look for the matching topic on the other side with `grep -rn -i '<topic words>'` over the other store, and compare the rules, not the wording. Port a rule only when it holds for any project: a rule naming a Filadd library, repository, service or product stays in `dev-standards`, and a rule that cites the session it came from keeps its Sources line on the mahou side only. A rule that lands in `dev-standards` goes into the guide that already holds the topic, or into `guides/common/` when it applies to every layer. A wiki entry that lands in mahou goes into the folder for its topic and its `INDEX.md`. `dev-standards` carries no `verified` date, so a wiki entry that gains or changes a rule gets the day of the sync as its `verified` date.
+
+`standards.md` is per side (dev-standards guides against wiki entries and rule files), and `package-layout.md` is mahou's only. A new representation that applies to both sides is written in the same plugin-neutral way and copied to both.
 
 ## Substitution table
 
@@ -126,4 +131,4 @@ Set the date under Last synced to today. Commit nothing and bump no version on e
 
 ## Last synced
 
-2026-11-14
+2026-11-18

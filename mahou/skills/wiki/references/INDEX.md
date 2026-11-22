@@ -5,7 +5,7 @@
 - [`dates`](dates/INDEX.md): grouping instants by the viewer's local day and writing day titles
 - [`design`](design/INDEX.md): shapes of modules, functions and state that make code harder to change; always reviewed, whatever the technology
 - [`firecrawl`](firecrawl/INDEX.md): calling Firecrawl from runtimes its SDK does not support
-- [`foldkit`](foldkit/INDEX.md): typed values in Foldkit radio groups and routes
+- [`foldkit`](foldkit/INDEX.md): typed values in Foldkit radio groups and routes, and asserting icons and missing lines in scene tests
 - [`gemini`](gemini/INDEX.md): what the Gemini API accepts as input and how it describes it
 - [`markdown`](markdown/INDEX.md): parsing markdown into a syntax tree outside a renderer
 - [`modal`](modal/INDEX.md): calling Modal functions from outside its Python client

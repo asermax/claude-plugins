@@ -1,6 +1,7 @@
 # References
 
 - [`cloudflare`](cloudflare/INDEX.md): running jobs, gates, agents, containers and data on Cloudflare's platform
+- [`dates`](dates/INDEX.md): grouping instants by the viewer's local day and writing day titles
 - [`design`](design/INDEX.md): shapes of modules, functions and state that make code harder to change; always reviewed, whatever the technology
 - [`firecrawl`](firecrawl/INDEX.md): calling Firecrawl from runtimes its SDK does not support
 - [`foldkit`](foldkit/INDEX.md): typed values in Foldkit radio groups and routes

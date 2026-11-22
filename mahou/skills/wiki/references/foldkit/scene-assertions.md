@@ -10,6 +10,8 @@ How Foldkit (0.170) scene tests can find a decorative SVG icon and check that an
 - `selector` supports only tag names, `#id`, `.class`, `[attr]`, `[attr="value"]`, `[attr^="prefix"]`, `:not(...)` and descendant combinators; any other syntax throws.
 - `textContent` (used by `toHaveText`, by a `RegExp` passed to `text`, and by the full-text branch of a string passed to `text`) joins every descendant text node with no separator. `expect(role("button", { name: /^Title/u })).toHaveText("TitleAmountAccount")` therefore fails when an optional line between them renders, which makes it a check that the line is absent.
 - `toHaveStyle(name, value?)` reads the element's inline style (`h.Style`), not its classes, so it checks a value the view sets from data, such as a per-item color. Pass the CSS name in kebab case (`"background-color"`). `expect(...).not.toHaveStyle("background-color")` checks that the view left the inline value out, for example on an unselected item that must show its class colors: an inline value would override any class, so the view drops it (`h.Style(isOn ? { backgroundColor: color } : {})`) and the test checks for its absence.
+- `expect(locator)` has no `toHaveCount`; calling it fails at run time with "toHaveCount is not a function". A count goes through `expectAll` with a multi-match locator: `expectAll(all.role("button", { name: "+ Item" })).toHaveCount(1)` checks that exactly one such button renders.
+- To check that an element uses a style shared from a common module (a create button reusing the shared pill style), compare its whole `class` attribute with the class the shared style produces: `expect(role("button", { name: "+ Item" })).toHaveAttr("class", stylex.props(sharedStyles.pill).className)`. This needs the test runner to run the StyleX transform (a StyleX plugin in the vitest config), so the class names in the test match the ones the view renders; it fails when the view renders its own style instead, and its message lists both class strings.
 - A string passed to `text` matches an element whose full text equals it or one of whose direct text nodes equals it. An element holding a text node and a child element (an amount with a caption span under it) is still found by the text node alone.
 
 ## Sources
@@ -17,4 +19,6 @@ How Foldkit (0.170) scene tests can find a decorative SVG icon and check that an
 - node_modules/foldkit/dist/test/query.d.ts (`selector`, `text`)
 - node_modules/foldkit/dist/test/query.js (`textContent`, `matchesText`, `hasDirectTextNodeMatch`)
 - node_modules/foldkit/dist/test/matchers.js (`toHaveText`, `toHaveStyle`)
+- node_modules/foldkit/dist/test/scene.d.ts (`expect`, `expectAll`, `all`)
+- A scene test asserting a button renders once and carries a shared StyleX style, checked to fail against a button with a local style, run 2026-11-22.
 - A scene test asserting a selected item's inline background color and its absence on an unselected item, run 2026-11-22.

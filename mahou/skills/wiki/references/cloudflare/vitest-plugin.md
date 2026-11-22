@@ -1,6 +1,6 @@
 # Testing Workers and Workflows with the vitest plugin
 
-verified: 2026-10-10
+verified: 2026-11-22
 
 Answers how Cloudflare's vitest integration tests Workflows and outbound HTTP, what replaced its removed fetch mock, and which approach replays recorded HTTP. Distilled from the plugin's type declarations, changelog and examples, the docs, and a spike that ran every approach on plugin 1.1.13 and 1.3.6 under vitest 4.1.
 
@@ -16,10 +16,12 @@ Answers how Cloudflare's vitest integration tests Workflows and outbound HTTP, w
 - Only HTTP interception (MSW or `outboundService`) runs the real step bodies, including the client's request building and response parsing and the step's binding writes, while replaying recorded responses.
 - Replaying vcrpy (Python) cassettes needs translation: strip `content-encoding` and `content-length` from recorded responses (otherwise "Decompression failed"), rewrite URLs that changed (such as a provider now reached through a gateway), and compare bodies as JSON rather than bytes. Matching on URL alone serves the wrong recorded response when several share a URL.
 - Code-level seams, such as a global symbol the code reads for a test double, are not a documented Workflow-testing method; they put the test hook in production code paths, and the double replaces the client code, so the client's serialization never runs.
+- Outside the vitest plugin, Alchemy's local runtime (2.0.0-beta.85) has no hook to intercept a Worker's outbound `fetch`, so the interception options above do not exist there. Redirecting a fixed HTTPS URL to a local server through `/etc/hosts`, port 443 and a certificate trusted with `NODE_EXTRA_CA_CERTS` works, but writing `/etc/hosts` and binding 443 need root, so it fails for a normal user and in unprivileged CI. Reading the upstream URL from config, with the real URL as the default, lets a test point the Worker at a plain HTTP server on a random port (listen on port 0, read the assigned port). Start that server before the stage deploys and set the variable before the deploy. Read the config in the Worker's init and pass the value into the code that fetches: a `Config` read inside a layer built at request time did not see the variable, and the Worker called the real URL.
 
 ## Sources
 
 - https://developers.cloudflare.com/workers/testing/vitest-integration/test-apis/
 - https://developers.cloudflare.com/workflows/build/test-workflows/
 - https://github.com/cloudflare/workers-sdk (vitest-plugin CHANGELOG, `fixtures/vitest-plugin-examples/request-mocking`, `fixtures/vitest-plugin-examples/workflows`)
+- Alchemy test stage, 2026-11-22: a cron Worker fetching a fixed HTTPS rates URL, first intercepted through /etc/hosts and port 443 (EACCES as a normal user), then through a configurable URL and a local HTTP server.
 - Spike, 2026-10-04: introspection, MSW, `outboundService` and a global seam raced on one Workflow, replaying recorded Firecrawl and Gemini responses

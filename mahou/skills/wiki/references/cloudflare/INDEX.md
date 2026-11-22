@@ -11,6 +11,6 @@
 - [`local-dev`](local-dev.md): running Workers that bind each other locally, shared state, local R2 over S3 and tunnels to it
 - [`python-workers`](python-workers.md): running a Python web app as a Worker, the Pyodide package gaps and the limits
 - [`r2`](r2.md): S3 access, presigned URLs in a browser, serving SVG safely, and pricing
-- [`vitest-plugin`](vitest-plugin.md): testing Workflows with introspection and step mocks, and outbound HTTP after `fetchMock`
+- [`vitest-plugin`](vitest-plugin.md): testing Workflows with introspection and step mocks, outbound HTTP after `fetchMock`, and pointing an Alchemy Worker at a local server through a configurable URL
 - [`workers-deploy`](workers-deploy.md): deploying with wrangler: a custom domain over existing DNS records, partial trigger updates, secrets from stdin, and CI token permissions
 - [`workflows`](workflows.md): running a long job in a spawn-and-resolve shape, its limits, retries, behaviour across deploys, and the languages that can write one

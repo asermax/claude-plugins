@@ -6,6 +6,7 @@
 - [`gemini`](gemini/INDEX.md): what the Gemini API accepts as input and how it describes it
 - [`markdown`](markdown/INDEX.md): parsing markdown into a syntax tree outside a renderer
 - [`modal`](modal/INDEX.md): calling Modal functions from outside its Python client
+- [`money`](money/INDEX.md): formatting amounts held as integer minor units and testing the text Intl produces
 - [`naming`](naming/INDEX.md): how to name variables, props and state in code
 - [`node`](node/INDEX.md): running and distributing a Node program
 - [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them

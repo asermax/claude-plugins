@@ -18,21 +18,29 @@ Load mahou:changeset. It gives you the repository paths you dispatch against, an
 
 ## Step 2: Collect the annotations
 
-Start one `plannotator review` per repository, backgrounded, all in a single message:
+A review covers one repository's changeset, or the part of it that the user picks. The user may review the parts one after another. For a part, ask whether to give plannotator the part as the top of the checked-out work branch, with `--base` set to the ref where the part starts, such as the branch under the part in a stack, or a commit. plannotator reviews from that ref up to the checkout and opens the full files around each hunk. When the review must include work not yet committed, add the `--diff-type` that covers it (`plannotator review --help` lists them). The user may pick another source for a review.
+
+Start one `plannotator review` per review, backgrounded, all in a single message. A whole changeset:
 
 ```
 cd {absolute-repo-path} && plannotator review
+```
+
+A part:
+
+```
+cd {absolute-repo-path} && plannotator review --base {ref}
 ```
 
 Backgrounding is what keeps that `cd` safe, because it never changes the session's working directory. Address repositories everywhere else the way `changeset` says.
 
 When a review times out before the user submits, start it again with the same command and tell the user the review restarted.
 
-Keep a map of repository to task so every result is attributed. Never poll. Completions arrive on their own.
+Keep a map of review to task so every result is attributed. Never poll. Completions arrive on their own.
 
-## Step 3: Work each repository as its annotations land
+## Step 3: Work each review as its annotations land
 
-Handle a repository the moment its result arrives, start to finish, and never hold a finished one behind a slow one.
+Handle a review the moment its result arrives, start to finish, and never hold a finished one behind a slow one.
 
 ### Verify
 

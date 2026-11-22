@@ -13,5 +13,5 @@
 - [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them
 - [`tanstack-query`](tanstack-query/INDEX.md): reaching an API through TanStack Query from React
 - [`tanstack-start`](tanstack-start/INDEX.md): building and deploying a TanStack Start app
-- [`testing`](testing/INDEX.md): how test runners are built and what they expose
+- [`testing`](testing/INDEX.md): how test runners are built and what they expose, and how to test values a module reads at import
 - [`typescript`](typescript/INDEX.md): typing variants, ids, casts, external data and invariants so the compiler rejects illegal states

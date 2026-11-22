@@ -13,7 +13,7 @@
 - [`naming`](naming/INDEX.md): how to name variables, props and state in code
 - [`node`](node/INDEX.md): running and distributing a Node program
 - [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them
-- [`stylex`](stylex/INDEX.md): sharing values between StyleX styles and the script that computes layout, and applying a style only in one state
+- [`stylex`](stylex/INDEX.md): sharing values between StyleX styles in several files and the script that computes layout, and applying a style only in one state
 - [`tanstack-query`](tanstack-query/INDEX.md): reaching an API through TanStack Query from React
 - [`tanstack-start`](tanstack-start/INDEX.md): building and deploying a TanStack Start app
 - [`testing`](testing/INDEX.md): how test runners are built and what they expose, and how to test values a module reads at import

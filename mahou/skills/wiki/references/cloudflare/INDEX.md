@@ -4,6 +4,7 @@
 - [`cf-cli`](cf-cli.md): the beta `cf` CLI against wrangler for D1 migrations, deploys and CI
 - [`containers`](containers.md): running an existing image behind a Durable Object, reaching bindings, sizes, sleep and cost
 - [`d1`](d1.md): SQLite on Cloudflare, its limits, wrangler migrations, and why SQLAlchemy and Alembic do not drive it
+- [`d1-constraint-errors`](d1-constraint-errors.md): the messages D1 gives for UNIQUE, CHECK and `RAISE(ABORT)` failures, where they sit inside Effect's `SqlError`, and how to read the three apart
 - [`d1-bound-parameters`](d1-bound-parameters.md): the 100 bound values per statement limit, `json_each` for id lists, and splitting multi-row inserts with drizzle
 - [`durable-objects`](durable-objects.md): serializing work per key with a gate object
 - [`flue`](flue.md): agents as functions, dispatch from Workflows, the Vite-only build, and the DOM dependency on Workers

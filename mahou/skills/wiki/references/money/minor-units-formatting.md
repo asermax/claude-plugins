@@ -13,8 +13,8 @@ Answers how to turn an amount stored as an integer of minor units (cents) plus a
 - Take the decimals from the application's own currency table and pass them as both `minimumFractionDigits` and `maximumFractionDigits`. Intl's built-in per-currency digits come from the runtime's ICU data and can differ between engines and versions; an amount stored with the table's decimals then prints with another count.
 - `currencyDisplay` changes how the currency is written: `"code"` gives `ARS 1.234,50` and `USD 1.234,50`, `"symbol"` gives `US$ 1.234,50` for USD in es-AR, and `"narrowSymbol"` gives `$ 1.234,50` for both ARS and USD. Use `"code"` when several currencies appear on one screen.
 - Intl writes a non-breaking space (U+00A0) between the code or symbol and the number, and an ASCII hyphen-minus for negatives. To print a typographic minus (U+2212), call `formatToParts` and replace the part of type `minusSign`.
-- The locale decides grouping. `es-AR` groups four-digit numbers (`1.234`); plain `es` does not (`1234`). Test the locale you ship.
-- Compact notation (`notation: "compact"`) rounds to two significant digits by default (`1999999` becomes `2 M`). `roundingMode: "trunc"` keeps `1,9 M`. In es-AR the thousands suffix is inconsistent (`1,2 K` for 1234 but `21 k` for 21000), and there is no billions form (`12345678901` becomes `12 mil M`). `en-US` gives `12B`.
+- The locale decides grouping. `es-AR` groups four-digit numbers (`1.234`); plain `es` and `de-DE` do not (`1234`). To follow the user's locale, pass `Intl.NumberFormat.supportedLocalesOf(navigator.languages)[0]` and fall back to `new Intl.NumberFormat().resolvedOptions().locale`; a hard-coded locale prints one country's separators to everyone. Test each locale you assert, with the locale passed explicitly.
+- Compact notation (`notation: "compact"`) rounds to two significant digits by default (`1999999` becomes `2 M`). `roundingMode: "trunc"` keeps `1,9 M`. Its text differs by locale in suffix, spacing and order, not only in separators. Node 24 output for 1234, 21000, 2100000 and 12345678901: es-AR `1,2 K`, `21 k`, `2,1 M`, `12 mil M` (inconsistent thousands suffix, no billions form); en-US `1.2K`, `21K`, `2.1M`, `12B` (no space); de-DE `1234`, `21.000`, `2,1 Mio.`, `12 Mrd.` (no thousands form); fr-FR `1,2 k` … `12 Md`; ja-JP groups by ten thousand (`2.1万`, `210万`, `123億`). With a currency the code moves too: `-USD 21M` in en-US, `-21 Mio. USD` in de-DE. A UI that must fit a width has to measure the text rather than assume a length per locale.
 - Constructing an `Intl.NumberFormat` is slow compared to calling `format`. Cache instances in a module-level `Map` keyed by the options that vary (currency, decimals, notation).
 - For a "no cents" form, cut the fraction from the digit string and format with zero fraction digits. Passing the full value with `maximumFractionDigits: 0` rounds instead of truncating.
 
@@ -27,7 +27,7 @@ const exactDecimal = (amount: bigint, decimals: number): string => {
   return decimals === 0 ? `${sign}${whole}` : `${sign}${whole}.${digits.slice(digits.length - decimals)}`;
 };
 
-const formatter = new Intl.NumberFormat("es-AR", {
+const formatter = new Intl.NumberFormat(locale, {
   style: "currency",
   currency: "USD",
   currencyDisplay: "code",
@@ -47,5 +47,5 @@ formatter.format(exactDecimal(123456n, 2));
 ## Sources
 
 - ECMA-402 `Intl.NumberFormat` v3 and MDN `Intl.NumberFormat` (developer.mozilla.org), 2026-11-22.
-- Output of Node's `Intl.NumberFormat("es-AR", …)` run on 2026-11-22 for the grouping, `narrowSymbol`, compact and `roundingMode` examples.
+- Output of Node's `Intl.NumberFormat("es-AR", …)` run on 2026-11-22 for the grouping, `narrowSymbol`, compact and `roundingMode` examples, and of Node 24 for the compact text in en-US, de-DE, fr-FR and ja-JP.
 - dinero.js, currency.js and big.js package documentation, as reported in a research pass on 2026-11-22.

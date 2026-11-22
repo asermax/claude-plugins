@@ -12,6 +12,7 @@ Answers how to write test expectations for text produced by `Intl.NumberFormat` 
 - Copy the expected text from the real output of the runtime the tests run on, not from what the locale should print. Compact forms surprise most: `12345678901` in es-AR prints `12 mil M`.
 - A test that proves screen behaviour (the chip shows the short form when the full text does not fit) asserts the real text. One formatter test file covers each form once (negative, zero, four-digit grouping, a value past `Number.MAX_SAFE_INTEGER`); screen tests do not re-test the formatter.
 - Test runners that match accessible names or visible text compare strings exactly, so the non-breaking space also matters for text queries.
+- Pin the locale the app reads (for example `navigator.languages` in a test setup file) so expectations do not follow the machine's locale, and pass a locale explicitly in formatter tests that cover several locales.
 - Node's ICU data and a browser's can differ for compact forms and less common locales. Assert compact text against one runtime only.
 
 ## Sources

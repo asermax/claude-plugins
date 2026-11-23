@@ -1,6 +1,6 @@
 # Variants as discriminated unions
 
-verified: 2026-11-08
+verified: 2026-11-23
 
 Answers how to type a value that takes one of several shapes, such as a request that is loading, loaded or failed, and how to make the code that branches on it fail to compile when a shape is added.
 
@@ -11,6 +11,7 @@ Answers how to type a value that takes one of several shapes, such as a request 
 - A repository picks one discriminant name, `kind`, `type` or `status`, and every union in it uses that name.
 - The set of discriminant values is a constant map with its type derived from it, never a TypeScript `enum`.
 - Every `switch` over the discriminant ends in a `default` arm that assigns the value to a `never`-typed local, so adding a shape makes every unhandled switch a compile error.
+- In an Effect codebase the discriminant is `_tag`, and each shape is built by a tagged constructor (`Schema.TaggedStruct`, `Data.taggedEnum`, or Foldkit's `defineTaggedUnion`, whose variants are callable as `Row.Transfer({ ... })`), not written as an object literal with `_tag`; anti-slop lint sets such as rat-stack's `no-manual-tagged-construction` refuse the literal. Branch with `Match.value(x).pipe(Match.tagsExhaustive({ ... }))` instead of a `switch`; it fails to compile when a tag is missing, as the `never` arm does. A `defineTaggedUnion` schema and its value type cannot share a name under `no-redeclare`, so the type takes a suffix (`typeof Row.Type` as `RowValue`).
 
 ```ts
 // Avoid: contradictory states can be written.

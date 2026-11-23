@@ -1,7 +1,7 @@
 # References
 
 - [`cloudflare`](cloudflare/INDEX.md): running jobs, gates, agents, containers and data on Cloudflare's platform
-- [`css`](css/INDEX.md): computing the layout CSS will produce, such as grid auto-fill column counts, before the browser lays it out, and which font weight a static-face design really draws
+- [`css`](css/INDEX.md): computing the layout CSS will produce, such as grid auto-fill column counts or a text's width from a glyph advance table, before the browser lays it out, and which font weight a static-face design really draws
 - [`dates`](dates/INDEX.md): grouping instants by the viewer's local day, writing day titles, and converting between typed local times and UTC instants
 - [`design`](design/INDEX.md): shapes of modules, functions and state that make code harder to change; always reviewed, whatever the technology
 - [`- [`drizzle`](drizzle/INDEX.md): generating Drizzle migrations without a terminal, such as a column rename that keeps its data, and tying an Effect Schema row decoder to a table's columns

@@ -1,0 +1,22 @@
+# Committing only your hunks from a shared checkout
+
+verified: 2026-11-23
+
+How to commit some hunks of some files when other people edit the same checkout at the same time, have entries staged in its index, and have their own uncommitted hunks in files you also changed.
+
+## Knowledge
+
+- `git commit` with no paths commits everything staged, including entries someone else staged. `git commit -- <paths>` (the default `--only` mode) commits the whole working-tree content of those paths, including other people's hunks in them. Neither commits only your hunks.
+- Commit from a temporary index instead: `GIT_INDEX_FILE=<tmp> git read-tree HEAD`, then `GIT_INDEX_FILE=<tmp> git apply --cached mine.patch`, then `GIT_INDEX_FILE=<tmp> git commit -F msg`. The commit holds HEAD plus your patch and nothing else; other people's staged entries stay staged in the real index. Commit hooks still run, and they run against the working tree, so they can fail on someone else's unfinished files; wait and retry instead of bypassing the hook.
+- Run `read-tree` through `commit` in one critical section (inside the same lock the other agents commit under). A commit that lands between `read-tree` and `commit` is otherwise dropped from your commit's tree.
+- Build `mine.patch` from `git diff -- <file>` and drop the hunks that are not yours by their changed lines (those starting with `+` or `-`). Context lines can contain the word you filter on (`TransactionModel` contains `Mode`), so filtering whole hunks by text drops your own. A new file you created goes in with `git diff --no-index -- /dev/null <path>`. Make each diff end with a newline before concatenating them; a runner that trims output joins the last line of one diff to the `diff --git` header of the next, and `git apply` reports "patch does not apply".
+- Check the patch first against a throwaway index: `GIT_INDEX_FILE=<tmp2> git read-tree HEAD && GIT_INDEX_FILE=<tmp2> git apply --cached --check mine.patch`.
+- After the commit, the real index still holds the old blobs of the paths you committed, so `git status` shows them as staged reverts (`MM`, or `D` plus `??` for a file you created). `git reset -q -- <your paths>` resets only those index entries to the new HEAD and leaves the working tree, including other people's hunks, untouched.
+- A script that makes two commits under `set -e` can stop after the first commit landed, when the second one's hook fails. Read `git log` before rerunning it: applying the first patch again against a HEAD that already has it fails with "already exists in index" and "patch does not apply".
+
+## Sources
+
+- git-commit(1), `--only` and `--include`
+- git(1), `GIT_INDEX_FILE`
+- git-apply(1), `--cached` and `--check`
+- A review that committed its fixes to a checkout where three other agents had staged and unstaged edits, including uncommitted hunks in one of the same files, run 2026-11-23.

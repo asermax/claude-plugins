@@ -1,6 +1,6 @@
 # Asserting icons and missing lines in Foldkit scene tests
 
-verified: 2026-11-22
+verified: 2026-11-23
 
 How Foldkit (0.170) scene tests can find a decorative SVG icon and check that an optional line is not rendered.
 
@@ -14,6 +14,7 @@ How Foldkit (0.170) scene tests can find a decorative SVG icon and check that an
 - `expect(locator)` has no `toHaveCount`; calling it fails at run time with "toHaveCount is not a function". A count goes through `expectAll` with a multi-match locator: `expectAll(all.role("button", { name: "+ Item" })).toHaveCount(1)` checks that exactly one such button renders.
 - `toHaveClass(name)` checks one class token: `h.Class` splits its string on whitespace into a class map and the matcher looks up `name` as one key. A StyleX style compiles to several atomic classes, so `toHaveClass` with a whole StyleX class string never passes; compare the `class` attribute instead.
 - To check that an element uses a style shared from a common module (a create button reusing the shared pill style), compare its whole `class` attribute with the class the shared style produces: `expect(role("button", { name: "+ Item" })).toHaveAttr("class", stylex.props(sharedStyles.pill).className)`. This needs the test runner to run the StyleX transform (a StyleX plugin in the vitest config), so the class names in the test match the ones the view renders; it fails when the view renders its own style instead, and its message lists both class strings.
+- To check where an item sits in a list, such as the option a picker lists last, take it from a multi-match locator and check its name: `expect(last(all.role("option"))).toHaveAccessibleName("External")`. `first`, `last` and `nth` turn an `all.*` locator into a single one in document order. `expect(role("option", { name: "External" })).toExist()` passes wherever the option sits.
 - A string passed to `text` matches an element whose full text equals it or one of whose direct text nodes equals it. An element holding a text node and a child element (an amount with a caption span under it) is still found by the text node alone.
 
 ## Sources
@@ -26,4 +27,5 @@ How Foldkit (0.170) scene tests can find a decorative SVG icon and check that an
 - node_modules/foldkit/dist/test/query.js (`lookupAttribute`, `findAllImpl`, `filter`)
 - A scene test asserting the background color of the circle around a row's category icon, checked to fail when the circle's color is replaced, run 2026-11-22.
 - A scene test asserting a button renders once and carries a shared StyleX style, checked to fail against a button with a local style, run 2026-11-22.
+- A picker scene test asserting the last option's accessible name, which a reviewer checked fails when the option is moved to the front of the list, run 2026-11-23.
 - A scene test asserting a selected item's inline background color and its absence on an unselected item, run 2026-11-22.

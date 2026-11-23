@@ -7,6 +7,7 @@
 - [`firecrawl`](firecrawl/INDEX.md): calling Firecrawl from runtimes its SDK does not support
 - [`foldkit`](foldkit/INDEX.md): typed values in Foldkit radio groups and routes, branching on a Foldkit union with its own `match` or Effect `Match`, reading the clock when a view opens, building a select-like picker on Dialog that opens as a sheet or a dropdown, asserting icons, missing lines, inline styles, match counts and shared styles in scene tests, handling the Mounts of nested dialogs there, and testing messages that arrive while a command is still out
 - [`gemini`](gemini/INDEX.md): what the Gemini API accepts as input and how it describes it
+- [`git`](git/INDEX.md): committing only your own hunks from a checkout other people are editing at the same time
 - [`markdown`](markdown/INDEX.md): parsing markdown into a syntax tree outside a renderer
 - [`modal`](modal/INDEX.md): calling Modal functions from outside its Python client
 - [`money`](money/INDEX.md): formatting amounts held as integer minor units, parsing typed amounts in the user's locale, and testing the text Intl produces

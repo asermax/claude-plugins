@@ -18,4 +18,4 @@ Why a `@foldkit/ui` `Dialog` stops answering Escape after its parent drops the m
 
 - `foldkit/dist/dom/dom.js`, `showDialog`, `closeDialog`, `releaseDialogHygieneById` (foldkit 0.170.0)
 - `@foldkit/ui/dist/dialog/index.js`, `AcquireResources`, `Unmounted`, `ReleaseDialogResources` (@foldkit/ui 0.170.0)
-- saifu commit 404417b, `apps/web/src/client/release-dropped-dialogs.ts`, and the browser reproduction behind it, 2026-11-23
+- A root update that releases every Dialog the message dropped, and the browser reproduction behind it, 2026-11-23

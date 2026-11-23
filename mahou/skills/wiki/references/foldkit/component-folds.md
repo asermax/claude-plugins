@@ -1,0 +1,24 @@
+# Folding @foldkit/ui components and shared kits into a parent
+
+verified: 2026-11-23
+
+How a parent updates an embedded `@foldkit/ui` component (Dialog, Toast, RadioGroup) or a kit of its own (a picker, a form, an edit sheet) through Foldkit's child folds instead of calling the child's `update`, `mapMessages` and `modifyFields` by hand at each site. Covers Foldkit 0.170.
+
+## Knowledge
+
+- Foldkit has the helpers: `Update.foldChild` for an entry point that takes an input (the child's `update` with its Message, or a capability such as `showError(model, text)`), `Update.foldChildStep` for one that takes only the child Model (`Dialog.open`, `Dialog.close`), `Update.foldChildAt` for a child picked by key, and `Update.foldChildInit` for a child built by an init (`Dialog.boot(config)`, a kit's `init`). Each takes `read`, `write`, `toParentMessage` (or `toParentModel` for init) and lifts the child's Commands itself.
+- `Dialog.update`, `Dialog.open`, `Dialog.close`, `Toast.update` and `Toast.show` all return an `outMessage` type (Dialog: `Opened`/`Closed`; Toast: `DismissedToast`). The plain `ChildFold` overload requires `outMessage?: never`, so a fold over them fails to type unless it has `foldOutMessage`. A parent that ignores them passes one that keeps the Model.
+- Write that keeper generic on the outer call, `const keepModel = <Model>() => (model: Model) => ({ model })`, and pass it with an instantiation expression, `foldOutMessage: keepModel<SheetModel>`. A keeper generic on the inner function (`() => <M>(model: M) => …`) leaves `ParentModel` inferred as `unknown` in `foldChildInit`, whose model comes only from `toParentModel` and the OutMessage step.
+- One lens object (`{ read, toParentMessage, write }`) spread into several folds keeps the read, the write and the wrapper in one place: `open: Update.foldChildStep({ ...lens, foldOutMessage: keepModel<Model>, update: Dialog.open })`, `close` with `Dialog.close`, `update: Update.foldChild({ ...lens, foldOutMessage: keepModel<Model>, update: Dialog.update })`. A dialog held in an `Option` uses `read: (model) => model.dialog`; the folds return `{ model }` when it is `None`. To open a dialog that may not exist yet, write `Dialog.init(...)` into the Option first (`Option.orElseSome`) and then run `open`.
+- A child OutMessage the parent acts on goes in `foldOutMessage`: `(outMessage) => (model) => …` receives the Model with the child already written back, and its Commands follow the child's. A picker's `Picked` that changes a draft, or a RadioGroup's single `Selected` variant (`({ value }) => (model) => …`), fit here. A step that returns an `outMessage` of the parent's own selects the derived-OutMessage overload, so the fold's result carries it.
+- When `foldOutMessage` calls the parent's own `update` (a picked option that becomes another of the parent's messages), build the fold inside the handler. Hoisting it above `update` or below it both break `no-use-before-define` for one side of the mutual recursion. Name the wrapper parameter something other than `message` there (`pickerMessage`) to avoid `no-shadow` against the handler's `message`.
+- A form kit's update that must ask its own child form to close (Escape on the sheet's dialog) cannot build `Form.Message.RequestedClose()` in a file the `foldkit/no-child-message-construction-in-root` rule treats as a parent. Export a capability from the form kit, `requestClose = (model) => update(model, Message.RequestedClose())`, and run it with `Update.foldChildStep`.
+- A factory in the form kit that wraps each form message in the parent's `Got*` message (`parentMessages(toParentMessage)` returning `changeDraft`, `requestClose`, `confirmDiscard`, `cancelDiscard`, `discardDialog`) replaces one hand-written copy per screen and needs no lint disable. In a view, build the screen's `Got*` wrapper inline inside the function that takes `h: HtmlBuilder<ScreenMessage>`: the same rule flags a wrapper helper at module scope, and `unicorn/consistent-function-scoping` flags one that captures nothing inside the view.
+- `mapMessages` stays right for Commands that no child update returned, such as a list of `Dialog.ReleaseDialogResources` Commands built by the parent.
+
+## Sources
+
+- `foldkit/dist/update/update.d.ts` (`foldChild`, `foldChildStep`, `foldChildAt`, `foldChildInit`, `ChildFold`, `ChildFoldWithOutMessage`), foldkit 0.170.0
+- `@foldkit/ui/dist/dialog/index.d.ts` (`update`, `open`, `close`, `boot`), `radioGroup/index.d.ts` (`OutMessage = Selected`), `toast/index.d.ts`, @foldkit/ui 0.170.0
+- `@foldkit/oxlint-plugin` 0.15.4, rule `no-child-message-construction-in-root`, its report text from a lint run
+- A web app that moved about 45 hand-written child updates across five screens, a form kit, an edit sheet kit and a picker onto these folds; 408 story and scene tests passed after it, 2026-11-23

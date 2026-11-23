@@ -1,0 +1,20 @@
+# Lint rules for names
+
+verified: 2026-11-23
+
+Answers which oxlint rules can enforce naming conventions, such as a deny list of generic names or a yes-or-no prefix on booleans, and what a custom JS plugin rule for them can and cannot see.
+
+## Knowledge
+
+- oxlint 1.92.0 has no port of typescript-eslint's `naming-convention`. Its `id-match` takes one regex for every identifier, so it cannot tell a boolean from any other value. Ultracite's core config turns `id-denylist` on with an empty list, so the rule reports nothing until it is given names.
+- `id-denylist` with a list of names reports more than declarations: an object-literal key (`{ data: 2 }`), a class field and every reference to the declared name, besides variables and parameters. It has no exception for a destructured field that keeps its source's name, so it reports names that belong to libraries and API bodies. For a deny list of local names, write a custom rule that visits only binding positions instead.
+- The binding positions a custom rule visits are `VariableDeclarator.id`, the `id` and `params` of `FunctionDeclaration`, `FunctionExpression` and `ArrowFunctionExpression`, and `CatchClause.param`. Walk each pattern: an `Identifier`, the `left` of an `AssignmentPattern`, the `argument` of a `RestElement`, the `parameter` of a `TSParameterProperty` (constructor `private readonly rows`), the elements of an `ArrayPattern`, and the `value` of each `ObjectPattern` property. A property with `shorthand: true` (`{ rows }`, `{ rows = [] }`) keeps the field's name, so skip it. Types and signatures without a body are other node types (`TSFunctionType`, `TSDeclareFunction`, `TSEmptyBodyFunctionExpression`, `TSMethodSignature`), so a rule that does not visit them leaves the parameter names of type signatures alone. `declare const` sits on a `VariableDeclaration` with `declare: true`.
+- A JS plugin has no type information, so a boolean-prefix rule sees a boolean only through syntax: a `boolean`, `true` or `false` annotation (alone or in a union with `null` and `undefined`) on a binding, a `TSPropertySignature` or a class field; a `true` or `false` initializer or default; an initializer that can only be a boolean (`!x`, a comparison, `in`, `instanceof`, `Boolean(x)`); a `Schema.Boolean` field, also inside `Schema.optional`, `Schema.optionalKey`, `Schema.NullOr` and `Schema.UndefinedOr`; and a Drizzle column built with `{ mode: "boolean" }`, following `.notNull()` and `.default()` chains back to the column call. It cannot see a boolean returned by a call (`const done = isDone(x)`), a property whose type comes from an inferred or imported type, or an object-literal value that is a boolean variable.
+- `RuleTester` from `oxlint/plugins-dev` parses a case as JavaScript unless its `filename` ends in `.ts`. A case with a type annotation, an interface or `declare` without a filename fails with `Parsing failed`. Give every case a `filename` such as `packages/core/src/naming.ts`; the file need not exist.
+- Turn the rules on for the source folders only (an `overrides` entry with `files: ["apps/**", "packages/**"]`) when the lint plugins themselves walk syntax trees full of `value`, `property` and `current` bindings that belong to the ESTree vocabulary.
+
+## Sources
+
+- oxlint 1.92.0 `--rules -f json` (872 rules, no `naming-convention`) and Ultracite 8.1.1's `config/oxlint/core`, 2026-11-23.
+- A run of `id-denylist` configured with `["error", "data", "value"]` on a file with a declaration, an object-literal key, a renamed destructuring, a parameter, a class field and an export: it reported the declaration, the object-literal key, the parameter and its use in the body, the class field and the export, and not the source key of the renamed destructuring, 2026-11-23.
+- A custom plugin with a generic-name rule and a boolean-prefix rule on oxlint 1.92.0 and `@oxlint/plugins` 1.92.0, whose RuleTester cases with TypeScript syntax failed to parse until each case named a `.ts` file, 2026-11-23.

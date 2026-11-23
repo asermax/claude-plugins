@@ -14,7 +14,7 @@
 - [`node`](node/INDEX.md): running and distributing a Node program
 - [`oxlint`](oxlint/INDEX.md): rules that misread Effect's data-first calls as array methods, what to write instead, and keeping a disable directive on the reported line after formatting
 - [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them
-- [`stylex`](stylex/INDEX.md): sharing values between StyleX styles in several files and the script that computes layout, applying a style only in one state, and where to declare media query keys
+- [`stylex`](stylex/INDEX.md): sharing values between StyleX styles in several files and the script that computes layout, applying a style only in one state, where to declare media query keys, and keeping a global reset from overriding StyleX's layered styles
 - [`tanstack-query`](tanstack-query/INDEX.md): reaching an API through TanStack Query from React
 - [`tanstack-start`](tanstack-start/INDEX.md): building and deploying a TanStack Start app
 - [`testing`](testing/INDEX.md): how test runners are built and what they expose, and how to test values a module reads at import

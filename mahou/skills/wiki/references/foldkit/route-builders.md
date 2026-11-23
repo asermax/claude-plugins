@@ -11,8 +11,12 @@ How a Foldkit (0.170) router prints a URL, so an app builds every URL it navigat
 - `Route.query` prints parameters in the order of the query struct's fields: it encodes the struct and walks the encoded record's entries. To keep an existing URL's parameter order, such as `?tx=…&edit=1`, declare the fields in that order.
 - Under the `sort-keys` lint rule (Ultracite's oxlint core turns it on) that order is an error, reported at the struct's opening brace, not at the out-of-order key. A `// oxlint-disable-next-line sort-keys -- <reason>` directive therefore goes on the line before `Schema.Struct({`.
 - Parsing does not depend on the order: the parser reads the query into a record before decoding it.
+- A router whose variant has no fields, such as `pipe(literal("payees"), Route.mapTo(AppRoute.Payees))`, takes its argument as optional: `payeesRouter()` prints `"/payees"`.
+- Foldkit's own lint rule `foldkit/no-hardcoded-route-strings` (`@foldkit/oxlint-plugin` 0.15) checks only the first argument of a navigation call. A hand-written path anywhere else, such as an `href` in a list of menu links, passes it; catching those needs a rule that checks every string literal.
+- The navigation helpers come from two places: `foldkit/navigation` (`pushUrl`, `replaceUrl`, `back`, `forward`, `load`, `openUrl`) and the `Navigation` namespace that `foldkit` re-exports from the same module. A lint rule that restricts the helpers has to match both, such as `importIdentity` with `Navigation` as a namespace.
 
 ## Sources
 
 - `foldkit/dist/route/parser.js` (foldkit 0.170.0), `query`'s `print` and the final `queryParams.toString()`
+- `foldkit/dist/route/parser.d.ts` (`BuildFn`), `foldkit/dist/index.d.ts` (`export * as Navigation`), `@foldkit/oxlint-plugin/dist/index.js` (`noHardcodedRouteStrings`)
 - A change that moved a web app's hand-built URLs onto its routers and kept `?tx=…&edit=1`, with the lint run that reported `sort-keys` at the struct's opening, 2026-11-23

@@ -5,7 +5,7 @@
 - [`dates`](dates/INDEX.md): grouping instants by the viewer's local day, writing day titles, and converting between typed local times and UTC instants
 - [`design`](design/INDEX.md): shapes of modules, functions and state that make code harder to change; always reviewed, whatever the technology
 - [`firecrawl`](firecrawl/INDEX.md): calling Firecrawl from runtimes its SDK does not support
-- [`foldkit`](foldkit/INDEX.md): typed values in Foldkit radio groups and routes, reading the clock when a view opens, and asserting icons, missing lines, inline styles, match counts and shared styles in scene tests
+- [`foldkit`](foldkit/INDEX.md): typed values in Foldkit radio groups and routes, reading the clock when a view opens, building a select-like picker on Dialog that opens as a sheet or a dropdown, asserting icons, missing lines, inline styles, match counts and shared styles in scene tests, and handling the Mounts of nested dialogs there
 - [`gemini`](gemini/INDEX.md): what the Gemini API accepts as input and how it describes it
 - [`markdown`](markdown/INDEX.md): parsing markdown into a syntax tree outside a renderer
 - [`modal`](modal/INDEX.md): calling Modal functions from outside its Python client
@@ -13,7 +13,7 @@
 - [`naming`](naming/INDEX.md): how to name variables, props and state in code
 - [`node`](node/INDEX.md): running and distributing a Node program
 - [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them
-- [`stylex`](stylex/INDEX.md): sharing values between StyleX styles in several files and the script that computes layout, and applying a style only in one state
+- [`stylex`](stylex/INDEX.md): sharing values between StyleX styles in several files and the script that computes layout, applying a style only in one state, and where to declare media query keys
 - [`tanstack-query`](tanstack-query/INDEX.md): reaching an API through TanStack Query from React
 - [`tanstack-start`](tanstack-start/INDEX.md): building and deploying a TanStack Start app
 - [`testing`](testing/INDEX.md): how test runners are built and what they expose, and how to test values a module reads at import

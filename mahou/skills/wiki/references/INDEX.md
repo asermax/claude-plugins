@@ -20,3 +20,4 @@
 - [`tanstack-start`](tanstack-start/INDEX.md): building and deploying a TanStack Start app
 - [`testing`](testing/INDEX.md): how test runners are built and what they expose, and how to test values a module reads at import
 - [`typescript`](typescript/INDEX.md): typing variants, ids, casts, external data and invariants so the compiler rejects illegal states
+- [`vite`](vite/INDEX.md): what the Vite dev server serves after quick successive edits and how to make it transform a module again

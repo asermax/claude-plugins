@@ -17,6 +17,7 @@ Answers where a Foldkit (0.170.0) app reads the current time, so that a value bu
 
 - In `foldkit/story`, `given(init().model)` takes only the model: the commands `init` returned are not pending. Feed the start reading as `message(CompletedRead(...))`; `Command.resolve(Read, ...)` on it fails with "no matching pending Command".
 - To prove the second reading is used, give the start reading at one minute, open the view, assert it is still closed and `Command.expectHas(Read())`, then `Command.resolve(Read, CompletedRead(later))` and assert the default and the bound are the later minute.
+- Put the later reading in a different month and day from the start reading. When both fall in the same month, an assertion that the month on screen stayed put passes even when every reading moves it.
 - Every existing story that opens the view now needs a `Command.resolve(Read, ...)` between the message that opens it and the view's own commands (a dialog's show command, for example), and helpers that call `update` directly need a second `update` with the reading.
 
 ## Sources

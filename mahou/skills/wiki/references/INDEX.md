@@ -12,6 +12,7 @@
 - [`money`](money/INDEX.md): formatting amounts held as integer minor units, parsing typed amounts in the user's locale, and testing the text Intl produces
 - [`naming`](naming/INDEX.md): how to name variables, props and state in code
 - [`node`](node/INDEX.md): running and distributing a Node program
+- [`oxlint`](oxlint/INDEX.md): rules that misread Effect's data-first calls as array methods, and what to write instead
 - [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them
 - [`stylex`](stylex/INDEX.md): sharing values between StyleX styles in several files and the script that computes layout, applying a style only in one state, and where to declare media query keys
 - [`tanstack-query`](tanstack-query/INDEX.md): reaching an API through TanStack Query from React

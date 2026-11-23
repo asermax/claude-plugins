@@ -1,7 +1,7 @@
 # References
 
 - [`cloudflare`](cloudflare/INDEX.md): running jobs, gates, agents, containers and data on Cloudflare's platform
-- [`css`](css/INDEX.md): computing the layout CSS will produce, such as grid auto-fill column counts, before the browser lays it out
+- [`css`](css/INDEX.md): computing the layout CSS will produce, such as grid auto-fill column counts, before the browser lays it out, and which font weight a static-face design really draws
 - [`dates`](dates/INDEX.md): grouping instants by the viewer's local day, writing day titles, and converting between typed local times and UTC instants
 - [`design`](design/INDEX.md): shapes of modules, functions and state that make code harder to change; always reviewed, whatever the technology
 - [`firecrawl`](firecrawl/INDEX.md): calling Firecrawl from runtimes its SDK does not support

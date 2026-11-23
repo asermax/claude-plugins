@@ -1,3 +1,3 @@
 # git
 
-- [`shared-checkout-commits`](shared-checkout-commits.md): committing only your own changes from a checkout where other agents stage files, edit the same files and leave work that fails the pre-commit hook
+- [`partial-commits`](partial-commits.md): committing only your own hunks from a checkout where other people have staged and unstaged edits, through a temporary index or a worktree when their unfinished work fails the commit hook, and resyncing the real index afterwards

@@ -60,6 +60,38 @@ const BUILT_IN: Record<string, MockDefinition<any>> = {
   'blank-screen': { width: 560, defaults: {}, render: () => <Browser app="…">{null}</Browser> },
 }
 
+const selectedTextInMockup = () => {
+  const selection = window.getSelection()
+  if (selection == null || selection.isCollapsed || selection.anchorNode == null) return null
+
+  const anchor = selection.anchorNode instanceof Element ? selection.anchorNode : selection.anchorNode.parentElement
+  return anchor?.closest('[data-selectable]') == null ? null : selection.toString()
+}
+
+// tldraw takes Ctrl+C and the copy event for its own shape clipboard and cancels the browser's copy. While the text
+// selection sits inside a selectable part of a mockup, these capture-phase listeners run before tldraw's, keep the
+// shortcut from reaching it and write the selected text to the clipboard
+window.addEventListener(
+  'keydown',
+  (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'c' && selectedTextInMockup() != null) event.stopImmediatePropagation()
+  },
+  true,
+)
+
+window.addEventListener(
+  'copy',
+  (event) => {
+    const text = selectedTextInMockup()
+    if (text == null || event.clipboardData == null) return
+
+    event.stopImmediatePropagation()
+    event.preventDefault()
+    event.clipboardData.setData('text/plain', text)
+  },
+  true,
+)
+
 export const definitionOf = (kind: string): MockDefinition<any> | undefined => mockupOf(kind) ?? BUILT_IN[kind]
 
 // Subscribes to the mockup registry, so editing a mockup file redraws its shapes without reloading the page
@@ -111,12 +143,23 @@ const MockContent = ({ shape }: { shape: MockShape }) => {
     <div
       ref={box}
       style={{ position: 'relative', width: shape.props.w / scale, height: shape.props.h / scale, transform: `scale(${scale})`, transformOrigin: 'top left' }}
-      // Elements marked data-interactive take clicks; tldraw keeps every other pointer event for selecting and moving
+      // Elements marked data-interactive take clicks and elements marked data-selectable take text selection; tldraw
+      // keeps every other pointer event for selecting and moving. Starting a text selection clears the shape selection,
+      // so Ctrl+C copies the text instead of the selected shapes. tldraw turns off user-select for every element and makes
+      // ::selection transparent, so the selectable part and its descendants turn both back on; data-unselectable keeps
+      // parts such as line numbers out of the copied text
       onPointerDown={(event) => {
-        if ((event.target as HTMLElement).closest('[data-interactive]') != null) event.stopPropagation()
+        const target = event.target as HTMLElement
+
+        if (target.closest('[data-interactive]') != null) event.stopPropagation()
+
+        if (target.closest('[data-selectable]') != null) {
+          event.stopPropagation()
+          editor.selectNone()
+        }
       }}
     >
-      <style>{'[data-interactive] { pointer-events: all; cursor: pointer; }'}</style>
+      <style>{'[data-interactive] { pointer-events: all; cursor: pointer; } [data-selectable] { pointer-events: all; cursor: text; } [data-selectable], [data-selectable] *:not([data-unselectable]) { user-select: text !important; -webkit-user-select: text !important; } [data-selectable] *::selection { background: #b4d5fe; }'}</style>
       {definition == null ? <span>unknown mockup: {shape.props.kind}</span> : definition.render({ ...definition.defaults, ...shape.props.data }, { update, shapeId: shape.id })}
     </div>
   )

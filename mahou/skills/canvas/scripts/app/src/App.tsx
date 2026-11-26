@@ -2,6 +2,10 @@ import { useState } from 'react'
 import { useSync } from '@tldraw/sync'
 import { createShapeId, inlineBase64AssetStore, Tldraw, toRichText, type Editor } from 'tldraw'
 import 'tldraw/tldraw.css'
+import { ChatCursorOverlayUtil } from './ChatCursorOverlayUtil'
+import { CursorChatBubble } from './CursorChatBubble'
+import { cursorChatNotify } from './cursorChatNotify'
+import { cursorChatShortcut } from './cursorChatShortcut'
 import { drawOf } from './draw'
 import { guardDeletedIds } from './guardDeletedIds'
 import { MockShapeUtil } from './MockShape'
@@ -11,6 +15,9 @@ import { SendButton } from './SendButton'
 import { pauses, stepOf } from './step'
 
 const shapeUtils = [MockShapeUtil]
+const overlayUtils = [ChatCursorOverlayUtil]
+// The DOM cursor layer draws every collaborator's cursor and chat a second time, unwrapped, over ChatCursorOverlayUtil's
+const components = { CursorChatBubble, CollaboratorCursor: null }
 const SYNC_URI = `${location.origin.replace(/^http/, 'ws')}/api/sync`
 
 const start = (editor: Editor) => {
@@ -32,6 +39,8 @@ const start = (editor: Editor) => {
   })
 
   guardDeletedIds(editor)
+  cursorChatShortcut(editor)
+  cursorChatNotify(editor)
 
   editor.zoomToFit({ animation: { duration: 0 } })
 }
@@ -42,7 +51,7 @@ export const App = () => {
 
   return (
     <div style={{ position: 'fixed', inset: 0 }}>
-      <Tldraw store={store} shapeUtils={shapeUtils} options={{ maxShapesPerPage: 20000 }} onMount={(mounted) => { start(mounted); setEditor(mounted) }} />
+      <Tldraw store={store} shapeUtils={shapeUtils} overlayUtils={overlayUtils} components={components} options={{ maxShapesPerPage: 20000 }} onMount={(mounted) => { start(mounted); setEditor(mounted) }} />
       {editor != null ? <SendButton editor={editor} /> : null}
     </div>
   )

@@ -100,18 +100,18 @@ const splitRows = (lines: CodeLine[]) => {
 
 // In the code view the lines are a plain file, not a diff: no mark colours and no struck-through lines. A line too
 // long for the column wraps instead of being cut, its continuation indented two characters past the line's own
-// indent, and the notes follow the taller row.
+// indent, and the notes follow the taller row. The indent stays in the text as spaces, pulled back by a matching
+// negative text-indent, so a copied line keeps it.
 const Cell = ({ line, number, rules, plain = false }: { line: CodeLine | null; number: number | null; rules: Highlight[]; plain?: boolean }) => {
   if (line == null) return <div style={{ flex: 1, minWidth: 0, background: '#f8f9fa' }}>&nbsp;</div>
 
   const indent = line.text.match(/^ */)?.[0].length ?? 0
-  const text = line.text.slice(indent)
 
   return (
     <div style={{ display: 'flex', flex: 1, minWidth: 0, background: plain ? 'transparent' : MARK_BG[line.mark] }}>
-      <span style={{ width: 30, flex: 'none', textAlign: 'right', paddingRight: 8, color: MUTED }}>{line.mark === 'gap' ? '' : number}</span>
-      <span style={{ flex: 1, minWidth: 0, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', paddingLeft: `${indent + 2}ch`, textIndent: '-2ch', color: line.mark === 'gap' ? MUTED : INK, textDecoration: !plain && line.mark === 'remove' ? 'line-through' : 'none' }}>
-        {line.mark === 'gap' ? '⋯' : !plain && line.mark === 'remove' ? text : colorize(text, rules)}
+      <span data-unselectable style={{ width: 30, flex: 'none', textAlign: 'right', paddingRight: 8, color: MUTED, userSelect: 'none' }}>{line.mark === 'gap' ? '' : number}</span>
+      <span style={{ flex: 1, minWidth: 0, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', paddingLeft: `${indent + 2}ch`, textIndent: `-${indent + 2}ch`, color: line.mark === 'gap' ? MUTED : INK, textDecoration: !plain && line.mark === 'remove' ? 'line-through' : 'none' }}>
+        {line.mark === 'gap' ? '⋯' : !plain && line.mark === 'remove' ? line.text : colorize(line.text, rules)}
       </span>
     </div>
   )
@@ -200,7 +200,7 @@ export const CodeSnippet = ({ file, tag, lines, gutterNotes, highlight, view, ex
         {view === 'code' ? null : <Toggle view={view} onChange={(next) => update({ view: next })} />}
       </div>
       <div style={{ position: 'relative', padding: '6px 0', minHeight: layout.height }}>
-        <div ref={rowsRef} style={{ display: 'flex', flexDirection: 'column', gap: 1, lineHeight: `${lineHeight}px`, marginRight: gutterNotes ? 260 : 0 }}>
+        <div ref={rowsRef} data-selectable style={{ display: 'flex', flexDirection: 'column', gap: 1, lineHeight: `${lineHeight}px`, marginRight: gutterNotes ? 260 : 0 }}>
           {view === 'split'
             ? splitRows(lines).map((row, position) => {
                 const oldIndex = row.old == null ? -1 : lines.indexOf(row.old)
@@ -214,7 +214,7 @@ export const CodeSnippet = ({ file, tag, lines, gutterNotes, highlight, view, ex
               })
             : lines.map((line, index) => (
                 <div key={index} data-line={index} style={{ display: 'flex' }}>
-                  {view === 'code' ? null : <span style={{ width: 14, flex: 'none', textAlign: 'center', background: MARK_BG[line.mark], color: line.mark === 'add' ? GREEN : line.mark === 'remove' ? RED : MUTED }}>{MARK_SIGN[line.mark]}</span>}
+                  {view === 'code' ? null : <span data-unselectable style={{ width: 14, flex: 'none', textAlign: 'center', userSelect: 'none', background: MARK_BG[line.mark], color: line.mark === 'add' ? GREEN : line.mark === 'remove' ? RED : MUTED }}>{MARK_SIGN[line.mark]}</span>}
                   <Cell line={line} number={numbers[index]} rules={highlight} plain={view === 'code'} />
                 </div>
               ))}

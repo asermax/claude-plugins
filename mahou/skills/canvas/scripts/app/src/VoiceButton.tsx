@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import type { Editor } from 'tldraw'
 import { FONT_SANS, INK } from './kit/theme'
+import { labelShapes, type ShapeLabel } from './shapeLabels'
 
 interface RecognitionResult {
   isFinal: boolean
@@ -29,18 +30,9 @@ const RecognitionClass = ((window as unknown as Record<string, unknown>).SpeechR
 
 const LANG = new URLSearchParams(location.search).get('lang') ?? navigator.language
 
-const SNIPPET = 60
+const selectionOf = (editor: Editor) => labelShapes(editor, editor.getSelectedShapes())
 
-// The agent reads the selection to know which shapes "this" or "here" points at, so each shape carries its id and a short label
-const selectionOf = (editor: Editor) =>
-  editor.getSelectedShapes().map((shape) => {
-    const text = editor.getShapeUtil(shape).getText(shape)?.replace(/\s+/g, ' ').trim() ?? ''
-    const kind = shape.type === 'mock' ? `mock ${(shape.props as { kind: string }).kind}` : shape.type
-
-    return { id: shape.id, kind, text: text.length > SNIPPET ? `${text.slice(0, SNIPPET)}…` : text }
-  })
-
-const send = (message: string, selected: ReturnType<typeof selectionOf>) =>
+const send = (message: string, selected: ShapeLabel[]) =>
   void fetch('/api/notify', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ message, selected }) })
 
 type Status = 'idle' | 'listening' | 'sent' | 'error'

@@ -133,12 +133,22 @@ const canvasApi = (): Plugin => ({
         save()
       }
 
-      // A voice message arrives as { message, selected }; the watch prints one line per event, so its newlines are flattened
+      // A voice message arrives as { message, selected } and a cursor chat message as { chat, at, point }, where at lists the
+      // shapes under the cursor; the watch prints one line per event, so a voice message's newlines are flattened and a
+      // chat message's line breaks, typed with Shift+Enter, are written as a literal \n
+      type Label = { id: string; kind: string; text: string }
       const body = await readBody(req)
-      const { message, selected = [] } = body === '' ? {} : (JSON.parse(body) as { message?: string; selected?: { id: string; kind: string; text: string }[] })
+      const { message, selected = [], chat, at = [], point } = body === '' ? {} : (JSON.parse(body) as { message?: string; selected?: Label[]; chat?: string; at?: Label[]; point?: { x: number; y: number } })
       const flat = (value: string) => value.replace(/\s+/g, ' ').trim()
-      const selection = selected.map(({ id, kind, text }) => (text === '' ? `${id} (${kind})` : `${id} (${kind}: "${flat(text)}")`)).join(', ')
-      const event = message == null ? 'click' : `voice: ${flat(message)}${selection === '' ? '' : ` | selected: ${selection}`}`
+      const labels = (shapes: Label[]) => shapes.map(({ id, kind, text }) => (text === '' ? `${id} (${kind})` : `${id} (${kind}: "${flat(text)}")`)).join(', ')
+      const selection = labels(selected)
+      const pointedAt = labels(at)
+      const event =
+        chat != null
+          ? `chat: ${flat(chat.trim().replace(/[^\S\n]*\n[^\S\n]*/g, '\\n'))}${pointedAt === '' ? '' : ` | at: ${pointedAt}`}${point == null ? '' : ` | point: ${point.x},${point.y}`}`
+          : message == null
+            ? 'click'
+            : `voice: ${flat(message)}${selection === '' ? '' : ` | selected: ${selection}`}`
 
       listeners.forEach((listener) => listener.write(`data: ${event}\n\n`))
       res.end('ok')

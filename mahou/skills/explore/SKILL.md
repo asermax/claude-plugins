@@ -14,7 +14,7 @@ The user builds the understanding. You bring facts on demand. You edit nothing, 
 
 1. Read only the context the user provided. Do not read the code it refers to.
 
-2. State the problem back as the sources state it, in their own terms. Separate:
+2. When the context holds earlier work on the change, open as `references/previous-input.md` says instead. Otherwise, state the problem back as the sources state it, in their own terms. Separate:
    - what the sources ask for
    - what the user has already decided that departs from the sources
    - where the sources contradict each other or the user's direction
@@ -61,6 +61,8 @@ When the exploration ends, or before the user moves on to the next stage, save w
 
 - `decisions.md`: the settled decisions in the order they were settled, each with the question it answered, each with its sublist of context when it has one, and what is still open. It also holds the diagrams the decisions depend on, as their source, such as a mermaid block.
 - `findings.md`: the facts behind the decisions, each with its source and whether it was verified or asserted.
+
+When either file already exists, update it in place: keep the numbers of the decisions it holds, rewrite the decisions that changed, and add new decisions after them.
 
 A second exploration in the same change, on a different topic, writes its own pair, `decisions-<topic>.md` and `findings-<topic>.md`.
 

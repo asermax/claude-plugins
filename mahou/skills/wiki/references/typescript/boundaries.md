@@ -1,6 +1,6 @@
 # Parsing at boundaries
 
-verified: 2026-11-23
+verified: 2026-11-27
 
 Answers where external data gets validated, where its TypeScript type comes from, and whether code inside the system checks it again.
 
@@ -13,6 +13,7 @@ Answers where external data gets validated, where its TypeScript type comes from
 - When the type comes first, annotate the schema with it (`const resourceSchema: z.ZodType<Resource> = …`) so the compiler rejects a schema that proves less than the type.
 - In Effect 4, the annotation is `Schema.Codec<Type, Encoded>`. Both parameters are covariant, so a schema that decodes to a narrower type passes and one that decodes to a wider type (a `NullOr` where the type has none) fails. For a database row, give the encoded side as `Pick<typeof table.$inferSelect, keyof Type>`: the compiler then also checks that every field the schema reads is a column of a compatible type. A generic helper that takes `Schema.Codec<A, unknown>` and is called with an explicit type argument (`codec<Cursor>(Schema.Struct({ … }))`) checks the same way without naming the encoded side.
 - An Effect `Schema.Struct` encode keeps only its declared fields, so a codec typed for a small shape (a paging cursor) can encode a whole record that has it, with no hand-written picking.
+- A response that reaches the code without a parse that converts it, such as a query hook that returns the JSON under a hand-written type, keeps the API's `null`s. A field the type declares optional (`property?: T`) then holds `null` at run time whenever the API sends one. Read such a field with `== null` / `!= null`, which cover both `null` and `undefined`, never with `=== undefined` or a check that rules out one other value, such as `!== ""`.
 - When a generated file already owns a shape (an OpenAPI, GraphQL or protobuf client, a database schema), derive from its types with `Pick`, `Omit`, `Parameters`, `ReturnType`, `Awaited` or `typeof` before declaring a new interface.
 
 ```ts
@@ -32,4 +33,5 @@ type ResourceSummary = Pick<GeneratedResource, "id" | "status">;
 ## Sources
 
 - pstack `typescript-best-practices`, `principle-type-system-discipline` and `principle-boundary-discipline` (github.com/cursor/plugins), 2026-11-08.
+- A frontend typing standard for optional fields of responses the app reads without converting them, 2026-11-27.
 - Effect 4.1.2 `Schema.Codec` (covariant `out T, out E`) annotating saifu's D1 row decoders and paging cursor codecs, and a probe that widened one field to `NullOr` and failed to compile on both sides, 2026-11-23.

@@ -15,10 +15,10 @@
 - [`naming`](naming/INDEX.md): how to name variables, props and state in code
 - [`node`](node/INDEX.md): running and distributing a Node program
 - [`oxlint`](oxlint/INDEX.md): rules that misread Effect's module functions, such as `Option.filter` or `Arr.reduce`, as array methods, what to write instead, keeping a disable directive on the reported line after formatting, sorting with a comparator to compare lists without order, sharing helpers between custom JS plugins, enforcing naming conventions such as a generic-name deny list or boolean prefixes, and writing every null check as `== null` with a rule that fixes the strict forms
-- [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them
+- [`react`](react/INDEX.md): structuring React components, the files they live in, and how callers share them, and typing CSS custom properties in `style`
 - [`stylex`](stylex/INDEX.md): sharing values between StyleX styles in several files and the script that computes layout, applying a style only in one state, where to declare media query keys, and keeping a global reset from overriding StyleX's layered styles
 - [`tanstack-query`](tanstack-query/INDEX.md): reaching an API through TanStack Query from React
 - [`tanstack-start`](tanstack-start/INDEX.md): building and deploying a TanStack Start app
 - [`testing`](testing/INDEX.md): how test runners are built and what they expose, and how to test values a module reads at import
-- [`typescript`](typescript/INDEX.md): typing variants, ids, casts, external data and invariants so the compiler rejects illegal states, and passing a caller's schema into a generic struct
+- [`typescript`](typescript/INDEX.md): typing variants, ids, casts, external data (including optional fields of unconverted responses) and invariants so the compiler rejects illegal states, and passing a caller's schema into a generic struct
 - [`vite`](vite/INDEX.md): what the Vite dev server serves after quick successive edits and how to make it transform a module again

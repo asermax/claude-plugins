@@ -101,6 +101,8 @@ Leave these as they are unless the user asks:
 
 - `distill-to-wiki` and `distill-to-dev-standards` (paired 2026-11-13) differ in where findings land. mahou splits them into global and local wiki entries and offers a local override for a contradiction; Filadd has one store, so every finding is a `dev-standards` guide section, guide or template, and a contradiction is ruled include or fix the code only. Filadd's adds templates for repeated boilerplate, prepares each repository through `prepare-repo`, and says out loud that its drafts edit `plugins/dev/`. Neither proposes `project-knowledge` or invariants entries. `codebase-surveyor` is the same file on both sides apart from the dispatching skill and `AGENTS.md` versus `CLAUDE.md`.
 
+- The linter pairing (ported 2026-11-27): Filadd keeps two references in `distill-to-dev-standards`, `frontend.md` and `backend.md`, each naming its shared lint package, its presets and its sync files. mahou keeps one generic `distill-to-wiki/references/linter.md` that writes to the linter of the project the session works in, asks whether to add one when the project has none, and lets the agent decide which item kinds carry a check, `learn` pointing at it for every kind. A change to the shared rules (kinds of check, when a check does not fit, blast radius) syncs; the package names, presets and file lists stay Filadd-only.
+
 When a new divergence is settled during a sync, add it here.
 
 ## Step 2: List the candidates and wait
@@ -131,4 +133,4 @@ Set the date under Last synced to today. Commit nothing and bump no version on e
 
 ## Last synced
 
-2026-11-26
+2026-11-27

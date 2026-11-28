@@ -1,6 +1,6 @@
 ---
 name: learn
-description: The author's tool for growing the plugin from real sessions. When the user asks what the session has to teach, it collects the points where the session generated friction or changed the behavior of the flow that was running, gives a take on each, and drafts what the user picks. When the user names what to build, it works that ask directly from the current context. A mixed ask gets both. Produces new or iterated skills, agents, wiki entries and local .mahou files.
+description: The author's tool for growing the plugin from real sessions. When the user asks what the session has to teach, it collects the points where the session generated friction or changed the behavior of the flow that was running, gives a take on each, and drafts what the user picks. When the user names what to build, it works that ask directly from the current context. A mixed ask gets both. Produces new or iterated skills, agents, wiki entries and local .mahou files, and the linter checks for the rules they state.
 argument-hint: [what to build from this session]
 disable-model-invocation: true
 ---
@@ -29,7 +29,7 @@ Examples inside a skill or wiki entry are generic. They carry the shape the sess
 
 1. **Classify and scope each item before drafting it.** Process becomes a skill, new or iterated. Work a skill should hand to a subagent becomes an agent. Knowledge about a tool or technology becomes a wiki entry. A decision the user repeated for this project becomes a standing rule in a local file. A rule every change to this project respects, about how the product behaves or how the system is built, becomes a line in the project's invariants note. Global means useful in any project; local means true only for this one. Restate the job the item does, which kind it is and where it lands. Read the skill, entry or index it would land in to check it is not already there; if it already says this, the finding becomes an iteration on whatever failed to read it. Draft only once the user confirms the shape.
 
-2. **Draft every item in one reply**, ordered by confidence then by impact, each under its own heading, with the file it lands in. For a new skill, agent, wiki entry, design type or program design representation, give the full text; for an iteration, the old and new text. Before showing the drafts, write them to `learn/round-<n>.md` in the change's scratch folder, the next free round number,, per the convention in mahou:basics, and run `superpowers:unslop` over them. The user approves, corrects or drops each item separately; do not ask for a single approve-everything answer, though the user may give one.
+2. **Draft every item in one reply**, ordered by confidence then by impact, each under its own heading, with the file it lands in. For a new skill, agent, wiki entry, design type or program design representation, give the full text; for an iteration, the old and new text. Before showing the drafts, write them to `learn/round-<n>.md` in the change's scratch folder, the next free round number, per the convention in mahou:basics, and run `superpowers:unslop` over them. The user approves, corrects or drops each item separately; do not ask for a single approve-everything answer, though the user may give one.
 
    - A new skill: the full draft, following the new skill checklist.
    - A skill iteration: the exact change and the reason it is needed.
@@ -37,7 +37,9 @@ Examples inside a skill or wiki entry are generic. They carry the shape the sess
    - A wiki entry: the draft plus its line in the index at the right level.
    - A local file: the draft and which skill it changes.
 
-3. **Write each approved item** to its place, and mark in the round's file which items were applied, corrected or dropped. Leave everything uncommitted.
+   Decide for each item that states a rule about how code is written, whatever its kind, whether a check in the project's linter fits it, following mahou:distill-to-wiki's `references/linter.md`. The item carries the linter change, or the reason no check fits, and the blast radius that reference requires.
+
+3. **Write each approved item** to its place, and each linter change to the project's linter on the branch checked out there. Mark in the round's file which items were applied, corrected or dropped. Leave everything uncommitted.
 
 ## Where things land
 

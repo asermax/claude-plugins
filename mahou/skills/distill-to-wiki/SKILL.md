@@ -1,6 +1,6 @@
 ---
 name: distill-to-wiki
-description: Surveys a project's codebase, one repository or several, for the technologies it uses, the conventions it repeats and the architectural decisions that shape it, compares each with the global and local wiki, and proposes new entries, iterations and contradictions for the user to rule on. It surveys the whole codebase by default, or the part the user names. Writes only wiki entries.
+description: Surveys a project's codebase, one repository or several, for the technologies it uses, the conventions it repeats and the architectural decisions that shape it, compares each with the global and local wiki, and proposes new entries, iterations and contradictions for the user to rule on, each rule paired with its check in the project's linter where one fits. It surveys the whole codebase by default, or the part the user names. Writes only wiki entries and their linter changes.
 argument-hint: [repositories, folders, technologies or a question to scope the survey]
 disable-model-invocation: true
 ---
@@ -65,6 +65,6 @@ Examples inside an entry are generic. A code example names its components, hooks
 
 ## Drafting
 
-1. **Draft every approved finding in one reply**, in the report's order, each under its own heading, with the file it lands in. Follow the entry format in mahou:wiki. For a new entry, give the full text and its line in the index at the right level; for an iteration, the old and new text. Before showing the drafts, write them to the change's scratch folder at `distill-to-wiki/drafts/` and run `superpowers:unslop` over them.
+1. **Draft every approved finding in one reply**, in the report's order, each under its own heading, with the file it lands in. Follow the entry format in mahou:wiki. For a new entry, give the full text and its line in the index at the right level; for an iteration, the old and new text. Each finding that adds, removes or changes a rule about how code is written carries its linter change in the same item, following `references/linter.md`: the rule added, changed or removed, or the reason no check fits, and the blast radius that reference requires. Before showing the drafts, write them to the change's scratch folder at `distill-to-wiki/drafts/` and run `superpowers:unslop` over them.
 
-2. **Write each approved item** to its place: a global entry to `skills/wiki/references/<topic>/<entry>.md` in the plugin, a local one to `.mahou/wiki/` in its repository, each with its line in that folder's `INDEX.md`, and a new folder's line in the index above it. Leave everything uncommitted.
+2. **Write each approved item** to its place: a global entry to `skills/wiki/references/<topic>/<entry>.md` in the plugin, a local one to `.mahou/wiki/` in its repository, each with its line in that folder's `INDEX.md`, and a new folder's line in the index above it. Write each approved linter change to the project's linter, on the branch checked out there. Leave everything uncommitted.
